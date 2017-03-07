@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">SportApp</string>
     <string name="facebook_app_id">131696366931199</string>
+    <string name="password">Password:</string>
+    <string name="email">Email:</string>
+    <string name="choose_gender">Choose gender:</string>
+    <string name="date_of_birth">Date of birth:</string>
+    <string name="nick">Nick</string>
+    <string name="name_and_surname">Name and Surname:</string>
+    <string name="choose_nickname">Choose nickname:</string>
+    <string name="name_and_surname_hint">Name and Surname</string>
 </resources>
