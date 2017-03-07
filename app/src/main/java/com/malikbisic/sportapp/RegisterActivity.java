@@ -2,6 +2,7 @@ package com.malikbisic.sportapp;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.graphics.Color;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,12 +11,16 @@ import android.widget.*;
 import android.widget.DatePicker;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText dateTx;
+    List<String> spinnerArray;
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +28,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_register);
         dateTx = (EditText) findViewById(R.id.dateRegLabel);
         dateTx.setOnClickListener(this);
+        spinnerArray = new ArrayList<>();
+        spinnerArray.add("Male");
+        spinnerArray.add("Female");
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner sItems = (Spinner) findViewById(R.id.spinnerRegGender);
+        sItems.setAdapter(adapter);
+
     }
 
     @Override
