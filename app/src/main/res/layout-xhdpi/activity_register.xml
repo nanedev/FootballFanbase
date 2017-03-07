@@ -22,6 +22,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <Button
+                android:id="@+id/registerBtnRegActivity"
+                android:layout_width="244dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_shape"
+                android:text="REGISTER"
+                android:textColor="@color/whiteColor"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinnerRegGender"
+                tools:layout_editor_absoluteY="452dp" />
+
             <Spinner
                 android:id="@+id/spinnerRegGender"
                 android:layout_width="wrap_content"
@@ -119,16 +134,17 @@
                 android:id="@+id/dateRegLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:layout_marginTop="11dp"
                 android:background="@drawable/edit_text_form"
                 android:ems="10"
-                android:inputType="date"
-                app:layout_constraintTop_toBottomOf="@+id/textView4"
-                android:layout_marginRight="8dp"
-                app:layout_constraintRight_toRightOf="parent"
-                android:layout_marginLeft="8dp"
+                android:inputType="none"
+                android:focusable="false"
+                app:layout_constraintHorizontal_bias="0.052"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintHorizontal_bias="0.052" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
             <TextView
                 android:id="@+id/textView4"
