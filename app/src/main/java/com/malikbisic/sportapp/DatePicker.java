@@ -13,9 +13,9 @@ import java.util.Calendar;
  * Created by korisnik on 07/03/2017.
  */
 
-public class DatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class DatePicker {
 
-    EditText dateText;
+  /*  EditText dateText;
 
     public DatePicker(View view){
         this.dateText = (EditText) view;
@@ -36,5 +36,5 @@ public class DatePicker extends DialogFragment implements DatePickerDialog.OnDat
 
         String date = day +" - "+ (month+1)+ " - " + year;
         dateText.setText(date);
-    }
+    }*/
 }
