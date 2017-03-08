@@ -296,6 +296,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         /*mReference.child("date").setValue(userDate);
                         mReference.child("gender").setValue(userGender);*/
 
+                        mReference = mDatabase.getReference().child("Nickname").push();
+                        mReference.setValue(userNick);
+
                         mDialog.dismiss();
 
 
