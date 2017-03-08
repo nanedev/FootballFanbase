@@ -3,6 +3,7 @@ package com.malikbisic.sportapp;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -34,11 +35,20 @@ import java.util.List;
 import java.util.Locale;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
-    private EditText nameField;
+  /*  private EditText nameField;
     private EditText nickField;
     private EditText emailField;
     private EditText passwordField;
-    private ConstraintLayout registerLayout;
+    private ConstraintLayout registerLayout;*/
+  private static final String TAG = "SignupActivity";
+    EditText mNameText;
+    EditText mSurnameText;
+    EditText mEmailText;
+    EditText mNickNameText;
+    EditText mPasswordText;
+    EditText mReEnterPasswordText;
+    Button mSignupButton;
+    TextView mLoginLink;
 
     Button regBtn;
 
@@ -48,6 +58,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     String userNick;
     String userEmail;
     String userPassword;
+    String userSurname;
     String user_id;
     Spinner genderItems;
 
@@ -69,14 +80,43 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_register);
-        nameField = (EditText) findViewById(R.id.nameRegLabel);
-        nickField = (EditText) findViewById(R.id.nicknameRegLabel);
-        emailField = (EditText) findViewById(R.id.emailLabel);
-        passwordField = (EditText) findViewById(R.id.passLabel);
-        regBtn = (Button) findViewById(R.id.registerBtnRegActivity);
-        registerLayout = (ConstraintLayout) findViewById(R.id.registerLayout);
+        mNameText = (EditText) findViewById(R.id.input_name);
+        mSurnameText = (EditText) findViewById(R.id.input_surname);
+        mEmailText = (EditText) findViewById(R.id.input_email);
+        mNickNameText = (EditText) findViewById(R.id.input_nickname);
+        mPasswordText = (EditText) findViewById(R.id.input_password);
+        mReEnterPasswordText = (EditText) findViewById(R.id.input_reEnterPassword);
+        mSignupButton = (Button) findViewById(R.id.btn_signup);
+        mLoginLink = (TextView) findViewById(R.id.link_login);
 
-        dateTx = (EditText) findViewById(R.id.dateRegLabel);
+
+        mSignupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signup();
+            }
+        });
+
+        mLoginLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Finish the registration screen and return to the Login activity
+                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            }
+        });
+
+
+
+
+
+
+
+
+
+      /*  dateTx = (EditText) findViewById(R.id.dateRegLabel);
         dateTx.setOnClickListener(this);
         spinnerArray = new ArrayList<>();
         spinnerArray.add("Male");
@@ -100,12 +140,117 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+*/
+    }
+    public void signup() {
+        Log.d(TAG, "Signup");
 
+        if (!validate()) {
+            onSignupFailed();
+            return;
+        }
+
+        mSignupButton.setEnabled(false);
+
+        final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Creating Account...");
+        progressDialog.show();
+
+        String name = mNameText.getText().toString();
+        String surname = mSurnameText.getText().toString();
+        String email = mEmailText.getText().toString();
+        String nick = mNickNameText.getText().toString();
+        String password = mPasswordText.getText().toString();
+        String reEnterPassword = mReEnterPasswordText.getText().toString();
+
+        // TODO: Implement your own signup logic here.
+        registerUser();
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // On complete call either onSignupSuccess or onSignupFailed
+                        // depending on success
+                        onSignupSuccess();
+                        // onSignupFailed();
+                        progressDialog.dismiss();
+                    }
+                }, 3000);
+        }
+
+    public void onSignupSuccess() {
+        mSignupButton.setEnabled(true);
+        setResult(RESULT_OK, null);
+        finish();
+    }
+
+    public void onSignupFailed() {
+        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+
+        mSignupButton.setEnabled(true);
+    }
+
+    public boolean validate() {
+        boolean valid = true;
+
+        String name = mNameText.getText().toString();
+        String surname = mSurnameText.getText().toString();
+        String email = mEmailText.getText().toString();
+        String nick = mNickNameText.getText().toString();
+        String password = mPasswordText.getText().toString();
+        String reEnterPassword = mReEnterPasswordText.getText().toString();
+
+        if (name.isEmpty() || name.length() < 3) {
+            mNameText.setError("at least 3 characters");
+            valid = false;
+        } else {
+            mNameText.setError(null);
+        }
+
+        if (surname.isEmpty()) {
+            mSurnameText.setError("Enter Surname");
+            valid = false;
+        } else {
+            mSurnameText.setError(null);
+        }
+
+
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            mEmailText.setError("enter a valid email address");
+            valid = false;
+        } else {
+            mEmailText.setError(null);
+        }
+
+        if (nick.isEmpty()) {
+            mNickNameText.setError("Nick already exists");
+            valid = false;
+        } else {
+            mNickNameText.setError(null);
+        }
+
+        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
+            mPasswordText.setError("between 6 and 10 alphanumeric characters");
+            valid = false;
+        } else {
+            mPasswordText.setError(null);
+        }
+
+        if (reEnterPassword.isEmpty() || reEnterPassword.length() < 6|| reEnterPassword.length() > 10 || !(reEnterPassword.equals(password))) {
+            mReEnterPasswordText.setError("Password Do not match");
+            valid = false;
+        } else {
+            mReEnterPasswordText.setError(null);
+        }
+
+        return valid;
     }
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.dateRegLabel) {
+      /*  if (view.getId() == R.id.dateRegLabel) {
             new DatePickerDialog(RegisterActivity.this, date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
@@ -116,22 +261,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         } else if (view.getId() == R.id.registerLayout){
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
+        }*/
     }
 
     private void registerUser() {
+        userName = mNameText.getText().toString().trim();
+        userSurname = mSurnameText.getText().toString().trim();
+        userNick = mNickNameText.getText().toString().trim();
 
-        userName = nameField.getText().toString().trim();
-        userNick = nickField.getText().toString().trim();
-        userEmail = emailField.getText().toString().trim();
-        userPassword = passwordField.getText().toString().trim();
-        userDate = dateTx.getText().toString().trim();
-        userGender = genderItems.getSelectedItem().toString().trim();
+        userEmail = mEmailText.getText().toString().trim();
+        userPassword = mPasswordText.getText().toString().trim();
+       /* userDate = dateTx.getText().toString().trim();
+        userGender = genderItems.getSelectedItem().toString().trim();*/
 
 
 
-        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userNick) && !TextUtils.isEmpty(userEmail)
-                && !TextUtils.isEmpty(userPassword) && !TextUtils.isEmpty(userDate) && !TextUtils.isEmpty(userGender))
+        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userSurname) &&!TextUtils.isEmpty(userNick) && !TextUtils.isEmpty(userEmail)
+                && !TextUtils.isEmpty(userPassword) )
         {
             mDialog.setMessage("Registering");
             mDialog.show();
@@ -145,9 +291,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                        user_id = mAuth.getCurrentUser().getUid();
                         mReference= mDatabase.getReference().child("Users").child(user_id);
                         mReference.child("name").setValue(userName);
+                        mReference.child("name").setValue(userSurname);
                         mReference.child("nick").setValue(userNick);
-                        mReference.child("date").setValue(userDate);
-                        mReference.child("gender").setValue(userGender);
+                        /*mReference.child("date").setValue(userDate);
+                        mReference.child("gender").setValue(userGender);*/
 
                         mDialog.dismiss();
 
@@ -160,19 +307,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
-                    if (TextUtils.isEmpty(userPassword) || userPassword.length() < 6){
+                   /* if (TextUtils.isEmpty(userPassword) || userPassword.length() < 6){
                         passwordField.setError("Password must be at least 6 characters");
                         mDialog.dismiss();
                     }
 
                     emailField.setError(e.getMessage());
                     mDialog.dismiss();
-
+*/
                 }
             });
         }
 
-        if (TextUtils.isEmpty(userName)) {
+        /*if (TextUtils.isEmpty(userName)) {
             nameField.setError("You did not enter a name");
             mDialog.dismiss();
         }
@@ -185,11 +332,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             dateTx.setError("You did not enter a birthday");
             mDialog.dismiss();
         }
-
+*/
 
     }
 
-    Calendar myCalendar = Calendar.getInstance();
+   /* Calendar myCalendar = Calendar.getInstance();
 
     DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
@@ -204,14 +351,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             updateLabel();
         }
 
-    };
+    };*/
 
     private void updateLabel() {
 
-        String myFormat = "dd/MMMM/yyyy"; //In which you need put here
+       /* String myFormat = "dd/MMMM/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
 
-        dateTx.setText(sdf.format(myCalendar.getTime()));
+        dateTx.setText(sdf.format(myCalendar.getTime()));*/
     }
 
     @Override
