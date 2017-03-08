@@ -83,7 +83,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mAuth = FirebaseAuth.getInstance();
         mDialog = new ProgressDialog(this);
         mDatabase = FirebaseDatabase.getInstance();
-        mReference = mDatabase.getReference().child("Users");
+
 
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,11 +130,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                     if (task.isSuccessful()){
                        user_id = mAuth.getCurrentUser().getUid();
-                        DatabaseReference currentUserDB = mDatabase.getReference().child(user_id);
-                        currentUserDB.child("name").setValue(userName);
-                        currentUserDB.child("nick").setValue(userNick);
-                        currentUserDB.child("date").setValue(userDate);
-                        currentUserDB.child("gender").setValue(userGender);
+                        mReference= mDatabase.getReference().child("Users").child(user_id);
+                        mReference.child("name").setValue(userName);
+                        mReference.child("nick").setValue(userNick);
+                        mReference.child("date").setValue(userDate);
+                        mReference.child("gender").setValue(userGender);
 
                         mDialog.dismiss();
 
@@ -146,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-
+                 e.printStackTrace();
                 }
             });
         }
