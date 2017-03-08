@@ -74,6 +74,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     FirebaseDatabase mDatabase;
     DatabaseReference mReference;
 
+    LinearLayout layout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +90,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mReEnterPasswordText = (EditText) findViewById(R.id.input_reEnterPassword);
         mSignupButton = (Button) findViewById(R.id.btn_signup);
         mLoginLink = (TextView) findViewById(R.id.link_login);
+        layout = (LinearLayout) findViewById(R.id.registerLayout);
+        layout.setOnClickListener(this);
 
-
+        mAuth = FirebaseAuth.getInstance();
+        mDialog = new ProgressDialog(this);
+        mDatabase = FirebaseDatabase.getInstance();
         mSignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,9 +133,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         genderItems = (Spinner) findViewById(R.id.spinnerRegGender);
         genderItems.setAdapter(adapter);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDialog = new ProgressDialog(this);
-        mDatabase = FirebaseDatabase.getInstance();
+
 
         registerLayout.setOnClickListener(this);
 
@@ -250,7 +254,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-      /*  if (view.getId() == R.id.dateRegLabel) {
+       /* if (view.getId() == R.id.dateRegLabel) {
             new DatePickerDialog(RegisterActivity.this, date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
@@ -258,10 +262,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             Log.i("klikno","klikno si");
 
 
-        } else if (view.getId() == R.id.registerLayout){
+        } else*/ if (view.getId() == R.id.registerLayout){
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }*/
+        }
     }
 
     private void registerUser() {
@@ -279,8 +283,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userSurname) &&!TextUtils.isEmpty(userNick) && !TextUtils.isEmpty(userEmail)
                 && !TextUtils.isEmpty(userPassword) )
         {
-            mDialog.setMessage("Registering");
-            mDialog.show();
 
 
             mAuth.createUserWithEmailAndPassword(userEmail,userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -299,7 +301,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         mReference = mDatabase.getReference().child("Nickname").push();
                         mReference.setValue(userNick);
 
-                        mDialog.dismiss();
 
 
 
