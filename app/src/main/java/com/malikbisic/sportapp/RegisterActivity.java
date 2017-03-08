@@ -117,6 +117,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         userDate = dateTx.getText().toString().trim();
         userGender = genderItems.getSelectedItem().toString().trim();
 
+
+
         if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userNick) && !TextUtils.isEmpty(userEmail)
                 && !TextUtils.isEmpty(userPassword) && !TextUtils.isEmpty(userDate) && !TextUtils.isEmpty(userGender))
         {
@@ -146,10 +148,33 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                 e.printStackTrace();
+
+                    if (TextUtils.isEmpty(userPassword) || userPassword.length() < 6){
+                        passwordField.setError("Password must be at least 6 characters");
+                        mDialog.dismiss();
+                    }
+
+                    emailField.setError(e.getMessage());
+                    mDialog.dismiss();
+
                 }
             });
         }
+
+        if (TextUtils.isEmpty(userName)) {
+            nameField.setError("You did not enter a name");
+            mDialog.dismiss();
+        }
+
+        if (TextUtils.isEmpty(userNick)) {
+            nickField.setError("You did not enter a username");
+            mDialog.dismiss();
+        }
+        if (TextUtils.isEmpty(userDate)) {
+            dateTx.setError("You did not enter a birthday");
+            mDialog.dismiss();
+        }
+
 
     }
 
