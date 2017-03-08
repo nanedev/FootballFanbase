@@ -84,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mDialog = new ProgressDialog(this);
         mDatabase = FirebaseDatabase.getInstance();
         mReference = mDatabase.getReference().child("Users");
+
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
