@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -66,6 +67,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     FirebaseAuth mAuth;
+    FirebaseAuth.AuthStateListener mAuthListener;
 
 
     EditText dateTx;
@@ -103,6 +105,22 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
         mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d("tag", "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d("Tag", "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
+
         mDialog = new ProgressDialog(this);
         mDatabase = FirebaseDatabase.getInstance();
         mSignupButton.setOnClickListener(new View.OnClickListener() {
@@ -174,7 +192,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
         // TODO: Implement your own signup logic here.
-
+        registerUser();
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
@@ -306,8 +324,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mAuth.createUserWithEmailAndPassword(userEmail,userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(RegisterActivity.this, "Check your email!", Toast.LENGTH_LONG).show();
+                        }
+                    });
 
                     if (task.isSuccessful()){
+
                        user_id = mAuth.getCurrentUser().getUid();
                         mReference= mDatabase.getReference().child("Users").child(user_id);
                         mReference.child("name").setValue(userName);
@@ -406,5 +432,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void afterTextChanged(Editable s) {
       validate();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }
