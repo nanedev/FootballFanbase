@@ -40,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText emailField;
     private EditText passwordField;
     private ConstraintLayout registerLayout;*/
-  private static final String TAG = "SignupActivity";
+  private static final String TAG = "RegisterActivity";
     EditText mNameText;
     EditText mSurnameText;
     EditText mEmailText;
@@ -114,8 +114,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        spinnerArray = new ArrayList<>();
+        spinnerArray.add("Male");
+        spinnerArray.add("Female");
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
 
 
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderItems = (Spinner) findViewById(R.id.input_gender);
+        genderItems.setAdapter(adapter);
 
 
 
@@ -124,14 +131,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
       /*  dateTx = (EditText) findViewById(R.id.dateRegLabel);
         dateTx.setOnClickListener(this);
-        spinnerArray = new ArrayList<>();
-        spinnerArray.add("Male");
-        spinnerArray.add("Female");
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        genderItems = (Spinner) findViewById(R.id.spinnerRegGender);
-        genderItems.setAdapter(adapter);
 
 
 
@@ -147,7 +147,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 */
     }
     public void signup() {
-        Log.d(TAG, "Signup");
+        Log.d(TAG, "RegisterActivity");
 
         if (!validate()) {
             onSignupFailed();
@@ -170,7 +170,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String reEnterPassword = mReEnterPasswordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
-        registerUser();
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
