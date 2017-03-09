@@ -11,7 +11,9 @@ import android.support.v4.app.FragmentTransaction;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -34,7 +36,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener,TextWatcher {
   /*  private EditText nameField;
     private EditText nickField;
     private EditText emailField;
@@ -92,6 +94,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mLoginLink = (TextView) findViewById(R.id.link_login);
         layout = (LinearLayout) findViewById(R.id.registerLayout);
         layout.setOnClickListener(this);
+        mNameText.addTextChangedListener(this);
+        mSurnameText.addTextChangedListener(this);
+        mEmailText.addTextChangedListener(this);
+        mNickNameText.addTextChangedListener(this);
+        mPasswordText.addTextChangedListener(this);
+        mReEnterPasswordText.addTextChangedListener(this);
+
 
         mAuth = FirebaseAuth.getInstance();
         mDialog = new ProgressDialog(this);
@@ -162,12 +171,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-        String name = mNameText.getText().toString();
-        String surname = mSurnameText.getText().toString();
-        String email = mEmailText.getText().toString();
-        String nick = mNickNameText.getText().toString();
-        String password = mPasswordText.getText().toString();
-        String reEnterPassword = mReEnterPasswordText.getText().toString();
+
 
         // TODO: Implement your own signup logic here.
 
@@ -205,10 +209,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
 
-        if (name.isEmpty() || name.length() < 3) {
-            mNameText.setError("at least 3 characters");
+        if (name.isEmpty() ) {
+            mNameText.setError("field can not be empty");
             valid = false;
-        } else {
+        } else if (name.length() < 3){
+            mNameText.setError("field should contain at least 3 characters");
+            valid = false;
+        }else {
             mNameText.setError(null);
         }
 
@@ -220,31 +227,43 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
 
 
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEmailText.setError("enter a valid email address");
+        if (email.isEmpty() ) {
+            mEmailText.setError("field can not be empty");
             valid = false;
-        } else {
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            mEmailText.setError("bad format of email");
+            valid = false;
+        }else{
             mEmailText.setError(null);
         }
 
         if (nick.isEmpty()) {
-            mNickNameText.setError("Nick already exists");
+            mNickNameText.setError("field can not be empty");
             valid = false;
         } else {
             mNickNameText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
-            mPasswordText.setError("between 6 and 10 alphanumeric characters");
+        if (password.isEmpty() ) {
+            mPasswordText.setError("field can not be empty");
             valid = false;
-        } else {
+        } else if (password.length() < 6 ){
+            mPasswordText.setError("password must contain at least 6 characters");
+            valid = false;
+        }else{
             mPasswordText.setError(null);
         }
 
-        if (reEnterPassword.isEmpty() || reEnterPassword.length() < 6|| reEnterPassword.length() > 10 || !(reEnterPassword.equals(password))) {
-            mReEnterPasswordText.setError("Password Do not match");
+        if (reEnterPassword.isEmpty() ) {
+            mReEnterPasswordText.setError("field can not be empty");
             valid = false;
-        } else {
+        } else if (reEnterPassword.length() < 6){
+            mReEnterPasswordText.setError("password must contain at least 6 characters");
+            valid = false;
+        }else if (!(reEnterPassword.equals(password))){
+            mReEnterPasswordText.setError("password do not match!");
+            valid = false;
+        }else {
             mReEnterPasswordText.setError(null);
         }
 
@@ -372,5 +391,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
 
         return false;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+      validate();
     }
 }
