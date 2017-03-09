@@ -75,7 +75,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     boolean valid;
 
-    Calendar minAdultAge = new GregorianCalendar();
+
+    Calendar minAdultAge;
 
 
     @Override
@@ -102,6 +103,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mNickNameText.addTextChangedListener(this);
         mPasswordText.addTextChangedListener(this);
         mReEnterPasswordText.addTextChangedListener(this);
+        minAdultAge = new GregorianCalendar();
+
+        dateTx.addTextChangedListener(this);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -282,6 +286,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
        if (minAdultAge.before(myCalendar)) {
             Toast.makeText(RegisterActivity.this, "You must be older 18 ", Toast.LENGTH_LONG).show();
+           minAdultAge.add(Calendar.YEAR, -18);
             valid = false;
         } else {
 
