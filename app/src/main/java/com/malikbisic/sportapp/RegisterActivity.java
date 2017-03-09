@@ -187,7 +187,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onSignupSuccess() {
         mSignupButton.setEnabled(true);
         setResult(RESULT_OK, null);
-        finish();
+       // finish();
     }
 
     public void onSignupFailed() {
