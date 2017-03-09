@@ -38,23 +38,17 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener,TextWatcher {
-  /*  private EditText nameField;
-    private EditText nickField;
-    private EditText emailField;
-    private EditText passwordField;
-    private ConstraintLayout registerLayout;*/
-  private static final String TAG = "RegisterActivity";
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, TextWatcher {
+    private static final String TAG = "RegisterActivity";
     EditText mNameText;
     EditText mSurnameText;
     EditText mEmailText;
     EditText mNickNameText;
     EditText mPasswordText;
     EditText mReEnterPasswordText;
+    EditText dateTx;
     Button mSignupButton;
     TextView mLoginLink;
-
-    Button regBtn;
 
     String userDate;
     String userGender;
@@ -66,12 +60,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     String user_id;
     Spinner genderItems;
 
-
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
 
 
-    EditText dateTx;
     List<String> spinnerArray;
     ArrayAdapter<String> adapter;
     ProgressDialog mDialog;
@@ -84,7 +76,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     boolean valid;
 
     Calendar minAdultAge = new GregorianCalendar();
-
 
 
     @Override
@@ -143,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
-                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
@@ -154,34 +145,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         spinnerArray.add("Male");
         spinnerArray.add("Female");
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
-
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderItems = (Spinner) findViewById(R.id.input_gender);
         genderItems.setAdapter(adapter);
 
-
-
-
-
-
-      /*  dateTx = (EditText) findViewById(R.id.dateRegLabel);
-        dateTx.setOnClickListener(this);
-
-
-
-
-        registerLayout.setOnClickListener(this);
-
-        regBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerUser();
-            }
-        });
-
-*/
     }
+
     public void signup() {
         Log.d(TAG, "RegisterActivity");
 
@@ -198,9 +167,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-
-
-        // TODO: Implement your own signup logic here.
         registerUser();
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -212,12 +178,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         progressDialog.dismiss();
                     }
                 }, 3000);
-        }
+    }
 
     public void onSignupSuccess() {
         mSignupButton.setEnabled(true);
         setResult(RESULT_OK, null);
-       // finish();
+        // finish();
     }
 
     public void onSignupFailed() {
@@ -256,13 +222,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String reEnterPassword = mReEnterPasswordText.getText().toString();
         String date = dateTx.getText().toString().trim();
 
-        if (name.isEmpty() ) {
+        if (name.isEmpty()) {
             mNameText.setError("field can not be empty");
             valid = false;
-        } else if (name.length() < 3){
+        } else if (name.length() < 3) {
             mNameText.setError("field should contain at least 3 characters");
             valid = false;
-        }else {
+        } else {
             mNameText.setError(null);
         }
 
@@ -274,13 +240,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
 
 
-        if (email.isEmpty() ) {
+        if (email.isEmpty()) {
             mEmailText.setError("field can not be empty");
             valid = false;
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             mEmailText.setError("bad format of email");
             valid = false;
-        }else{
+        } else {
             mEmailText.setError(null);
         }
 
@@ -291,26 +257,26 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mNickNameText.setError(null);
         }
 
-        if (password.isEmpty() ) {
+        if (password.isEmpty()) {
             mPasswordText.setError("field can not be empty");
             valid = false;
-        } else if (password.length() < 6 ){
+        } else if (password.length() < 6) {
             mPasswordText.setError("password must contain at least 6 characters");
             valid = false;
-        }else{
+        } else {
             mPasswordText.setError(null);
         }
 
-        if (reEnterPassword.isEmpty() ) {
+        if (reEnterPassword.isEmpty()) {
             mReEnterPasswordText.setError("field can not be empty");
             valid = false;
-        } else if (reEnterPassword.length() < 6){
+        } else if (reEnterPassword.length() < 6) {
             mReEnterPasswordText.setError("password must contain at least 6 characters");
             valid = false;
-        }else if (!(reEnterPassword.equals(password))){
+        } else if (!(reEnterPassword.equals(password))) {
             mReEnterPasswordText.setError("password do not match!");
             valid = false;
-        }else {
+        } else {
             mReEnterPasswordText.setError(null);
         }
 
@@ -325,15 +291,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-       if (view.getId() == R.id.input_dateofbirth) {
+        if (view.getId() == R.id.input_dateofbirth) {
             new DatePickerDialog(RegisterActivity.this, date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-           /*else if (view.getId() == R.id.registerBtnRegActivity) {
-            Log.i("klikno","klikno si"); */
 
-
-        } else if (view.getId() == R.id.registerLayout){
+        } else if (view.getId() == R.id.registerLayout) {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
@@ -343,20 +306,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         userName = mNameText.getText().toString().trim();
         userSurname = mSurnameText.getText().toString().trim();
         userNick = mNickNameText.getText().toString().trim();
-
         userEmail = mEmailText.getText().toString().trim();
         userPassword = mPasswordText.getText().toString().trim();
-       /* userDate = dateTx.getText().toString().trim();
-        userGender = genderItems.getSelectedItem().toString().trim();*/
+        userDate = dateTx.getText().toString().trim();
+        userGender = genderItems.getSelectedItem().toString().trim();
 
 
-
-        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userSurname) &&!TextUtils.isEmpty(userNick) && !TextUtils.isEmpty(userEmail)
-                && !TextUtils.isEmpty(userPassword) )
-        {
+        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userSurname) && !TextUtils.isEmpty(userNick) && !TextUtils.isEmpty(userEmail)
+                && !TextUtils.isEmpty(userPassword)) {
 
 
-            mAuth.createUserWithEmailAndPassword(userEmail,userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            mAuth.createUserWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     FirebaseUser user = mAuth.getCurrentUser();
@@ -367,20 +327,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         }
                     });
 
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
 
-                       user_id = mAuth.getCurrentUser().getUid();
-                        mReference= mDatabase.getReference().child("Users").child(user_id);
+                        user_id = mAuth.getCurrentUser().getUid();
+                        mReference = mDatabase.getReference().child("Users").child(user_id);
                         mReference.child("name").setValue(userName);
-                        mReference.child("name").setValue(userSurname);
+                        mReference.child("surname").setValue(userSurname);
                         mReference.child("nick").setValue(userNick);
-                        /*mReference.child("date").setValue(userDate);
-                        mReference.child("gender").setValue(userGender);*/
-
+                        mReference.child("date").setValue(userDate);
+                        mReference.child("gender").setValue(userGender);
                         mReference = mDatabase.getReference().child("Nickname").push();
                         mReference.setValue(userNick);
-
-
 
 
                     }
@@ -390,35 +347,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
-                   /* if (TextUtils.isEmpty(userPassword) || userPassword.length() < 6){
-                        passwordField.setError("Password must be at least 6 characters");
-                        mDialog.dismiss();
-                    }
 
-                    emailField.setError(e.getMessage());
-                    mDialog.dismiss();
-*/
                 }
             });
         }
 
-        /*if (TextUtils.isEmpty(userName)) {
-            nameField.setError("You did not enter a name");
-            mDialog.dismiss();
-        }
-
-        if (TextUtils.isEmpty(userNick)) {
-            nickField.setError("You did not enter a username");
-            mDialog.dismiss();
-        }
-        if (TextUtils.isEmpty(userDate)) {
-            dateTx.setError("You did not enter a birthday");
-            mDialog.dismiss();
-        }
-*/
 
     }
-
 
 
     private void updateLabel() {
@@ -432,7 +367,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
 
-        if (i == KeyEvent.KEYCODE_ENTER){
+        if (i == KeyEvent.KEYCODE_ENTER) {
             registerUser();
         }
 
@@ -451,7 +386,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void afterTextChanged(Editable s) {
-      validate();
+        validate();
     }
 
     @Override
