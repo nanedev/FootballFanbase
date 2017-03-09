@@ -280,11 +280,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mReEnterPasswordText.setError(null);
         }
 
-        if (minAdultAge.before(myCalendar)) {
-            dateTx.setError("Must be older 18");
+       if (minAdultAge.before(myCalendar)) {
+            Toast.makeText(RegisterActivity.this, "You must be older 18 ", Toast.LENGTH_LONG).show();
             valid = false;
         } else {
-            dateTx.setError(null);
+
         }
         return valid;
     }
@@ -319,13 +319,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mAuth.createUserWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    FirebaseUser user = mAuth.getCurrentUser();
+                    FirebaseUser user = mAuth.getInstance().getCurrentUser();
                     user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(RegisterActivity.this, "Check your email!", Toast.LENGTH_LONG).show();
+                            if (task.isSuccessful()) {
+                                Toast.makeText(RegisterActivity.this, "Check your email!", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(RegisterActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
+
 
                     if (task.isSuccessful()) {
 
