@@ -34,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -80,6 +81,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     LinearLayout layout;
 
+    boolean valid;
+
+    Calendar minAdultAge = new GregorianCalendar();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +99,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mPasswordText = (EditText) findViewById(R.id.input_password);
         mReEnterPasswordText = (EditText) findViewById(R.id.input_reEnterPassword);
         mSignupButton = (Button) findViewById(R.id.btn_signup);
+        dateTx = (EditText) findViewById(R.id.input_dateofbirth);
+
+        dateTx.setOnClickListener(this);
         mLoginLink = (TextView) findViewById(R.id.link_login);
         layout = (LinearLayout) findViewById(R.id.registerLayout);
         layout.setOnClickListener(this);
@@ -217,8 +226,27 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mSignupButton.setEnabled(true);
     }
 
+    Calendar myCalendar = Calendar.getInstance();
+
+    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker datePicker, int year, int monthOfYear,
+                              int dayOfMonth) {
+            // TODO Auto-generated method stub
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+            minAdultAge.add(Calendar.YEAR, -18);
+
+            updateLabel();
+        }
+
+    };
+
     public boolean validate() {
-        boolean valid = true;
+        valid = true;
 
         String name = mNameText.getText().toString();
         String surname = mSurnameText.getText().toString();
@@ -226,6 +254,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String nick = mNickNameText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
+        String date = dateTx.getText().toString().trim();
 
         if (name.isEmpty() ) {
             mNameText.setError("field can not be empty");
@@ -285,20 +314,26 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mReEnterPasswordText.setError(null);
         }
 
+        if (minAdultAge.before(myCalendar)) {
+            dateTx.setError("Must be older 18");
+            valid = false;
+        } else {
+            dateTx.setError(null);
+        }
         return valid;
     }
 
     @Override
     public void onClick(View view) {
-       /* if (view.getId() == R.id.dateRegLabel) {
+       if (view.getId() == R.id.input_dateofbirth) {
             new DatePickerDialog(RegisterActivity.this, date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-        } else if (view.getId() == R.id.registerBtnRegActivity) {
-            Log.i("klikno","klikno si");
+           /*else if (view.getId() == R.id.registerBtnRegActivity) {
+            Log.i("klikno","klikno si"); */
 
 
-        } else*/ if (view.getId() == R.id.registerLayout){
+        } else if (view.getId() == R.id.registerLayout){
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
@@ -384,29 +419,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-   /* Calendar myCalendar = Calendar.getInstance();
 
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker datePicker, int year, int monthOfYear,
-                              int dayOfMonth) {
-            // TODO Auto-generated method stub
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            updateLabel();
-        }
-
-    };*/
 
     private void updateLabel() {
 
-       /* String myFormat = "dd/MMMM/yyyy"; //In which you need put here
+        String myFormat = "dd/MMMM/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
 
-        dateTx.setText(sdf.format(myCalendar.getTime()));*/
+        dateTx.setText(sdf.format(myCalendar.getTime()));
     }
 
     @Override
