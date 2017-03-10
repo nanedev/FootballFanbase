@@ -28,8 +28,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +54,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     Button mSignupButton;
     TextView mLoginLink;
     TextView errorInfo;
+    String value;
 
     String userDate;
     String userGender;
@@ -115,6 +120,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         mAuth = FirebaseAuth.getInstance();
 
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -136,6 +142,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(View v) {
                 signup();
+
             }
         });
 
@@ -222,7 +229,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             Log.i("Year check", String.valueOf(realYear));
 
 
-
             updateLabel();
         }
 
@@ -234,10 +240,32 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String name = mNameText.getText().toString();
         String surname = mSurnameText.getText().toString();
         String email = mEmailText.getText().toString();
-        String nick = mNickNameText.getText().toString();
+        final String nick = mNickNameText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
         String date = dateTx.getText().toString().trim();
+
+        mReference = mDatabase.getReference("Nickname");
+
+        mReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
+                    value = nickNames.getValue(String.class);
+                    Log.i("values", value);
+                    if (value.equals(nick)) {
+                        mNickNameText.setError("nick already exists");
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                databaseError.getMessage();
+            }
+        });
 
         if (name.isEmpty()) {
             mNameText.setError("field can not be empty");
@@ -297,14 +325,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mReEnterPasswordText.setError(null);
         }
 
-       if (realYear < 18) {
+        if (realYear < 18) {
 
-           errorInfo.setText("You must be older than 18");
-           errorInfo.setVisibility(View.VISIBLE);
+            errorInfo.setText("You must be older than 18");
+            errorInfo.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-           errorInfo.setText("");
-           errorInfo.setVisibility(View.INVISIBLE);
+            errorInfo.setText("");
+            errorInfo.setVisibility(View.INVISIBLE);
         }
         return valid;
     }
@@ -350,7 +378,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(RegisterActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
 
@@ -382,6 +410,31 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     }
+    /*private void compareNicks(){
+        mReference = mDatabase.getReference("Nickname");
+        final String userNick = mNickNameText.getText().toString().trim();
+
+        mReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot nicknamesSnapshot : dataSnapshot.getChildren()){
+                    value = nicknamesSnapshot.getValue(String.class);
+                    Log.i("proba",value);
+
+
+                }
+                if (userNick.equals(value)){
+                    Log.i("nickProba",userNick + "already exists");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+             Log.i("error",databaseError.getMessage());
+            }
+        });
+
+    }*/
 
 
     private void updateLabel() {
