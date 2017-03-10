@@ -253,9 +253,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
                     value = nickNames.getValue(String.class);
                     Log.i("values", value);
-                    if (value.equals(nick)) {
-                        mNickNameText.setError("nick already exists");
-                    }
+
+
                 }
 
 
@@ -298,7 +297,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (nick.isEmpty()) {
             mNickNameText.setError("field can not be empty");
             valid = false;
-        } else {
+        } else if (value.equals(nick)) {
+
+            mNickNameText.setError("nick already exists");
+            valid = false;
+        }else {
             mNickNameText.setError(null);
         }
 
@@ -334,6 +337,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             errorInfo.setText("");
             errorInfo.setVisibility(View.INVISIBLE);
         }
+
         return valid;
     }
 
@@ -467,7 +471,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void afterTextChanged(Editable s) {
-        validate();
+       // validate();
     }
 
     @Override
