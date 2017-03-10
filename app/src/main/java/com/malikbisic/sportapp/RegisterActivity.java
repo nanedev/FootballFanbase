@@ -74,6 +74,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     LinearLayout layout;
 
     boolean valid;
+    int selectYear;
+    int currentYear;
+    int realYear;
 
 
     Calendar minAdultAge;
@@ -208,7 +211,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             myCalendar.set(Calendar.MONTH, monthOfYear);
             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-            minAdultAge.add(Calendar.YEAR, -18);
+            selectYear = year;
+            currentYear = minAdultAge.get(Calendar.YEAR);
+            Log.i("Year select", String.valueOf(selectYear));
+            Log.i("Year current", String.valueOf(currentYear));
+
+            realYear = currentYear - selectYear;
+            Log.i("Year check", String.valueOf(realYear));
+
+
 
             updateLabel();
         }
@@ -284,9 +295,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mReEnterPasswordText.setError(null);
         }
 
-       if (minAdultAge.before(myCalendar)) {
-            Toast.makeText(RegisterActivity.this, "You must be older 18 ", Toast.LENGTH_LONG).show();
-           minAdultAge.add(Calendar.YEAR, -18);
+       if (realYear < 18) {
+            Toast.makeText(RegisterActivity.this, "You must be older than 18 ", Toast.LENGTH_LONG).show();
+
             valid = false;
         } else {
 
