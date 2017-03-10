@@ -97,6 +97,12 @@
                 android:hint="Birthday"
                 android:focusable="false"
                 android:inputType="text" />
+            <TextView
+                android:id="@+id/input_dateofbirthInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:textColor="@color/redError" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- mobile number -->

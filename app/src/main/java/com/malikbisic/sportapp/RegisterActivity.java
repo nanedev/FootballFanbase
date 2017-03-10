@@ -49,6 +49,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     EditText dateTx;
     Button mSignupButton;
     TextView mLoginLink;
+    TextView errorInfo;
 
     String userDate;
     String userGender;
@@ -95,6 +96,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mReEnterPasswordText = (EditText) findViewById(R.id.input_reEnterPassword);
         mSignupButton = (Button) findViewById(R.id.btn_signup);
         dateTx = (EditText) findViewById(R.id.input_dateofbirth);
+        errorInfo = (TextView) findViewById(R.id.input_dateofbirthInfo);
 
         dateTx.setOnClickListener(this);
         mLoginLink = (TextView) findViewById(R.id.link_login);
@@ -296,11 +298,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
 
        if (realYear < 18) {
-            Toast.makeText(RegisterActivity.this, "You must be older than 18 ", Toast.LENGTH_LONG).show();
 
+           errorInfo.setText("You must be older than 18");
+           errorInfo.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-
+           errorInfo.setText("");
+           errorInfo.setVisibility(View.INVISIBLE);
         }
         return valid;
     }
