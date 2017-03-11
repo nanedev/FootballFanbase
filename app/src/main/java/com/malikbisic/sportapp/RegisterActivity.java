@@ -1,13 +1,9 @@
 package com.malikbisic.sportapp;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentTransaction;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,8 +35,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, TextWatcher {
     private static final String TAG = "RegisterActivity";
@@ -81,6 +79,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     LinearLayout layout;
 
     boolean valid;
+    AtomicBoolean nicknameExists = new AtomicBoolean(false);
+    AtomicBoolean checkingNick = new AtomicBoolean(false);
     int selectYear;
     int currentYear;
     int realYear;
@@ -166,6 +166,34 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         genderItems = (Spinner) findViewById(R.id.input_gender);
         genderItems.setAdapter(adapter);
 
+        mReference = mDatabase.getReference();
+
+
+//        mReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
+//                    value = nickNames.getValue(String.class);
+//                    Log.i("values", value);
+//                    if (mNickNameText.getText().toString().isEmpty()) {
+//                        mNickNameText.setError("field can not be empty");
+//                        nicknameExists = false;
+//                    } else if (mNickNameText.getText().toString().equals(value)) {
+//                        mNickNameText.setError("nick already exists");
+//                        nicknameExists = false;
+//                    } else {
+//                        mNickNameText.setError(null);
+//                        nicknameExists = false;
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                databaseError.getMessage();
+//                nicknameExists = true;
+//            }
+//        });
     }
 
     public void signup() {
@@ -241,40 +269,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String name = mNameText.getText().toString();
         String surname = mSurnameText.getText().toString();
         String email = mEmailText.getText().toString();
-        nickCompare = mNickNameText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
         String date = dateTx.getText().toString().trim();
 
-        mReference = mDatabase.getReference("Nickname");
-
-        mReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
-                    value = nickNames.getValue(String.class);
-                    Log.i("values", value);
-                    if (nickCompare.isEmpty()) {
-                        mNickNameText.setError("field can not be empty");
-                        valid = false;
-                    } else if (nickCompare.equals(value)) {
-
-                        mNickNameText.setError("nick already exists");
-                        valid = false;
-                    } else {
-                        mNickNameText.setError(null);
-                    }
-
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                databaseError.getMessage();
-            }
-        });
+        if (mNickNameText.getText().toString().isEmpty()) {
+            mNickNameText.setError("field can not be empty");
+            valid = false;
+        } else if (nicknameExists.get()) {
+            mNickNameText.setError("nicknameExists");
+            valid = false;
+        } else {
+            mNickNameText.setError(null);
+        }
 
         if (name.isEmpty()) {
             mNameText.setError("field can not be empty");
@@ -303,7 +310,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         } else {
             mEmailText.setError(null);
         }
-
 
 
         if (password.isEmpty()) {
@@ -466,12 +472,29 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
+    public void onTextChanged(final CharSequence s, int start, int before, int count) {
 
     }
 
     @Override
     public void afterTextChanged(Editable s) {
+        mReference.child("Users").orderByChild("nick").equalTo(mNickNameText.getText().toString())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (null != dataSnapshot.getValue())
+                            nicknameExists.getAndSet(true);
+                        else
+                            nicknameExists.getAndSet(false);
+                        checkingNick.set(false);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        nicknameExists.set(true);
+                        checkingNick.set(false);
+                    }
+                });
         validate();
     }
 
