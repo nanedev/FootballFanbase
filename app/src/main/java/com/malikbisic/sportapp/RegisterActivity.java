@@ -55,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     TextView mLoginLink;
     TextView errorInfo;
     String value;
+    String nickCompare;
 
     String userDate;
     String userGender;
@@ -240,7 +241,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String name = mNameText.getText().toString();
         String surname = mSurnameText.getText().toString();
         String email = mEmailText.getText().toString();
-        final String nick = mNickNameText.getText().toString();
+        nickCompare = mNickNameText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
         String date = dateTx.getText().toString().trim();
@@ -253,7 +254,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
                     value = nickNames.getValue(String.class);
                     Log.i("values", value);
+                    if (nickCompare.isEmpty()) {
+                        mNickNameText.setError("field can not be empty");
+                        valid = false;
+                    } else if (nickCompare.equals(value)) {
 
+                        mNickNameText.setError("nick already exists");
+                        valid = false;
+                    } else {
+                        mNickNameText.setError(null);
+                    }
 
                 }
 
@@ -294,16 +304,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mEmailText.setError(null);
         }
 
-        if (nick.isEmpty()) {
-            mNickNameText.setError("field can not be empty");
-            valid = false;
-        } else if (value.equals(nick)) {
 
-            mNickNameText.setError("nick already exists");
-            valid = false;
-        }else {
-            mNickNameText.setError(null);
-        }
 
         if (password.isEmpty()) {
             mPasswordText.setError("field can not be empty");
@@ -471,7 +472,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void afterTextChanged(Editable s) {
-       // validate();
+        validate();
     }
 
     @Override
