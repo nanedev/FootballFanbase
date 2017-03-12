@@ -29,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.JsonArray;
@@ -82,6 +83,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     LinearLayout layout;
 
     boolean valid;
+    boolean nickExist;
     AtomicBoolean nicknameExists = new AtomicBoolean(false);
     AtomicBoolean checkingNick = new AtomicBoolean(false);
     int selectYear;
@@ -121,6 +123,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         dateTx.addTextChangedListener(this);
 
+        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -145,6 +149,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mSignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 signup();
 
             }
@@ -281,11 +286,27 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot nickNames : dataSnapshot.getChildren())
-                    if (nickNames.exists()) {
-                        mNickNameText.setError("already exists");
 
-                    } else mNickNameText.setError(null);
+
+                if(dataSnapshot!=null && dataSnapshot.getChildren()!=null &&
+                        dataSnapshot.getChildren().iterator().hasNext() ){
+                    //Username Exist
+                    nickExist = true;
+                }else {
+                    //Username Does Not Exist
+                    nickExist = false;
+                }
+
+
+                /*for (DataSnapshot nickNames : dataSnapshot.getChildren())
+
+                    if (nickNames.exists()) {
+                        nickExist = true;
+
+
+                    } else {
+                        nickExist = false;
+                    }*/
             }
 
             @Override
@@ -297,10 +318,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (mNickNameText.getText().toString().isEmpty()) {
             mNickNameText.setError("field can not be empty");
             valid = false;
-        } /*else if () {
+        } else if (nickExist == true) {
             mNickNameText.setError("nicknameExists");
             valid = false;
-        }*/ else {
+        } else {
             mNickNameText.setError(null);
         }
 
@@ -525,6 +546,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+
 
        /* nickList = new ArrayList<>();
 
