@@ -87,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     int selectYear;
     int currentYear;
     int realYear;
-
+    ArrayList<String> nickList;
 
     Calendar minAdultAge;
 
@@ -279,7 +279,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (mNickNameText.getText().toString().isEmpty()) {
             mNickNameText.setError("field can not be empty");
             valid = false;
-        } else if (nicknameExists.get()) {
+        } else if (nickList.contains(mNickNameText.getText().toString().trim())) {
             mNickNameText.setError("nicknameExists");
             valid = false;
         } else {
@@ -499,16 +499,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     }
                 });*/
         validate();
+        Log.i("proba", nickList.toString());
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        final ArrayList<String> nickList = new ArrayList<>();
+        nickList = new ArrayList<>();
 
 
-        mReference = mDatabase.getReference("Users");
+        mReference = mDatabase.getReference("Nickname");
 
         mReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -517,9 +519,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (nickList.contains(mNickNameText.getText().toString())) {
                     mNameText.setError("already exists");
                 }
-                Log.i("proba", nickList.toString());
-            }
 
+            }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
