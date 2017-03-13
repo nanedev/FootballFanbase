@@ -3,6 +3,7 @@ package com.malikbisic.sportapp;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import android.support.v7.app.AppCompatActivity;
@@ -68,6 +69,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     String userSurname;
     String user_id;
     Spinner genderItems;
+    Boolean checkForNick = true;
 
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
@@ -83,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     LinearLayout layout;
 
     boolean valid;
-    boolean nickExist;
+
     AtomicBoolean nicknameExists = new AtomicBoolean(false);
     AtomicBoolean checkingNick = new AtomicBoolean(false);
     int selectYear;
@@ -282,32 +284,37 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String date = dateTx.getText().toString().trim();
 
         mReference = mDatabase.getReference("Users");
+
         Query query = mReference.orderByChild("nick").equalTo(mNickNameText.getText().toString());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                if(dataSnapshot!=null && dataSnapshot.getChildren()!=null &&
-                        dataSnapshot.getChildren().iterator().hasNext() ){
-                    //Username Exist
-                    nickExist = true;
-                }else {
-                    //Username Does Not Exist
-                    nickExist = false;
+                for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
+                    Log.d("baza", nickNames.getKey().toString());
+                    Log.d("baza1", nickNames.getValue().toString());
+                    Log.d("baza2", nickNames.getChildren().toString());
+                    Log.d("baza3", nickNames.getRef().toString());
+                    Log.d("jelovorijesenje", (String) nickNames.child("nick").getValue());
+                    mNickNameText.setError("already exists");
+                    value = (String) nickNames.child("nick").getValue();
+
+                  /*  for (DataSnapshot nick : nickNames.getChildren()) {
+                        Log.i("aaa", (nick.getValue().toString()));
+
+
+                    }*/
+                       /* if (nick.getValue().toString().equals("nick")) {
+                            mNickNameText.setError("already exists");
+                            Log.i("stajeovo",nick.getValue().toString());
+                        } else {
+                            mNickNameText.setError(null);
+                        }*/
                 }
 
-
-                /*for (DataSnapshot nickNames : dataSnapshot.getChildren())
-
-                    if (nickNames.exists()) {
-                        nickExist = true;
-
-
-                    } else {
-                        nickExist = false;
-                    }*/
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -318,8 +325,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (mNickNameText.getText().toString().isEmpty()) {
             mNickNameText.setError("field can not be empty");
             valid = false;
-        } else if (nickExist == true) {
-            mNickNameText.setError("nicknameExists");
+
+        } else if (mNickNameText.getText().toString().equals(value)) {
+            mNickNameText.setError("already exists");
             valid = false;
         } else {
             mNickNameText.setError(null);
