@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     EditText dateTx;
     Button mSignupButton;
     TextView mLoginLink;
-    TextView errorInfo;
+    TextView errorInfo, errorName, errorSurname, errorEmail, errorPassword, errorRePassword, errorNick;
     String value;
 
     String userDate;
@@ -102,6 +102,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mSignupButton = (Button) findViewById(R.id.btn_signup);
         dateTx = (EditText) findViewById(R.id.input_dateofbirth);
         errorInfo = (TextView) findViewById(R.id.input_dateofbirthInfo);
+        errorName = (TextView) findViewById(R.id.input_nameInfoError);
+        errorSurname = (TextView) findViewById(R.id.input_surnameInfoError);
+        errorEmail = (TextView) findViewById(R.id.input_emailInfoError);
+        errorNick = (TextView) findViewById(R.id.input_nicknameInfoError);
+        errorPassword = (TextView) findViewById(R.id.input_passwordInfoError);
+        errorRePassword = (TextView) findViewById(R.id.input_rePasswordInfoError);
         dateTx.setOnClickListener(this);
         mLoginLink = (TextView) findViewById(R.id.link_login);
         layout = (LinearLayout) findViewById(R.id.registerLayout);
@@ -247,7 +253,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                 for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
 
-                    mNickNameText.setError("already exists");
+                    errorNick.setText("Already exists");
+                    errorNick.setVisibility(View.VISIBLE);
                     value = (String) nickNames.child("nick").getValue();
 
 
@@ -263,65 +270,83 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         });
 
         if (mNickNameText.getText().toString().isEmpty()) {
-            mNickNameText.setError("field can not be empty");
+            errorNick.setText("Field can not be empty");
+            errorNick.setVisibility(View.VISIBLE);
             valid = false;
 
         } else if (mNickNameText.getText().toString().equals(value)) {
-            mNickNameText.setError("already exists");
+            errorNick.setText("Already exists");
+            errorNick.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-            mNickNameText.setError(null);
+            errorNick.setText("");
+            errorNick.setVisibility(View.INVISIBLE);
         }
 
         if (name.isEmpty()) {
-            mNameText.setError("field can not be empty");
+            errorName.setText("Field can not be empty");
+            errorName.setVisibility(View.VISIBLE);
             valid = false;
         } else if (name.length() < 3) {
-            mNameText.setError("field should contain at least 3 characters");
+            errorName.setText("Field should contain at least 3 characters");
+            errorName.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-            mNameText.setError(null);
+            errorName.setText("");
+            errorName.setVisibility(View.INVISIBLE);
         }
 
         if (surname.isEmpty()) {
-            mSurnameText.setError("Enter Surname");
+            errorSurname.setText("Field can not be empty");
+            errorSurname.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-            mSurnameText.setError(null);
+            errorSurname.setText("");
+            errorSurname.setVisibility(View.INVISIBLE);
         }
 
         if (email.isEmpty()) {
-            mEmailText.setError("field can not be empty");
+            errorEmail.setText("Field can not be empty");
+            errorEmail.setVisibility(View.VISIBLE);
             valid = false;
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEmailText.setError("bad format of email");
+            errorEmail.setText("Bad format of email");
+            errorEmail.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-            mEmailText.setError(null);
+            errorEmail.setText("");
+            errorEmail.setVisibility(View.INVISIBLE);
         }
 
 
         if (password.isEmpty()) {
-            mPasswordText.setError("field can not be empty");
+            errorPassword.setText("Field can not be empty");
+            errorPassword.setVisibility(View.VISIBLE);
             valid = false;
         } else if (password.length() < 6) {
-            mPasswordText.setError("password must contain at least 6 characters");
+            errorPassword.setText("Password must contain at least 6 characters");
+            errorPassword.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-            mPasswordText.setError(null);
+            errorPassword.setText("");
+            errorPassword.setVisibility(View.INVISIBLE);
         }
 
         if (reEnterPassword.isEmpty()) {
-            mReEnterPasswordText.setError("field can not be empty");
+            errorRePassword.setText("Field can not be empty");
+            errorRePassword.setVisibility(View.VISIBLE);
             valid = false;
         } else if (reEnterPassword.length() < 6) {
-            mReEnterPasswordText.setError("password must contain at least 6 characters");
+            errorRePassword.setText("Password must contain at least 6 characters");
+            errorRePassword.setVisibility(View.VISIBLE);
             valid = false;
         } else if (!(reEnterPassword.equals(password))) {
-            mReEnterPasswordText.setError("password do not match!");
+            errorRePassword.setText("Password do not match!");
+            errorRePassword.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-            mReEnterPasswordText.setError(null);
+            errorRePassword.setText("");
+            errorRePassword.setVisibility(View.INVISIBLE);
         }
 
         if (realYear < 18) {
