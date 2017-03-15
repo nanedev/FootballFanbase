@@ -10,15 +10,25 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
-public class LoginActivity extends AppCompatActivity /*implements View.OnClickListener*/ {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TAGGOOGLE = "GoogleActivity";
@@ -40,11 +50,12 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
     private static final int REQUEST_SIGNUP = 0;
 
 
-
+    ProgressDialog mDialog;
     EditText mEmailText;
     EditText mPasswordText;
     Button mLoginButton;
     TextView mSignUpLink;
+    ImageButton googleSignIn;
 
 
 
@@ -60,6 +71,8 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
         mPasswordText = (EditText) findViewById(R.id.input_password);
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mSignUpLink = (TextView) findViewById(R.id.link_signup);
+        googleSignIn = (ImageButton) findViewById(R.id.google_login);
+        mDialog = new ProgressDialog(this);
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,7 +110,7 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
                 // [START_EXCLUDE]
-                updateUI(user);
+                updateUI(currentUser);
                 // [END_EXCLUDE]
             }
 
@@ -121,7 +134,83 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+            } else {
+                // Google Sign In failed, update UI appropriately
+                // [START_EXCLUDE]
+                updateUI(null);
+                // [END_EXCLUDE]
+            }
+        }
+    }
+
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+        // [START_EXCLUDE silent]
+        mDialog.setMessage("Authorization");
+        mDialog.show();
+        // [END_EXCLUDE]
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        // [START_EXCLUDE]
+                        mDialog.dismiss();
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+
+    private void updateUI(FirebaseUser user) {
+        mDialog.dismiss();
+        if (user != null) {
+
+
+            findViewById(R.id.google_login).setVisibility(View.GONE);
+
+        } else {
+
+
+            findViewById(R.id.google_login).setVisibility(View.VISIBLE);
+
+        }
+    }
+
+
+
+
 
     public void login() {
         Log.d(TAG, "Login");
@@ -154,20 +243,21 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
                     }
                 }, 3000);
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SIGNUP) {
-            if (resultCode == RESULT_OK) {
 
-                // TODO: Implement successful signup logic here
-                // By default we just finish the Activity and log them in automatically
-                this.finish();
-            }
-        }
+    /*  @Override
+      protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+          if (requestCode == REQUEST_SIGNUP) {
+              if (resultCode == RESULT_OK) {
+
+                  // TODO: Implement successful signup logic here
+                  // By default we just finish the Activity and log them in automatically
+                  this.finish();
+              }
+          }
 
 
 
-    }
+      }*/
     @Override
     public void onBackPressed() {
         // Disable going back to the MainActivity
@@ -207,6 +297,16 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
         }
 
         return valid;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+
+        if (i == R.id.google_login) {
+            signIn();
+        }
+
     }
 
    /* @Override
