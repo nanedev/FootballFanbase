@@ -40,10 +40,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
+
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, TextWatcher {
     private static final String TAG = "RegisterActivity";
@@ -58,7 +57,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     TextView mLoginLink;
     TextView errorInfo;
     String value;
-    String nickCompare;
 
     String userDate;
     String userGender;
@@ -69,11 +67,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     String userSurname;
     String user_id;
     Spinner genderItems;
-    Boolean checkForNick = true;
 
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
-
 
     List<String> spinnerArray;
     ArrayAdapter<String> adapter;
@@ -83,15 +79,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     DatabaseReference mReference;
 
     LinearLayout layout;
-
     boolean valid;
-
-    AtomicBoolean nicknameExists = new AtomicBoolean(false);
-    AtomicBoolean checkingNick = new AtomicBoolean(false);
     int selectYear;
     int currentYear;
     int realYear;
-    ArrayList<String> nickList;
+
 
     Calendar minAdultAge;
 
@@ -110,7 +102,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mSignupButton = (Button) findViewById(R.id.btn_signup);
         dateTx = (EditText) findViewById(R.id.input_dateofbirth);
         errorInfo = (TextView) findViewById(R.id.input_dateofbirthInfo);
-
         dateTx.setOnClickListener(this);
         mLoginLink = (TextView) findViewById(R.id.link_login);
         layout = (LinearLayout) findViewById(R.id.registerLayout);
@@ -122,27 +113,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mPasswordText.addTextChangedListener(this);
         mReEnterPasswordText.addTextChangedListener(this);
         minAdultAge = new GregorianCalendar();
-
         dateTx.addTextChangedListener(this);
-
         FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
-
-
         mAuth = FirebaseAuth.getInstance();
-
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // User is signed in
                     Log.d("tag", "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
-                    // User is signed out
                     Log.d("Tag", "onAuthStateChanged:signed_out");
                 }
-                // ...
+
             }
         };
 
@@ -151,9 +135,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mSignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 signup();
-
             }
         });
 
@@ -175,40 +157,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderItems = (Spinner) findViewById(R.id.input_gender);
         genderItems.setAdapter(adapter);
-
         mReference = mDatabase.getReference();
 
-
-//        mReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
-//                    value = nickNames.getValue(String.class);
-//                    Log.i("values", value);
-//                    if (mNickNameText.getText().toString().isEmpty()) {
-//                        mNickNameText.setError("field can not be empty");
-//                        nicknameExists = false;
-//                    } else if (mNickNameText.getText().toString().equals(value)) {
-//                        mNickNameText.setError("nick already exists");
-//                        nicknameExists = false;
-//                    } else {
-//                        mNickNameText.setError(null);
-//                        nicknameExists = false;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                databaseError.getMessage();
-//                nicknameExists = true;
-//            }
-//        });
     }
 
     public void signup() {
         Log.d(TAG, "RegisterActivity");
-
         if (!validate()) {
             onSignupFailed();
             return;
@@ -292,25 +246,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
                 for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
-                    Log.d("baza", nickNames.getKey().toString());
-                    Log.d("baza1", nickNames.getValue().toString());
-                    Log.d("baza2", nickNames.getChildren().toString());
-                    Log.d("baza3", nickNames.getRef().toString());
-                    Log.d("jelovorijesenje", (String) nickNames.child("nick").getValue());
+
                     mNickNameText.setError("already exists");
                     value = (String) nickNames.child("nick").getValue();
 
-                  /*  for (DataSnapshot nick : nickNames.getChildren()) {
-                        Log.i("aaa", (nick.getValue().toString()));
 
-
-                    }*/
-                       /* if (nick.getValue().toString().equals("nick")) {
-                            mNickNameText.setError("already exists");
-                            Log.i("stajeovo",nick.getValue().toString());
-                        } else {
-                            mNickNameText.setError(null);
-                        }*/
                 }
 
             }
@@ -349,7 +289,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         } else {
             mSurnameText.setError(null);
         }
-
 
         if (email.isEmpty()) {
             mEmailText.setError("field can not be empty");
@@ -408,8 +347,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         } else if (view.getId() == R.id.registerLayout) {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        } else if (view.getId() == R.id.btn_signup) {
+
+        } else if (view.getId() == R.id.link_login) {
+
         }
     }
+
 
     private void registerUser() {
         userName = mNameText.getText().toString().trim();
@@ -447,15 +391,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     if (task.isSuccessful()) {
 
                         user_id = mAuth.getCurrentUser().getUid();
-
                         mReference.child("name").setValue(userName);
                         mReference.child("surname").setValue(userSurname);
                         mReference.child("nick").setValue(userNick);
                         mReference.child("date").setValue(userDate);
                         mReference.child("gender").setValue(userGender);
-                        mReference = mDatabase.getReference().child("Nickname").push();
-                        mReference.setValue(userNick);
-
 
                     }
 
@@ -471,32 +411,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     }
-    /*private void compareNicks(){
-        mReference = mDatabase.getReference("Nickname");
-        final String userNick = mNickNameText.getText().toString().trim();
-
-        mReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot nicknamesSnapshot : dataSnapshot.getChildren()){
-                    value = nicknamesSnapshot.getValue(String.class);
-                    Log.i("proba",value);
-
-
-                }
-                if (userNick.equals(value)){
-                    Log.i("nickProba",userNick + "already exists");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-             Log.i("error",databaseError.getMessage());
-            }
-        });
-
-    }*/
-
 
     private void updateLabel() {
 
@@ -528,25 +442,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void afterTextChanged(Editable s) {
-      /*  mReference.child("Users").orderByChild("nick").equalTo(mNickNameText.getText().toString())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (null != dataSnapshot.getValue())
-                            nicknameExists.getAndSet(true);
-                        else
-                            nicknameExists.getAndSet(false);
-                        checkingNick.set(false);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        nicknameExists.set(true);
-                        checkingNick.set(false);
-                    }
-                });*/
         validate();
-//        Log.i("proba", nickList.toString());
 
     }
 
@@ -555,44 +451,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
 
-
-       /* nickList = new ArrayList<>();
-
-
-        mReference = mDatabase.getReference("Nickname");
-
-        mReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-
-                nickList.add(dataSnapshot.getValue().toString());
-                if (nickList.contains(mNickNameText.getText().toString())) {
-                    mNameText.setError("already exists");
-                }
-
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-*/
     }
 
     @Override
