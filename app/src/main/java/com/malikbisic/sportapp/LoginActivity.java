@@ -14,10 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-
-import io.fabric.sdk.android.Fabric;
 
 public class LoginActivity extends AppCompatActivity /*implements View.OnClickListener*/ {
 
@@ -31,7 +27,6 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    Button openRegisterActivityBtn;
 
     EditText mEmailText;
     EditText mPasswordText;
@@ -43,7 +38,7 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+
 //        Fabric.with(this, new Twitter(authConfig));
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_login);
