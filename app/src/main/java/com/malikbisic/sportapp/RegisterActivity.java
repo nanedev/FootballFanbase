@@ -2,6 +2,7 @@ package com.malikbisic.sportapp;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -433,7 +434,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     errorEmail.setText(e.getMessage());
                     errorEmail.setVisibility(View.VISIBLE);
                     valid = false;
-                    mEmailText.setFocusable(true);
+                    mEmailText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(mEmailText, InputMethodManager.SHOW_IMPLICIT);
                     progressDialog.dismiss();
                 }
             });
