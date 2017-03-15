@@ -83,6 +83,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     int selectYear;
     int currentYear;
     int realYear;
+    ProgressDialog progressDialog;
 
 
     Calendar minAdultAge;
@@ -176,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         mSignupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this,
+        progressDialog = new ProgressDialog(RegisterActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
@@ -305,18 +306,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             errorSurname.setVisibility(View.INVISIBLE);
         }
 
-        if (email.isEmpty()) {
+      /*  if (email.isEmpty()) {
             errorEmail.setText("Field can not be empty");
-            errorEmail.setVisibility(View.VISIBLE);
-            valid = false;
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            errorEmail.setText("Bad format of email");
             errorEmail.setVisibility(View.VISIBLE);
             valid = false;
         } else {
             errorEmail.setText("");
             errorEmail.setVisibility(View.INVISIBLE);
-        }
+        } */
 
 
         if (password.isEmpty()) {
@@ -397,39 +394,47 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mAuth.createUserWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    FirebaseUser user = mAuth.getInstance().getCurrentUser();
-                    user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(RegisterActivity.this, "Check your email!", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(RegisterActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-
                     if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getInstance().getCurrentUser();
+                        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(RegisterActivity.this, "Check your email!", Toast.LENGTH_LONG).show();
+                                }
+                            }
 
-                        user_id = mAuth.getCurrentUser().getUid();
-                        mReference.child("name").setValue(userName);
-                        mReference.child("surname").setValue(userSurname);
-                        mReference.child("nick").setValue(userNick);
-                        mReference.child("date").setValue(userDate);
-                        mReference.child("gender").setValue(userGender);
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(RegisterActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+
+                        if (task.isSuccessful()) {
+
+                            user_id = mAuth.getCurrentUser().getUid();
+                            mReference = mDatabase.getReference().child("Users").child(user_id);
+                            mReference.child("name").setValue(userName);
+                            mReference.child("surname").setValue(userSurname);
+                            mReference.child("nick").setValue(userNick);
+                            mReference.child("date").setValue(userDate);
+                            mReference.child("gender").setValue(userGender);
+
+                        }
 
                     }
-
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
-
+                    errorEmail.setText(e.getMessage());
+                    errorEmail.setVisibility(View.VISIBLE);
+                    valid = false;
+                    mEmailText.setFocusable(true);
+                    progressDialog.dismiss();
                 }
             });
         }
