@@ -4,13 +4,15 @@
     package="com.malikbisic.sportapp">
 
     <uses-sdk
-        android:targetSdkVersion="25"
         android:minSdkVersion="14"
+        android:targetSdkVersion="25"
         tools:overrideLibrary="com.facebook,android.support.customtabs,com.malikbisic.sportapp" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -18,10 +20,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-        <activity android:name=".LoginActivity"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity
+            android:name=".LoginActivity"
             android:theme="@style/AppTheme.Dark">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,12 +34,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity"
-            android:theme="@style/AppTheme.Dark"/>
+        <activity
+            android:name=".RegisterActivity"
+            android:theme="@style/AppTheme.Dark" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="063e8832f30153f9cc1d8f5484be56b76e6041fd" />
+
+        <activity android:name=".SetUpAccount"></activity>
     </application>
 
 </manifest>

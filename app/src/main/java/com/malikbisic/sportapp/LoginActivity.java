@@ -13,19 +13,32 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity /*implements View.OnClickListener*/ {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    private static final String TWITTER_KEY = "SGhHUU1SO947OcEmg9x0rHutI";
-    private static final String TWITTER_SECRET = "7dm7t0hRqgQzudePEiU9KLeovMfLfr4riKBHP64sTCnMH0WSVd";
+    private static final String TAGGOOGLE = "GoogleActivity";
+    private static final int RC_SIGN_IN = 9001;
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+
+    // [START declare_auth_listener]
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    // [END declare_auth_listener]
+
+    private GoogleApiClient mGoogleApiClient;
+    private TextView mStatusTextView;
+    private TextView mDetailTextView;
 
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
 
 
     EditText mEmailText;
@@ -39,7 +52,7 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Fabric.with(this, new Twitter(authConfig));
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_login);
 
@@ -47,10 +60,6 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
         mPasswordText = (EditText) findViewById(R.id.input_password);
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mSignUpLink = (TextView) findViewById(R.id.link_signup);
-
-       /* openRegisterActivityBtn = (Button) findViewById(R.id.registerBtn);
-
-        openRegisterActivityBtn.setOnClickListener(this);*/
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,13 +71,56 @@ public class LoginActivity extends AppCompatActivity /*implements View.OnClickLi
         mSignUpLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Start the Signup activity
                 Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
                 startActivityForResult(intent, REQUEST_SIGNUP);
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                if (currentUser != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // [START_EXCLUDE]
+                updateUI(user);
+                // [END_EXCLUDE]
+            }
+
+
+        };
+
+
+
+    }
+
+    @Override
+    protected void onStart() {
+
+        mAuth.addAuthStateListener(mAuthListener);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 
     public void login() {
