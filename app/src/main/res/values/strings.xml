@@ -12,4 +12,6 @@
     <string name="error_email">The email address is badly formatted.</string>
     <string name="error_password">The password is invalid or the user does not have a password.</string>
     <string name="error_emailandpass">There is no user record corresponding to this identifier. The user may have been deleted.</string>
+    <string name="error_reset_pass_blank_email_field">An internal error has occurred. [ INVALID_EMAIL ]</string>
+    <string name="error_reset_pass_email_doesnt_exists">There is no user record corresponding to this identifier. The user may have been deleted.</string>
 </resources>

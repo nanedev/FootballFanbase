@@ -216,16 +216,38 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mAuth = FirebaseAuth.getInstance();
 
             emailAddress = mEmailText.getText().toString();
+            if (TextUtils.isEmpty(emailAddress)) {
+                emailError.setError("Field can not be blank!");
+            } else {
 
-            mAuth.sendPasswordResetEmail(emailAddress)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.i("proba", "email sent");
+                mAuth.sendPasswordResetEmail(emailAddress)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(LoginActivity.this, "Check your email", Toast.LENGTH_LONG).show();
+
+                                    Log.i("proba", "email sent");
+                                }
                             }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        if (e.getMessage().equals(getString(R.string.error_reset_pass_blank_email_field))) {
+                            emailError.setText("Bad formatted email");
+                            emailError.setVisibility(View.VISIBLE);
+                        } else if (e.getMessage().equals(getString(R.string.error_reset_pass_email_doesnt_exists))) {
+                            emailError.setText("This email does not exists");
+                            emailError.setVisibility(View.VISIBLE);
+                        } else {
+                            emailError.setText("");
+                            emailError.setVisibility(View.INVISIBLE);
                         }
-                    });
+                        Log.i("errori", e.getMessage());
+                    }
+                });
+            }
 
         }
 
