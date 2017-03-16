@@ -133,8 +133,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void checkLogin() {
-        String email = mEmailText.getText().toString().trim();
-        String password = mPasswordText.getText().toString().trim();
+        final String email = mEmailText.getText().toString().trim();
+        final String password = mPasswordText.getText().toString().trim();
 
 
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
@@ -154,10 +154,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     if (e.getMessage().equals(getString(R.string.error_email))) {
-                        mEmailText.setError("Bad formatted email");
-                    } else if (e.getMessage().equals(getString(R.string.error_password))) {
-                        mPasswordText.setError("The password is invalid");
-                    } else if (e.getMessage().equals(getString(R.string.error_emailandpass))) {
+                        emailError.setText("Bad formatted email");
+                        emailError.setVisibility(View.VISIBLE);
+                    } else {
+                        emailError.setText("");
+                        emailError.setVisibility(View.INVISIBLE);
+                    }
+
+                    if (e.getMessage().equals(getString(R.string.error_password))) {
+                        passwordError.setText("The password is invalid");
+                        passwordError.setVisibility(View.VISIBLE);
+                    } else {
+                        passwordError.setText("");
+                        passwordError.setVisibility(View.INVISIBLE);
+                    }
+
+                        if (e.getMessage().equals(getString(R.string.error_emailandpass))) {
                         Toast.makeText(LoginActivity.this, "User doesn't exists", Toast.LENGTH_LONG).show();
                     }
                 }
