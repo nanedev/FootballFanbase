@@ -126,9 +126,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Log.d("tag", "onAuthStateChanged:signed_in:" + user.getUid());
+                    Log.i("tag", "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
-                    Log.d("Tag", "onAuthStateChanged:signed_out");
+                    Log.i("Tag", "onAuthStateChanged:signed_out");
                 }
 
             }

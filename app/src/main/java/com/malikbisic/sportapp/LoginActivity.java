@@ -153,7 +153,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    //mPasswordText.setError(e.getMessage());
+                    if (e.getMessage().equals(getString(R.string.error_email))) {
+                        mEmailText.setError("Bad formatted email");
+                    } else if (e.getMessage().equals(getString(R.string.error_password))) {
+                        mPasswordText.setError("The password is invalid");
+                    } else if (e.getMessage().equals(getString(R.string.error_emailandpass))) {
+                        Toast.makeText(LoginActivity.this, "User doesn't exists", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }

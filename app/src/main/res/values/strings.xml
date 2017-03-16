@@ -9,4 +9,7 @@
     <string name="name_and_surname">Name and Surname:</string>
     <string name="choose_nickname">Choose nickname:</string>
     <string name="name_and_surname_hint">Name and Surname</string>
+    <string name="error_email">The email address is badly formatted.</string>
+    <string name="error_password">The password is invalid or the user does not have a password.</string>
+    <string name="error_emailandpass">There is no user record corresponding to this identifier. The user may have been deleted.</string>
 </resources>
