@@ -68,6 +68,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ImageButton facebookLogin;
 
     private String user_id;
+    private String email;
+    private String password;
+    private String emailAddress;
     boolean valid;
 
 
@@ -93,6 +96,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mDatabase = FirebaseDatabase.getInstance();
         mLoginButton.setOnClickListener(this);
         mSignUpLink.setOnClickListener(this);
+        mForgotPassword.setOnClickListener(this);
 
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -106,37 +110,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    public boolean validate() {
-        valid = true;
-
-        String email = mEmailText.getText().toString().trim();
-        String password = mPasswordText.getText().toString().trim();
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (email.isEmpty()) {
-            emailError.setText("Field can not be empty");
-            emailError.setVisibility(View.VISIBLE);
-            valid = false;
-        } else if (!email.equals(user.getEmail())) {
-
-            emailError.setText("Email not exists");
-            emailError.setVisibility(View.VISIBLE);
-            valid = false;
-
-        } else {
-            emailError.setText("");
-            emailError.setVisibility(View.INVISIBLE);
-        }
-
-
-
-        return valid;
-    }
-
     private void checkLogin() {
-        final String email = mEmailText.getText().toString().trim();
-        final String password = mPasswordText.getText().toString().trim();
+        email = mEmailText.getText().toString().trim();
+        password = mPasswordText.getText().toString().trim();
 
 
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
@@ -237,6 +213,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             goToReg.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(goToReg);
         } else if (v.getId() == R.id.forgot_password) {
+            mAuth = FirebaseAuth.getInstance();
+
+            emailAddress = mEmailText.getText().toString();
+
+            mAuth.sendPasswordResetEmail(emailAddress)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.i("proba", "email sent");
+                            }
+                        }
+                    });
 
         }
 
