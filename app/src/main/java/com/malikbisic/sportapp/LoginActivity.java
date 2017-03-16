@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -36,6 +38,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
@@ -57,6 +64,9 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
     private TextView mDetailTextView;
+
+    DatabaseReference mDatabase;
+
 
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
@@ -289,11 +299,11 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        String email = mEmailText.getText().toString();
-        String password = mPasswordText.getText().toString();
+
 
         // TODO: Implement your own authentication logic here.
 
+        checkLogin();
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
@@ -319,6 +329,59 @@ public class LoginActivity extends AppCompatActivity {
 
 
       }*/
+
+    public void checkLogin(){
+
+        String email = mEmailText.getText().toString();
+        String password = mPasswordText.getText().toString();
+
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
+
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+                    final FirebaseUser user = mAuth.getCurrentUser();
+
+                    final String user_id = user.getUid();
+
+                    mDatabase.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.hasChild(user_id)){
+
+                                if (user.isEmailVerified()){
+                                    Log.i("Email verification", "Successfuly");
+                                } else {
+                                    Log.i("Email verification", "You need to verifaction your email to contunuous");
+                                }
+
+                            } else
+                            {
+                                Toast.makeText(LoginActivity.this, "You need to create your account", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            });
+        }
+
+    }
+
     @Override
     public void onBackPressed() {
         // Disable going back to the MainActivity
@@ -327,7 +390,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         mLoginButton.setEnabled(true);
-        finish();
     }
 
     public void onLoginFailed() {
