@@ -30,6 +30,13 @@
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:inputType="textEmailAddress" />
+
+            <TextView
+                android:id="@+id/emailInfoErrorLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:textColor="@color/redError" />
         </android.support.design.widget.TextInputLayout>
 
         <!--  Password Label -->
@@ -45,6 +52,12 @@
                 android:layout_height="wrap_content"
                 android:hint="Password"
                 android:inputType="textPassword" />
+            <TextView
+                android:id="@+id/passwordInfoErrorLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:textColor="@color/redError" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatButton

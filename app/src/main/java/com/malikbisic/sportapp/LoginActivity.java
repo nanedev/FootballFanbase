@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,10 +61,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText mPasswordText;
     private Button mLoginButton;
     private TextView mSignUpLink;
+    private TextView emailError;
+    private TextView passwordError;
     private ImageButton googleSignIn;
     private ImageButton facebookLogin;
 
     private String user_id;
+    boolean valid;
 
 
     @Override
@@ -80,6 +84,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mSignUpLink = (TextView) findViewById(R.id.link_signup);
         googleSignIn = (ImageButton) findViewById(R.id.google_login);
         facebookLogin = (ImageButton) findViewById(R.id.fb_login);
+        emailError = (TextView) findViewById(R.id.emailInfoErrorLogin);
+        passwordError = (TextView) findViewById(R.id.passwordInfoErrorLogin);
         mDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
@@ -98,9 +104,38 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    public boolean validate() {
+        valid = true;
+
+        String email = mEmailText.getText().toString().trim();
+        String password = mPasswordText.getText().toString().trim();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (email.isEmpty()) {
+            emailError.setText("Field can not be empty");
+            emailError.setVisibility(View.VISIBLE);
+            valid = false;
+        } else if (!email.equals(user.getEmail())) {
+
+            emailError.setText("Email not exists");
+            emailError.setVisibility(View.VISIBLE);
+            valid = false;
+
+        } else {
+            emailError.setText("");
+            emailError.setVisibility(View.INVISIBLE);
+        }
+
+
+
+        return valid;
+    }
+
     private void checkLogin() {
         String email = mEmailText.getText().toString().trim();
         String password = mPasswordText.getText().toString().trim();
+
 
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
 
