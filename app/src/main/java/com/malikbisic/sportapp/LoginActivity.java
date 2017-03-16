@@ -63,6 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView mSignUpLink;
     private TextView emailError;
     private TextView passwordError;
+    private TextView mForgotPassword;
     private ImageButton googleSignIn;
     private ImageButton facebookLogin;
 
@@ -86,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         facebookLogin = (ImageButton) findViewById(R.id.fb_login);
         emailError = (TextView) findViewById(R.id.emailInfoErrorLogin);
         passwordError = (TextView) findViewById(R.id.passwordInfoErrorLogin);
+        mForgotPassword = (TextView) findViewById(R.id.forgot_password);
         mDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
@@ -234,6 +236,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Intent goToReg = new Intent(LoginActivity.this, RegisterActivity.class);
             goToReg.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(goToReg);
+        } else if (v.getId() == R.id.forgot_password) {
+
         }
 
     }
