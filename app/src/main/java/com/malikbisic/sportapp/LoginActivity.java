@@ -47,52 +47,46 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 
 
-public class LoginActivity extends AppCompatActivity {
-
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private FirebaseAuth mAuth;
-
     private FirebaseAuth.AuthStateListener mAuthListener;
-    // [END declare_auth_listener]
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mReference;
 
-    DatabaseReference mDatabase;
+    private ProgressDialog mDialog;
+    private EditText mEmailText;
+    private EditText mPasswordText;
+    private Button mLoginButton;
+    private TextView mSignUpLink;
+    private ImageButton googleSignIn;
+    private ImageButton facebookLogin;
 
-
-    private static final String TAG = "LoginActivity";
-    private static final int REQUEST_SIGNUP = 0;
-
-
-    ProgressDialog mDialog;
-    EditText mEmailText;
-    EditText mPasswordText;
-    Button mLoginButton;
-    TextView mSignUpLink;
-    ImageButton googleSignIn;
-    ImageButton facebookLogin;
-
-    CallbackManager callbackManager;
-
+    private String user_id;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_login);
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(getApplication());
-        mEmailText = (EditText) findViewById(R.id.input_email);
-        mPasswordText = (EditText) findViewById(R.id.input_password);
+        mEmailText = (EditText) findViewById(R.id.input_email_login);
+        mPasswordText = (EditText) findViewById(R.id.input_password_login);
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mSignUpLink = (TextView) findViewById(R.id.link_signup);
         googleSignIn = (ImageButton) findViewById(R.id.google_login);
         facebookLogin = (ImageButton) findViewById(R.id.fb_login);
         mDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabase = FirebaseDatabase.getInstance();
+        mLoginButton.setOnClickListener(this);
+        mSignUpLink.setOnClickListener(this);
+
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -101,20 +95,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        mLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkLogin();
-            }
-        });
-
-        mSignUpLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(registerIntent);
-            }
-        });
 
     }
 
@@ -122,16 +102,16 @@ public class LoginActivity extends AppCompatActivity {
         String email = mEmailText.getText().toString().trim();
         String password = mPasswordText.getText().toString().trim();
 
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
-            
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()){
-                        
+                    if (task.isSuccessful()) {
+
                         checkUserExists();
-                        
-                    }else {
+
+                    } else {
                         Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -146,24 +126,24 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkUserExists() {
 
-        final String user_id = mAuth.getCurrentUser().getUid();
+        user_id = mAuth.getCurrentUser().getUid();
+        mReference = mDatabase.getReference("Users");
 
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(user_id)){
+                if (dataSnapshot.hasChild(user_id)) {
 
                     FirebaseUser user = mAuth.getCurrentUser();
 
-                    if (user.isEmailVerified()){
+                    if (user.isEmailVerified()) {
                         Intent setupIntent = new Intent(LoginActivity.this, SetUpAccount.class);
                         startActivity(setupIntent);
-                    } else
-                    {
+                    } else {
                         Toast.makeText(LoginActivity.this, "Email has not verifacte", Toast.LENGTH_LONG).show();
                     }
 
-                }else {
+                } else {
                     Toast.makeText(LoginActivity.this, "You need to setup your account", Toast.LENGTH_LONG).show();
                 }
             }
@@ -193,6 +173,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.btn_login) {
+            checkLogin();
+        } else if (v.getId() == R.id.link_signup) {
+            Intent goToReg = new Intent(LoginActivity.this, RegisterActivity.class);
+            goToReg.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(goToReg);
+        }
 
-
+    }
 }
