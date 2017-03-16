@@ -65,11 +65,18 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
             android:padding="12dp"
             android:text="Login"/>
 
-
+        <TextView
+            android:id="@+id/forgot_password"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Forgot password ?"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/blueColor"
+            android:gravity="center"
+            android:textSize="20sp" />
 
         <TextView android:id="@+id/link_signup"
             android:layout_width="fill_parent"
