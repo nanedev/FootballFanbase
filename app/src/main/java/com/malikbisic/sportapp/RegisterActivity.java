@@ -119,7 +119,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mReEnterPasswordText.addTextChangedListener(this);
         minAdultAge = new GregorianCalendar();
         dateTx.addTextChangedListener(this);
-        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
         mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
