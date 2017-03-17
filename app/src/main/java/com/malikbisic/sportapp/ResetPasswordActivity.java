@@ -36,29 +36,34 @@ public class ResetPasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 emailAddress = resetPwEmail.getText().toString();
+                if (TextUtils.isEmpty(emailAddress)) {
+                    Toast.makeText(ResetPasswordActivity.this, "Field can not be empty!", Toast.LENGTH_LONG).show();
+                } else {
 
 
-                mAuth.sendPasswordResetEmail(emailAddress)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d("proba", "Email sent.");
-                                    Toast.makeText(ResetPasswordActivity.this, "Check your email for further instructions", Toast.LENGTH_LONG).show();
+                    mAuth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d("proba", "Email sent.");
+
+                                        Toast.makeText(ResetPasswordActivity.this, "Check your email for further instructions", Toast.LENGTH_LONG).show();
+                                    }
                                 }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            if (e.getMessage().equals(getString(R.string.error_reset_pass_email_doesnt_exists))) {
+                                Toast.makeText(ResetPasswordActivity.this, "Email does not exists", Toast.LENGTH_LONG).show();
+                            } else if (e.getMessage().equals(getString(R.string.error_reset_pass_blank_email_field))) {
+                                Toast.makeText(ResetPasswordActivity.this, "Please enter valid email address", Toast.LENGTH_LONG).show();
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        if (e.getMessage().equals(getString(R.string.error_reset_pass_email_doesnt_exists))) {
-                            Toast.makeText(ResetPasswordActivity.this, "Email is bad formatted or does not exists", Toast.LENGTH_LONG).show();
-                        } else if (e.getMessage().equals(getString(R.string.error_reset_pass_blank_email_field))) {
-                            Toast.makeText(ResetPasswordActivity.this, "Please enter valid email address", Toast.LENGTH_LONG).show();
+
                         }
+                    });
 
-                    }
-                });
-
+                }
             }
         });
 
