@@ -30,15 +30,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
         resetPasswordBtn = (Button) findViewById(R.id.resetPasswordBtn);
         mAuth = FirebaseAuth.getInstance();
 
+
         resetPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 emailAddress = resetPwEmail.getText().toString();
 
-                if (TextUtils.isEmpty(emailAddress)) {
-                    Toast.makeText(ResetPasswordActivity.this, "Field can not be blank", Toast.LENGTH_LONG).show();
-                }
 
                 mAuth.sendPasswordResetEmail(emailAddress)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
