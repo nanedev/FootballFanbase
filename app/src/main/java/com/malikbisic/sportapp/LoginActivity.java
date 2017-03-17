@@ -202,6 +202,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.i("email google", personEmail);
             Log.i("id google", gender);
             Log.i("photo url google", String.valueOf(personPhoto));
+//net
 
 
             if (result.isSuccess()) {
