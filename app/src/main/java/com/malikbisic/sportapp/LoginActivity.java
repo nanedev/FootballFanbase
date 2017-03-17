@@ -76,6 +76,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String emailAddress;
     private ProgressDialog mDialog;
 
+    CallbackManager callbackManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +85,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_login);
-        FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(getApplication());
         mEmailText = (EditText) findViewById(R.id.input_email_login);
         mPasswordText = (EditText) findViewById(R.id.input_password_login);
@@ -102,6 +103,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mForgotPassword.setOnClickListener(this);
         googleSignIn.setOnClickListener(this);
         mDialog = new ProgressDialog(this);
+        FacebookSdk.sdkInitialize(this);
+
+        callbackManager = CallbackManager.Factory.create();
+
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                handleFacebookAccessToken(loginResult.getAccessToken());
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
         mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -131,6 +154,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .build();
 
 
+        facebookLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
+            }
+        });
+
+
+
     }
 
     private void signIn() {
@@ -158,6 +190,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mDialog.dismiss();
             }
         }
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
@@ -184,6 +217,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                         // ...
 
+                    }
+                });
+    }
+
+    private void handleFacebookAccessToken(final AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+
+
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
                     }
                 });
     }
@@ -248,7 +304,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user.isEmailVerified()) {
-                            Intent setupIntent = new Intent(LoginActivity.this, SetUpAccFromGoogle.class);
+                            Intent setupIntent = new Intent(LoginActivity.this, SetUpAccount.class);
                             startActivity(setupIntent);
                         } else {
                             Toast.makeText(LoginActivity.this, "Email has not verifacte", Toast.LENGTH_LONG).show();
