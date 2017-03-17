@@ -2,6 +2,7 @@ package com.malikbisic.sportapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.facebook.FacebookSdk;
@@ -111,6 +113,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
+                checkUserExists();
+
+                FirebaseUser user = mAuth.getCurrentUser();
+
 
             }
 
@@ -157,9 +163,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         facebookLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
+
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "email"));
             }
         });
+
 
 
 
@@ -173,11 +181,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mDialog.setMessage("Starting sign in...");
-        mDialog.show();
+
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            mDialog.setMessage("Starting sign in...");
+            mDialog.show();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            String name = acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String gender = String.valueOf(acct.getAccount());
+            Uri personPhoto = acct.getPhotoUrl();
+
+            Log.i("name google", name);
+            Log.i("given name google", personGivenName);
+            Log.i(" family name google", personFamilyName);
+            Log.i("email google", personEmail);
+            Log.i("id google", gender);
+            Log.i("photo url google", String.valueOf(personPhoto));
 
 
             if (result.isSuccess()) {
@@ -224,13 +248,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void handleFacebookAccessToken(final AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
+        final FirebaseUser user = mAuth.getCurrentUser();
         final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
 
 
                         if (!task.isSuccessful()) {
