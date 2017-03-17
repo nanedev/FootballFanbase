@@ -48,8 +48,10 @@
             android:value="063e8832f30153f9cc1d8f5484be56b76e6041fd" />
 
         <activity android:name=".SetUpAccount" />
-        <activity android:name=".ResetPasswordActivity"
-            android:theme="@style/AppTheme.Dark"></activity>
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".SetUpAccFromGoogle"></activity>
     </application>
 
 </manifest>

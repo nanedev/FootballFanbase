@@ -26,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -49,14 +50,16 @@ import java.util.Arrays;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-
+    private static final int RC_SIGN_IN = 1;
+    private static final String TAG = "LoginActivity";
+    private GoogleApiClient mGoogleApiClient;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
 
-    private ProgressDialog mDialog;
+
     private EditText mEmailText;
     private EditText mPasswordText;
     private Button mLoginButton;
@@ -71,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String email;
     private String password;
     private String emailAddress;
-    boolean valid;
+    private ProgressDialog mDialog;
 
 
     @Override
@@ -97,17 +100,92 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginButton.setOnClickListener(this);
         mSignUpLink.setOnClickListener(this);
         mForgotPassword.setOnClickListener(this);
-
+        googleSignIn.setOnClickListener(this);
+        mDialog = new ProgressDialog(this);
+        mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() != null) {
+                if (firebaseAuth.getCurrentUser() == null) {
+
                 }
             }
         };
 
 
+        //GOOGLE SIGN IN
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Toast.makeText(LoginActivity.this, "You got an error", Toast.LENGTH_LONG).show();
+                    }
+                }).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mDialog.setMessage("Starting sign in...");
+        mDialog.show();
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+
+
+            if (result.isSuccess()) {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+            } else {
+                // Google Sign In failed, update UI appropriately
+                // ...
+                mDialog.dismiss();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            mDialog.dismiss();
+                            checkUserExists();
+                        }
+                        // ...
+
+                    }
+                });
     }
 
     private void checkLogin() {
@@ -147,7 +225,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         passwordError.setVisibility(View.INVISIBLE);
                     }
 
-                        if (e.getMessage().equals(getString(R.string.error_emailandpass))) {
+                    if (e.getMessage().equals(getString(R.string.error_emailandpass))) {
                         Toast.makeText(LoginActivity.this, "User doesn't exists", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -157,33 +235,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void checkUserExists() {
 
-        user_id = mAuth.getCurrentUser().getUid();
-        mReference = mDatabase.getReference("Users");
+        if (mAuth.getCurrentUser() != null) {
 
-        mReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(user_id)) {
+            user_id = mAuth.getCurrentUser().getUid();
+            mReference = mDatabase.getReference("Users");
 
-                    FirebaseUser user = mAuth.getCurrentUser();
+            mReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(user_id)) {
 
-                    if (user.isEmailVerified()) {
-                        Intent setupIntent = new Intent(LoginActivity.this, SetUpAccount.class);
-                        startActivity(setupIntent);
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        if (user.isEmailVerified()) {
+                            Intent setupIntent = new Intent(LoginActivity.this, SetUpAccount.class);
+                            startActivity(setupIntent);
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Email has not verifacte", Toast.LENGTH_LONG).show();
+                        }
+
                     } else {
-                        Toast.makeText(LoginActivity.this, "Email has not verifacte", Toast.LENGTH_LONG).show();
+                        Intent goToSetUp = new Intent(LoginActivity.this, SetUpAccFromGoogle.class);
+                        goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(goToSetUp);
+
                     }
-
-                } else {
-                    Toast.makeText(LoginActivity.this, "You need to setup your account", Toast.LENGTH_LONG).show();
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
 
@@ -215,6 +299,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else if (v.getId() == R.id.forgot_password) {
             Intent openForgotPassActivity = new Intent(LoginActivity.this, ResetPasswordActivity.class);
             startActivity(openForgotPassActivity);
+        } else if (v.getId() == R.id.google_login) {
+            signIn();
+
         }
 
     }
