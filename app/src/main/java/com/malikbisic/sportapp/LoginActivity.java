@@ -248,7 +248,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user.isEmailVerified()) {
-                            Intent setupIntent = new Intent(LoginActivity.this, SetUpAccount.class);
+                            Intent setupIntent = new Intent(LoginActivity.this, SetUpAccFromGoogle.class);
                             startActivity(setupIntent);
                         } else {
                             Toast.makeText(LoginActivity.this, "Email has not verifacte", Toast.LENGTH_LONG).show();
