@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
     private EditText enterUsername;
+    private Button contunue;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mDatabase;
@@ -32,32 +34,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enter_username);
         enterUsername = (EditText) findViewById(R.id.input_username);
+        contunue = (Button) findViewById(R.id.continue_to_profil);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        mReference = mDatabase.getReference("Users");
 
-        Query query = mReference.orderByChild("nick").equalTo(enterUsername.getText().toString());
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        contunue.setOnClickListener(this);
 
 
-                for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
 
-                    enterUsername.setError("already exists");
-                    value = (String) nickNames.child("nick").getValue();
-
-
-                }
-
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
 
     }
@@ -66,6 +50,28 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
 
         if (v.getId() == R.id.continue_to_profil) {
+            mReference = mDatabase.getReference("Users");
+            Query query = mReference.orderByChild("nick").equalTo(enterUsername.getText().toString());
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                    for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
+
+                        value = (String) nickNames.child("nick").getValue();
+
+
+                    }
+
+                }
+
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
             if (TextUtils.isEmpty(enterUsername.getText().toString())) {
                 enterUsername.setError("field can not be blank");
                 valid = false;
@@ -74,8 +80,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 valid = false;
             } else {
                 enterUsername.setError(null);
-                Intent intent = new Intent(EnterUsernameForApp.this, ProfilActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(EnterUsernameForApp.this, ProfilActivity.class);
+                //startActivity(intent);
             }
         }
 
