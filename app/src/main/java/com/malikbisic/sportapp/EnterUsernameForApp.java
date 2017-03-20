@@ -3,7 +3,7 @@ package com.malikbisic.sportapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class SetUpAccFromGoogle extends AppCompatActivity {
+public class EnterUsernameForApp extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

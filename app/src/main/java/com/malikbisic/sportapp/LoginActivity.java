@@ -27,7 +27,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,12 +35,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -116,7 +113,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 checkUserExists();
 
 
-
             }
 
             @Override
@@ -168,8 +164,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "email"));
             }
         });
-
-
 
 
     }
@@ -274,7 +268,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         email = mEmailText.getText().toString().trim();
         password = mPasswordText.getText().toString().trim();
 
-
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
 
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -337,7 +330,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
 
                     } else {
-                        Intent goToSetUp = new Intent(LoginActivity.this, SetUpAccFromGoogle.class);
+                        Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                         goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToSetUp);
 

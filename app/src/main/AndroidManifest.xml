@@ -54,7 +54,9 @@
             android:name=".ResetPasswordActivity"
             android:theme="@style/AppTheme.Dark" />
 
-        <activity android:name=".SetUpAccFromGoogle"></activity>
+        <activity
+            android:name=".EnterUsernameForApp"
+            android:theme="@style/AppTheme.Dark" />
     </application>
 
 </manifest>
