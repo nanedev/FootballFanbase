@@ -115,7 +115,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 handleFacebookAccessToken(loginResult.getAccessToken());
                 checkUserExists();
 
-                FirebaseUser user = mAuth.getCurrentUser();
 
 
             }
@@ -127,6 +126,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onError(FacebookException error) {
+
+                Log.e("Facebook error", error.getMessage());
 
             }
         });
@@ -356,6 +357,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onStart() {
 
         mAuth.addAuthStateListener(mAuthListener);
+
         super.onStart();
     }
 
