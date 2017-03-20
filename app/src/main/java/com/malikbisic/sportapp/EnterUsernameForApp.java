@@ -8,6 +8,6 @@ public class EnterUsernameForApp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set_up_acc_from_google);
+        setContentView(R.layout.enter_username);
     }
 }
