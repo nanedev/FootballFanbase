@@ -254,7 +254,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     errorNick.setText("Already exists");
                     errorNick.setVisibility(View.VISIBLE);
                     value = (String) nickNames.child("nick").getValue();
-                    //nešto
 
 
                 }

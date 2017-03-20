@@ -3,15 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.malikbisic.sportapp">
 
-
+    <uses-sdk tools:overrideLibrary="com.firebase.ui,com.firebase.ui.auth,com.facebook,android.support.customtabs" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
-    <uses-sdk tools:overrideLibrary="com.firebase.ui,com.firebase.ui.auth,com.facebook,android.support.customtabs"></uses-sdk>
 
     <application
         android:name=".Application"
@@ -21,12 +19,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
-
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-          tools:replace="android:value"
-            android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"
+            tools:replace="android:value" />
 
         <activity
             android:name=".LoginActivity"
@@ -36,27 +32,22 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-
         <activity
             android:name=".RegisterActivity"
             android:theme="@style/AppTheme.Dark" />
-
         <activity android:name=".SetUpAccount" />
-
         <activity
             android:name=".ResetPasswordActivity"
             android:theme="@style/AppTheme.Dark" />
-
         <activity
             android:name=".EnterUsernameForApp"
             android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".ProfilActivity"></activity>
     </application>
 
 </manifest>
