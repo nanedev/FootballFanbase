@@ -75,6 +75,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String emailAddress;
     private ProgressDialog mDialog;
 
+    String gName;
+    String gFirstName;
+    String gLastName;
+
     CallbackManager callbackManager;
 
 
@@ -184,20 +188,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             GoogleSignInAccount acct = result.getSignInAccount();
 
-            String name = acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String gender = String.valueOf(acct.getAccount());
+            gFirstName = acct.getGivenName();
+            gLastName = acct.getFamilyName();
             Uri personPhoto = acct.getPhotoUrl();
-
-            Log.i("name google", name);
-            Log.i("given name google", personGivenName);
-            Log.i(" family name google", personFamilyName);
-            Log.i("email google", personEmail);
-            Log.i("id google", gender);
-            Log.i("photo url google", String.valueOf(personPhoto));
-//net
 
 
             if (result.isSuccess()) {
@@ -331,6 +324,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     } else {
                         Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                        goToSetUp.putExtra("firstNamegoogle", gFirstName);
+                        goToSetUp.putExtra("lastNamegoogle", gLastName);
                         goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToSetUp);
 
