@@ -6,7 +6,7 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="25"
-        tools:overrideLibrary="com.facebook,android.support.customtabs,com.malikbisic.sportapp" />
+        tools:overrideLibrary="com.facebook,com.firebase.ui,android.support.customtabs,com.malikbisic.sportapp" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
