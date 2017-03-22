@@ -24,9 +24,7 @@
             android:layout_height="130dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:background="@drawable/circle_button"
-            android:src="@drawable/image001"
-            android:textAlignment="center" />
+            android:src="@drawable/profilimage" />
 
 
         <TextView
