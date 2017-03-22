@@ -18,6 +18,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
     private EditText enterUsername;
@@ -30,17 +37,31 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private boolean valid = true;
     private String username;
 
+    private ArrayList<String> nickList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enter_username);
         enterUsername = (EditText) findViewById(R.id.input_username);
+        nickList = new ArrayList<>();
         contunue = (Button) findViewById(R.id.continue_to_profil);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
 
         contunue.setOnClickListener(this);
 
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Usernames");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null){
+                    for (ParseObject object : objects){
+                        nickList.add(String.valueOf(object.get("username")));
+                    }
+                }
+            }
+        });
 
 
 
@@ -51,41 +72,32 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
 
         if (v.getId() == R.id.continue_to_profil) {
-            mReference = mDatabase.getReference("Users");
-            Query query = mReference.orderByChild("nick").equalTo(enterUsername.getText().toString());
-            query.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
 
-
-                    for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
-
-                        value = (String) nickNames.child("nick").getValue();
-
-
-                    }
-
-                }
-
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-            if (TextUtils.isEmpty(enterUsername.getText().toString())) {
-                enterUsername.setError("field can not be blank");
-                valid = false;
-            } else if (enterUsername.getText().toString().equals(value)) {
-                Toast.makeText(EnterUsernameForApp.this, "Username already exists,can not continue!", Toast.LENGTH_LONG).show();
-                valid = false;
-            } else {
-                enterUsername.setError(null);
-                //Intent intent = new Intent(EnterUsernameForApp.this, ProfilActivity.class);
-                //startActivity(intent);
+            if (valid()){
+                Intent intent = new Intent(EnterUsernameForApp.this, ProfilActivity.class);
+                startActivity(intent);
             }
+
         }
 
+    }
+
+
+    public boolean valid(){
+        valid = true;
+
+        String nick = enterUsername.getText().toString().trim();
+        if (TextUtils.isEmpty(enterUsername.getText().toString())) {
+            enterUsername.setError("field can not be blank");
+            valid = false;
+        } else if (nickList.contains(nick)) {
+            Toast.makeText(EnterUsernameForApp.this, "Username already exists,can not continue!", Toast.LENGTH_LONG).show();
+            valid = false;
+        } else {
+            enterUsername.setError(null);
+
+        }
+    return valid;
     }
 
 
