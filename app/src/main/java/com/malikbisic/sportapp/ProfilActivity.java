@@ -45,8 +45,9 @@ public class ProfilActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
-
+            addImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             Uri imageUri = data.getData();
+            addImage.setImageURI(imageUri);
             Picasso.with(this).load(imageUri).into(addImage);
         }
     }
