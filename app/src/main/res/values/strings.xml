@@ -6,6 +6,8 @@
     <string name="choose_gender">Choose gender:</string>
     <string name="date_of_birth">Date of birth:</string>
     <string name="nick">Nick</string>
+    <string name="parse_server_url">https://parseapi.back4app.com/</string>
+    <string name="parse_app_id">1l5MQohP0oGkgU2LhfK89mRV6ojjQYFXc7CQwvw1</string>
     <string name="name_and_surname">Name and Surname:</string>
     <string name="choose_nickname">Choose nickname:</string>
     <string name="name_and_surname_hint">Name and Surname</string>

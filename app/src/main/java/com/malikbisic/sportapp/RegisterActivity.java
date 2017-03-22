@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.TimeZoneFormat;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
@@ -33,6 +34,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -241,18 +246,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String reEnterPassword = mReEnterPasswordText.getText().toString();
         String date = dateTx.getText().toString().trim();
 
-        mReference = mDatabase.getReference("Users");
+       /* mReference = mDatabase.getReference("Users");
 
         Query query = mReference.orderByChild("nick").equalTo(mNickNameText.getText().toString());
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
 
                 for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
-
-                    errorNick.setText("Already exists");
-                    errorNick.setVisibility(View.VISIBLE);
                     value = (String) nickNames.child("nick").getValue();
 
 
@@ -265,7 +267,34 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onCancelled(DatabaseError databaseError) {
 
             }
+        }); */
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Usernames");
+        query.whereEqualTo("username", userNick);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null){
+                    for (ParseObject object : objects){
+                        value = String.valueOf(object.get("username"));
+                    }
+                }
+            }
         });
+
+
+        if (name.isEmpty()) {
+            errorName.setText("Field can not be empty");
+            errorName.setVisibility(View.VISIBLE);
+            valid = false;
+        } else if (name.length() < 3) {
+            errorName.setText("Field should contain at least 3 characters");
+            errorName.setVisibility(View.VISIBLE);
+            valid = false;
+        } else {
+            errorName.setText("");
+            errorName.setVisibility(View.INVISIBLE);
+        }
 
         if (mNickNameText.getText().toString().isEmpty()) {
             errorNick.setText("Field can not be empty");
@@ -281,18 +310,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             errorNick.setVisibility(View.INVISIBLE);
         }
 
-        if (name.isEmpty()) {
-            errorName.setText("Field can not be empty");
-            errorName.setVisibility(View.VISIBLE);
-            valid = false;
-        } else if (name.length() < 3) {
-            errorName.setText("Field should contain at least 3 characters");
-            errorName.setVisibility(View.VISIBLE);
-            valid = false;
-        } else {
-            errorName.setText("");
-            errorName.setVisibility(View.INVISIBLE);
-        }
+
 
         if (surname.isEmpty()) {
             errorSurname.setText("Field can not be empty");
@@ -419,6 +437,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             mReference.child("date").setValue(userDate);
                             mReference.child("gender").setValue(userGender);
 
+                            ParseObject object = new ParseObject("Usernames");
+                            object.put("username", userNick);
+                            object.saveInBackground();
+
                         }
 
                     }
@@ -471,7 +493,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void afterTextChanged(Editable s) {
-        validate();
+        //validate();
 
     }
 
