@@ -91,6 +91,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     Calendar minAdultAge;
 
+    ArrayList<String> nickList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         dateTx.setOnClickListener(this);
         mLoginLink = (TextView) findViewById(R.id.link_login);
         layout = (LinearLayout) findViewById(R.id.registerLayout);
+        nickList = new ArrayList<>();
         layout.setOnClickListener(this);
         mNameText.addTextChangedListener(this);
         mSurnameText.addTextChangedListener(this);
@@ -167,6 +170,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         genderItems = (Spinner) findViewById(R.id.input_gender);
         genderItems.setAdapter(adapter);
         mReference = mDatabase.getReference();
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Usernames");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null){
+                    for (ParseObject object : objects){
+                        nickList.add(String.valueOf(object.get("username")));
+                    }
+                }
+            }
+        });
 
     }
 
@@ -245,42 +260,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
         String date = dateTx.getText().toString().trim();
-
-       /* mReference = mDatabase.getReference("Users");
-
-        Query query = mReference.orderByChild("nick").equalTo(mNickNameText.getText().toString());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        String nick = mNickNameText.getText().toString().trim();
 
 
-                for (DataSnapshot nickNames : dataSnapshot.getChildren()) {
-                    value = (String) nickNames.child("nick").getValue();
-
-
-                }
-
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); */
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Usernames");
-        query.whereEqualTo("username", userNick);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null){
-                    for (ParseObject object : objects){
-                        value = String.valueOf(object.get("username"));
-                    }
-                }
-            }
-        });
 
 
         if (name.isEmpty()) {
@@ -301,7 +283,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             errorNick.setVisibility(View.VISIBLE);
             valid = false;
 
-        } else if (mNickNameText.getText().toString().equals(value)) {
+        } else if (nickList.contains(nick)) {
             errorNick.setText("Already exists");
             errorNick.setVisibility(View.VISIBLE);
             valid = false;
