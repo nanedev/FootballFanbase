@@ -24,6 +24,7 @@
             android:layout_height="130dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
+            android:src="@drawable/image001"
             android:background="@drawable/circle_button"
             android:textAlignment="center" />
 
