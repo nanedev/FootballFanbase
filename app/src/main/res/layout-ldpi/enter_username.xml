@@ -5,18 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.malikbisic.sportapp.EnterUsernameForApp"
-    android:gravity="center">
+    tools:context="com.malikbisic.sportapp.EnterUsernameForApp">
 
 
     <TextView
         android:id="@+id/enterUsernameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_margin="20dp"
-        android:text="Enter your username:"
         android:gravity="center"
-        android:layout_gravity="center_vertical" />
+        android:text="Enter your username:" />
 
 
     <android.support.design.widget.TextInputLayout
@@ -25,7 +24,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:layout_gravity="center_vertical">
+        >
 
         <EditText
             android:id="@+id/input_username"
@@ -34,11 +33,44 @@
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:gravity="center"
-            android:layout_gravity="center_vertical"
             android:hint="Username"
             android:inputType="text" />
 
     </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp">
+
+        <EditText
+            android:id="@+id/input_dateofbirth_usernameAkt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:gravity="center"
+            android:hint="Birthday"
+            android:focusable= "false" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp">
+
+        <Spinner
+            android:id="@+id/input_gender_usernmaeAkt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp" />
+
+    </android.support.design.widget.TextInputLayout>
+
 
 
     <android.support.v7.widget.AppCompatButton

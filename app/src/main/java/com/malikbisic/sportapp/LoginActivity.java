@@ -20,6 +20,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
@@ -48,7 +49,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "LoginActivity";
     private GoogleApiClient mGoogleApiClient;
@@ -115,7 +116,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
                 checkUserExists();
+                Profile fb = Profile.getCurrentProfile();
+                String fbFirstName = fb.getFirstName();
+                String fbLastName = fb.getLastName();
+                Uri pictureurl = fb.getProfilePictureUri(100, 100);
 
+                Log.i("First name", fbFirstName);
+                Log.i("Last name", fbLastName);
+                Log.i("Picture", String.valueOf(pictureurl));
 
             }
 
@@ -188,6 +196,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             GoogleSignInAccount acct = result.getSignInAccount();
 
+
             gFirstName = acct.getGivenName();
             gLastName = acct.getFamilyName();
             Uri personPhoto = acct.getPhotoUrl();
@@ -237,13 +246,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void handleFacebookAccessToken(final AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
-        final FirebaseUser user = mAuth.getCurrentUser();
         final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+
 
 
                         if (!task.isSuccessful()) {
