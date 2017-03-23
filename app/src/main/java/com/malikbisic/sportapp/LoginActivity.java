@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -121,6 +122,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String fbLastName = fb.getLastName();
                 Uri pictureurl = fb.getProfilePictureUri(100, 100);
 
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+
+
                 Log.i("First name", fbFirstName);
                 Log.i("Last name", fbLastName);
                 Log.i("Picture", String.valueOf(pictureurl));
@@ -199,7 +206,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             gFirstName = acct.getGivenName();
             gLastName = acct.getFamilyName();
+
             Uri personPhoto = acct.getPhotoUrl();
+
 
 
             if (result.isSuccess()) {
@@ -215,10 +224,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -228,7 +237,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
+
+
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                        Log.i("uid",user.getUid());
+
+                            if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
