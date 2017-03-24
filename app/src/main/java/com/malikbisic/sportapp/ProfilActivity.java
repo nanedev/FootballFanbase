@@ -48,7 +48,9 @@ public class ProfilActivity extends AppCompatActivity {
             addImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             Uri imageUri = data.getData();
             addImage.setImageURI(imageUri);
-            Picasso.with(this).load(imageUri).into(addImage);
+            Picasso.with(getApplicationContext()).load(imageUri)
+                    .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher).fit().centerCrop()
+                    .into(addImage);
         }
     }
 }

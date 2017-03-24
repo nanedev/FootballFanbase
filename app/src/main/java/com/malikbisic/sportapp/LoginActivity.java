@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String password;
     private String emailAddress;
     private ProgressDialog mDialog;
+    String user_uid;
 
     String gName;
     String gFirstName;
@@ -201,15 +202,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mDialog.setMessage("Starting sign in...");
             mDialog.show();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            GoogleSignInAccount acct = result.getSignInAccount();
-
-
-            gFirstName = acct.getGivenName();
-            gLastName = acct.getFamilyName();
-
-            Uri personPhoto = acct.getPhotoUrl();
-
-
 
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
@@ -243,6 +235,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         Log.i("uid",user.getUid());
 
+                        user_uid = user.getUid();
+
                             if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
@@ -267,9 +261,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
-
-
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
