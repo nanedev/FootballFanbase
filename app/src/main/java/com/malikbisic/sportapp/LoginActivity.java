@@ -259,10 +259,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                                mReference = mDatabase.getReference("Users");
+                                mReference.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.hasChild(gUserId)) {
+                                            Intent intent = new Intent(LoginActivity.this, SetUpAccount.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
 
-                            mDialog.dismiss();
-                            checkUserExists();
-                        }
+                                        } else {
+                                            Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                                            goToSetUp.putExtra("firstNamegoogle", gFirstName);
+                                            goToSetUp.putExtra("lastNamegoogle", gLastName);
+                                            goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(goToSetUp);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                mDialog.dismiss();
+
+                            }
                         // ...
 
                     }
@@ -359,14 +382,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(LoginActivity.this, "Email has not verifacte", Toast.LENGTH_LONG).show();
                         }
 
-                    } else {
-                        Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
-                        goToSetUp.putExtra("firstNamegoogle", gFirstName);
-                        goToSetUp.putExtra("lastNamegoogle", gLastName);
-                        goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(goToSetUp);
-
                     }
+
+
                 }
 
                 @Override
