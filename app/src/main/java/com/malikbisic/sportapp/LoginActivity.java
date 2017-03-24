@@ -23,6 +23,7 @@ import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.firebase.ui.auth.ui.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -76,11 +77,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String password;
     private String emailAddress;
     private ProgressDialog mDialog;
-    String user_uid;
 
     String gName;
-    String gFirstName;
-    String gLastName;
+    static String gFirstName;
+    static String gLastName;
+    static String gUserId;
+
+    static String fbFirstName;
+    static String fbUserId;
+    static String fbLastName;
+
+    static boolean checkgoogleSignIn = false;
+    static boolean checkFacebookSignIn = false;
 
     CallbackManager callbackManager;
 
@@ -109,29 +117,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mForgotPassword.setOnClickListener(this);
         googleSignIn.setOnClickListener(this);
         mDialog = new ProgressDialog(this);
-        FacebookSdk.sdkInitialize(this);
+
 
         callbackManager = CallbackManager.Factory.create();
 
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+
                 handleFacebookAccessToken(loginResult.getAccessToken());
                 checkUserExists();
+
                 Profile fb = Profile.getCurrentProfile();
-                String fbFirstName = fb.getFirstName();
-                String fbLastName = fb.getLastName();
-                Uri pictureurl = fb.getProfilePictureUri(100, 100);
+                fbFirstName = fb.getFirstName();
+                fbLastName = fb.getLastName();
 
 
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+               // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                //fbUserId = user.getUid();
 
-
-
-
-                Log.i("First name", fbFirstName);
-                Log.i("Last name", fbLastName);
-                Log.i("Picture", String.valueOf(pictureurl));
 
             }
 
@@ -181,6 +185,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View view) {
 
+                checkgoogleSignIn = false;
+                checkFacebookSignIn = true;
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "email"));
             }
         });
@@ -202,6 +208,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mDialog.setMessage("Starting sign in...");
             mDialog.show();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+
+           // gFirstName = acct.getGivenName();
+            //gLastName = acct.getFamilyName();
+
+            Uri personPhoto = acct.getPhotoUrl();
+
+
 
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
@@ -213,6 +228,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mDialog.dismiss();
             }
         }
+
+
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -229,13 +246,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-
-
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                        Log.i("uid",user.getUid());
 
-                        user_uid = user.getUid();
+                        gFirstName = acct.getGivenName();
+                        gLastName = acct.getFamilyName();
+                        gUserId = user.getUid();
+
 
                             if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
@@ -261,6 +278,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+
+                         Log.i("fb udi",task.getResult().getUser().getUid());
+
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
@@ -387,6 +408,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Intent openForgotPassActivity = new Intent(LoginActivity.this, ResetPasswordActivity.class);
             startActivity(openForgotPassActivity);
         } else if (v.getId() == R.id.google_login) {
+
+            LoginManager.getInstance().logOut();
+            checkgoogleSignIn = true;
+            checkFacebookSignIn = false;
             signIn();
 
         }

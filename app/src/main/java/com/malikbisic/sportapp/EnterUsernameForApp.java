@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.support.v7.util.DiffUtil;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -53,6 +55,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     int realYear;
     Calendar minAdultAge;
 
+    String googleUser_id;
+    String googleFirstName;
+    String googleLastName;
+    String gender;
+    ProgressDialog mDialog;
+
     EditText birthday;
     private ArrayList<String> nickList;
 
@@ -67,6 +75,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         contunue = (Button) findViewById(R.id.continue_to_profil);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
+        mDialog = new ProgressDialog(this);
 
         spinnerArray = new ArrayList<>();
         spinnerArray.add("Male");
@@ -81,6 +90,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         minAdultAge = new GregorianCalendar();
 
+        googleUser_id = LoginActivity.gUserId;
+        googleFirstName = LoginActivity.gFirstName;
+        googleLastName = LoginActivity.gLastName;
+
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Usernames");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -90,6 +103,18 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         nickList.add(String.valueOf(object.get("username")));
                     }
                 }
+            }
+        });
+
+        genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                gender = String.valueOf(adapterView.getItemAtPosition(i));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
     }
@@ -135,8 +160,13 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (v.getId() == R.id.continue_to_profil) {
 
             if (valid()) {
+                if (LoginActivity.checkgoogleSignIn == true){
+                    googleEnterDatabase();
+                }
                 Intent intent = new Intent(EnterUsernameForApp.this, ProfilActivity.class);
                 startActivity(intent);
+            } else {
+                mDialog.dismiss();
             }
 
         } else if (v.getId() == R.id.input_dateofbirth_usernameAkt) {
@@ -177,5 +207,24 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         return valid;
     }
 
+    public void googleEnterDatabase(){
+
+        String username = enterUsername.getText().toString().trim();
+        String userDate = birthday.getText().toString().trim();
+
+        mDialog.setMessage("Registering...");
+        mDialog.show();
+        mReference = mDatabase.getReference().child("Users").child(googleUser_id);
+        mReference.child("name").setValue(googleFirstName);
+        mReference.child("surname").setValue(googleLastName);
+        mReference.child("nick").setValue(username);
+        mReference.child("date").setValue(userDate);
+        mReference.child("gender").setValue(gender);
+
+        ParseObject object = new ParseObject("Usernames");
+        object.put("username", username);
+        object.saveInBackground();
+        mDialog.dismiss();
+    }
 
 }

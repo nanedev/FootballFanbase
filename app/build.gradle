@@ -60,5 +60,6 @@ dependencies {
 
 
     testCompile 'junit:junit:4.12'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
 }
 apply plugin: 'com.google.gms.google-services'
