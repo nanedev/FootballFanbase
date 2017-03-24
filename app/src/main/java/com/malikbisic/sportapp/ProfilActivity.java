@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class ProfilActivity extends AppCompatActivity {
     private ImageView addImage;
@@ -46,11 +48,28 @@ public class ProfilActivity extends AppCompatActivity {
 
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             addImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+
             Uri imageUri = data.getData();
             addImage.setImageURI(imageUri);
-            Picasso.with(getApplicationContext()).load(imageUri)
+
+            CropImage.activity(imageUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1, 1)
+                    .start(this);
+           /* Picasso.with(getApplicationContext()).load(imageUri)
                     .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher).fit().centerCrop()
-                    .into(addImage);
+                    .into(addImage);*/
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                addImage.setImageURI(resultUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
         }
     }
 }
