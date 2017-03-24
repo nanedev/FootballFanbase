@@ -48,14 +48,16 @@ public class ProfilActivity extends AppCompatActivity {
 
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             addImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            addImage.setAlpha(254);
 
 
             Uri imageUri = data.getData();
             addImage.setImageURI(imageUri);
 
+
             CropImage.activity(imageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
-                    .setAspectRatio(1, 1)
+                    .setCropShape(CropImageView.CropShape.OVAL)
                     .start(this);
            /* Picasso.with(getApplicationContext()).load(imageUri)
                     .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher).fit().centerCrop()
