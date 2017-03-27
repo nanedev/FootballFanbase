@@ -47,7 +47,7 @@ import java.util.Locale;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
     private EditText enterUsername;
-    private Button contunue;
+    private Button continueBtn;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mDatabase;
@@ -55,26 +55,23 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String value;
     private boolean valid = true;
     private String username;
-    Spinner genderItems;
-    List<String> spinnerArray;
-    ArrayAdapter<String> adapter;
-    int selectYear;
-    int currentYear;
-    int realYear;
-    Calendar minAdultAge;
+    private Spinner genderItems;
+    private List<String> spinnerArray;
+    private ArrayAdapter<String> adapter;
+    private int selectYear;
+    private int currentYear;
+    private int realYear;
+    private Calendar minAdultAge;
     private ImageView addImage;
-
     private TextView usernameErrorTxt;
     private TextView birthdayErrorTxt;
-
-    String googleUser_id;
-    String googleFirstName;
-    String googleLastName;
-    String gender;
-    ProgressDialog mDialog;
-
-    EditText birthday;
-    private ArrayList<String> nickList;
+    private String googleUser_id;
+    private String googleFirstName;
+    private String googleLastName;
+    private String gender;
+    private ProgressDialog mDialog;
+    private EditText birthday;
+    private ArrayList<String> usernameList;
     private static final int GALLERY_REQUEST = 2;
 
     @Override
@@ -86,14 +83,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         genderItems = (Spinner) findViewById(R.id.genderSetUp);
         usernameErrorTxt = (TextView) findViewById(R.id.input_usernameError);
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
-        nickList = new ArrayList<>();
-        contunue = (Button) findViewById(R.id.continueToMainPage);
+        usernameList = new ArrayList<>();
+        continueBtn = (Button) findViewById(R.id.continueToMainPage);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mDialog = new ProgressDialog(this);
         addImage = (ImageView) findViewById(R.id.addImage);
-
-
 
 
         spinnerArray = new ArrayList<>();
@@ -104,7 +99,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         genderItems.setAdapter(adapter);
 
-        contunue.setOnClickListener(this);
+        continueBtn.setOnClickListener(this);
         birthday.setOnClickListener(this);
 
         minAdultAge = new GregorianCalendar();
@@ -128,7 +123,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
                     for (ParseObject object : objects) {
-                        nickList.add(String.valueOf(object.get("username")));
+                        usernameList.add(String.valueOf(object.get("username")));
                     }
                 }
             }
@@ -222,7 +217,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (v.getId() == R.id.continueToMainPage) {
 
             if (valid()) {
-                if (LoginActivity.checkgoogleSignIn == true){
+                if (LoginActivity.checkgoogleSignIn == true) {
                     googleEnterDatabase();
                     Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
                     startActivity(intent);
@@ -245,12 +240,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     public boolean valid() {
         valid = true;
 
-        String nick = enterUsername.getText().toString().trim();
+        String username = enterUsername.getText().toString().trim();
         if (TextUtils.isEmpty(enterUsername.getText().toString())) {
             usernameErrorTxt.setText("Field can not be blank");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
-        } else if (nickList.contains(nick)) {
+        } else if (usernameList.contains(username)) {
             usernameErrorTxt.setText("Username already exists,can not continue!");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
@@ -273,7 +268,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         return valid;
     }
 
-    public void googleEnterDatabase(){
+    public void googleEnterDatabase() {
 
         String username = enterUsername.getText().toString().trim();
         String userDate = birthday.getText().toString().trim();
