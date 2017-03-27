@@ -55,27 +55,27 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String value;
     private boolean valid = true;
     private String username;
-    Spinner genderItems;
-    List<String> spinnerArray;
-    ArrayAdapter<String> adapter;
-    int selectYear;
-    int currentYear;
-    int realYear;
-    Calendar minAdultAge;
+    private Spinner genderItems;
+    private List<String> spinnerArray;
+    private ArrayAdapter<String> adapter;
+    private int selectYear;
+    private int currentYear;
+    private int realYear;
+    private Calendar minAdultAge;
     private ImageView addImage;
 
     private TextView usernameErrorTxt;
     private TextView birthdayErrorTxt;
 
-    String googleUser_id;
-    String googleFirstName;
-    String googleLastName;
-    String gender;
-    ProgressDialog mDialog;
+    private String googleUser_id;
+    private String googleFirstName;
+    private String googleLastName;
+    private String gender;
+    private ProgressDialog mDialog;
 
     private boolean hasSetProfileImage = false;
-    EditText birthday;
-    private ArrayList<String> nickList;
+    private EditText birthday;
+    private ArrayList<String> usernameList;
     private static final int GALLERY_REQUEST = 2;
 
     @Override
@@ -87,7 +87,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         genderItems = (Spinner) findViewById(R.id.genderSetUp);
         usernameErrorTxt = (TextView) findViewById(R.id.input_usernameError);
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
-        nickList = new ArrayList<>();
+        usernameList = new ArrayList<>();
         contunue = (Button) findViewById(R.id.continueToMainPage);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
@@ -129,7 +129,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
                     for (ParseObject object : objects) {
-                        nickList.add(String.valueOf(object.get("username")));
+                        usernameList.add(String.valueOf(object.get("username")));
                     }
                 }
             }
@@ -247,19 +247,19 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     public boolean valid() {
         valid = true;
 
-        if (hasSetProfileImage == false){
+        if (!hasSetProfileImage) {
             Toast.makeText(EnterUsernameForApp.this, "You need to set profile image", Toast.LENGTH_LONG).show();
             valid = false;
         }else {
-
+            valid = true;
         }
 
-        String nick = enterUsername.getText().toString().trim();
+        String username = enterUsername.getText().toString().trim();
         if (TextUtils.isEmpty(enterUsername.getText().toString())) {
             usernameErrorTxt.setText("Field can not be blank");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
-        } else if (nickList.contains(nickList)) {
+        } else if (usernameList.contains(username)) {
             usernameErrorTxt.setText("Username already exists,can not continue!");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
