@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,6 +33,9 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,6 +61,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     int currentYear;
     int realYear;
     Calendar minAdultAge;
+    private ImageView addImage;
 
     String googleUser_id;
     String googleFirstName;
@@ -65,6 +71,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     EditText birthday;
     private ArrayList<String> nickList;
+    private static final int GALLERY_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +85,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mDialog = new ProgressDialog(this);
-
+        addImage = (ImageView) findViewById(R.id.addImage);
 
 
 
@@ -99,6 +106,15 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         googleUser_id = LoginActivity.gUserId;
         googleFirstName = LoginActivity.gFirstName;
         googleLastName = LoginActivity.gLastName;
+
+        addImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+                openGallery.setType("image/*");
+                startActivityForResult(openGallery, GALLERY_REQUEST);
+            }
+        });
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Usernames");
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -150,6 +166,40 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         }
 
     };
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+            addImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            addImage.setAlpha(254);
+
+
+            Uri imageUri = data.getData();
+            addImage.setImageURI(imageUri);
+
+
+            CropImage.activity(imageUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setCropShape(CropImageView.CropShape.OVAL)
+                    .start(this);
+
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                Picasso.with(getApplicationContext()).load(resultUri)
+                        .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
+                        .into(addImage);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+    }
 
 
     private void updateLabel() {
