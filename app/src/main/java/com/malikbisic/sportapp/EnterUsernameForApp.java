@@ -70,11 +70,11 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enter_username);
-        enterUsername = (EditText) findViewById(R.id.input_username);
-        birthday = (EditText) findViewById(R.id.input_dateofbirth_usernameAkt);
-        genderItems = (Spinner) findViewById(R.id.input_gender_usernmaeAkt);
+        enterUsername = (EditText) findViewById(R.id.usernameSetUp);
+        birthday = (EditText) findViewById(R.id.dateSetUp);
+        genderItems = (Spinner) findViewById(R.id.genderSetUp);
         nickList = new ArrayList<>();
-        contunue = (Button) findViewById(R.id.continue_to_profil);
+        contunue = (Button) findViewById(R.id.continueToMainPage);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mDialog = new ProgressDialog(this);
@@ -163,12 +163,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
 
-        if (v.getId() == R.id.continue_to_profil) {
+        if (v.getId() == R.id.continueToMainPage) {
 
             if (valid()) {
                 if (LoginActivity.checkgoogleSignIn == true){
                     googleEnterDatabase();
-                    Intent intent = new Intent(EnterUsernameForApp.this, ProfilActivity.class);
+                    Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
                     startActivity(intent);
                 }
 
@@ -176,7 +176,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mDialog.dismiss();
             }
 
-        } else if (v.getId() == R.id.input_dateofbirth_usernameAkt) {
+        } else if (v.getId() == R.id.dateSetUp) {
             new DatePickerDialog(EnterUsernameForApp.this, date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();

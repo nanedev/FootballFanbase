@@ -385,7 +385,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             startActivity(setupIntent);
                             mDialog.dismiss();
                         } else if (user.isEmailVerified() && !dataSnapshot.child(user_id).hasChild("username")) {
-                            Intent intent = new Intent(LoginActivity.this, SetUpAccount.class);
+                            Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                             startActivity(intent);
                             mDialog.dismiss();
                         } else {
