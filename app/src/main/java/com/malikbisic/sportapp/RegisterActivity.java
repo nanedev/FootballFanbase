@@ -172,7 +172,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public void onSignupSuccess() {
         mSignupButton.setEnabled(true);
+
         setResult(RESULT_OK, null);
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
         // finish();
     }
 
@@ -255,7 +259,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         } else if (view.getId() == R.id.btn_signup) {
 
         } else if (view.getId() == R.id.link_login) {
-
+            Intent goToLogin = new Intent(RegisterActivity.this, LoginActivity.class);
+            goToLogin.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(goToLogin);
         }
     }
 
@@ -320,7 +326,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     }
-
 
 
     @Override

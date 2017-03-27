@@ -224,7 +224,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (v.getId() == R.id.continueToMainPage) {
 
             if (valid()) {
-                if (LoginActivity.checkgoogleSignIn == true){
+                if (LoginActivity.checkgoogleSignIn) {
                     googleEnterDatabase();
                     Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
                     startActivity(intent);
