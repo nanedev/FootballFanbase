@@ -3,6 +3,8 @@ package com.malikbisic.sportapp;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -76,6 +78,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mDialog = new ProgressDialog(this);
+
+
+
+
 
         spinnerArray = new ArrayList<>();
         spinnerArray.add("Male");
@@ -162,9 +168,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             if (valid()) {
                 if (LoginActivity.checkgoogleSignIn == true){
                     googleEnterDatabase();
+                    Intent intent = new Intent(EnterUsernameForApp.this, ProfilActivity.class);
+                    startActivity(intent);
                 }
-                Intent intent = new Intent(EnterUsernameForApp.this, ProfilActivity.class);
-                startActivity(intent);
+
             } else {
                 mDialog.dismiss();
             }

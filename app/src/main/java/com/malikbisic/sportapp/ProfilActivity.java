@@ -32,6 +32,15 @@ public class ProfilActivity extends AppCompatActivity {
         profilBtnContinue = (Button) findViewById(R.id.profil_tbn_continue);
 
 
+        boolean firsttime = getSharedPreferences("preference", MODE_PRIVATE).getBoolean("isfirsttime", true);
+
+        if (firsttime == true){
+            getSharedPreferences("preference", MODE_PRIVATE).edit().putBoolean("isfirsttime", false).commit();
+        } else {
+            Intent newsFeed = new Intent(ProfilActivity.this, SetUpAccount.class);
+            startActivity(newsFeed);
+        }
+
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,16 +68,16 @@ public class ProfilActivity extends AppCompatActivity {
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setCropShape(CropImageView.CropShape.OVAL)
                     .start(this);
-           /* Picasso.with(getApplicationContext()).load(imageUri)
-                    .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher).fit().centerCrop()
-                    .into(addImage);*/
+
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
-                addImage.setImageURI(resultUri);
+                Picasso.with(getApplicationContext()).load(resultUri)
+                        .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
+                        .into(addImage);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
