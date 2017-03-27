@@ -63,13 +63,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private String userEmail;
     private String userPassword;
     private String userSurname;
-    private String user_id;
+    static String user_id;
+    static String name;
+    static String surname;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
+    static boolean checkLoginPressed = false;
 
     private LinearLayout layout;
 
@@ -124,6 +127,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mSignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                name = mNameText.getText().toString().trim();
+                surname = mSurnameText.getText().toString().trim();
+                LoginActivity.checkgoogleSignIn = false;
+                LoginActivity.checkFacebookSignIn = false;
+                checkLoginPressed = true;
                 signup();
             }
         });
@@ -189,8 +197,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public boolean validate() {
         valid = true;
 
-        String name = mNameText.getText().toString();
-        String surname = mSurnameText.getText().toString();
+        name = mNameText.getText().toString();
+        surname = mSurnameText.getText().toString();
         String email = mEmailText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();

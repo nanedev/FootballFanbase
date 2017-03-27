@@ -87,8 +87,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     static String fbLastName;
 
+    static String userIdLogin;
+
     static boolean checkgoogleSignIn = false;
     static boolean checkFacebookSignIn = false;
+    static boolean checkLoginPressed = false;
+
 
     CallbackManager callbackManager;
 
@@ -189,6 +193,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 checkgoogleSignIn = false;
                 checkFacebookSignIn = true;
+                checkLoginPressed = false;
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "email"));
             }
         });
@@ -335,6 +340,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
 
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        userIdLogin = user.getUid();
                         checkUserExists();
 
                     } else {
@@ -437,6 +444,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_login) {
+            checkgoogleSignIn = false;
+            checkFacebookSignIn = false;
+            checkLoginPressed = true;
             checkLogin();
         } else if (v.getId() == R.id.link_signup) {
             Intent goToReg = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -449,6 +459,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             LoginManager.getInstance().logOut();
             checkgoogleSignIn = true;
+            checkLoginPressed = false;
             checkFacebookSignIn = false;
             signIn();
 

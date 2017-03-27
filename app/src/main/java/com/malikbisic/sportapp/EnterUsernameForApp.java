@@ -71,6 +71,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String googleFirstName;
     private String googleLastName;
     private String gender;
+    private String loginUserid;
+    private String nameRegister;
+    private String surnameRegister;
     private ProgressDialog mDialog;
 
     private boolean hasSetProfileImage = false;
@@ -113,6 +116,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         googleUser_id = LoginActivity.gUserId;
         googleFirstName = LoginActivity.gFirstName;
         googleLastName = LoginActivity.gLastName;
+        loginUserid = LoginActivity.userIdLogin;
+
 
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,6 +234,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
                     startActivity(intent);
                 }
+                if (LoginActivity.checkLoginPressed == true){
+
+                    loginEnterDatabase();
+                }
 
             } else {
                 mDialog.dismiss();
@@ -301,5 +310,23 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         object.saveInBackground();
         mDialog.dismiss();
     }
+
+    public void loginEnterDatabase(){
+        String username = enterUsername.getText().toString().trim();
+        String userDate = birthday.getText().toString().trim();
+
+        mDialog.setMessage("Registering...");
+        mDialog.show();
+        mReference = mDatabase.getReference().child("Users").child(loginUserid);
+        mReference.child("username").setValue(username);
+        mReference.child("date").setValue(userDate);
+        mReference.child("gender").setValue(gender);
+
+        ParseObject object = new ParseObject("Usernames");
+        object.put("username", username);
+        object.saveInBackground();
+        mDialog.dismiss();
+    }
+
 
 }
