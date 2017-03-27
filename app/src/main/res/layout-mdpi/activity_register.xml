@@ -90,69 +90,10 @@
 
 
         <!-- mobile number -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
-
-            <EditText
-                android:id="@+id/input_nickname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nick"
-                android:inputType="text" />
-
-            <TextView
-                android:id="@+id/input_nicknameInfoError"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:textColor="@color/redError" />
-        </android.support.design.widget.TextInputLayout>
 
         <!-- mobile number -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
-
-            <EditText
-                android:id="@+id/input_dateofbirth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Birthday"
-                android:focusable="false"
-                android:inputType="text" />
-            <TextView
-                android:id="@+id/input_dateofbirthInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:textColor="@color/redError" />
-        </android.support.design.widget.TextInputLayout>
 
         <!-- mobile number -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
-
-            <Spinner
-                android:id="@+id/input_gender"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text" />
-
-            <TextView
-                android:id="@+id/input_genderInfoError"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:textColor="@color/redError" />
-        </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
         <android.support.design.widget.TextInputLayout
@@ -218,5 +159,5 @@
             android:textSize="16dip" />
 
     </LinearLayout>
-    //nesto
+
 </ScrollView>

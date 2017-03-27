@@ -47,51 +47,35 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, TextWatcher {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
     private static final String TAG = "RegisterActivity";
-    EditText mNameText;
-    EditText mSurnameText;
-    EditText mEmailText;
-    EditText mNickNameText;
-    EditText mPasswordText;
-    EditText mReEnterPasswordText;
-    EditText dateTx;
-    Button mSignupButton;
-    TextView mLoginLink;
-    TextView errorInfo, errorName, errorSurname, errorEmail, errorPassword, errorRePassword, errorNick;
-    String value;
+    private EditText mNameText;
+    private EditText mSurnameText;
+    private EditText mEmailText;
+    private EditText mPasswordText;
+    private EditText mReEnterPasswordText;
 
-    String userDate;
-    String userGender;
-    String userName;
-    String userNick;
-    String userEmail;
-    String userPassword;
-    String userSurname;
-    String user_id;
-    Spinner genderItems;
+    private Button mSignupButton;
+    private TextView mLoginLink;
+    private TextView errorInfo, errorName, errorSurname, errorEmail, errorPassword, errorRePassword, errorNick;
+    private String userName;
 
-    FirebaseAuth mAuth;
-    FirebaseAuth.AuthStateListener mAuthListener;
+    private String userEmail;
+    private String userPassword;
+    private String userSurname;
+    private String user_id;
 
-    List<String> spinnerArray;
-    ArrayAdapter<String> adapter;
-    ProgressDialog mDialog;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
-    FirebaseDatabase mDatabase;
-    DatabaseReference mReference;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mReference;
 
-    LinearLayout layout;
+    private LinearLayout layout;
+
+    private ProgressDialog progressDialog;
+
     boolean valid;
-    int selectYear;
-    int currentYear;
-    int realYear;
-    ProgressDialog progressDialog;
-
-
-    Calendar minAdultAge;
-
-    ArrayList<String> nickList;
 
 
     @Override
@@ -102,31 +86,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mNameText = (EditText) findViewById(R.id.input_name);
         mSurnameText = (EditText) findViewById(R.id.input_surname);
         mEmailText = (EditText) findViewById(R.id.input_email);
-        mNickNameText = (EditText) findViewById(R.id.input_nickname);
+
         mPasswordText = (EditText) findViewById(R.id.input_password);
         mReEnterPasswordText = (EditText) findViewById(R.id.input_reEnterPassword);
         mSignupButton = (Button) findViewById(R.id.btn_signup);
-        dateTx = (EditText) findViewById(R.id.input_dateofbirth);
-        errorInfo = (TextView) findViewById(R.id.input_dateofbirthInfo);
+
+
         errorName = (TextView) findViewById(R.id.input_nameInfoError);
         errorSurname = (TextView) findViewById(R.id.input_surnameInfoError);
         errorEmail = (TextView) findViewById(R.id.input_emailInfoError);
-        errorNick = (TextView) findViewById(R.id.input_nicknameInfoError);
+
         errorPassword = (TextView) findViewById(R.id.input_passwordInfoError);
         errorRePassword = (TextView) findViewById(R.id.input_rePasswordInfoError);
-        dateTx.setOnClickListener(this);
+
         mLoginLink = (TextView) findViewById(R.id.link_login);
         layout = (LinearLayout) findViewById(R.id.registerLayout);
-        nickList = new ArrayList<>();
+
         layout.setOnClickListener(this);
-        mNameText.addTextChangedListener(this);
-        mSurnameText.addTextChangedListener(this);
-        mEmailText.addTextChangedListener(this);
-        mNickNameText.addTextChangedListener(this);
-        mPasswordText.addTextChangedListener(this);
-        mReEnterPasswordText.addTextChangedListener(this);
-        minAdultAge = new GregorianCalendar();
-        dateTx.addTextChangedListener(this);
+
         mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -142,7 +119,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         };
 
-        mDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         mDatabase = FirebaseDatabase.getInstance();
         mSignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,26 +139,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        spinnerArray = new ArrayList<>();
-        spinnerArray.add("Male");
-        spinnerArray.add("Female");
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        genderItems = (Spinner) findViewById(R.id.input_gender);
-        genderItems.setAdapter(adapter);
-        mReference = mDatabase.getReference();
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Usernames");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null){
-                    for (ParseObject object : objects){
-                        nickList.add(String.valueOf(object.get("username")));
-                    }
-                }
-            }
-        });
 
     }
 
@@ -225,32 +182,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mSignupButton.setEnabled(true);
     }
 
-    Calendar myCalendar = Calendar.getInstance();
-
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker datePicker, int year, int monthOfYear,
-                              int dayOfMonth) {
-            // TODO Auto-generated method stub
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            selectYear = year;
-            currentYear = minAdultAge.get(Calendar.YEAR);
-            Log.i("Year select", String.valueOf(selectYear));
-            Log.i("Year current", String.valueOf(currentYear));
-
-            realYear = currentYear - selectYear;
-            Log.i("Year check", String.valueOf(realYear));
-
-
-            updateLabel();
-        }
-
-    };
-
     public boolean validate() {
         valid = true;
 
@@ -259,11 +190,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String email = mEmailText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
-        String date = dateTx.getText().toString().trim();
-        String nick = mNickNameText.getText().toString().trim();
-
-
-
 
         if (name.isEmpty()) {
             errorName.setText("Field can not be empty");
@@ -278,22 +204,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             errorName.setVisibility(View.INVISIBLE);
         }
 
-        if (mNickNameText.getText().toString().isEmpty()) {
-            errorNick.setText("Field can not be empty");
-            errorNick.setVisibility(View.VISIBLE);
-            valid = false;
-
-        } else if (nickList.contains(nick)) {
-            errorNick.setText("Already exists");
-            errorNick.setVisibility(View.VISIBLE);
-            valid = false;
-        } else {
-            errorNick.setText("");
-            errorNick.setVisibility(View.INVISIBLE);
-        }
-
-
-
         if (surname.isEmpty()) {
             errorSurname.setText("Field can not be empty");
             errorSurname.setVisibility(View.VISIBLE);
@@ -302,15 +212,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             errorSurname.setText("");
             errorSurname.setVisibility(View.INVISIBLE);
         }
-
-      /*  if (email.isEmpty()) {
-            errorEmail.setText("Field can not be empty");
-            errorEmail.setVisibility(View.VISIBLE);
-            valid = false;
-        } else {
-            errorEmail.setText("");
-            errorEmail.setVisibility(View.INVISIBLE);
-        } */
 
 
         if (password.isEmpty()) {
@@ -343,27 +244,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             errorRePassword.setVisibility(View.INVISIBLE);
         }
 
-        if (realYear < 18) {
-
-            errorInfo.setText("You must be older than 18");
-            errorInfo.setVisibility(View.VISIBLE);
-            valid = false;
-        } else {
-            errorInfo.setText("");
-            errorInfo.setVisibility(View.INVISIBLE);
-        }
-
         return valid;
     }
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.input_dateofbirth) {
-            new DatePickerDialog(RegisterActivity.this, date, myCalendar
-                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-
-        } else if (view.getId() == R.id.registerLayout) {
+        if (view.getId() == R.id.registerLayout) {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         } else if (view.getId() == R.id.btn_signup) {
@@ -377,14 +263,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private void registerUser() {
         userName = mNameText.getText().toString().trim();
         userSurname = mSurnameText.getText().toString().trim();
-        userNick = mNickNameText.getText().toString().trim();
         userEmail = mEmailText.getText().toString().trim();
         userPassword = mPasswordText.getText().toString().trim();
-        userDate = dateTx.getText().toString().trim();
-        userGender = genderItems.getSelectedItem().toString().trim();
 
 
-        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userSurname) && !TextUtils.isEmpty(userNick) && !TextUtils.isEmpty(userEmail)
+        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userSurname) && !TextUtils.isEmpty(userEmail)
                 && !TextUtils.isEmpty(userPassword)) {
 
 
@@ -415,13 +298,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             mReference = mDatabase.getReference().child("Users").child(user_id);
                             mReference.child("name").setValue(userName);
                             mReference.child("surname").setValue(userSurname);
-                            mReference.child("nick").setValue(userNick);
-                            mReference.child("date").setValue(userDate);
-                            mReference.child("gender").setValue(userGender);
-
-                            ParseObject object = new ParseObject("Usernames");
-                            object.put("username", userNick);
-                            object.saveInBackground();
 
                         }
 
@@ -445,13 +321,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void updateLabel() {
 
-        String myFormat = "dd/MMMM/yyyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
-
-        dateTx.setText(sdf.format(myCalendar.getTime()));
-    }
 
     @Override
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -463,21 +333,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         return false;
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(final CharSequence s, int start, int before, int count) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        //validate();
-
-    }
 
     @Override
     public void onStart() {
