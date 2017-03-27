@@ -51,7 +51,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "LoginActivity";
     private GoogleApiClient mGoogleApiClient;
@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
+    private DatabaseReference mReferenceUsers;
 
 
     private EditText mEmailText;
@@ -78,13 +78,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String emailAddress;
     private ProgressDialog mDialog;
 
-    String gName;
+
     static String gFirstName;
     static String gLastName;
     static String gUserId;
 
     static String fbFirstName;
-    static String fbUserId;
+
     static String fbLastName;
 
     static boolean checkgoogleSignIn = false;
@@ -117,6 +117,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mForgotPassword.setOnClickListener(this);
         googleSignIn.setOnClickListener(this);
         mDialog = new ProgressDialog(this);
+        mReferenceUsers = mDatabase.getReference("Users");
+        mReferenceUsers.keepSynced(true);
 
 
         callbackManager = CallbackManager.Factory.create();
@@ -133,7 +135,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 fbLastName = fb.getLastName();
 
 
-               // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //fbUserId = user.getUid();
 
 
@@ -211,11 +213,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInAccount acct = result.getSignInAccount();
 
 
-           // gFirstName = acct.getGivenName();
+            // gFirstName = acct.getGivenName();
             //gLastName = acct.getFamilyName();
 
             Uri personPhoto = acct.getPhotoUrl();
-
 
 
             if (result.isSuccess()) {
@@ -254,38 +255,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         gUserId = user.getUid();
 
 
-                            if (!task.isSuccessful()) {
+                        if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                                mReference = mDatabase.getReference("Users");
-                                mReference.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.hasChild(gUserId)) {
-                                            Intent intent = new Intent(LoginActivity.this, SetUpAccount.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            startActivity(intent);
 
-                                        } else {
-                                            Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
-                                            goToSetUp.putExtra("firstNamegoogle", gFirstName);
-                                            goToSetUp.putExtra("lastNamegoogle", gLastName);
-                                            goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            startActivity(goToSetUp);
-                                        }
+
+                            mReferenceUsers.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.hasChild(gUserId)) {
+                                        Intent intent = new Intent(LoginActivity.this, SetUpAccount.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+
+                                    } else {
+                                        Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                                        goToSetUp.putExtra("firstNamegoogle", gFirstName);
+                                        goToSetUp.putExtra("lastNamegoogle", gLastName);
+                                        goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(goToSetUp);
                                     }
+                                }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                                    }
-                                });
+                                }
+                            });
 
-                                mDialog.dismiss();
+                            mDialog.dismiss();
 
-                            }
+                        }
                         // ...
 
                     }
@@ -303,7 +305,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
 
-                         Log.i("fb udi",task.getResult().getUser().getUid());
+                        Log.i("fb udi", task.getResult().getUser().getUid());
 
 
                         if (!task.isSuccessful()) {
@@ -331,6 +333,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         checkUserExists();
 
                     } else {
+                        mDialog.dismiss();
                         Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -362,28 +365,32 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void checkUserExists() {
-
+        mDialog.setMessage("Please wait...");
+        mDialog.show();
         if (mAuth.getCurrentUser() != null) {
 
             user_id = mAuth.getCurrentUser().getUid();
-            mReference = mDatabase.getReference("Users");
+            mReferenceUsers = mDatabase.getReference("Users");
 
-            mReference.addValueEventListener(new ValueEventListener() {
+
+            mReferenceUsers.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(user_id)) {
 
                         FirebaseUser user = mAuth.getCurrentUser();
 
-                        if (user.isEmailVerified()) {
-                            Intent setupIntent = new Intent(LoginActivity.this, SetUpAccount.class);
+                        if (user.isEmailVerified() && dataSnapshot.child(user_id).hasChild("username")) {
+                            Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                             startActivity(setupIntent);
+                        } else if (user.isEmailVerified() && !dataSnapshot.child(user_id).hasChild("username")) {
+                            Intent intent = new Intent(LoginActivity.this, SetUpAccount.class);
+                            startActivity(intent);
                         } else {
-                            Toast.makeText(LoginActivity.this, "Email has not verifacte", Toast.LENGTH_LONG).show();
+                            mDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
                         }
-
                     }
-
 
                 }
 
