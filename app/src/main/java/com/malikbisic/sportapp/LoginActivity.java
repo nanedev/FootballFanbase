@@ -262,7 +262,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         } else {
 
 
-                            mReferenceUsers.addValueEventListener(new ValueEventListener() {
+                           /* mReferenceUsers.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.hasChild(gUserId)) {
@@ -283,7 +283,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 public void onCancelled(DatabaseError databaseError) {
 
                                 }
-                            });
+                            }); */
+                           checkUserExists();
 
                             mDialog.dismiss();
 
@@ -305,13 +306,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
 
-                        Log.i("fb udi", task.getResult().getUser().getUid());
-
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+
+
+                            String error = String.valueOf(task.getException().getMessage());
+
+                            if (error.equals(getString(R.string.error_facebook_account_already_exists))) {
+                                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                                mDialog.dismiss();
+                            }
                         }
 
                         // ...
@@ -392,6 +397,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             mDialog.dismiss();
                             Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
                         }
+                    }  else {
+                        Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                        goToSetUp.putExtra("firstNamegoogle", gFirstName);
+                        goToSetUp.putExtra("lastNamegoogle", gLastName);
+                        goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(goToSetUp);
                     }
 
                 }

@@ -20,6 +20,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,6 +64,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     Calendar minAdultAge;
     private ImageView addImage;
 
+    private TextView usernameErrorTxt;
+    private TextView birthdayErrorTxt;
+
     String googleUser_id;
     String googleFirstName;
     String googleLastName;
@@ -80,6 +84,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         enterUsername = (EditText) findViewById(R.id.usernameSetUp);
         birthday = (EditText) findViewById(R.id.dateSetUp);
         genderItems = (Spinner) findViewById(R.id.genderSetUp);
+        usernameErrorTxt = (TextView) findViewById(R.id.input_usernameError);
+        birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
         nickList = new ArrayList<>();
         contunue = (Button) findViewById(R.id.continueToMainPage);
         mAuth = FirebaseAuth.getInstance();
@@ -241,24 +247,27 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         String nick = enterUsername.getText().toString().trim();
         if (TextUtils.isEmpty(enterUsername.getText().toString())) {
-            enterUsername.setError("field can not be blank");
+            usernameErrorTxt.setText("Field can not be blank");
+            usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else if (nickList.contains(nick)) {
-            Toast.makeText(EnterUsernameForApp.this, "Username already exists,can not continue!", Toast.LENGTH_LONG).show();
+            usernameErrorTxt.setText("Username already exists,can not continue!");
+            usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-            enterUsername.setError(null);
+            usernameErrorTxt.setText("");
+            usernameErrorTxt.setVisibility(View.INVISIBLE);
 
         }
 
-        if (realYear < 18) {
+        if (realYear < 13) {
 
-            Toast.makeText(EnterUsernameForApp.this, "You must be older than 18!", Toast.LENGTH_LONG).show();
-
-
+            birthdayErrorTxt.setText("You must be older than 13!");
+            birthdayErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else {
-
+            usernameErrorTxt.setText("");
+            birthdayErrorTxt.setVisibility(View.INVISIBLE);
         }
 
         return valid;
@@ -274,7 +283,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mReference = mDatabase.getReference().child("Users").child(googleUser_id);
         mReference.child("name").setValue(googleFirstName);
         mReference.child("surname").setValue(googleLastName);
-        mReference.child("nick").setValue(username);
+        mReference.child("username").setValue(username);
         mReference.child("date").setValue(userDate);
         mReference.child("gender").setValue(gender);
 

@@ -16,4 +16,6 @@
     <string name="error_emailandpass">There is no user record corresponding to this identifier. The user may have been deleted.</string>
     <string name="error_reset_pass_blank_email_field">An internal error has occurred. [ INVALID_EMAIL ]</string>
     <string name="error_reset_pass_email_doesnt_exists">There is no user record corresponding to this identifier. The user may have been deleted.</string>
+    <string name="error_facebook_account_already_exists">An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.</string>
+
 </resources>
