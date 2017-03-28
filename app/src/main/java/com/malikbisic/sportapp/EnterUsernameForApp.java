@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -81,6 +82,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private ArrayList<String> usernameList;
     private static final int GALLERY_REQUEST = 2;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +98,28 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mDatabase = FirebaseDatabase.getInstance();
         mDialog = new ProgressDialog(this);
         addImage = (ImageView) findViewById(R.id.addImage);
+        mAuth = FirebaseAuth.getInstance();
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    String uid = user.getUid();
+                    String name = user.getDisplayName();
+                    String provider = user.getProviderId();
+                    String email = user.getEmail();
+
+                    Log.i("proba", uid);
+                    Log.i("proba", name);
+                    Log.i("proba", provider);
+                    Log.i("proba", email);
+                } else {
+
+                }
+
+            }
+        };
 
 
 
@@ -234,7 +258,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
                     startActivity(intent);
                 }
-                if (LoginActivity.checkLoginPressed == true){
+                if (LoginActivity.checkLoginPressed) {
 
                     loginEnterDatabase();
                 }
@@ -328,5 +352,18 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mDialog.dismiss();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
 
 }

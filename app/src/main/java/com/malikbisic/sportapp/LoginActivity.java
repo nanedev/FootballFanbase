@@ -57,11 +57,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private GoogleApiClient mGoogleApiClient;
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReferenceUsers;
-
-
     private EditText mEmailText;
     private EditText mPasswordText;
     private Button mLoginButton;
@@ -71,14 +68,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView mForgotPassword;
     private ImageButton googleSignIn;
     private ImageButton facebookLogin;
-
     private String user_id;
     private String email;
     private String password;
     private String emailAddress;
     private ProgressDialog mDialog;
-
-
     static String gFirstName;
     static String gLastName;
     static String gUserId;
@@ -139,10 +133,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 fbLastName = fb.getLastName();
 
 
-                // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                //fbUserId = user.getUid();
-
-
             }
 
             @Override
@@ -160,14 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null) {
 
-                }
-            }
-        };
 
 
         //GOOGLE SIGN IN
@@ -218,9 +201,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInAccount acct = result.getSignInAccount();
 
 
-            // gFirstName = acct.getGivenName();
-            //gLastName = acct.getFamilyName();
-
             Uri personPhoto = acct.getPhotoUrl();
 
 
@@ -266,35 +246,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     Toast.LENGTH_SHORT).show();
                         } else {
 
-
-                           /* mReferenceUsers.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.hasChild(gUserId)) {
-                                        Intent intent = new Intent(LoginActivity.this, SetUpAccount.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(intent);
-
-                                    } else {
-                                        Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
-                                        goToSetUp.putExtra("firstNamegoogle", gFirstName);
-                                        goToSetUp.putExtra("lastNamegoogle", gLastName);
-                                        goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(goToSetUp);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            }); */
                            checkUserExists();
 
                             mDialog.dismiss();
 
                         }
-                        // ...
 
                     }
                 });
@@ -309,7 +265,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
 
 
                         if (!task.isSuccessful()) {
@@ -406,8 +361,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     }  else {
                         Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
-                        goToSetUp.putExtra("firstNamegoogle", gFirstName);
-                        goToSetUp.putExtra("lastNamegoogle", gLastName);
                         goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToSetUp);
                     }
@@ -421,25 +374,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             });
         }
     }
-
-
-    @Override
-    protected void onStart() {
-
-        mAuth.addAuthStateListener(mAuthListener);
-
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-
-    }
-
 
     @Override
     public void onClick(View v) {
