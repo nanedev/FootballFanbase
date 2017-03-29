@@ -77,10 +77,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String surnameRegister;
     private ProgressDialog mDialog;
 
+    private String fbFirstName;
+    private String fbLastName;
+
     private boolean hasSetProfileImage = false;
     private EditText birthday;
     private ArrayList<String> usernameList;
     private static final int GALLERY_REQUEST = 2;
+    String uid;
 
 
     @Override
@@ -105,14 +109,16 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    String uid = user.getUid();
+                    uid = user.getUid();
                     String name = user.getDisplayName();
                     String provider = user.getProviderId();
                     String email = user.getEmail();
 
+
+
                     Log.i("proba", uid);
-                    Log.i("proba", name);
-                    Log.i("proba", provider);
+                   // Log.i("proba", name);
+                    //Log.i("proba", provider);
                     Log.i("proba", email);
                 } else {
 
@@ -141,6 +147,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         googleFirstName = LoginActivity.gFirstName;
         googleLastName = LoginActivity.gLastName;
         loginUserid = LoginActivity.userIdLogin;
+        fbFirstName = LoginActivity.fbFirstName;
+        fbLastName = LoginActivity.fbLastName;
 
 
         addImage.setOnClickListener(new View.OnClickListener() {
@@ -263,6 +271,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     loginEnterDatabase();
                 }
 
+                if (LoginActivity.checkFacebookSignIn){
+                    fbEnterDatabase();
+                }
+
             } else {
                 mDialog.dismiss();
             }
@@ -342,6 +354,26 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mDialog.setMessage("Registering...");
         mDialog.show();
         mReference = mDatabase.getReference().child("Users").child(loginUserid);
+        mReference.child("username").setValue(username);
+        mReference.child("date").setValue(userDate);
+        mReference.child("gender").setValue(gender);
+
+        ParseObject object = new ParseObject("Usernames");
+        object.put("username", username);
+        object.saveInBackground();
+        mDialog.dismiss();
+    }
+
+    public void fbEnterDatabase(){
+
+        String username = enterUsername.getText().toString().trim();
+        String userDate = birthday.getText().toString().trim();
+
+        mDialog.setMessage("Registering...");
+        mDialog.show();
+        mReference = mDatabase.getReference().child("Users").child(uid);
+        mReference.child("name").setValue(fbFirstName);
+        mReference.child("surname").setValue(fbLastName);
         mReference.child("username").setValue(username);
         mReference.child("date").setValue(userDate);
         mReference.child("gender").setValue(gender);

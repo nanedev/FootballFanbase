@@ -20,6 +20,9 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -47,6 +50,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
 
 import java.util.Arrays;
 
@@ -128,9 +133,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 handleFacebookAccessToken(loginResult.getAccessToken());
                 checkUserExists();
 
-                Profile fb = Profile.getCurrentProfile();
+
+            Profile fb = Profile.getCurrentProfile();
+
                 fbFirstName = fb.getFirstName();
                 fbLastName = fb.getLastName();
+
+                Log.i("fbname", fbFirstName);
+                Log.i("fnsurname", fbLastName);
 
 
             }
