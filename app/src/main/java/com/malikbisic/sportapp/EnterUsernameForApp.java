@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +32,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -86,6 +90,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private static final int GALLERY_REQUEST = 2;
     String uid;
 
+    private StorageReference mFilePath;
+    private FirebaseStorage mStorage;
+    private Uri resultUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +110,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mDialog = new ProgressDialog(this);
         addImage = (ImageView) findViewById(R.id.addImage);
         mAuth = FirebaseAuth.getInstance();
+        mStorage = FirebaseStorage.getInstance();
+
+        mFilePath = FirebaseStorage.getInstance().getReference(); //mStorage.getReferenceFromUrl("gs://sportapp-11328.appspot.com");
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -115,9 +126,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     String email = user.getEmail();
 
 
-
                     Log.i("proba", uid);
-                   // Log.i("proba", name);
+                    // Log.i("proba", name);
                     //Log.i("proba", provider);
                     Log.i("proba", email);
                 } else {
@@ -126,8 +136,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
             }
         };
-
-
 
 
         spinnerArray = new ArrayList<>();
@@ -235,7 +243,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
+                resultUri = result.getUri();
                 Picasso.with(getApplicationContext()).load(resultUri)
                         .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
                         .into(addImage);
@@ -271,7 +279,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     loginEnterDatabase();
                 }
 
-                if (LoginActivity.checkFacebookSignIn){
+                if (LoginActivity.checkFacebookSignIn) {
                     fbEnterDatabase();
                 }
 
@@ -295,7 +303,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (!hasSetProfileImage) {
             Toast.makeText(EnterUsernameForApp.this, "You need to set profile image", Toast.LENGTH_LONG).show();
             valid = false;
-        }else {
+        } else {
             valid = true;
         }
 
@@ -327,61 +335,96 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         return valid;
     }
 
-    public void googleEnterDatabase(){
+    public void googleEnterDatabase() {
 
-        String username = enterUsername.getText().toString().trim();
-        String userDate = birthday.getText().toString().trim();
+        final String username = enterUsername.getText().toString().trim();
+        final String userDate = birthday.getText().toString().trim();
 
         mDialog.setMessage("Registering...");
         mDialog.show();
-        mReference = mDatabase.getReference().child("Users").child(googleUser_id);
-        mReference.child("name").setValue(googleFirstName);
-        mReference.child("surname").setValue(googleLastName);
-        mReference.child("username").setValue(username);
-        mReference.child("date").setValue(userDate);
-        mReference.child("gender").setValue(gender);
 
-        ParseObject object = new ParseObject("Usernames");
-        object.put("username", username);
-        object.saveInBackground();
-        mDialog.dismiss();
+        StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+
+        imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                mReference = mDatabase.getReference().child("Users").child(googleUser_id);
+                mReference.child("name").setValue(googleFirstName);
+                mReference.child("surname").setValue(googleLastName);
+                mReference.child("username").setValue(username);
+                mReference.child("date").setValue(userDate);
+                mReference.child("gender").setValue(gender);
+                mReference.child("profileImage").setValue(downloadUrl.toString());
+
+                ParseObject object = new ParseObject("Usernames");
+                object.put("username", username);
+                object.saveInBackground();
+                mDialog.dismiss();
+            }
+        });
+
     }
 
-    public void loginEnterDatabase(){
-        String username = enterUsername.getText().toString().trim();
-        String userDate = birthday.getText().toString().trim();
+    public void loginEnterDatabase() {
+        final String username = enterUsername.getText().toString().trim();
+        final String userDate = birthday.getText().toString().trim();
 
+
+        StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
         mDialog.show();
-        mReference = mDatabase.getReference().child("Users").child(loginUserid);
-        mReference.child("username").setValue(username);
-        mReference.child("date").setValue(userDate);
-        mReference.child("gender").setValue(gender);
+        imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-        ParseObject object = new ParseObject("Usernames");
-        object.put("username", username);
-        object.saveInBackground();
-        mDialog.dismiss();
+
+                mReference = mDatabase.getReference().child("Users").child(loginUserid);
+                mReference.child("username").setValue(username);
+                mReference.child("date").setValue(userDate);
+                mReference.child("gender").setValue(gender);
+                mReference.child("profileImage").setValue(downloadUrl.toString());
+
+                ParseObject object = new ParseObject("Usernames");
+                object.put("username", username);
+                object.saveInBackground();
+                mDialog.dismiss();
+            }
+        });
+
     }
 
-    public void fbEnterDatabase(){
+    public void fbEnterDatabase() {
 
-        String username = enterUsername.getText().toString().trim();
-        String userDate = birthday.getText().toString().trim();
+        final String username = enterUsername.getText().toString().trim();
+        final String userDate = birthday.getText().toString().trim();
 
+
+        StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
         mDialog.show();
-        mReference = mDatabase.getReference().child("Users").child(uid);
-        mReference.child("name").setValue(fbFirstName);
-        mReference.child("surname").setValue(fbLastName);
-        mReference.child("username").setValue(username);
-        mReference.child("date").setValue(userDate);
-        mReference.child("gender").setValue(gender);
+        imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-        ParseObject object = new ParseObject("Usernames");
-        object.put("username", username);
-        object.saveInBackground();
-        mDialog.dismiss();
+
+                mReference = mDatabase.getReference().child("Users").child(uid);
+                mReference.child("name").setValue(fbFirstName);
+                mReference.child("surname").setValue(fbLastName);
+                mReference.child("username").setValue(username);
+                mReference.child("date").setValue(userDate);
+                mReference.child("gender").setValue(gender);
+                mReference.child("profileImage").setValue(downloadUrl.toString());
+
+                ParseObject object = new ParseObject("Usernames");
+                object.put("username", username);
+                object.saveInBackground();
+                mDialog.dismiss();
+            }
+        });
     }
 
     @Override
