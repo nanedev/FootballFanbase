@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -86,8 +87,11 @@ public class MainPage extends AppCompatActivity
         if (id == R.id.nav_profile) {
             // Handle the camera action
             ProfileFragment profileFragment = new ProfileFragment();
-             FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeMainPage, profileFragment, profileFragment.getTag()).commit();
+
+             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+
+            manager.setCustomAnimations(R.animator.fragment_slide_in_left, R.animator.fragment_slide_out_left,
+                    R.animator.fragment_slide_out_right, R.animator.fragment_slide_in_right).replace(R.id.relativeMainPage, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
         } else if (id == R.id.nav_message) {
 
         } else if (id == R.id.nav_notifications) {
@@ -104,4 +108,5 @@ public class MainPage extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

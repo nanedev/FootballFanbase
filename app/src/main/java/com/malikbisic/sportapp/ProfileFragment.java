@@ -3,6 +3,7 @@ package com.malikbisic.sportapp;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.util.Map;
@@ -65,17 +67,14 @@ public class ProfileFragment extends Fragment {
 
                 Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
 
-                try {
-                    String profielImage = String.valueOf(value.get("profileImage"));
-                    URL url = new URL(profielImage);
-                    Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                    profile.setImageBitmap(bmp);
-                    username.setText(String.valueOf(value.get("username")));
-                    gender.setText(String.valueOf(value.get("gender")));
-                    birthday.setText(String.valueOf(value.get("date")));
-                }catch (Exception ex){
-                    Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                }
+
+                String profielImage = String.valueOf(value.get("profileImage"));
+                Picasso.with(getActivity())
+                        .load(profielImage)
+                        .into(profile);
+                username.setText(String.valueOf(value.get("username")));
+                gender.setText(String.valueOf(value.get("gender")));
+                birthday.setText(String.valueOf(value.get("date")));
 
 
             }
@@ -88,5 +87,7 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
+
+
 
 }

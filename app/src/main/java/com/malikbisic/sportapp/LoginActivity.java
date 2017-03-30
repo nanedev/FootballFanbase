@@ -361,10 +361,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                             startActivity(setupIntent);
                             mDialog.dismiss();
+                            finish();
                         } else if (user.isEmailVerified() && !dataSnapshot.child(user_id).hasChild("username")) {
                             Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                             startActivity(intent);
                             mDialog.dismiss();
+                            finish();
+
                         } else {
                             mDialog.dismiss();
                             Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
@@ -373,6 +376,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                         goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToSetUp);
+                        finish();
+
                     }
 
                 }
