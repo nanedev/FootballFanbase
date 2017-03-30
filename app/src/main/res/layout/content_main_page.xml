@@ -16,15 +16,5 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp">
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="News feed"
-            tools:layout_editor_absoluteX="155dp"
-            tools:layout_editor_absoluteY="224dp" />
-
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
