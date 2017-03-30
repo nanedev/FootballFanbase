@@ -441,6 +441,4 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         }
     }
 
-    //nešto
-
 }

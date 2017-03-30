@@ -3,6 +3,7 @@ package com.malikbisic.sportapp;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -40,6 +41,8 @@ public class MainPage extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
 
     @Override
@@ -82,6 +85,9 @@ public class MainPage extends AppCompatActivity
 
         if (id == R.id.nav_profile) {
             // Handle the camera action
+            ProfileFragment profileFragment = new ProfileFragment();
+             FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeMainPage, profileFragment, profileFragment.getTag()).commit();
         } else if (id == R.id.nav_message) {
 
         } else if (id == R.id.nav_notifications) {
