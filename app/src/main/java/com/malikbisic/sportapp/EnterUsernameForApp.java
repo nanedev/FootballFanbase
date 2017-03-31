@@ -36,8 +36,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.juanpabloprado.countrypicker.CountryPicker;
-import com.juanpabloprado.countrypicker.CountryPickerListener;
+
+import com.mukesh.countrypicker.fragments.CountryPicker;
+import com.mukesh.countrypicker.interfaces.CountryPickerListener;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -46,6 +47,7 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -143,6 +145,22 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             }
         };
 
+        selectCountry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                picker = picker = CountryPicker.newInstance("Select Country");
+                picker.show(getSupportFragmentManager(), "COUNTRY_PICKER");
+                picker.setListener(new CountryPickerListener() {
+                    @Override
+                    public void onSelectCountry(String name, String code, String dialCode, int flagDrawableResID) {
+                        picker.dismiss();
+                        selectCountry.setCompoundDrawablesWithIntrinsicBounds(flagDrawableResID, 0, 0, 0);
+                        selectCountry.setText(name);
+                        // Implement your code here
+                    }
+                });
+            }
+        });
 
         spinnerArray = new ArrayList<>();
         spinnerArray.add("Male");
@@ -164,22 +182,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         fbFirstName = LoginActivity.fbFirstName;
         fbLastName = LoginActivity.fbLastName;
 
-        selectCountry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                picker = CountryPicker.getInstance("Select Country", new CountryPickerListener() {
-                    @Override
-                    public void onSelectCountry(String name, String code) {
-                        picker.dismiss();
-                        selectCountry.setText(name);
-                        DialogFragment dialogFragment =
-                                (DialogFragment) getSupportFragmentManager().findFragmentByTag("CountryPicker");
-                        dialogFragment.dismiss();
-                    }
-                });
-                picker.show(getSupportFragmentManager(), "CountryPicker");
-            }
-        });
 
 
         addImage.setOnClickListener(new View.OnClickListener() {
