@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,10 +37,13 @@ public class ProfileFragment extends Fragment {
     TextView username;
     TextView gender;
     TextView birthday;
-    private String googleUser_id;
+    private String uid;
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -49,16 +55,16 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        googleUser_id = LoginActivity.gUserId;
 
         mDatabase = FirebaseDatabase.getInstance();
-
-        mReference = mDatabase.getReference().child("Users").child(googleUser_id);
+        uid = MainPage.uid;
+        mReference = mDatabase.getReference().child("Users").child(uid);
 
         profile = (ImageView) view.findViewById(R.id.get_profile_image_id);
         username = (TextView) view.findViewById(R.id.username_id);
         gender = (TextView) view.findViewById(R.id.gender_id);
         birthday = (TextView) view.findViewById(R.id.birthday_id);
+
 
         mReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -87,7 +93,6 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
-
-
-
 }
+
+
