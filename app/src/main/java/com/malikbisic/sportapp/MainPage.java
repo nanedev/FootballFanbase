@@ -90,8 +90,8 @@ public class MainPage extends AppCompatActivity
 
              FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
-            manager.setCustomAnimations(R.animator.fragment_slide_in_left, R.animator.fragment_slide_out_left,
-                    R.animator.fragment_slide_out_right, R.animator.fragment_slide_in_right).replace(R.id.relativeMainPage, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.relativeMainPage, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
         } else if (id == R.id.nav_message) {
 
         } else if (id == R.id.nav_notifications) {
