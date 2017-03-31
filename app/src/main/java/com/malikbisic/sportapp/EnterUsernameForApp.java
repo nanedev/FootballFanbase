@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.util.DiffUtil;
@@ -35,6 +36,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.juanpabloprado.countrypicker.CountryPicker;
+import com.juanpabloprado.countrypicker.CountryPickerListener;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -71,6 +74,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     private TextView usernameErrorTxt;
     private TextView birthdayErrorTxt;
+    private EditText selectCountry;
 
     private String googleUser_id;
     private String googleFirstName;
@@ -93,6 +97,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private StorageReference mFilePath;
     private FirebaseStorage mStorage;
     private Uri resultUri = null;
+    CountryPicker picker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +110,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
         usernameList = new ArrayList<>();
         contunue = (Button) findViewById(R.id.continueToMainPage);
+        selectCountry = (EditText) findViewById(R.id.countrySelect);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mDialog = new ProgressDialog(this);
@@ -157,6 +163,23 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         loginUserid = LoginActivity.userIdLogin;
         fbFirstName = LoginActivity.fbFirstName;
         fbLastName = LoginActivity.fbLastName;
+
+        selectCountry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                picker = CountryPicker.getInstance("Select Country", new CountryPickerListener() {
+                    @Override
+                    public void onSelectCountry(String name, String code) {
+                        picker.dismiss();
+                        selectCountry.setText(name);
+                        DialogFragment dialogFragment =
+                                (DialogFragment) getSupportFragmentManager().findFragmentByTag("CountryPicker");
+                        dialogFragment.dismiss();
+                    }
+                });
+                picker.show(getSupportFragmentManager(), "CountryPicker");
+            }
+        });
 
 
         addImage.setOnClickListener(new View.OnClickListener() {

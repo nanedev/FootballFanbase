@@ -135,6 +135,33 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Country:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/countrySelect"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_marginRight="10dp"
+                android:hint="Tap" />
+
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/continueToMainPage"
             android:layout_width="match_parent"
