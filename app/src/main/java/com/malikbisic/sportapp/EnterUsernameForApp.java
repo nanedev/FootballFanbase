@@ -425,7 +425,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                 StorageReference countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
 
-                UploadTask uploadTask = (UploadTask) countryFlag.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                UploadTask uploadTask = countryFlag.putBytes(data);
+                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
