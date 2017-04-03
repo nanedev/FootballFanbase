@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +34,14 @@ import java.util.Map;
  */
 public class ProfileFragment extends Fragment {
 
-    ImageView profile;
-    TextView username;
-    TextView gender;
-    TextView birthday;
+    private ImageView profile;
+    private TextView username;
+    private TextView gender;
+    private TextView birthday;
+    private TextView country;
+    private EditText club;
+    private EditText player;
+
     private String uid;
 
     private FirebaseDatabase mDatabase;
@@ -64,6 +69,9 @@ public class ProfileFragment extends Fragment {
         username = (TextView) view.findViewById(R.id.username_id);
         gender = (TextView) view.findViewById(R.id.gender_id);
         birthday = (TextView) view.findViewById(R.id.birthday_id);
+        country = (TextView) view.findViewById(R.id.countryId);
+        club = (EditText) view.findViewById(R.id.footballClubId);
+        player = (EditText) view.findViewById(R.id.footballPlayerId);
 
 
         mReference.addValueEventListener(new ValueEventListener() {
