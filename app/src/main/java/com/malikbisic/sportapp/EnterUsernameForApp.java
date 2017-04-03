@@ -450,6 +450,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                         Log.e("flagError", e.getMessage());
 
+                        //netp
+
                     }
                 });
 

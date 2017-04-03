@@ -56,7 +56,7 @@ public class ProfileFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -89,6 +89,9 @@ public class ProfileFragment extends Fragment {
                 username.setText(String.valueOf(value.get("username")));
                 gender.setText(String.valueOf(value.get("gender")));
                 birthday.setText(String.valueOf(value.get("date")));
+
+                //String flag = String.valueOf(value.get("flag"));
+               // country.setText(String.valueOf(value.get("Country")));
 
 
             }
