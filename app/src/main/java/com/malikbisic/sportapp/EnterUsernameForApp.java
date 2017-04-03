@@ -378,30 +378,57 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         final String username = enterUsername.getText().toString().trim();
         final String userDate = birthday.getText().toString().trim();
 
+        StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
         mDialog.show();
 
-        StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        final byte[] data = baos.toByteArray();
 
         imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                mReference = mDatabase.getReference().child("Users").child(googleUser_id);
-                mReference.child("name").setValue(googleFirstName);
-                mReference.child("surname").setValue(googleLastName);
-                mReference.child("username").setValue(username);
-                mReference.child("date").setValue(userDate);
-                mReference.child("gender").setValue(gender);
-                mReference.child("profileImage").setValue(downloadUrl.toString());
+                StorageReference countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
 
-                ParseObject object = new ParseObject("Usernames");
-                object.put("username", username);
-                object.saveInBackground();
-                mDialog.dismiss();
+                UploadTask uploadTask = countryFlag.putBytes(data);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
+
+                        mReference = mDatabase.getReference().child("Users").child(uid);
+                        mReference.child("username").setValue(username);
+                        mReference.child("date").setValue(userDate);
+                        mReference.child("gender").setValue(gender);
+                        mReference.child("profileImage").setValue(downloadUrl.toString());
+                        mReference.child("country").setValue(selectCountry.getText().toString().trim());
+                        mReference.child("flag").setValue(downloadFlagUri.toString());
+
+
+                        ParseObject object = new ParseObject("Usernames");
+                        object.put("username", username);
+                        object.saveInBackground();
+                        mDialog.dismiss();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Log.e("flagError", e.getMessage());
+
+                        //netp
+
+                    }
+                });
+
+
+
             }
         });
+
 
     }
 
@@ -431,12 +458,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
 
-                        mReference = mDatabase.getReference().child("Users").child(loginUserid);
+                        mReference = mDatabase.getReference().child("Users").child(uid);
                         mReference.child("username").setValue(username);
                         mReference.child("date").setValue(userDate);
                         mReference.child("gender").setValue(gender);
                         mReference.child("profileImage").setValue(downloadUrl.toString());
-                        mReference.child("Country").setValue(selectCountry.getText().toString().trim());
+                        mReference.child("country").setValue(selectCountry.getText().toString().trim());
                         mReference.child("flag").setValue(downloadFlagUri.toString());
 
 
@@ -472,24 +499,51 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
         mDialog.show();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        final byte[] data = baos.toByteArray();
+
         imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                final Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                StorageReference countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
+
+                UploadTask uploadTask = countryFlag.putBytes(data);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
+
+                        mReference = mDatabase.getReference().child("Users").child(uid);
+                        mReference.child("username").setValue(username);
+                        mReference.child("date").setValue(userDate);
+                        mReference.child("gender").setValue(gender);
+                        mReference.child("profileImage").setValue(downloadUrl.toString());
+                        mReference.child("country").setValue(selectCountry.getText().toString().trim());
+                        mReference.child("flag").setValue(downloadFlagUri.toString());
 
 
-                mReference = mDatabase.getReference().child("Users").child(uid);
-                mReference.child("name").setValue(fbFirstName);
-                mReference.child("surname").setValue(fbLastName);
-                mReference.child("username").setValue(username);
-                mReference.child("date").setValue(userDate);
-                mReference.child("gender").setValue(gender);
-                mReference.child("profileImage").setValue(downloadUrl.toString());
+                        ParseObject object = new ParseObject("Usernames");
+                        object.put("username", username);
+                        object.saveInBackground();
+                        mDialog.dismiss();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
 
-                ParseObject object = new ParseObject("Usernames");
-                object.put("username", username);
-                object.saveInBackground();
-                mDialog.dismiss();
+                        Log.e("flagError", e.getMessage());
+
+                        //netp
+
+                    }
+                });
+
+
+
             }
         });
     }
