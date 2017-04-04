@@ -76,7 +76,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private EditText player;
     private ArrayList<String> usernameList;
     private RelativeLayout layout;
-    private Uri resultUri = null;
+    private Uri resultUri;
     private boolean hasSetProfileImage = false;
     private int selectYear;
     private int currentYear;
@@ -233,7 +233,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             CropImage.activity(imageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setCropShape(CropImageView.CropShape.OVAL)
-                    .start((Activity) this.getContext());
+                    .start(getContext(), this);
 
         }
 
@@ -247,6 +247,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 hasSetProfileImage = true;
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
+                Log.i("errorCrop", String.valueOf(error));
             }
         }
     }
@@ -303,9 +304,28 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             } else if (item.getTitle().equals("Save")) {
 
 
+
+
                 if (valid()){
                     item.setTitle("Edit Profile");
                     item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                    username.setFocusable(false);
+                    username.setEnabled(false);
+                    username.setClickable(false);
+                    username.setCursorVisible(false);
+                    username.setFocusableInTouchMode(false);;
+
+                    birthday.setClickable(false);
+
+                    country.setClickable(false);
+
+                    club.setFocusable(false);
+                    club.setEnabled(false);
+                    club.setClickable(false);
+                    club.setCursorVisible(false);
+                    club.setFocusableInTouchMode(false);
+                    player.setFocusable(false);
+
                     final String usernameString = username.getText().toString().trim();
                     final String userDate = birthday.getText().toString().trim();
                     final String favoriteClubString = club.getText().toString().trim();
@@ -358,23 +378,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                             });
                         }
                     });
-                    username.setFocusable(false);
-                    username.setEnabled(false);
-                    username.setClickable(false);
-                    username.setCursorVisible(false);
-                    username.setFocusableInTouchMode(false);;
-
-                    birthday.setClickable(false);
-
-                    country.setClickable(false);
-
-                    club.setFocusable(false);
-                    club.setEnabled(false);
-                    club.setClickable(false);
-                    club.setCursorVisible(false);
-                    club.setFocusableInTouchMode(false);
-                    player.setFocusable(false);
-
 
                 }
 
