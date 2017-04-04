@@ -1,10 +1,14 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profile_fragment_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.malikbisic.sportapp.ProfileFragment">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,6 +16,7 @@
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/relaiveLayoutBackgroudnProfile"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
@@ -33,27 +38,36 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/username_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Username"
+                android:textCursorDrawable="@color/black"
+                android:textSize="18sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/username_id"
+                <ImageView
+                    android:id="@+id/flagImageView"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:text="Username"
-                    android:textSize="18sp" />
+                    android:layout_height="37dp"
+                    android:layout_weight="0.12"
+                    android:background="@color/primary"/>
 
                 <TextView
                     android:id="@+id/countryId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:layout_marginTop="10dp"
-                    android:layout_weight="1"
+                    android:layout_weight="0.89"
                     android:text="Country"
                     android:textSize="18sp" />
 
@@ -61,7 +75,7 @@
 
             <TextView
                 android:id="@+id/gender_id"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
@@ -70,7 +84,7 @@
 
             <TextView
                 android:id="@+id/birthday_id"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
@@ -86,7 +100,7 @@
                 android:text="What is your favourite football club?"
                 android:textSize="18sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/footballClubId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,8 +108,7 @@
                 android:layout_marginTop="3dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Club"
-                android:inputType="textPersonName" />
+                android:hint="Club" />
 
             <TextView
                 android:id="@+id/textView14"
@@ -123,3 +136,5 @@
     </LinearLayout>
 
 </ScrollView>
+
+</RelativeLayout>
