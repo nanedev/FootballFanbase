@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
+
     private EditText enterUsername;
     private Button continueBtn;
     private FirebaseAuth mAuth;

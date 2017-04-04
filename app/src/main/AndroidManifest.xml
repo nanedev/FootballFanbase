@@ -58,6 +58,7 @@
         <activity
             android:name=".MainPage"
             android:label="@string/title_activity_main_page"
+            android:windowSoftInputMode="stateVisible|adjustPan"
             android:theme="@style/AppTheme.Dark" />
     </application>
 
