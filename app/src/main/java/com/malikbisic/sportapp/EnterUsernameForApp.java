@@ -192,9 +192,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         googleFirstName = LoginActivity.gFirstName;
         googleLastName = LoginActivity.gLastName;
         loginUserid = LoginActivity.userIdLogin;
-        fbFirstName = LoginActivity.fbFirstName;
-        fbLastName = LoginActivity.fbLastName;
-
 
 
         addImage.setOnClickListener(new View.OnClickListener() {
@@ -317,9 +314,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     loginEnterDatabase();
                 }
 
-                if (LoginActivity.checkFacebookSignIn) {
-                    fbEnterDatabase();
-                }
 
             } else {
                 mDialog.dismiss();

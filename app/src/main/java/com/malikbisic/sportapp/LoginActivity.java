@@ -15,18 +15,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.Profile;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.firebase.ui.auth.ui.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -38,29 +28,23 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
 
-import java.util.Arrays;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "LoginActivity";
     private GoogleApiClient mGoogleApiClient;
-
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReferenceUsers;
@@ -72,29 +56,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView passwordError;
     private TextView mForgotPassword;
     private ImageButton googleSignIn;
-    private ImageButton facebookLogin;
     private String user_id;
     private String email;
     private String password;
-    private String emailAddress;
+
     private ProgressDialog mDialog;
     static String gFirstName;
     static String gLastName;
     static String gUserId;
-
-    static String fbFirstName;
-
-    static String fbLastName;
-
     static String userIdLogin;
-
     static boolean checkgoogleSignIn = false;
-    static boolean checkFacebookSignIn = false;
     static boolean checkLoginPressed = false;
-
-
-    CallbackManager callbackManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +80,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mSignUpLink = (TextView) findViewById(R.id.link_signup);
         googleSignIn = (ImageButton) findViewById(R.id.google_login);
-        facebookLogin = (ImageButton) findViewById(R.id.fb_login);
         emailError = (TextView) findViewById(R.id.emailInfoErrorLogin);
         passwordError = (TextView) findViewById(R.id.passwordInfoErrorLogin);
         mForgotPassword = (TextView) findViewById(R.id.forgot_password);
@@ -123,45 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mReferenceUsers = mDatabase.getReference("Users");
         mReferenceUsers.keepSynced(true);
 
-
-        callbackManager = CallbackManager.Factory.create();
-
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-
-                handleFacebookAccessToken(loginResult.getAccessToken());
-                checkUserExists();
-
-
-            Profile fb = Profile.getCurrentProfile();
-
-                fbFirstName = fb.getFirstName();
-                fbLastName = fb.getLastName();
-
-                Log.i("fbname", fbFirstName);
-                Log.i("fnsurname", fbLastName);
-
-
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-
-                Log.e("Facebook error", error.getMessage());
-
-            }
-        });
-
         mAuth = FirebaseAuth.getInstance();
-
-
-
 
         //GOOGLE SIGN IN
 
@@ -178,18 +111,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 }).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-
-        facebookLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                checkgoogleSignIn = false;
-                checkFacebookSignIn = true;
-                checkLoginPressed = false;
-                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "email"));
-            }
-        });
 
 
     }
@@ -210,10 +131,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             GoogleSignInAccount acct = result.getSignInAccount();
 
-
-            Uri personPhoto = acct.getPhotoUrl();
-
-
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
@@ -225,12 +142,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
 
-
-        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -266,33 +180,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    private void handleFacebookAccessToken(final AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-
-        final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
 
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
-
-
-                            String error = String.valueOf(task.getException().getMessage());
-
-                            if (error.equals(getString(R.string.error_facebook_account_already_exists))) {
-                                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
-                                mDialog.dismiss();
-                            }
-                        }
-
-                        // ...
-                    }
-                });
-    }
 
     private void checkLogin() {
         email = mEmailText.getText().toString().trim();
@@ -394,7 +283,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         if (v.getId() == R.id.btn_login) {
             checkgoogleSignIn = false;
-            checkFacebookSignIn = false;
             checkLoginPressed = true;
             checkLogin();
         } else if (v.getId() == R.id.link_signup) {
@@ -409,7 +297,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             LoginManager.getInstance().logOut();
             checkgoogleSignIn = true;
             checkLoginPressed = false;
-            checkFacebookSignIn = false;
+
             signIn();
 
         }

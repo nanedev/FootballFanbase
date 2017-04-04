@@ -1,50 +1,27 @@
 package com.malikbisic.sportapp;
 
-import android.app.DatePickerDialog;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.icu.text.TimeZoneFormat;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import android.widget.DatePicker;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
 
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
@@ -54,24 +31,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText mEmailText;
     private EditText mPasswordText;
     private EditText mReEnterPasswordText;
-
     private Button mSignupButton;
     private TextView mLoginLink;
-    private TextView errorInfo, errorName, errorSurname, errorEmail, errorPassword, errorRePassword, errorNick;
+    private TextView errorName, errorSurname, errorEmail, errorPassword, errorRePassword;
     private String userName;
-
     private String userEmail;
     private String userPassword;
     private String userSurname;
     static String user_id;
     static String name;
     static String surname;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
+    private DatabaseReference mReferenceUsers;
     static boolean checkLoginPressed = false;
 
     private LinearLayout layout;
@@ -89,26 +62,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mNameText = (EditText) findViewById(R.id.input_name);
         mSurnameText = (EditText) findViewById(R.id.input_surname);
         mEmailText = (EditText) findViewById(R.id.input_email);
-
         mPasswordText = (EditText) findViewById(R.id.input_password);
         mReEnterPasswordText = (EditText) findViewById(R.id.input_reEnterPassword);
         mSignupButton = (Button) findViewById(R.id.btn_signup);
-
-
         errorName = (TextView) findViewById(R.id.input_nameInfoError);
         errorSurname = (TextView) findViewById(R.id.input_surnameInfoError);
         errorEmail = (TextView) findViewById(R.id.input_emailInfoError);
-
         errorPassword = (TextView) findViewById(R.id.input_passwordInfoError);
         errorRePassword = (TextView) findViewById(R.id.input_rePasswordInfoError);
-
         mLoginLink = (TextView) findViewById(R.id.link_login);
         layout = (LinearLayout) findViewById(R.id.registerLayout);
-
         layout.setOnClickListener(this);
-
         mAuth = FirebaseAuth.getInstance();
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -130,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 name = mNameText.getText().toString().trim();
                 surname = mSurnameText.getText().toString().trim();
                 LoginActivity.checkgoogleSignIn = false;
-                LoginActivity.checkFacebookSignIn = false;
+
                 checkLoginPressed = true;
                 signup();
             }
@@ -166,13 +131,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         progressDialog.show();
 
         registerUser();
+
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
+
                         onSignupSuccess();
-                        // onSignupFailed();
+
                         progressDialog.dismiss();
                     }
                 }, 3000);
@@ -180,26 +145,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public void onSignupSuccess() {
         mSignupButton.setEnabled(true);
-
         setResult(RESULT_OK, null);
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        // finish();
     }
 
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
         mSignupButton.setEnabled(true);
     }
 
     public boolean validate() {
         valid = true;
-
         name = mNameText.getText().toString();
         surname = mSurnameText.getText().toString();
-        String email = mEmailText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
 
@@ -224,7 +184,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             errorSurname.setText("");
             errorSurname.setVisibility(View.INVISIBLE);
         }
-
 
         if (password.isEmpty()) {
             errorPassword.setText("Field can not be empty");
@@ -264,8 +223,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (view.getId() == R.id.registerLayout) {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        } else if (view.getId() == R.id.btn_signup) {
-
         } else if (view.getId() == R.id.link_login) {
             Intent goToLogin = new Intent(RegisterActivity.this, LoginActivity.class);
             goToLogin.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -309,9 +266,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         if (task.isSuccessful()) {
 
                             user_id = mAuth.getCurrentUser().getUid();
-                            mReference = mDatabase.getReference().child("Users").child(user_id);
-                            mReference.child("name").setValue(userName);
-                            mReference.child("surname").setValue(userSurname);
+                            mReferenceUsers = mDatabase.getReference().child("Users").child(user_id);
+                            mReferenceUsers.child("name").setValue(userName);
+                            mReferenceUsers.child("surname").setValue(userSurname);
 
                         }
 
@@ -321,13 +278,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
+
                     errorEmail.setText(e.getMessage());
                     errorEmail.setVisibility(View.VISIBLE);
-                    valid = false;
+                    onSignupFailed();
                     mEmailText.requestFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mEmailText, InputMethodManager.SHOW_IMPLICIT);
+
                     progressDialog.dismiss();
+
                 }
             });
         }
