@@ -49,14 +49,12 @@ import java.util.Locale;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
     private EditText enterUsername;
-    private Button contunueBtn;
+    private Button continueBtn;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
-    private String value;
     private boolean valid = true;
-
     private Spinner genderItems;
     private List<String> spinnerArray;
     private ArrayAdapter<String> adapter;
@@ -66,16 +64,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private Calendar minAdultAge;
     private ImageView addImage;
     private EditText favoriteClub;
-
     private TextView usernameErrorTxt;
     private TextView birthdayErrorTxt;
     private EditText selectCountry;
-
-    private String googleUser_id;
-    private String googleFirstName;
-    private String googleLastName;
+    String googleUser_id;
+    String googleFirstName;
+    String googleLastName;
     private String gender;
-    private String loginUserid;
+    String loginUserid;
 
     private ProgressDialog mDialog;
 
@@ -105,7 +101,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
         favoriteClub = (EditText) findViewById(R.id.favoriteClubEnterId);
         usernameList = new ArrayList<>();
-        contunueBtn = (Button) findViewById(R.id.continueToMainPage);
+        continueBtn = (Button) findViewById(R.id.continueToMainPage);
         selectCountry = (EditText) findViewById(R.id.countrySelect);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
@@ -170,7 +166,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         genderItems.setAdapter(adapter);
 
-        contunueBtn.setOnClickListener(this);
+        continueBtn.setOnClickListener(this);
         birthday.setOnClickListener(this);
 
         minAdultAge = new GregorianCalendar();
@@ -291,7 +287,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (v.getId() == R.id.continueToMainPage) {
 
             if (valid()) {
-                if (LoginActivity.checkgoogleSignIn) {
+                if (LoginActivity.checkGoogleSignIn) {
                     googleEnterDatabase();
                     Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
                     startActivity(intent);

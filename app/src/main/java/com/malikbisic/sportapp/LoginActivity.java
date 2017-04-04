@@ -2,7 +2,7 @@ package com.malikbisic.sportapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
+
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.facebook.CallbackManager;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -59,13 +58,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String user_id;
     private String email;
     private String password;
-
     private ProgressDialog mDialog;
     static String gFirstName;
     static String gLastName;
     static String gUserId;
     static String userIdLogin;
-    static boolean checkgoogleSignIn = false;
+    static boolean checkGoogleSignIn = false;
     static boolean checkLoginPressed = false;
 
     @Override
@@ -282,7 +280,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_login) {
-            checkgoogleSignIn = false;
+            checkGoogleSignIn = false;
             checkLoginPressed = true;
             checkLogin();
         } else if (v.getId() == R.id.link_signup) {
@@ -295,7 +293,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else if (v.getId() == R.id.google_login) {
 
             LoginManager.getInstance().logOut();
-            checkgoogleSignIn = true;
+            checkGoogleSignIn = true;
             checkLoginPressed = false;
 
             signIn();
