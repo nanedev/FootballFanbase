@@ -3,16 +3,12 @@ package com.malikbisic.sportapp;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.util.DiffUtil;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -25,23 +21,15 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import com.mukesh.countrypicker.fragments.CountryPicker;
 import com.mukesh.countrypicker.interfaces.CountryPickerListener;
 import com.parse.FindCallback;
@@ -51,9 +39,7 @@ import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,14 +49,14 @@ import java.util.Locale;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
     private EditText enterUsername;
-    private Button contunue;
+    private Button contunueBtn;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
     private String value;
     private boolean valid = true;
-    private String username;
+
     private Spinner genderItems;
     private List<String> spinnerArray;
     private ArrayAdapter<String> adapter;
@@ -79,6 +65,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private int realYear;
     private Calendar minAdultAge;
     private ImageView addImage;
+    private EditText favoriteClub;
 
     private TextView usernameErrorTxt;
     private TextView birthdayErrorTxt;
@@ -89,8 +76,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String googleLastName;
     private String gender;
     private String loginUserid;
-    private String nameRegister;
-    private String surnameRegister;
+
     private ProgressDialog mDialog;
 
     private String fbFirstName;
@@ -117,8 +103,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         genderItems = (Spinner) findViewById(R.id.genderSetUp);
         usernameErrorTxt = (TextView) findViewById(R.id.input_usernameError);
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
+        favoriteClub = (EditText) findViewById(R.id.favoriteClubEnterId);
         usernameList = new ArrayList<>();
-        contunue = (Button) findViewById(R.id.continueToMainPage);
+        contunueBtn = (Button) findViewById(R.id.continueToMainPage);
         selectCountry = (EditText) findViewById(R.id.countrySelect);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
@@ -183,7 +170,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         genderItems.setAdapter(adapter);
 
-        contunue.setOnClickListener(this);
+        contunueBtn.setOnClickListener(this);
         birthday.setOnClickListener(this);
 
         minAdultAge = new GregorianCalendar();
@@ -371,6 +358,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         final String username = enterUsername.getText().toString().trim();
         final String userDate = birthday.getText().toString().trim();
+        final String favoriteClubString = favoriteClub.getText().toString().trim();
+        final String countryString = selectCountry.getText().toString().trim();
 
         StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
@@ -398,8 +387,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         mReference.child("date").setValue(userDate);
                         mReference.child("gender").setValue(gender);
                         mReference.child("profileImage").setValue(downloadUrl.toString());
-                        mReference.child("country").setValue(selectCountry.getText().toString().trim());
+                        mReference.child("country").setValue(countryString);
                         mReference.child("flag").setValue(downloadFlagUri.toString());
+                        mReference.child("favoriteClub").setValue(favoriteClubString);
 
 
                         ParseObject object = new ParseObject("Usernames");
@@ -411,15 +401,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onFailure(@NonNull Exception e) {
 
-                        Log.e("flagError", e.getMessage());
-
-                        //netp
+                        Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
                     }
                 });
-
-
-
             }
         });
 
@@ -429,66 +414,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     public void loginEnterDatabase() {
         final String username = enterUsername.getText().toString().trim();
         final String userDate = birthday.getText().toString().trim();
-
-
-        StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-        mDialog.setMessage("Registering...");
-        mDialog.show();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        final byte[] data = baos.toByteArray();
-
-        imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                final Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                StorageReference countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
-
-                UploadTask uploadTask = countryFlag.putBytes(data);
-                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
-
-                        mReference = mDatabase.getReference().child("Users").child(uid);
-                        mReference.child("username").setValue(username);
-                        mReference.child("date").setValue(userDate);
-                        mReference.child("gender").setValue(gender);
-                        mReference.child("profileImage").setValue(downloadUrl.toString());
-                        mReference.child("country").setValue(selectCountry.getText().toString().trim());
-                        mReference.child("flag").setValue(downloadFlagUri.toString());
-
-
-                        ParseObject object = new ParseObject("Usernames");
-                        object.put("username", username);
-                        object.saveInBackground();
-                        mDialog.dismiss();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                        Log.e("flagError", e.getMessage());
-
-                        //netp
-
-                    }
-                });
-
-
-
-            }
-        });
-
-    }
-
-    public void fbEnterDatabase() {
-
-        final String username = enterUsername.getText().toString().trim();
-        final String userDate = birthday.getText().toString().trim();
-
+        final String favoriteClubString = favoriteClub.getText().toString().trim();
+        final String countryString = selectCountry.getText().toString().trim();
 
         StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
@@ -516,8 +443,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         mReference.child("date").setValue(userDate);
                         mReference.child("gender").setValue(gender);
                         mReference.child("profileImage").setValue(downloadUrl.toString());
-                        mReference.child("country").setValue(selectCountry.getText().toString().trim());
+                        mReference.child("country").setValue(countryString);
                         mReference.child("flag").setValue(downloadFlagUri.toString());
+                        mReference.child("favoriteClub").setValue(favoriteClub.getText().toString().trim());
 
 
                         ParseObject object = new ParseObject("Usernames");
@@ -529,17 +457,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onFailure(@NonNull Exception e) {
 
-                        Log.e("flagError", e.getMessage());
-
-                        //netp
+                        Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
                     }
                 });
 
-
-
             }
         });
+
     }
 
     @Override

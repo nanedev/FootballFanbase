@@ -45,7 +45,7 @@ public class ProfileFragment extends Fragment {
     private TextView gender;
     private TextView birthday;
     private TextView country;
-    private EditText club;
+    private TextView club;
     private EditText player;
     private RelativeLayout layout;
     private Uri resultUri = null;
@@ -83,7 +83,7 @@ public class ProfileFragment extends Fragment {
         gender = (TextView) view.findViewById(R.id.gender_id);
         birthday = (TextView) view.findViewById(R.id.birthday_id);
         country = (TextView) view.findViewById(R.id.countryId);
-        club = (EditText) view.findViewById(R.id.footballClubId);
+        club = (TextView) view.findViewById(R.id.footballClubId);
         player = (EditText) view.findViewById(R.id.footballPlayerId);
         layout = (RelativeLayout) view.findViewById(R.id.relaiveLayoutBackgroudnProfile);
 
