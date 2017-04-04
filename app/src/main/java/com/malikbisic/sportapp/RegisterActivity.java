@@ -94,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(View v) {
                 name = mNameText.getText().toString().trim();
                 surname = mSurnameText.getText().toString().trim();
-                LoginActivity.checkgoogleSignIn = false;
+                LoginActivity.checkGoogleSignIn = false;
 
                 checkLoginPressed = true;
                 signup();

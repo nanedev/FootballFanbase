@@ -119,16 +119,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     uid = user.getUid();
-                    String name = user.getDisplayName();
-                    String provider = user.getProviderId();
-                    String email = user.getEmail();
-
-
-                    Log.i("proba", uid);
-                    // Log.i("proba", name);
-                    //Log.i("proba", provider);
-                    Log.i("proba", email);
-                } else {
 
                 }
 
@@ -138,7 +128,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         selectCountry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                picker = picker = CountryPicker.newInstance("Select Country");
+                picker = CountryPicker.newInstance("Select Country");
                 picker.show(getSupportFragmentManager(), "COUNTRY_PICKER");
                 picker.setListener(new CountryPickerListener() {
                     @Override
@@ -149,8 +139,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         selectCountry.setCompoundDrawablesWithIntrinsicBounds(imageCountry, 0, 0, 0);
                         selectCountry.setText(name);
                         // Implement your code here
+                        BitmapFactory.Options dimensions = new BitmapFactory.Options();
 
-                        bitmap = BitmapFactory.decodeResource(getResources(), imageCountry);
+                        bitmap = BitmapFactory.decodeResource(getResources(), imageCountry, dimensions);
+
 
 
                     }
@@ -163,19 +155,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         spinnerArray.add("Female");
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         genderItems.setAdapter(adapter);
-
         continueBtn.setOnClickListener(this);
         birthday.setOnClickListener(this);
-
         minAdultAge = new GregorianCalendar();
-
         googleUser_id = LoginActivity.gUserId;
         googleFirstName = LoginActivity.gFirstName;
         googleLastName = LoginActivity.gLastName;
         loginUserid = LoginActivity.userIdLogin;
-
 
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,7 +264,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         String myFormat = "dd/MMMM/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
-
         birthday.setText(sdf.format(myCalendar.getTime()));
     }
 
