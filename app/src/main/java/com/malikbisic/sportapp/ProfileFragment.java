@@ -188,6 +188,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
 
 
+
+
+
+
+
+
         return view;
 
     }

@@ -58,8 +58,9 @@
         <activity
             android:name=".MainPage"
             android:label="@string/title_activity_main_page"
-            android:windowSoftInputMode="stateVisible|adjustPan"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity android:name=".EditProfileActivity"></activity>
     </application>
 
 </manifest>
