@@ -349,7 +349,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mDialog.show();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        bitmap.setHasAlpha(true);
         final byte[] data = baos.toByteArray();
 
         imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -405,7 +406,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mDialog.show();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        bitmap.setHasAlpha(true);
         final byte[] data = baos.toByteArray();
 
         imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

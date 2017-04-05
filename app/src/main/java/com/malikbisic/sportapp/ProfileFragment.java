@@ -172,7 +172,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
                 String flagImageFirebase = String.valueOf(value.get("flag"));
 
-                Picasso.with(getActivity())
+                Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
                         .into(flag);
                 country.setText(String.valueOf(value.get("country")));
@@ -323,7 +323,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 username.setClickable(true);
                 username.setCursorVisible(true);
                 username.setFocusableInTouchMode(true);
-                ;
+
                 username.setInputType(InputType.TYPE_CLASS_TEXT);
                 username.requestFocus();
 
@@ -336,7 +336,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 club.setClickable(true);
                 club.setCursorVisible(true);
                 club.setFocusableInTouchMode(true);
-                ;
                 club.setInputType(InputType.TYPE_CLASS_TEXT);
                 club.requestFocus();
 
