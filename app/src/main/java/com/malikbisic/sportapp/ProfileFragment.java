@@ -1,13 +1,16 @@
 package com.malikbisic.sportapp;
 
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -41,7 +44,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mukesh.countrypicker.fragments.CountryPicker;
 import com.mukesh.countrypicker.interfaces.CountryPickerListener;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -51,6 +60,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -60,7 +70,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileFragment extends Fragment implements View.OnClickListener{
+public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private ImageView profile;
     private ImageView flag;
@@ -87,6 +97,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     CountryPicker picker;
     private StorageReference mFilePath;
     private ProgressDialog dialog;
+    private BitmapDrawable obwer;
 
 
     private String uid;
@@ -155,7 +166,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 birthday.setText(String.valueOf(value.get("date")));
                 club.setText(String.valueOf(value.get("favoriteClub")));
 
-                if (value.get("favoritePlayer") != null){
+                if (value.get("favoritePlayer") != null) {
                     player.setText(String.valueOf(value.get("favoritePlayer")));
                 }
 
@@ -164,15 +175,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 Picasso.with(getActivity())
                         .load(flagImageFirebase)
                         .into(flag);
-               country.setText(String.valueOf(value.get("country")));
+                country.setText(String.valueOf(value.get("country")));
 
-                if (country.getText().toString().equals("Bosnia and Herzegovina")){
-                    layout.setBackgroundResource(R.drawable.bihflag);
-                } else if (country.getText().toString().equals("Belgium")) {
-                    layout.setBackgroundResource(R.drawable.belgium);
-                }
-
-
+                backgroundImage();
             }
 
             @Override
@@ -181,7 +186,41 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             }
         });
 
+
+
         return view;
+
+    }
+
+    public void backgroundImage() {
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
+        query.whereEqualTo("country", country.getText().toString().trim());
+        Log.i("countr<", String.valueOf(country.getText()));
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null)
+                    for (ParseObject object : objects) {
+
+                        ParseFile file = (ParseFile) object.get("flag");
+                        file.getDataInBackground(new GetDataCallback() {
+                            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+                                if (e == null) {
+
+
+                                    Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                    obwer = new BitmapDrawable(getResources(), bmp1);
+                                    layout.setBackground(obwer);
+                                } else {
+                                    Log.d("test", "There was a problem downloading the data.");
+                                }
+                            }
+                        });
+                    }
+            }
+        });
 
     }
 
@@ -218,6 +257,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         birthday.setText(sdf.format(myCalendar.getTime()));
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -272,7 +312,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         //noinspection SimplifiableIfStatement
         if (id == R.id.editProfileId) {
 
-            if (item.getTitle().equals("Edit Profile")){
+            if (item.getTitle().equals("Edit Profile")) {
                 item.setTitle("Save");
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -282,7 +322,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 username.setEnabled(true);
                 username.setClickable(true);
                 username.setCursorVisible(true);
-                username.setFocusableInTouchMode(true);;
+                username.setFocusableInTouchMode(true);
+                ;
                 username.setInputType(InputType.TYPE_CLASS_TEXT);
                 username.requestFocus();
 
@@ -294,7 +335,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 club.setEnabled(true);
                 club.setClickable(true);
                 club.setCursorVisible(true);
-                club.setFocusableInTouchMode(true);;
+                club.setFocusableInTouchMode(true);
+                ;
                 club.setInputType(InputType.TYPE_CLASS_TEXT);
                 club.requestFocus();
 
@@ -304,16 +346,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             } else if (item.getTitle().equals("Save")) {
 
 
-
-
-                if (valid()){
+                if (valid()) {
                     item.setTitle("Edit Profile");
                     item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                     username.setFocusable(false);
                     username.setEnabled(false);
                     username.setClickable(false);
                     username.setCursorVisible(false);
-                    username.setFocusableInTouchMode(false);;
+                    username.setFocusableInTouchMode(false);
+                    ;
 
                     birthday.setClickable(false);
 
@@ -391,7 +432,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public boolean valid() {
         valid = true;
 
-        if (!hasSetProfileImage ) {
+        if (!hasSetProfileImage) {
             Toast.makeText(getActivity(), "You need to set profile image", Toast.LENGTH_LONG).show();
             valid = false;
         } else {
@@ -423,7 +464,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             birthdayError.setVisibility(View.GONE);
         }
 
-        if (TextUtils.isEmpty(country.getText().toString())){
+        if (TextUtils.isEmpty(country.getText().toString())) {
             countryError.setText("Field can to be blank");
             countryError.setVisibility(View.VISIBLE);
             valid = false;
@@ -433,21 +474,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }
 
 
-
         return valid;
     }
 
 
-
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.birthday_id){
+        if (view.getId() == R.id.birthday_id) {
             new DatePickerDialog(getActivity(), date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
-        } else if (view.getId() == R.id.countryId){
-            picker  = CountryPicker.newInstance("Select Country");
+        } else if (view.getId() == R.id.countryId) {
+            picker = CountryPicker.newInstance("Select Country");
             picker.show(getActivity().getSupportFragmentManager(), "COUNTRY_PICKER");
             picker.setListener(new CountryPickerListener() {
                 @Override
@@ -464,7 +503,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
                 }
             });
-        } else if (view.getId() == R.id.get_profile_image_id){
+        } else if (view.getId() == R.id.get_profile_image_id) {
 
             profile.setImageResource(0);
             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
