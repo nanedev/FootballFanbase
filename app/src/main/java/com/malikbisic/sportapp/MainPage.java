@@ -1,5 +1,10 @@
 package com.malikbisic.sportapp;
 
+import android.annotation.TargetApi;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,8 +33,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.parse.FindCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
 import java.util.Map;
 
 public class MainPage extends AppCompatActivity
@@ -42,6 +55,8 @@ public class MainPage extends AppCompatActivity
     private ImageView profile;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
+    private BitmapDrawable obwer;
+    private LinearLayout layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +67,7 @@ public class MainPage extends AppCompatActivity
         setSupportActionBar(toolbar);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
+        layout = (LinearLayout) findViewById(R.id.nav_header_main_background);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -69,20 +85,52 @@ public class MainPage extends AppCompatActivity
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                            Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
+                            if (dataSnapshot.exists()) {
+                                Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
 
 
-                            String profielImage = String.valueOf(value.get("profileImage"));
-                            Picasso.with(getApplicationContext())
-                                    .load(profielImage)
-                                    .into(profile);
-                            username.setText(String.valueOf(value.get("username")));
 
-                            FirebaseUser user = mAuth.getCurrentUser();
+                                    String profielImage = String.valueOf(value.get("profileImage"));
+                                    Picasso.with(getApplicationContext())
+                                            .load(profielImage)
+                                            .into(profile);
+                                    username.setText(String.valueOf(value.get("username")));
 
-                            email.setText(user.getEmail());
+                                    String country = String.valueOf(value.get("country"));
+                                Log.i("country", country);
+
+                                    FirebaseUser user = mAuth.getCurrentUser();
+
+                                    email.setText(user.getEmail());
+
+                                    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
+                                    query.whereEqualTo("country", country);
+                                    query.findInBackground(new FindCallback<ParseObject>() {
+                                        @Override
+                                        public void done(List<ParseObject> objects, ParseException e) {
+                                            if (e == null)
+                                                for (ParseObject object : objects) {
+
+                                                    ParseFile file = (ParseFile) object.get("flag");
+                                                    file.getDataInBackground(new GetDataCallback() {
+                                                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                                                        @Override
+                                                        public void done(byte[] data, ParseException e) {
+                                                            if (e == null) {
 
 
+                                                                Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                                                obwer = new BitmapDrawable(getResources(), bmp1);
+                                                                layout.setBackground(obwer);
+                                                            } else {
+                                                                Log.d("test", "There was a problem downloading the data.");
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                        }
+                                    });
+                                }
                         }
 
                         @Override
@@ -127,6 +175,8 @@ public class MainPage extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+
 
 
     @SuppressWarnings("StatementWithEmptyBody")
