@@ -184,7 +184,6 @@
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                android:focusable="false"
                 android:hint="Favourite Club" />
 
 
