@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -73,11 +74,15 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     String googleLastName;
     private String gender;
     String loginUserid;
+    private Uri imageUri;
+    private String username;
+    private String userDate;
+    private String favoriteClubString;
+    private String countryString;
 
     private ProgressDialog mDialog;
 
-    private String fbFirstName;
-    private String fbLastName;
+
 
     private boolean hasSetProfileImage = false;
     private EditText birthday;
@@ -87,6 +92,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     private StorageReference mFilePath;
     private FirebaseStorage mStorage;
+    private StorageReference profileImageRef;
+    private StorageReference countryFlag;
     private Uri resultUri = null;
     Bitmap bitmap;
     CountryPicker picker;
@@ -95,6 +102,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enter_username);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         enterUsername = (EditText) findViewById(R.id.usernameSetUp);
         birthday = (EditText) findViewById(R.id.dateSetUp);
         genderItems = (Spinner) findViewById(R.id.genderSetUp);
@@ -235,7 +243,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             addImage.setAlpha(254);
 
 
-            Uri imageUri = data.getData();
+            imageUri = data.getData();
             addImage.setImageURI(imageUri);
 
 
@@ -339,12 +347,13 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     public void googleEnterDatabase() {
 
-        final String username = enterUsername.getText().toString().trim();
-        final String userDate = birthday.getText().toString().trim();
-        final String favoriteClubString = favoriteClub.getText().toString().trim();
-        final String countryString = selectCountry.getText().toString().trim();
 
-        StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+        username = enterUsername.getText().toString().trim();
+        userDate = birthday.getText().toString().trim();
+        favoriteClubString = favoriteClub.getText().toString().trim();
+        countryString = selectCountry.getText().toString().trim();
+
+        profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
         mDialog.show();
 
@@ -353,12 +362,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         bitmap.setHasAlpha(true);
         final byte[] data = baos.toByteArray();
 
-        imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        profileImageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                StorageReference countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
+                countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
 
                 UploadTask uploadTask = countryFlag.putBytes(data);
                 uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -367,6 +376,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
 
                         mReference = mDatabase.getReference().child("Users").child(uid);
+                        mReference.child("name").setValue(googleFirstName);
+                        mReference.child("surname").setValue(googleLastName);
                         mReference.child("username").setValue(username);
                         mReference.child("date").setValue(userDate);
                         mReference.child("gender").setValue(gender);
@@ -396,12 +407,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     }
 
     public void loginEnterDatabase() {
-        final String username = enterUsername.getText().toString().trim();
-        final String userDate = birthday.getText().toString().trim();
-        final String favoriteClubString = favoriteClub.getText().toString().trim();
-        final String countryString = selectCountry.getText().toString().trim();
+        username = enterUsername.getText().toString().trim();
+        userDate = birthday.getText().toString().trim();
+        favoriteClubString = favoriteClub.getText().toString().trim();
+        countryString = selectCountry.getText().toString().trim();
 
-        StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+        profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
         mDialog.show();
 
@@ -410,12 +421,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         bitmap.setHasAlpha(true);
         final byte[] data = baos.toByteArray();
 
-        imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        profileImageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                StorageReference countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
+                countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
 
                 UploadTask uploadTask = countryFlag.putBytes(data);
                 uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

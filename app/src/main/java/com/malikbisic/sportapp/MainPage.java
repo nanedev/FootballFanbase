@@ -67,8 +67,6 @@ public class MainPage extends AppCompatActivity
         setSupportActionBar(toolbar);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        layout = (LinearLayout) findViewById(R.id.nav_header_main_background);
-
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -161,6 +159,7 @@ public class MainPage extends AppCompatActivity
         profile = (ImageView) header.findViewById(R.id.nav_header_profil_image);
         username = (TextView) header.findViewById(R.id.header_username);
         email = (TextView) header.findViewById(R.id.header_email);
+        layout = (LinearLayout) header.findViewById(R.id.nav_header_main_background);
 
 
 
