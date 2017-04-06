@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textColor="@color/redError"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_marginRight="50dp" />
 
         <LinearLayout
@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textColor="@color/redError"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_marginRight="50dp" />
 
         <LinearLayout
@@ -196,7 +196,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textColor="@color/redError"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_marginRight="50dp" />
 
         <Button

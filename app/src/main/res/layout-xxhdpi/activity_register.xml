@@ -39,7 +39,7 @@
                 android:id="@+id/input_nameInfoError"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:textColor="@color/redError" />
         </android.support.design.widget.TextInputLayout>
 
@@ -61,7 +61,7 @@
                 android:id="@+id/input_surnameInfoError"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:textColor="@color/redError" />
         </android.support.design.widget.TextInputLayout>
 
@@ -113,7 +113,7 @@
                 android:id="@+id/input_passwordInfoError"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:textColor="@color/redError" />
         </android.support.design.widget.TextInputLayout>
 
@@ -135,7 +135,7 @@
                 android:id="@+id/input_rePasswordInfoError"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:textColor="@color/redError" />
         </android.support.design.widget.TextInputLayout>
 

@@ -68,6 +68,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private EditText favoriteClub;
     private TextView usernameErrorTxt;
     private TextView birthdayErrorTxt;
+    private TextView clubError;
     private EditText selectCountry;
     String googleUser_id;
     String googleFirstName;
@@ -110,6 +111,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         usernameErrorTxt = (TextView) findViewById(R.id.input_usernameError);
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
         favoriteClub = (EditText) findViewById(R.id.favoriteClubEnterId);
+        clubError = (TextView) findViewById(R.id.input_cluberror);
         usernameList = new ArrayList<>();
         continueBtn = (Button) findViewById(R.id.continueToMainPage);
         selectCountry = (EditText) findViewById(R.id.countrySelect);
@@ -315,7 +317,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             valid = false;
         } else {
             usernameErrorTxt.setText("");
-            usernameErrorTxt.setVisibility(View.INVISIBLE);
+            usernameErrorTxt.setVisibility(View.GONE);
 
         }
 
@@ -326,7 +328,16 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             valid = false;
         } else {
             usernameErrorTxt.setText("");
-            birthdayErrorTxt.setVisibility(View.INVISIBLE);
+            birthdayErrorTxt.setVisibility(View.GONE);
+        }
+
+        if (favoriteClub.getText().toString().isEmpty()){
+            clubError.setText("Field can not be blank");
+            clubError.setVisibility(View.VISIBLE);
+            valid = false;
+        } else {
+            clubError.setText("");
+            clubError.setVisibility(View.GONE);
         }
 
         return valid;
