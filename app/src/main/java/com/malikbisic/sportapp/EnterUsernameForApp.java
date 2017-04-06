@@ -81,6 +81,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String countryString;
 
     private ProgressDialog mDialog;
+    private static final String TAG = "EnterUsernameForApp";
 
 
 
@@ -281,21 +282,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         if (v.getId() == R.id.continueToMainPage) {
 
-            if (valid()) {
-                if (LoginActivity.checkGoogleSignIn) {
-                    googleEnterDatabase();
-                    Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
-                    startActivity(intent);
-                }
-                if (LoginActivity.checkLoginPressed) {
-
-                    loginEnterDatabase();
-                }
-
-
-            } else {
-                mDialog.dismiss();
-            }
+            signup();
 
         } else if (v.getId() == R.id.dateSetUp) {
             new DatePickerDialog(EnterUsernameForApp.this, date, myCalendar
@@ -406,6 +393,51 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     }
 
+    public void signup() {
+        Log.d(TAG, "RegisterActivity");
+        if (!valid()) {
+
+            return;
+        }
+
+        continueBtn.setEnabled(false);
+
+        mDialog = new ProgressDialog(EnterUsernameForApp.this,
+                R.style.AppTheme_Dark_Dialog);
+        mDialog.setIndeterminate(true);
+        mDialog.setMessage("Creating Account...");
+        mDialog.show();
+
+        if (LoginActivity.checkGoogleSignIn) {
+            googleEnterDatabase();
+
+        }
+        if (LoginActivity.checkLoginPressed) {
+
+            loginEnterDatabase();
+        }
+
+
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+
+
+                            onSignupSuccess();
+
+                        mDialog.dismiss();
+                    }
+                }, 4000);
+    }
+
+    public void onSignupSuccess() {
+        continueBtn.setEnabled(true);
+        setResult(RESULT_OK, null);
+        Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
     public void loginEnterDatabase() {
         username = enterUsername.getText().toString().trim();
         userDate = birthday.getText().toString().trim();
