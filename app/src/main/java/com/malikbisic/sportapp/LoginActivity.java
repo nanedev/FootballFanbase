@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         emailError = (TextView) findViewById(R.id.emailInfoErrorLogin);
         passwordError = (TextView) findViewById(R.id.passwordInfoErrorLogin);
         mForgotPassword = (TextView) findViewById(R.id.forgot_password);
-        mDialog = new ProgressDialog(this);
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mLoginButton.setOnClickListener(this);
@@ -124,6 +124,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            mDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
+            mDialog.setIndeterminate(true);
             mDialog.setMessage("Starting sign in...");
             mDialog.show();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
