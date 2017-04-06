@@ -53,6 +53,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     boolean valid;
 
+    private String error;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,8 +138,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 new Runnable() {
                     public void run() {
 
-                        onSignupSuccess();
-
+                        if (error == null) {
+                            onSignupSuccess();
+                        }else if (error != null){
+                            onSignupFailed();
+                            error = null;
+                        }
                         progressDialog.dismiss();
                     }
                 }, 3000);
@@ -162,6 +168,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         surname = mSurnameText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
+
 
         if (name.isEmpty()) {
             errorName.setText("Field can not be empty");
@@ -278,15 +285,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
+                error = e.getMessage();
+
+
 
                     errorEmail.setText(e.getMessage());
                     errorEmail.setVisibility(View.VISIBLE);
-                    onSignupFailed();
                     mEmailText.requestFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mEmailText, InputMethodManager.SHOW_IMPLICIT);
 
                     progressDialog.dismiss();
+                    onSignupFailed();
+
+                    Log.i("email exists", e.getMessage());
 
                 }
             });
