@@ -170,6 +170,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String reEnterPassword = mReEnterPasswordText.getText().toString();
 
 
+        if (mEmailText.getText().toString().isEmpty()){
+            errorEmail.setText("Field can not be empty");
+            errorEmail.setVisibility(View.VISIBLE);
+            valid = false;
+        } else {
+            errorEmail.setText("");
+            errorEmail.setVisibility(View.GONE);
+        }
+
+
         if (name.isEmpty()) {
             errorName.setText("Field can not be empty");
             errorName.setVisibility(View.VISIBLE);
@@ -180,7 +190,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             valid = false;
         } else {
             errorName.setText("");
-            errorName.setVisibility(View.INVISIBLE);
+            errorName.setVisibility(View.GONE);
         }
 
         if (surname.isEmpty()) {
@@ -189,7 +199,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             valid = false;
         } else {
             errorSurname.setText("");
-            errorSurname.setVisibility(View.INVISIBLE);
+            errorSurname.setVisibility(View.GONE);
         }
 
         if (password.isEmpty()) {
@@ -202,7 +212,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             valid = false;
         } else {
             errorPassword.setText("");
-            errorPassword.setVisibility(View.INVISIBLE);
+            errorPassword.setVisibility(View.GONE);
         }
 
         if (reEnterPassword.isEmpty()) {
@@ -219,7 +229,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             valid = false;
         } else {
             errorRePassword.setText("");
-            errorRePassword.setVisibility(View.INVISIBLE);
+            errorRePassword.setVisibility(View.GONE);
         }
 
         return valid;
