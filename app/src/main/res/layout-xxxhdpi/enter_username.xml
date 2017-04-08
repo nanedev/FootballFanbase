@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.malikbisic.sportapp.EnterUsernameForApp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:gravity="center"
+            android:text="Please add your profile image:"
+            android:textSize="18sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/fans">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/addImage"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/profilimage" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Username:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/usernameSetUp"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/input_usernameError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/redError"
+            android:visibility="gone"
+            android:layout_marginRight="50dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Date:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/dateSetUp"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:focusable="false" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/input_BirthdayError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/redError"
+            android:visibility="gone"
+            android:layout_marginRight="50dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Gender:"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/genderSetUp"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+
+                android:layout_marginRight="10dp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Country:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/countrySelect"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:hint="Tap"
+                android:drawablePadding="5dp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Club:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/favoriteClubEnterId"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:hint="Favourite Club" />
+
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/input_cluberror"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/redError"
+            android:visibility="gone"
+            android:layout_marginRight="50dp" />
+
+        <Button
+            android:id="@+id/continueToMainPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="40dp"
+            android:text="Continue" />
+
+    </LinearLayout>
+</ScrollView>
