@@ -221,7 +221,7 @@ public class ProfileFragment extends Fragment {
     public void backgroundImage() {
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
         query.whereEqualTo("country", country.getText().toString().trim());
-        Log.i("countr<", String.valueOf(country.getText()));
+        Log.i("countr", String.valueOf(country.getText()));
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -239,8 +239,11 @@ public class ProfileFragment extends Fragment {
                                     Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
                                     obwer = new BitmapDrawable(getResources(), bmp1);
                                     layout.setBackground(obwer);
+
+
                                 } else {
                                     Log.d("test", "There was a problem downloading the data.");
+                                    Log.i("stasedesava", e.getMessage());
                                 }
                             }
                         });

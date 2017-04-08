@@ -51,28 +51,38 @@
                 android:layout_marginTop="10dp"
                 android:text="Ime Prezime"
                 android:textSize="24sp"
-                android:textColor="#000000" />
+                android:textColor="#FFFFFF" />
 
             <ImageView
                 android:id="@+id/user_countryFlag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@mipmap/aq_flag"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_above="@+id/horizontal_line"
                 android:layout_below="@+id/name_surname"
-                android:layout_toRightOf="@+id/date_textview"
-                android:layout_above="@+id/horizontal_line" />
+                android:layout_centerHorizontal="true"
+                android:layout_toLeftOf="@+id/user_country"
+                android:layout_toStartOf="@id/user_country"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+
+
+                />
 
 
             <TextView
                 android:id="@+id/user_country"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Država"
-                android:textSize="24sp"
-                android:textColor="#000000"
                 android:layout_below="@+id/name_surname"
-                android:layout_toRightOf="@+id/user_countryFlag"
-                android:layout_toEndOf="@+id/user_countryFlag" />
+                android:layout_centerHorizontal="true"
+
+                android:layout_alignLeft="@id/name_surname"
+                android:layout_alignStart="@id/name_surname"
+
+                android:text="Država"
+
+                android:textColor="#FFFFFF"
+                android:textSize="24sp" />
 
             <View
                 android:layout_width="fill_parent"
@@ -107,7 +117,9 @@
                 android:layout_toEndOf="@+id/user_username_textview"
                 android:layout_toRightOf="@+id/user_username_textview"
                 android:layout_marginLeft="50dp"
-                android:text="Username" />
+                android:layout_marginStart="50dp"
+                android:text="Username"
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -125,7 +137,8 @@
                 android:layout_alignLeft="@+id/user_username"
                 android:layout_alignStart="@+id/user_username"
                 android:layout_alignTop="@+id/gender_textview"
-                android:text="Gender" />
+                android:text="Gender"
+                android:textColor="#FFFFFF" />
 
             <View
                 android:layout_width="fill_parent"
@@ -151,7 +164,8 @@
                 android:layout_alignLeft="@+id/user_username"
                 android:layout_alignStart="@+id/user_username"
                 android:layout_alignTop="@+id/date_textview"
-                android:text="Date" />
+                android:text="Date"
+                android:textColor="#FFFFFF" />
 
 
             <View
@@ -178,7 +192,8 @@
                 android:layout_alignLeft="@+id/user_username"
                 android:layout_alignStart="@+id/user_username"
                 android:layout_alignTop="@+id/club_textview"
-                android:text="Club" />
+                android:text="Club"
+                android:textColor="#FFFFFF" />
 
             <View
                 android:layout_width="fill_parent"
