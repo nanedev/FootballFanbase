@@ -8,15 +8,19 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +56,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -70,7 +76,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends Fragment {
 
     private ImageView profile;
     private ImageView flag;
@@ -79,10 +85,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private TextView birthday;
     private TextView country;
     private TextView club;
-    private TextView usernameError;
-    private TextView countryError;
-    private TextView birthdayError;
-    private TextView clubError;
+    private TextView name_surname;
     private EditText player;
     private ArrayList<String> usernameList;
     private RelativeLayout layout;
@@ -98,6 +101,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private StorageReference mFilePath;
     private ProgressDialog dialog;
     private BitmapDrawable obwer;
+    private ProgressBar loadProfile_image;
 
 
     private String uid;
@@ -128,28 +132,29 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mReference = mDatabase.getReference().child("Users").child(uid);
 
         profile = (ImageView) view.findViewById(R.id.get_profile_image_id);
-        flag = (ImageView) view.findViewById(R.id.flagImageView);
-        username = (TextView) view.findViewById(R.id.username_id);
-        gender = (TextView) view.findViewById(R.id.gender_id);
-        birthday = (TextView) view.findViewById(R.id.birthday_id);
-        country = (TextView) view.findViewById(R.id.countryId);
-        club = (TextView) view.findViewById(R.id.footballClubId);
+        name_surname = (TextView) view.findViewById(R.id.name_surname);
+        flag = (ImageView) view.findViewById(R.id.user_countryFlag);
+        username = (TextView) view.findViewById(R.id.user_username);
+        gender = (TextView) view.findViewById(R.id.user_gender);
+        birthday = (TextView) view.findViewById(R.id.user_date);
+        country = (TextView) view.findViewById(R.id.user_country);
+        club = (TextView) view.findViewById(R.id.user_club);
         player = (EditText) view.findViewById(R.id.footballPlayerId);
-        usernameError = (TextView) view.findViewById(R.id.usernameError_Profile);
-        countryError = (TextView) view.findViewById(R.id.coutryError_Profile);
-        birthdayError = (TextView) view.findViewById(R.id.birthdayError_Profile);
-        clubError = (TextView) view.findViewById(R.id.clubError_Profile);
-        layout = (RelativeLayout) view.findViewById(R.id.relaiveLayoutBackgroudnProfile);
+        layout = (RelativeLayout) view.findViewById(R.id.profileImageLayout);
         usernameList = new ArrayList<>();
 
         mFilePath = FirebaseStorage.getInstance().getReference();
 
         dialog = new ProgressDialog(getContext());
+        loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);;
 
         minAdultAge = new GregorianCalendar();
 
 
+        loadProfile_image.getIndeterminateDrawable()
+                .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN );
         mReference.addValueEventListener(new ValueEventListener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -161,6 +166,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 Picasso.with(getActivity())
                         .load(profielImage)
                         .into(profile);
+
+                String name = value.get("name") +" "+ value.get("surname");
+
+                name_surname.setText(name);
                 username.setText(String.valueOf(value.get("username")));
                 gender.setText(String.valueOf(value.get("gender")));
                 birthday.setText(String.valueOf(value.get("date")));
@@ -170,11 +179,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     player.setText(String.valueOf(value.get("favoritePlayer")));
                 }
 
+
                 String flagImageFirebase = String.valueOf(value.get("flag"));
 
                 Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
-                        .into(flag);
+                        .into(flag, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                loadProfile_image.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
                 country.setText(String.valueOf(value.get("country")));
 
                 backgroundImage();
@@ -318,204 +338,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         //noinspection SimplifiableIfStatement
         if (id == R.id.editProfileId) {
 
-            if (item.getTitle().equals("Edit Profile")) {
-                item.setTitle("Save");
-                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-                profile.setOnClickListener(this);
-
-                username.setFocusable(true);
-                username.setEnabled(true);
-                username.setClickable(true);
-                username.setCursorVisible(true);
-                username.setFocusableInTouchMode(true);
-
-                username.setInputType(InputType.TYPE_CLASS_TEXT);
-                username.requestFocus();
-
-                birthday.setOnClickListener(this);
-
-                country.setOnClickListener(this);
-
-                club.setFocusable(true);
-                club.setEnabled(true);
-                club.setClickable(true);
-                club.setCursorVisible(true);
-                club.setFocusableInTouchMode(true);
-                club.setInputType(InputType.TYPE_CLASS_TEXT);
-                club.requestFocus();
-
-                player.setFocusable(true);
-
-
-            } else if (item.getTitle().equals("Save")) {
-
-
-                if (valid()) {
-                    item.setTitle("Edit Profile");
-                    item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-                    username.setFocusable(false);
-                    username.setEnabled(false);
-                    username.setClickable(false);
-                    username.setCursorVisible(false);
-                    username.setFocusableInTouchMode(false);
-                    ;
-
-                    birthday.setClickable(false);
-
-                    country.setClickable(false);
-
-                    club.setFocusable(false);
-                    club.setEnabled(false);
-                    club.setClickable(false);
-                    club.setCursorVisible(false);
-                    club.setFocusableInTouchMode(false);
-                    player.setFocusable(false);
-
-                    final String usernameString = username.getText().toString().trim();
-                    final String userDate = birthday.getText().toString().trim();
-                    final String favoriteClubString = club.getText().toString().trim();
-                    final String countryString = country.getText().toString().trim();
-
-                    StorageReference imageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-                    dialog.setMessage("Registering...");
-                    dialog.show();
-
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    final byte[] data = baos.toByteArray();
-
-                    imageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            final Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                            StorageReference countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
-
-                            UploadTask uploadTask = countryFlag.putBytes(data);
-                            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
-
-                                    mReference = mDatabase.getReference().child("Users").child(uid);
-                                    mReference.child("username").setValue(usernameString);
-                                    mReference.child("date").setValue(userDate);
-                                    mReference.child("gender").setValue(gender);
-                                    mReference.child("profileImage").setValue(downloadUrl.toString());
-                                    mReference.child("country").setValue(countryString);
-                                    mReference.child("flag").setValue(downloadFlagUri.toString());
-                                    mReference.child("favoriteClub").setValue(favoriteClubString);
-                                    mReference.child("favoritePlayer").setValue(player.getText().toString().trim());
-
-
-                                    ParseObject object = new ParseObject("Usernames");
-                                    object.put("username", username);
-                                    object.saveInBackground();
-                                    dialog.dismiss();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-
-                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-
-                                }
-                            });
-                        }
-                    });
-
-                }
-
-            }
-
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean valid() {
-        valid = true;
-
-        if (!hasSetProfileImage) {
-            Toast.makeText(getActivity(), "You need to set profile image", Toast.LENGTH_LONG).show();
-            valid = false;
-        } else {
-            valid = true;
-        }
-
-        ;
-        if (TextUtils.isEmpty(username.getText().toString())) {
-            usernameError.setText("Field can not be blank");
-            usernameError.setVisibility(View.VISIBLE);
-            valid = false;
-        } else if (usernameList.contains(username)) {
-            usernameError.setText("Username already exists,can not continue!");
-            usernameError.setVisibility(View.VISIBLE);
-            valid = false;
-        } else {
-            usernameError.setText("");
-            usernameError.setVisibility(View.GONE);
-
-        }
-
-        if (realYear < 13) {
-
-            birthdayError.setText("You must be older than 13!");
-            birthdayError.setVisibility(View.VISIBLE);
-            valid = false;
-        } else {
-            birthdayError.setText("");
-            birthdayError.setVisibility(View.GONE);
-        }
-
-        if (TextUtils.isEmpty(country.getText().toString())) {
-            countryError.setText("Field can to be blank");
-            countryError.setVisibility(View.VISIBLE);
-            valid = false;
-        } else {
-            countryError.setText("");
-            countryError.setVisibility(View.GONE);
-        }
 
 
-        return valid;
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.birthday_id) {
-            new DatePickerDialog(getActivity(), date, myCalendar
-                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-
-        } else if (view.getId() == R.id.countryId) {
-            picker = CountryPicker.newInstance("Select Country");
-            picker.show(getActivity().getSupportFragmentManager(), "COUNTRY_PICKER");
-            picker.setListener(new CountryPickerListener() {
-                @Override
-                public void onSelectCountry(String name, String code, String dialCode, int flagDrawableResID) {
-                    picker.dismiss();
-                    int imageCountry = flagDrawableResID;
-                    Log.i("image", String.valueOf(imageCountry));
-                    flag.setImageResource(imageCountry);
-                    country.setText(name);
-                    // Implement your code here
-
-                    bitmap = BitmapFactory.decodeResource(getResources(), imageCountry);
-
-
-                }
-            });
-        } else if (view.getId() == R.id.get_profile_image_id) {
-
-            profile.setImageResource(0);
-            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
-            openGallery.setType("image/*");
-            startActivityForResult(openGallery, GALLERY_REQUEST);
-        }
-    }
 }
 
 

@@ -88,10 +88,10 @@ public class MainPage extends AppCompatActivity
 
 
 
-                                    String profielImage = String.valueOf(value.get("profileImage"));
-                                    Picasso.with(getApplicationContext())
+                                   // String profielImage = String.valueOf(value.get("profileImage"));
+                                    /*Picasso.with(getApplicationContext())
                                             .load(profielImage)
-                                            .into(profile);
+                                            .into(profile); */
                                     username.setText(String.valueOf(value.get("username")));
 
                                     String country = String.valueOf(value.get("country"));
