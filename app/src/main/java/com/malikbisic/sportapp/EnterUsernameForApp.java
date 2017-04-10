@@ -312,7 +312,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else if (usernameList.contains(username)) {
-            usernameErrorTxt.setText("Username already exists,can not continue!");
+            usernameErrorTxt.setText("already exists");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else {
@@ -323,7 +323,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         if (realYear < 13) {
 
-            birthdayErrorTxt.setText("You must be older than 13!");
+            birthdayErrorTxt.setText("must be older than 13!");
             birthdayErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else {
