@@ -69,6 +69,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private TextView usernameErrorTxt;
     private TextView birthdayErrorTxt;
     private TextView clubError;
+    private TextView countryError;
     private EditText selectCountry;
     String googleUser_id;
     String googleFirstName;
@@ -112,6 +113,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
         favoriteClub = (EditText) findViewById(R.id.favoriteClubEnterId);
         clubError = (TextView) findViewById(R.id.input_cluberror);
+        countryError = (TextView) findViewById(R.id.input_counryError);
         usernameList = new ArrayList<>();
         continueBtn = (Button) findViewById(R.id.continueToMainPage);
         selectCountry = (EditText) findViewById(R.id.countrySelect);
@@ -312,7 +314,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else if (usernameList.contains(username)) {
-            usernameErrorTxt.setText("already exists");
+            usernameErrorTxt.setText("Username already exists,can not continue!");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else {
@@ -321,9 +323,18 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         }
 
+        if (selectCountry.getText().toString().isEmpty()){
+            countryError.setText("Field can not be empty");
+            countryError.setVisibility(View.VISIBLE);
+            valid = false;
+        } else {
+            countryError.setText("");
+            countryError.setVisibility(View.GONE);
+        }
+
         if (realYear < 13) {
 
-            birthdayErrorTxt.setText("must be older than 13!");
+            birthdayErrorTxt.setText("You must be older than 13!");
             birthdayErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else {

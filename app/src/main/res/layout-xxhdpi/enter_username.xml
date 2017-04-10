@@ -162,6 +162,15 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/input_counryError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/redError"
+            android:visibility="gone"
+            android:layout_marginRight="50dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
