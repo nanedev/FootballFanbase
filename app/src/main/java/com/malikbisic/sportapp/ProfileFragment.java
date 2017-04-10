@@ -3,8 +3,10 @@ package com.malikbisic.sportapp;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -109,6 +111,7 @@ public class ProfileFragment extends Fragment {
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
+    private TextView editProfilePicture;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
@@ -139,6 +142,7 @@ public class ProfileFragment extends Fragment {
         birthday = (TextView) view.findViewById(R.id.user_date);
         country = (TextView) view.findViewById(R.id.user_country);
         club = (TextView) view.findViewById(R.id.user_club);
+        editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
 
         layout = (RelativeLayout) view.findViewById(R.id.profileImageLayout);
         usernameList = new ArrayList<>();
@@ -149,6 +153,22 @@ public class ProfileFragment extends Fragment {
         loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);;
 
         minAdultAge = new GregorianCalendar();
+        editProfilePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] items = {"Take picture", "Open gallery"};
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dark_Dialog);
+                dialog.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i("items click", String.valueOf(i));
+                    }
+                });
+                dialog.create();
+                dialog.show();
+            }
+        });
 
 
         loadProfile_image.getIndeterminateDrawable()
