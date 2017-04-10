@@ -108,6 +108,7 @@ public class ProfileFragment extends Fragment {
 
     private String uid;
     private static final int GALLERY_REQUEST = 1;
+    private static final int OPEN_CAMERA = 2;
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
@@ -162,7 +163,14 @@ public class ProfileFragment extends Fragment {
                 dialog.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.i("items click", String.valueOf(i));
+                        if (i == 0){
+                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(cameraIntent, OPEN_CAMERA);
+                        } else if (i == 1){
+                            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+                            openGallery.setType("image/*");
+                            startActivityForResult(openGallery, GALLERY_REQUEST);
+                        }
                     }
                 });
                 dialog.create();
@@ -309,6 +317,17 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == OPEN_CAMERA && requestCode == RESULT_OK){
+
+                Uri imageUri = data.getData();
+            profile.setImageURI(imageUri);
+
+            CropImage.activity(imageUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setCropShape(CropImageView.CropShape.OVAL)
+                    .start(getContext(), this);
+        }
 
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             profile.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
