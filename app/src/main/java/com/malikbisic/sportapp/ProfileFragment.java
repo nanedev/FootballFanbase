@@ -139,7 +139,7 @@ public class ProfileFragment extends Fragment {
         birthday = (TextView) view.findViewById(R.id.user_date);
         country = (TextView) view.findViewById(R.id.user_country);
         club = (TextView) view.findViewById(R.id.user_club);
-        player = (EditText) view.findViewById(R.id.footballPlayerId);
+
         layout = (RelativeLayout) view.findViewById(R.id.profileImageLayout);
         usernameList = new ArrayList<>();
 

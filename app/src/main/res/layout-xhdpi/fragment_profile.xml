@@ -59,7 +59,7 @@
                 android:layout_height="30dp"
                 android:layout_above="@+id/horizontal_line"
                 android:layout_below="@+id/name_surname"
-                android:layout_centerHorizontal="true"
+
                 android:layout_toLeftOf="@+id/user_country"
                 android:layout_toStartOf="@id/user_country"
                 android:layout_marginRight="5dp"
@@ -75,10 +75,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/name_surname"
                 android:layout_centerHorizontal="true"
-
-                android:layout_alignLeft="@id/name_surname"
-                android:layout_alignStart="@id/name_surname"
-
                 android:text="Država"
 
                 android:textColor="#FFFFFF"
