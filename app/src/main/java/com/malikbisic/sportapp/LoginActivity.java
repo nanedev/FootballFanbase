@@ -103,9 +103,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 FirebaseUser user = mAuth.getCurrentUser();
 
                 if (user != null) {
-                    Intent mainPage = new Intent(LoginActivity.this, MainPage.class);
-                    mainPage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(mainPage);
+                    autoLogin();
                 }
             }
         };
@@ -291,6 +289,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             });
         }
     }
+
+    private void autoLogin(){
+        user_id = mAuth.getCurrentUser().getUid();
+        mReferenceUsers = mDatabase.getReference("Users");
+
+
+        mReferenceUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(user_id)) {
+
+                    FirebaseUser user = mAuth.getCurrentUser();
+
+                    if (user.isEmailVerified() && dataSnapshot.child(user_id).hasChild("username")) {
+                        Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                        startActivity(setupIntent);
+                        mDialog.dismiss();
+                        finish();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     @Override
     public void onClick(View v) {
