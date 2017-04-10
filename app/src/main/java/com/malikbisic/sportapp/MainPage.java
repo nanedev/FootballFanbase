@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -201,6 +202,12 @@ public class MainPage extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        } else if (id == R.id.nav_logout) {
+            mAuth.signOut();
+            Intent goToLogin = new Intent(MainPage.this, LoginActivity.class);
+            goToLogin.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(goToLogin);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
