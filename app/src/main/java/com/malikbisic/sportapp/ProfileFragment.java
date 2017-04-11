@@ -62,6 +62,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -199,6 +200,7 @@ public class ProfileFragment extends Fragment {
                 String profielImage = String.valueOf(value.get("profileImage"));
                 Picasso.with(getActivity())
                         .load(profielImage)
+                        .networkPolicy(NetworkPolicy.OFFLINE)
                         .into(profile);
 
                 String name = value.get("name") +" "+ value.get("surname");
@@ -218,6 +220,7 @@ public class ProfileFragment extends Fragment {
 
                 Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
+                        .networkPolicy(NetworkPolicy.OFFLINE)
                         .into(flag, new Callback() {
                             @Override
                             public void onSuccess() {
@@ -346,6 +349,7 @@ public class ProfileFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 resultUri = result.getUri();
                 Picasso.with(getActivity()).load(resultUri)
+                        .networkPolicy(NetworkPolicy.OFFLINE)
                         .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
                         .into(profile);
                 profileImageUpdate = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
