@@ -6,8 +6,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,6 +18,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -64,6 +67,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -101,6 +105,7 @@ public class ProfileFragment extends Fragment {
     private Bitmap bitmap;
     CountryPicker picker;
     private StorageReference mFilePath;
+    private StorageReference profileImageUpdate;
     private ProgressDialog dialog;
     private BitmapDrawable obwer;
     private ProgressBar loadProfile_image;
@@ -108,7 +113,7 @@ public class ProfileFragment extends Fragment {
 
     private String uid;
     private static final int GALLERY_REQUEST = 1;
-    private static final int OPEN_CAMERA = 2;
+    private static final int OPEN_CAMERA = 2222;
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
@@ -157,19 +162,20 @@ public class ProfileFragment extends Fragment {
         editProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] items = {"Take picture", "Open gallery"};
+                final String[] items = {"Take picture", "Open gallery"};
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dark_Dialog);
                 dialog.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i == 0){
+                        if (items[i].equals("Take picture")){
                             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(cameraIntent, OPEN_CAMERA);
-                        } else if (i == 1){
+                            getActivity().startActivityForResult(cameraIntent, OPEN_CAMERA);
+                        }
+                        if (items[i].equals("Open gallery")){
                             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
                             openGallery.setType("image/*");
-                            startActivityForResult(openGallery, GALLERY_REQUEST);
+                            getActivity().startActivityForResult(openGallery, GALLERY_REQUEST);
                         }
                     }
                 });
@@ -317,18 +323,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == OPEN_CAMERA && requestCode == RESULT_OK){
-
-                Uri imageUri = data.getData();
-            profile.setImageURI(imageUri);
-
-            CropImage.activity(imageUri)
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .setCropShape(CropImageView.CropShape.OVAL)
-                    .start(getContext(), this);
-        }
-
+            super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             profile.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             profile.setAlpha(254);
@@ -338,12 +333,13 @@ public class ProfileFragment extends Fragment {
             profile.setImageURI(imageUri);
 
 
+
             CropImage.activity(imageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setCropShape(CropImageView.CropShape.OVAL)
                     .start(getContext(), this);
-
         }
+
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -352,6 +348,16 @@ public class ProfileFragment extends Fragment {
                 Picasso.with(getActivity()).load(resultUri)
                         .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
                         .into(profile);
+                profileImageUpdate = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+                profileImageUpdate.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri downloadUri = taskSnapshot.getDownloadUrl();
+
+                        mReference = mDatabase.getReference().child("Users").child(uid);
+                        mReference.child("profileImage").setValue(downloadUri.toString());
+                    }
+                });
                 hasSetProfileImage = true;
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
