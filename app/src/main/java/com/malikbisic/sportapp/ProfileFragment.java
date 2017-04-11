@@ -93,34 +93,28 @@ public class ProfileFragment extends Fragment {
     private TextView country;
     private TextView club;
     private TextView name_surname;
-    private EditText player;
-    private ArrayList<String> usernameList;
     private RelativeLayout layout;
-    private Uri resultUri;
-    private boolean hasSetProfileImage = false;
-    private int selectYear;
-    private int currentYear;
-    private int realYear;
     private Calendar minAdultAge;
-    private boolean valid;
-    private Bitmap bitmap;
-    CountryPicker picker;
-    private StorageReference mFilePath;
-    private StorageReference profileImageUpdate;
-    private ProgressDialog dialog;
     private BitmapDrawable obwer;
     private ProgressBar loadProfile_image;
-
-
     private String uid;
     private static final int GALLERY_REQUEST = 1;
-    private static final int OPEN_CAMERA = 2222;
-
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
-    private TextView editProfilePicture;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    boolean hasSetProfileImage = false;
+    int selectYear;
+    int currentYear;
+    int realYear;
+    ArrayList<String> usernameList;
+    Uri resultUri;
+    StorageReference mFilePath;
+    StorageReference profileImageUpdate;
+    ProgressDialog dialog;
+    String name;
+    TextView editProfilePicture;
+    String profileImage;
+    String flagImageFirebase;
+    Uri imageUri;
 
 
     public ProfileFragment() {
@@ -140,7 +134,6 @@ public class ProfileFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
         uid = MainPage.uid;
         mReference = mDatabase.getReference().child("Users").child(uid);
-
         profile = (ImageView) view.findViewById(R.id.get_profile_image_id);
         name_surname = (TextView) view.findViewById(R.id.name_surname);
         flag = (ImageView) view.findViewById(R.id.user_countryFlag);
@@ -150,29 +143,21 @@ public class ProfileFragment extends Fragment {
         country = (TextView) view.findViewById(R.id.user_country);
         club = (TextView) view.findViewById(R.id.user_club);
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
-
         layout = (RelativeLayout) view.findViewById(R.id.profileImageLayout);
         usernameList = new ArrayList<>();
-
         mFilePath = FirebaseStorage.getInstance().getReference();
-
         dialog = new ProgressDialog(getContext());
         loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);;
-
         minAdultAge = new GregorianCalendar();
         editProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] items = {"Take picture", "Open gallery"};
-
+                final String[] items = {"Open gallery"};
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dark_Dialog);
                 dialog.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if (items[i].equals("Take picture")){
-                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                            getActivity().startActivityForResult(cameraIntent, OPEN_CAMERA);
-                        }
+
                         if (items[i].equals("Open gallery")){
                             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
                             openGallery.setType("image/*");
@@ -197,26 +182,19 @@ public class ProfileFragment extends Fragment {
                 Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
 
 
-                String profielImage = String.valueOf(value.get("profileImage"));
+                profileImage = String.valueOf(value.get("profileImage"));
                 Picasso.with(getActivity())
-                        .load(profielImage)
+                        .load(profileImage)
                         .networkPolicy(NetworkPolicy.OFFLINE)
                         .into(profile);
 
-                String name = value.get("name") +" "+ value.get("surname");
-
+                name = value.get("name") + " " + value.get("surname");
                 name_surname.setText(name);
                 username.setText(String.valueOf(value.get("username")));
                 gender.setText(String.valueOf(value.get("gender")));
                 birthday.setText(String.valueOf(value.get("date")));
                 club.setText(String.valueOf(value.get("favoriteClub")));
-
-                if (value.get("favoritePlayer") != null) {
-                    player.setText(String.valueOf(value.get("favoritePlayer")));
-                }
-
-
-                String flagImageFirebase = String.valueOf(value.get("flag"));
+                flagImageFirebase = String.valueOf(value.get("flag"));
 
                 Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
@@ -242,13 +220,6 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
-
-
-
-
-
-
 
 
         return view;
@@ -279,8 +250,8 @@ public class ProfileFragment extends Fragment {
 
 
                                 } else {
-                                    Log.d("test", "There was a problem downloading the data.");
-                                    Log.i("stasedesava", e.getMessage());
+                                    Toast.makeText(ProfileFragment.this.getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+
                                 }
                             }
                         });
@@ -330,19 +301,14 @@ public class ProfileFragment extends Fragment {
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             profile.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             profile.setAlpha(254);
-
-
-            Uri imageUri = data.getData();
+            imageUri = data.getData();
             profile.setImageURI(imageUri);
-
-
 
             CropImage.activity(imageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setCropShape(CropImageView.CropShape.OVAL)
                     .start(getContext(), this);
         }
-
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -388,10 +354,6 @@ public class ProfileFragment extends Fragment {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.editProfileId) {
-
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
