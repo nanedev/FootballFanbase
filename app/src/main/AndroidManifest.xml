@@ -71,7 +71,7 @@
             android:label="@string/title_activity_main_page"
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="stateVisible|adjustPan"
-            android:configChanges="orientation" />
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity android:name=".EditProfileActivity"></activity>
     </application>
 
