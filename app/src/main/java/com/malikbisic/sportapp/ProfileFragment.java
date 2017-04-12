@@ -185,7 +185,17 @@ public class ProfileFragment extends Fragment {
                 Picasso.with(getActivity())
                         .load(profileImage)
                         .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(profile);
+                        .into(profile, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                loadProfile_image.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
 
                 name = value.get("name") + " " + value.get("surname");
                 name_surname.setText(name);
@@ -196,10 +206,37 @@ public class ProfileFragment extends Fragment {
 
                 flagImageFirebase = String.valueOf(value.get("flag"));
 
-                Picasso.with(ProfileFragment.this.getActivity())
+                Picasso.Builder builder = new Picasso.Builder(getContext());
+                builder.listener(new Picasso.Listener()
+                {
+                    @Override
+                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
+                    {
+                        exception.printStackTrace();
+                        Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+                builder.build().load(flagImageFirebase).into(flag);
+                /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
                         .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(flag);
+                        .into(flag, new Callback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onError() {
+                            try {
+
+                            }catch (Exception e)
+                            {
+                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                            }
+                        });*/
+
                 country.setText(String.valueOf(value.get("country")));
 
                 backgroundImage();
