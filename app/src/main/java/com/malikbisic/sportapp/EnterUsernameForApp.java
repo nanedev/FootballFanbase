@@ -2,6 +2,7 @@ package com.malikbisic.sportapp;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -81,7 +82,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String userDate;
     private String favoriteClubString;
     private String countryString;
-
+    Uri downloadFlagUri;
     private ProgressDialog mDialog;
     private static final String TAG = "EnterUsernameForApp";
 
@@ -382,7 +383,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
+                        downloadFlagUri = taskSnapshot.getDownloadUrl();
 
                         mReference = mDatabase.getReference().child("Users").child(uid);
                         mReference.child("name").setValue(googleFirstName);
@@ -486,7 +487,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadFlagUri = taskSnapshot.getDownloadUrl();
+                        downloadFlagUri = taskSnapshot.getDownloadUrl();
 
                         mReference = mDatabase.getReference().child("Users").child(uid);
                         mReference.child("username").setValue(username);
@@ -529,6 +530,11 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(MyContextWrapper.wrap(newBase, "en"));
     }
 
 }
