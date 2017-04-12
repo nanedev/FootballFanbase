@@ -174,7 +174,6 @@ public class ProfileFragment extends Fragment {
         loadProfile_image.getIndeterminateDrawable()
                 .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN );
         mReference.addValueEventListener(new ValueEventListener() {
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -194,22 +193,13 @@ public class ProfileFragment extends Fragment {
                 gender.setText(String.valueOf(value.get("gender")));
                 birthday.setText(String.valueOf(value.get("date")));
                 club.setText(String.valueOf(value.get("favoriteClub")));
+
                 flagImageFirebase = String.valueOf(value.get("flag"));
 
                 Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
                         .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(flag, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                loadProfile_image.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onError() {
-
-                            }
-                        });
+                        .into(flag);
                 country.setText(String.valueOf(value.get("country")));
 
                 backgroundImage();

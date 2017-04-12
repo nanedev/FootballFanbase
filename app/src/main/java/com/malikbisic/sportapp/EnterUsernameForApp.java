@@ -4,10 +4,13 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -34,6 +37,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mukesh.countrypicker.fragments.CountryPicker;
 import com.mukesh.countrypicker.interfaces.CountryPickerListener;
+import com.mukesh.countrypicker.models.Country;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -102,6 +106,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     Bitmap bitmap;
     CountryPicker picker;
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,6 +130,11 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
 
+        Locale locale = Locale.ENGLISH;
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+        getApplicationContext().getApplicationContext().getResources().updateConfiguration(config, null);
         mFilePath = FirebaseStorage.getInstance().getReference(); //mStorage.getReferenceFromUrl("gs://sportapp-11328.appspot.com");
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -143,6 +153,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         selectCountry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 picker = CountryPicker.newInstance("Select Country");
                 picker.show(getSupportFragmentManager(), "COUNTRY_PICKER");
                 picker.setListener(new CountryPickerListener() {
@@ -151,6 +162,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         picker.dismiss();
                         int imageCountry = flagDrawableResID;
                         Log.i("image", String.valueOf(imageCountry));
+
                         selectCountry.setCompoundDrawablesWithIntrinsicBounds(imageCountry, 0, 0, 0);
                         selectCountry.setText(name);
                         // Implement your code here
@@ -532,9 +544,5 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         }
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(MyContextWrapper.wrap(newBase, "en"));
-    }
 
 }
