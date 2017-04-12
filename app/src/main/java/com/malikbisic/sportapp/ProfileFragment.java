@@ -93,7 +93,7 @@ public class ProfileFragment extends Fragment {
     private TextView country;
     private TextView club;
     private TextView name_surname;
-    private RelativeLayout layout;
+
     private Calendar minAdultAge;
     private BitmapDrawable obwer;
     private ProgressBar loadProfile_image;
@@ -115,6 +115,7 @@ public class ProfileFragment extends Fragment {
     String profileImage;
     String flagImageFirebase;
     Uri imageUri;
+    ImageView backgroundImage;
 
 
     public ProfileFragment() {
@@ -143,7 +144,7 @@ public class ProfileFragment extends Fragment {
         country = (TextView) view.findViewById(R.id.user_country);
         club = (TextView) view.findViewById(R.id.user_club);
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
-        layout = (RelativeLayout) view.findViewById(R.id.profileImageLayout);
+        backgroundImage = (ImageView) view.findViewById(R.id.backgroundProfile);
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
         dialog = new ProgressDialog(getContext());
@@ -273,7 +274,7 @@ public class ProfileFragment extends Fragment {
 
                                     Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
                                     obwer = new BitmapDrawable(getResources(), bmp1);
-                                    layout.setBackground(obwer);
+                                    backgroundImage.setImageDrawable(obwer);
 
 
                                 } else {
