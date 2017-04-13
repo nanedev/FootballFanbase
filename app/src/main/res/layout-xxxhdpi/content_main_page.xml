@@ -9,16 +9,70 @@
     tools:context="com.malikbisic.sportapp.MainPage"
     tools:showIn="@layout/app_bar_main_page">
 
-    <RelativeLayout
-        android:id="@+id/relativeMainPage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="8dp">
 
-    </RelativeLayout>
+    <android.support.v4.widget.CircleImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/userProfilImage"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="username"
+        android:layout_alignLeft="@+id/userProfilImage"
+        android:layout_alignStart="@+id/userProfilImage"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/user_username" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/multilineshape"
+        android:ems="10"
+        android:padding="5dp"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/user_username"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/uploadPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText"
+        android:layout_alignStart="@+id/editText"
+        android:layout_alignTop="@+id/uploadVideo"
+        android:background="#ef9a9a"
+        app:srcCompat="@drawable/ic_add_a_photo_white_24dp" />
+
+    <ImageView
+        android:id="@+id/uploadVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/uploadPhoto"
+        android:layout_toRightOf="@+id/uploadPhoto"
+        android:background="#90caf9"
+        app:srcCompat="@drawable/ic_videocam_white_24dp" />
+
+    <ImageView
+        android:id="@+id/uploadTalk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/uploadVideo"
+        android:layout_toRightOf="@+id/uploadVideo"
+        android:background="#ffab91"
+        app:srcCompat="@drawable/ic_mic_white_24dp" />
+
+
 </RelativeLayout>
