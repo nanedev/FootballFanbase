@@ -201,18 +201,19 @@ public class MainPage extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PHOTO_OPEN && resultCode == RESULT_OK){
+        if (data != null) {
+            if (requestCode == PHOTO_OPEN && resultCode == RESULT_OK) {
 
-            Uri imageUri = data.getData();
+                Uri imageUri = data.getData();
 
-            Log.i("uri photo", String.valueOf(imageUri));
+                Log.i("uri photo", String.valueOf(imageUri));
+            } else {
+
+                for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                    fragment.onActivityResult(requestCode, resultCode, data);
+                }
+            }
         }
-
-        else{
-
-        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            fragment.onActivityResult(requestCode, resultCode, data);
-        }}
     }
 
     @Override
