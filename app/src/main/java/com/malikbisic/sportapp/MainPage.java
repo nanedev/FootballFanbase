@@ -69,6 +69,8 @@ public class MainPage extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -201,7 +203,7 @@ public class MainPage extends AppCompatActivity
              FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.relativeMainPage, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
         } else if (id == R.id.nav_message) {
 
         } else if (id == R.id.nav_notifications) {

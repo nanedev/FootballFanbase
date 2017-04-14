@@ -10,13 +10,14 @@
     tools:showIn="@layout/app_bar_main_page">
 
 
-    <android.support.v4.widget.CircleImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:id="@+id/userProfilImage"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/profilimage" />
 
     <TextView
         android:layout_width="wrap_content"
