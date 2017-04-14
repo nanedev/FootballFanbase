@@ -72,13 +72,13 @@
 
             <ImageView
                 android:layout_width="20dp"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:src="@drawable/addphoto"
                 android:id="@+id/gallery_icon_content_main"
 
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp" />
 
@@ -89,11 +89,13 @@
                 android:layout_height="wrap_content"
                 android:text="Add photo"
                 android:textColor="#000000"
+                android:textSize="12sp"
+                android:layout_alignBaseline="@+id/videoText"
+                android:layout_alignBottom="@+id/videoText"
                 android:layout_toRightOf="@+id/gallery_icon_content_main"
                 android:layout_toEndOf="@+id/gallery_icon_content_main"
-
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp" />
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp" />
 
 
             <View
@@ -111,7 +113,7 @@
 
             <ImageView
                 android:layout_width="20dp"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:id="@+id/vide_icon_content_main"
 
                 android:layout_toRightOf="@+id/vertical_line_content_main"
@@ -119,7 +121,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/addvideo"
-                android:layout_marginTop="5dp" />
+                android:layout_marginTop="10dp" />
 
 
             <TextView
@@ -130,7 +132,7 @@
                 android:textColor="#000000"
                 android:layout_toRightOf="@+id/vide_icon_content_main"
                 android:layout_toEndOf="@+id/vide_icon_content_main"
-
+                android:textSize="12sp"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="10dp" />
@@ -152,7 +154,7 @@
 
             <ImageView
                 android:layout_width="20dp"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:id="@+id/talk_icon_content_main"
 
                 android:layout_toRightOf="@+id/vertical_line_content_main2"
@@ -160,7 +162,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/mic"
-                android:layout_marginTop="5dp" />
+                android:layout_marginTop="10dp" />
 
             <TextView
                 android:id="@+id/audioText"
@@ -170,7 +172,7 @@
                 android:textColor="#000000"
                 android:layout_toRightOf="@+id/talk_icon_content_main"
                 android:layout_toEndOf="@+id/talk_icon_content_main"
-
+                android:textSize="12sp"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="10dp" />
