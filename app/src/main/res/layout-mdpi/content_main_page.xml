@@ -39,18 +39,22 @@
             android:id="@+id/editText2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/user_username"
-            android:layout_toEndOf="@id/user_username"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:ems="10"
-            android:inputType="textMultiLine"
             android:layout_above="@+id/horizontal_line_content_main"
             android:layout_alignParentTop="true"
-            android:hint="Post something"
-            android:padding="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/user_username"
+            android:layout_toRightOf="@id/user_username"
             android:background="@null"
-            android:textColor="#000000" />
+            android:cursorVisible="true"
+            android:ems="10"
+            android:hint="Post something"
+            android:inputType="textMultiLine"
+            android:padding="5dp"
+            android:gravity="top"
+            android:textColor="#000000"
+            android:textColorLink="#1a237e"
+            android:textCursorDrawable="@null" />
 
         <View
             android:layout_width="fill_parent"
@@ -61,21 +65,23 @@
             android:id="@+id/horizontal_line_content_main" />
 
         <ImageView
-            android:layout_width="30dp"
+            android:layout_width="20dp"
             android:layout_height="30dp"
-            android:src="@drawable/fans"
+            android:src="@drawable/addphoto"
             android:id="@+id/gallery_icon_content_main"
             android:layout_below="@id/horizontal_line_content_main"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp" />
 
 
         <TextView
             android:id="@+id/galleryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload photo"
+            android:text="Add photo"
             android:textColor="#000000"
             android:layout_toRightOf="@+id/gallery_icon_content_main"
             android:layout_toEndOf="@+id/gallery_icon_content_main"
@@ -98,13 +104,15 @@
             android:layout_marginBottom="5dp" />
 
         <ImageView
-            android:layout_width="30dp"
+            android:layout_width="20dp"
             android:layout_height="30dp"
             android:id="@+id/vide_icon_content_main"
             android:layout_below="@+id/horizontal_line_content_main"
             android:layout_toRightOf="@+id/vertical_line_content_main"
+            android:layout_toEndOf="@+id/vertical_line_content_main"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/fans"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/addvideo"
             android:layout_marginTop="5dp" />
 
 
@@ -112,7 +120,7 @@
             android:id="@+id/videoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload video"
+            android:text="Add video"
             android:textColor="#000000"
             android:layout_toRightOf="@+id/vide_icon_content_main"
             android:layout_toEndOf="@+id/vide_icon_content_main"
@@ -137,7 +145,7 @@
 
 
         <ImageView
-            android:layout_width="30dp"
+            android:layout_width="20dp"
             android:layout_height="30dp"
             android:id="@+id/talk_icon_content_main"
             android:layout_below="@+id/horizontal_line_content_main"
@@ -145,14 +153,14 @@
             android:layout_toEndOf="@+id/vertical_line_content_main2"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:src="@drawable/fans"
+            android:src="@drawable/mic"
             android:layout_marginTop="5dp" />
 
         <TextView
             android:id="@+id/audioText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Talk"
+            android:text="Record audio"
             android:textColor="#000000"
             android:layout_toRightOf="@+id/talk_icon_content_main"
             android:layout_toEndOf="@+id/talk_icon_content_main"
