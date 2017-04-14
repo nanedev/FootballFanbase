@@ -206,6 +206,7 @@ public class ProfileFragment extends Fragment {
                 club.setText(String.valueOf(value.get("favoriteClub")));
 
                 flagImageFirebase = String.valueOf(value.get("flag"));
+                Log.i("flag uri", flagImageFirebase);
 
                 Picasso.Builder builder = new Picasso.Builder(getContext());
                 builder.listener(new Picasso.Listener()
@@ -218,6 +219,7 @@ public class ProfileFragment extends Fragment {
                     }
                 });
                 builder.build().load(flagImageFirebase).into(flag);
+
                 /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
                         .networkPolicy(NetworkPolicy.OFFLINE)

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,7 +28,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -51,7 +50,7 @@ import java.util.Map;
 import static android.R.attr.data;
 
 public class MainPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -63,6 +62,18 @@ public class MainPage extends AppCompatActivity
     private DatabaseReference mReference;
     private BitmapDrawable obwer;
     private LinearLayout layout;
+    private ImageView userProfileImage;
+    private TextView usernameuser;
+    private ImageView galleryIcon;
+    private TextView galleryText;
+    private ImageView videoIcon;
+    private TextView videoText;
+    private ImageView audioIcon;
+    private TextView audioText;
+
+    private static final int PHOTO_OPEN = 1;
+    private static final int VIDEO_OPEN = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +83,19 @@ public class MainPage extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        userProfileImage = (ImageView) findViewById(R.id.userProfilImage);
+        usernameuser = (TextView) findViewById(R.id.user_username);
+        galleryIcon = (ImageView) findViewById(R.id.gallery_icon_content_main);
+        galleryText = (TextView) findViewById(R.id.galleryText);
+        videoIcon = (ImageView) findViewById(R.id.vide_icon_content_main);
+        videoText = (TextView) findViewById(R.id.videoText);
+        audioIcon = (ImageView) findViewById(R.id.talk_icon_content_main);
+        audioText = (TextView) findViewById(R.id.audioText);
+
+        galleryIcon.setOnClickListener(this);
+        galleryText.setOnClickListener(this);
+        videoIcon.setOnClickListener(this);
+        videoText.setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
@@ -96,45 +120,50 @@ public class MainPage extends AppCompatActivity
 
                                 String profielImage = String.valueOf(value.get("profileImage"));
                                 Picasso.with(getApplicationContext())
-                                            .load(profielImage)
+                                        .load(profielImage)
                                         .into(profile);
-                                    username.setText(String.valueOf(value.get("username")));
+                                username.setText(String.valueOf(value.get("username")));
+                                usernameuser.setText(String.valueOf(value.get("username")));
 
-                                    String country = String.valueOf(value.get("country"));
+                                Picasso.with(getApplicationContext())
+                                        .load(profielImage)
+                                        .into(userProfileImage);
+
+                                String country = String.valueOf(value.get("country"));
                                 Log.i("country", country);
 
-                                    FirebaseUser user = mAuth.getCurrentUser();
+                                FirebaseUser user = mAuth.getCurrentUser();
 
-                                    email.setText(user.getEmail());
+                                email.setText(user.getEmail());
 
-                                    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
-                                    query.whereEqualTo("country", country);
-                                    query.findInBackground(new FindCallback<ParseObject>() {
-                                        @Override
-                                        public void done(List<ParseObject> objects, ParseException e) {
-                                            if (e == null)
-                                                for (ParseObject object : objects) {
+                                ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
+                                query.whereEqualTo("country", country);
+                                query.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> objects, ParseException e) {
+                                        if (e == null)
+                                            for (ParseObject object : objects) {
 
-                                                    ParseFile file = (ParseFile) object.get("flag");
-                                                    file.getDataInBackground(new GetDataCallback() {
-                                                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                                                        @Override
-                                                        public void done(byte[] data, ParseException e) {
-                                                            if (e == null) {
+                                                ParseFile file = (ParseFile) object.get("flag");
+                                                file.getDataInBackground(new GetDataCallback() {
+                                                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                                                    @Override
+                                                    public void done(byte[] data, ParseException e) {
+                                                        if (e == null) {
 
 
-                                                                Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                                                obwer = new BitmapDrawable(getResources(), bmp1);
-                                                                layout.setBackground(obwer);
-                                                            } else {
-                                                                Log.d("test", "There was a problem downloading the data.");
-                                                            }
+                                                            Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                                            obwer = new BitmapDrawable(getResources(), bmp1);
+                                                            layout.setBackground(obwer);
+                                                        } else {
+                                                            Log.d("test", "There was a problem downloading the data.");
                                                         }
-                                                    });
-                                                }
-                                        }
-                                    });
-                                }
+                                                    }
+                                                });
+                                            }
+                                    }
+                                });
+                            }
                         }
 
                         @Override
@@ -150,7 +179,6 @@ public class MainPage extends AppCompatActivity
         };
 
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -160,12 +188,11 @@ public class MainPage extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        View header=navigationView.getHeaderView(0);
+        View header = navigationView.getHeaderView(0);
         profile = (ImageView) header.findViewById(R.id.nav_header_profil_image);
         username = (TextView) header.findViewById(R.id.header_username);
         email = (TextView) header.findViewById(R.id.header_email);
         layout = (LinearLayout) header.findViewById(R.id.nav_header_main_background);
-
 
 
     }
@@ -174,9 +201,18 @@ public class MainPage extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == PHOTO_OPEN && resultCode == RESULT_OK){
+
+            Uri imageUri = data.getData();
+
+            Log.i("uri photo", String.valueOf(imageUri));
+        }
+
+        else{
+
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
-        }
+        }}
     }
 
     @Override
@@ -190,8 +226,6 @@ public class MainPage extends AppCompatActivity
     }
 
 
-
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -202,7 +236,7 @@ public class MainPage extends AppCompatActivity
             // Handle the camera action
             ProfileFragment profileFragment = new ProfileFragment();
 
-             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
                     R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
@@ -228,6 +262,7 @@ public class MainPage extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -242,19 +277,21 @@ public class MainPage extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_page, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.post) {
-            Toast.makeText(MainPage.this, "Clicked", Toast.LENGTH_LONG).show();
+    public void onClick(View view) {
+
+        if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText){
+            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+            openGallery.setType("image/*");
+            startActivityForResult(openGallery, PHOTO_OPEN);
+        } else if (view.getId() == R.id.vide_icon_content_main || view.getId() == R.id.videoText){
+            Intent intent = new Intent();
+            intent.setType("video/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Complete action using"), VIDEO_OPEN);
+
         }
 
-        return super.onOptionsItemSelected(item);
     }
 }

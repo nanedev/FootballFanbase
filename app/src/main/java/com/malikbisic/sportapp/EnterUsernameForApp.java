@@ -330,7 +330,11 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             usernameErrorTxt.setText("Username already exists,can not continue!");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
-        } else {
+        } else if (username.length() < 3 || username.length() > 8){
+
+            usernameErrorTxt.setText("Username must be between 3 and 8 characters!");
+            usernameErrorTxt.setVisibility(View.VISIBLE);
+        } else{
             usernameErrorTxt.setText("");
             usernameErrorTxt.setVisibility(View.GONE);
 
