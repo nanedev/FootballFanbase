@@ -71,6 +71,9 @@ public class MainPage extends AppCompatActivity
     private ImageView audioIcon;
     private TextView audioText;
     static boolean photoSelected;
+    static String usernameInfo;
+    static String profielImage;
+
 
     private static final int PHOTO_OPEN = 1;
     private static final int VIDEO_OPEN = 2;
@@ -98,6 +101,8 @@ public class MainPage extends AppCompatActivity
         videoIcon.setOnClickListener(this);
         videoText.setOnClickListener(this);
 
+
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -119,12 +124,13 @@ public class MainPage extends AppCompatActivity
                                 Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
 
 
-                                String profielImage = String.valueOf(value.get("profileImage"));
+                                profielImage = String.valueOf(value.get("profileImage"));
                                 Picasso.with(getApplicationContext())
                                         .load(profielImage)
                                         .into(profile);
                                 username.setText(String.valueOf(value.get("username")));
                                 usernameuser.setText(String.valueOf(value.get("username")));
+                                usernameInfo = usernameuser.getText().toString().trim();
 
                                 Picasso.with(getApplicationContext())
                                         .load(profielImage)
@@ -178,6 +184,9 @@ public class MainPage extends AppCompatActivity
 
             }
         };
+
+
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
