@@ -11,7 +11,18 @@
         android:layout_height="match_parent">
 
 
+        <Button
+            android:id="@+id/btn_post_photo_or_video"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_below="@+id/RL_POST"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/circle_button_shape_post_photo_video"
+            android:text="POST" />
+
         <RelativeLayout
+            android:id="@+id/RL_POST"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -21,6 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
+                android:background="@null"
                 android:ems="10"
                 android:gravity="top"
                 android:hint="Tell something about this"
@@ -28,20 +40,19 @@
                 android:padding="5dp"
                 android:textColor="#000000"
                 android:textColorLink="#1a237e"
-                android:textCursorDrawable="@null"
-                android:background="@null" />
+                android:textCursorDrawable="@null" />
 
 
             <ImageView
+                android:id="@+id/post_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:id="@+id/post_image"
-                android:layout_below="@+id/tell_something_about_video_image"
-                android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:scaleType="fitXY"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tell_something_about_video_image"
                 android:adjustViewBounds="true"
-                android:visibility="invisible" />
+                android:scaleType="fitXY"
+                android:visibility="gone" />
 
             <VideoView
                 android:id="@+id/post_video"
@@ -49,18 +60,10 @@
                 android:layout_height="200dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/tell_something_about_video_image" />
+                android:layout_below="@+id/tell_something_about_video_image"
+                android:visibility="gone" />
 
 
-            <Button
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:id="@+id/btn_post_photo_or_video"
-                android:layout_below="@+id/post_video"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/circle_button_shape_post_photo_video"
-                android:layout_marginTop="20dp"
-                android:text="POST" />
         </RelativeLayout>
 
 

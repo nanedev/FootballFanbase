@@ -70,6 +70,7 @@ public class MainPage extends AppCompatActivity
     private TextView videoText;
     private ImageView audioIcon;
     private TextView audioText;
+    static boolean photoSelected = false;
 
     private static final int PHOTO_OPEN = 1;
     private static final int VIDEO_OPEN = 1;
@@ -206,9 +207,21 @@ public class MainPage extends AppCompatActivity
 
                 Uri imageUri = data.getData();
                 Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
+                goToAddPhotoOrVideo.putExtra("image-uri_selected", imageUri.toString());
                 startActivity(goToAddPhotoOrVideo);
                 Log.i("uri photo", String.valueOf(imageUri));
-            } else {
+
+            }
+            if (requestCode == VIDEO_OPEN &&  resultCode == RESULT_OK) {
+                Uri videoUri = data.getData();
+                Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
+                goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
+                Log.i("uri video", String.valueOf(videoUri));
+                startActivity(goToAddPhotoOrVideo);
+
+
+            }
+             else {
 
                 for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                     fragment.onActivityResult(requestCode, resultCode, data);
@@ -285,10 +298,12 @@ public class MainPage extends AppCompatActivity
 
         if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText){
             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+            photoSelected = true;
             openGallery.setType("image/*");
             startActivityForResult(openGallery, PHOTO_OPEN);
         } else if (view.getId() == R.id.vide_icon_content_main || view.getId() == R.id.videoText){
             Intent intent = new Intent();
+            photoSelected = false;
             intent.setType("video/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Complete action using"), VIDEO_OPEN);
