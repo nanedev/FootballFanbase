@@ -70,10 +70,10 @@ public class MainPage extends AppCompatActivity
     private TextView videoText;
     private ImageView audioIcon;
     private TextView audioText;
-    static boolean photoSelected = false;
+    static boolean photoSelected;
 
     private static final int PHOTO_OPEN = 1;
-    private static final int VIDEO_OPEN = 1;
+    private static final int VIDEO_OPEN = 2;
 
 
     @Override
@@ -212,7 +212,7 @@ public class MainPage extends AppCompatActivity
                 Log.i("uri photo", String.valueOf(imageUri));
 
             }
-            if (requestCode == VIDEO_OPEN &&  resultCode == RESULT_OK) {
+            else if (requestCode == VIDEO_OPEN &&  resultCode == RESULT_OK) {
                 Uri videoUri = data.getData();
                 Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
                 goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());

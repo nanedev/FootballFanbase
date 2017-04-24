@@ -35,6 +35,12 @@ public class AddPhotoOrVideo extends AppCompatActivity {
 
             Uri imageUri = Uri.parse(myIntent.getStringExtra("image-uri_selected"));
             photoSelected.setImageURI(imageUri);
+        } else if (MainPage.photoSelected == false){
+            photoSelected.setVisibility(View.GONE);
+            videoSelected.setVisibility(View.VISIBLE);
+            Uri videoUri = Uri.parse(myIntent.getStringExtra("video-uri_selected"));
+            videoSelected.setVideoURI(videoUri);
+
         }
 
 
