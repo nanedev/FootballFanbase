@@ -205,7 +205,8 @@ public class MainPage extends AppCompatActivity
             if (requestCode == PHOTO_OPEN && resultCode == RESULT_OK) {
 
                 Uri imageUri = data.getData();
-
+                Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
+                startActivity(goToAddPhotoOrVideo);
                 Log.i("uri photo", String.valueOf(imageUri));
             } else {
 

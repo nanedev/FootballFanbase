@@ -14,11 +14,11 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <supports-screens
-        android:normalScreens="true"
-        android:largeScreens="true"
-        android:xlargeScreens="true"
         android:anyDensity="true"
-        android:resizeable="true" />
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:xlargeScreens="true" />
 
     <application
         android:name=".Application"
@@ -44,9 +44,9 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme.Dark"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,27 +59,27 @@
             android:label="@string/app_name" />
         <activity
             android:name=".RegisterActivity"
-            android:theme="@style/AppTheme.Dark"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".ResetPasswordActivity"
-            android:theme="@style/AppTheme.Dark"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".EnterUsernameForApp"
-            android:theme="@style/AppTheme.Dark"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".MainPage"
-            android:label="@string/title_activity_main_page"
-            android:theme="@style/AppTheme.Dark"
-            android:windowSoftInputMode="stateVisible|adjustPan"
-
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:screenOrientation="portrait" />
+            android:label="@string/title_activity_main_page"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity android:name=".AddPhotoOrVideo"></activity>
     </application>
 
 </manifest>
