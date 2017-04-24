@@ -43,6 +43,7 @@ public class AddPhotoOrVideo extends AppCompatActivity {
 
             Uri imageUri = Uri.parse(myIntent.getStringExtra("image-uri_selected"));
             photoSelected.setImageURI(imageUri);
+
         } else if (!MainPage.photoSelected) {
             photoSelected.setVisibility(View.GONE);
             videoSelected.setVisibility(View.VISIBLE);
@@ -61,6 +62,7 @@ public class AddPhotoOrVideo extends AppCompatActivity {
                 Uri video = Uri.parse(myIntent.getStringExtra("video-uri_selected"));
                 videoSelected.setMediaController(mediacontroller);
                 videoSelected.setVideoURI(video);
+                videoSelected.pause();
 
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
@@ -72,7 +74,7 @@ public class AddPhotoOrVideo extends AppCompatActivity {
                 // Close the progress bar and play the video
                 public void onPrepared(MediaPlayer mp) {
                     pDialog.dismiss();
-                    videoSelected.start();
+                    //videoSelected.start();
                 }
             });
 
