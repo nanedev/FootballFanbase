@@ -1,20 +1,25 @@
 package com.malikbisic.sportapp;
 
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -44,6 +49,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -70,11 +76,13 @@ public class MainPage extends AppCompatActivity
     private TextView videoText;
     private ImageView audioIcon;
     private TextView audioText;
+    private MediaRecorder mRecorder;
     static boolean photoSelected;
     static String usernameInfo;
     static String profielImage;
 
-
+    String mFileName = null;
+    private static final String LOG_TAG = "record_log";
     private static final int PHOTO_OPEN = 1;
     private static final int VIDEO_OPEN = 2;
 
@@ -96,15 +104,22 @@ public class MainPage extends AppCompatActivity
         audioIcon = (ImageView) findViewById(R.id.talk_icon_content_main);
         audioText = (TextView) findViewById(R.id.audioText);
 
+
         galleryIcon.setOnClickListener(this);
         galleryText.setOnClickListener(this);
         videoIcon.setOnClickListener(this);
         videoText.setOnClickListener(this);
+        audioIcon.setOnClickListener(this);
+        audioText.setOnClickListener(this);
 
 
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
+
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/recorded_audio.3gp";
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -317,7 +332,34 @@ public class MainPage extends AppCompatActivity
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Complete action using"), VIDEO_OPEN);
 
+        } else if (view.getId() == R.id.talk_icon_content_main || view.getId() == R.id.audioText) {
+
+            Intent intent = new Intent(MainPage.this, RecordAudio.class);
+            startActivity(intent);
         }
 
     }
+
+    private void startRecording() {
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mRecorder.prepare();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+
+        mRecorder.start();
+    }
+
+    private void stopRecording() {
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
+    }
+
 }
