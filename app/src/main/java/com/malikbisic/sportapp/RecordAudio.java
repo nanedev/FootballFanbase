@@ -204,6 +204,10 @@ public class RecordAudio extends AppCompatActivity {
                         buttonPlayLastRecordAudio.setEnabled(false);
                         buttonPost.setEnabled(true);
                         buttonUploadAudio.setEnabled(false);
+                        stateText.setVisibility(View.VISIBLE);
+                        stateText.setTextSize(14.0f);
+                        stateText.setTextColor(Color.parseColor("#263238"));
+                        stateText.setText("Click Post to post file to wall");
                     }
                 });
 

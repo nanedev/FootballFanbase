@@ -105,7 +105,8 @@
                 android:layout_below="@+id/upload_audio"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/post_btn"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp"
+                android:background="@drawable/post_btn_record_audio_shape" />
         </RelativeLayout>
 
     </RelativeLayout>
