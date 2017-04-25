@@ -118,6 +118,7 @@ public class ProfileFragment extends Fragment {
     ImageView backgroundImage;
 
 
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -130,7 +131,7 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
 
         mDatabase = FirebaseDatabase.getInstance();
         uid = MainPage.uid;

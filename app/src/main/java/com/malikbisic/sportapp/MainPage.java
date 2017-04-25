@@ -1,6 +1,8 @@
 package com.malikbisic.sportapp;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,14 +14,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -30,6 +38,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -54,9 +63,10 @@ import java.util.List;
 import java.util.Map;
 
 import static android.R.attr.data;
+import static android.R.attr.theme;
 
 public class MainPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -65,7 +75,7 @@ public class MainPage extends AppCompatActivity
     private TextView email;
     private ImageView profile;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
+    private DatabaseReference mReference, postingDatabase;
     private BitmapDrawable obwer;
     private LinearLayout layout;
     private ImageView userProfileImage;
@@ -76,6 +86,9 @@ public class MainPage extends AppCompatActivity
     private TextView videoText;
     private ImageView audioIcon;
     private TextView audioText;
+    private EditText postText;
+    MenuItem myMenu;
+    private ProgressDialog postingDialog;
 
     static boolean photoSelected;
     static String usernameInfo;
@@ -93,7 +106,7 @@ public class MainPage extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
         userProfileImage = (ImageView) findViewById(R.id.userProfilImage);
         usernameuser = (TextView) findViewById(R.id.user_username);
         galleryIcon = (ImageView) findViewById(R.id.gallery_icon_content_main);
@@ -102,6 +115,20 @@ public class MainPage extends AppCompatActivity
         videoText = (TextView) findViewById(R.id.videoText);
         audioIcon = (ImageView) findViewById(R.id.talk_icon_content_main);
         audioText = (TextView) findViewById(R.id.audioText);
+        postText = (EditText) findViewById(R.id.postOnlyText);
+        postingDialog = new ProgressDialog(this);
+
+        postText.addTextChangedListener(this);
+        postText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+
+                if (i == KeyEvent.KEYCODE_DEL){
+                }
+
+                return false;
+            }
+        });
 
 
         galleryIcon.setOnClickListener(this);
@@ -261,6 +288,40 @@ public class MainPage extends AppCompatActivity
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_page, menu);
+        myMenu = menu.findItem(R.id.postText);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.postText) {
+            String textPost = postText.getText().toString().trim();
+
+            postingDialog.setMessage("Posting...");
+            postingDialog.show();
+            DatabaseReference newPost = postingDatabase.push();
+            newPost.child("desc").setValue(textPost);
+            newPost.child("username").setValue(MainPage.usernameInfo);
+            newPost.child("profileImage").setValue(MainPage.profielImage);
+            postingDialog.dismiss();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -337,4 +398,25 @@ public class MainPage extends AppCompatActivity
 
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+
+            if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
+                myMenu.setEnabled(true);
+            } else if (postText.getText().toString().trim().length() < 3){
+                myMenu.setEnabled(false);
+            }
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
+    }
 }

@@ -36,7 +36,7 @@
             android:textColor="#000000" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/postOnlyText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/horizontal_line_content_main"
@@ -48,10 +48,10 @@
             android:background="@null"
             android:cursorVisible="true"
             android:ems="10"
+            android:gravity="top"
             android:hint="Post something"
             android:inputType="textMultiLine"
             android:padding="5dp"
-            android:gravity="top"
             android:textColor="#000000"
             android:textColorLink="#1a237e"
             android:textCursorDrawable="@null" />
