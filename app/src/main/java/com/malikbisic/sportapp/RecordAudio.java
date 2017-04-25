@@ -2,6 +2,7 @@ package com.malikbisic.sportapp;
 
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -36,6 +37,7 @@ public class RecordAudio extends AppCompatActivity {
     Button buttonStart, buttonStop, buttonPlayLastRecordAudio,
             buttonStopPlayingRecording, buttonUploadAudio, buttonPost;
     String AudioSavePathInDevice = null;
+    TextView stateText;
     MediaRecorder mediaRecorder;
     Random random;
     String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
@@ -56,6 +58,7 @@ public class RecordAudio extends AppCompatActivity {
         buttonUploadAudio = (Button) findViewById(R.id.upload_audio);
         buttonPost = (Button) findViewById(R.id.post_btn);
         mDialog = new ProgressDialog(this);
+        stateText = (TextView) findViewById(R.id.state_textview);
 
         buttonStop.setEnabled(false);
         buttonPlayLastRecordAudio.setEnabled(false);
@@ -94,9 +97,10 @@ public class RecordAudio extends AppCompatActivity {
                     buttonPlayLastRecordAudio.setEnabled(false);
                     buttonUploadAudio.setEnabled(false);
                     buttonPost.setEnabled(false);
+                    stateText.setVisibility(View.VISIBLE);
+                    stateText.setText("Recording..");
+                    stateText.setTextColor(Color.parseColor("#1b5e20"));
 
-                    Toast.makeText(RecordAudio.this, "Recording started",
-                            Toast.LENGTH_LONG).show();
                 } else {
                     requestPermission();
                 }
@@ -115,8 +119,10 @@ public class RecordAudio extends AppCompatActivity {
                 buttonUploadAudio.setEnabled(true);
                 buttonPost.setEnabled(false);
 
-                Toast.makeText(RecordAudio.this, "Recording Completed",
-                        Toast.LENGTH_LONG).show();
+                stateText.setVisibility(View.VISIBLE);
+                stateText.setText("Recording completed!");
+                stateText.setTextColor(Color.parseColor("#d50000"));
+
             }
         });
 
@@ -140,8 +146,11 @@ public class RecordAudio extends AppCompatActivity {
                 }
 
                 mediaPlayer.start();
-                Toast.makeText(RecordAudio.this, "Recording Playing",
-                        Toast.LENGTH_LONG).show();
+
+                stateText.setVisibility(View.VISIBLE);
+                stateText.setText("Recording playing!");
+                stateText.setTextColor(Color.parseColor("#1a237e"));
+
             }
         });
 
@@ -154,6 +163,7 @@ public class RecordAudio extends AppCompatActivity {
                 buttonPlayLastRecordAudio.setEnabled(true);
                 buttonUploadAudio.setEnabled(true);
                 buttonPost.setEnabled(false);
+                stateText.setVisibility(View.INVISIBLE);
 
                 if (mediaPlayer != null) {
                     mediaPlayer.stop();

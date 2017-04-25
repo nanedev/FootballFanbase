@@ -27,7 +27,16 @@
                 android:id="@+id/imageView"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/mic" />
+                android:src="@drawable/microphoneforsportapp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/state_textview"
+                android:layout_below="@+id/imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:visibility="invisible" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -35,7 +44,7 @@
                 android:text="Record"
                 android:textColor="#ffffff"
                 android:id="@+id/button"
-                android:layout_below="@+id/imageView"
+                android:layout_below="@+id/state_textview"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="37dp"
                 android:background="@drawable/record_btn_shape" />
