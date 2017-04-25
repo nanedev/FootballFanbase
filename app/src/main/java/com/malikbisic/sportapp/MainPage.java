@@ -76,13 +76,12 @@ public class MainPage extends AppCompatActivity
     private TextView videoText;
     private ImageView audioIcon;
     private TextView audioText;
-    private MediaRecorder mRecorder;
+
     static boolean photoSelected;
     static String usernameInfo;
     static String profielImage;
 
-    String mFileName = null;
-    private static final String LOG_TAG = "record_log";
+
     private static final int PHOTO_OPEN = 1;
     private static final int VIDEO_OPEN = 2;
 
@@ -117,8 +116,6 @@ public class MainPage extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
 
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/recorded_audio.3gp";
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -338,28 +335,6 @@ public class MainPage extends AppCompatActivity
             startActivity(intent);
         }
 
-    }
-
-    private void startRecording() {
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-        try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
-        }
-
-        mRecorder.start();
-    }
-
-    private void stopRecording() {
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
     }
 
 }
