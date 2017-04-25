@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -42,12 +44,15 @@ public class RecordAudio extends AppCompatActivity {
     public static final int RequestPermissionCode = 1;
     MediaPlayer mediaPlayer;
     StorageReference mStorage;
+    DatabaseReference postAudio;
     ProgressDialog mDialog;
+    Uri uriAudio;
 
     private static final String LOG_TAG = "record_log";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        postAudio = FirebaseDatabase.getInstance().getReference().child("Posting");
         setContentView(R.layout.activity_record_audio);
         buttonStart = (Button) findViewById(R.id.button);
         buttonStop = (Button) findViewById(R.id.button2);
@@ -181,6 +186,7 @@ public class RecordAudio extends AppCompatActivity {
                 filePath.putFile(uri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        uriAudio = taskSnapshot.getDownloadUrl();
                         mDialog.dismiss();
                         buttonStart.setEnabled(true);
                         buttonStopPlayingRecording.setEnabled(false);
@@ -191,6 +197,25 @@ public class RecordAudio extends AppCompatActivity {
                     }
                 });
 
+            }
+        });
+
+        buttonPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialog.setMessage("Posting...");
+                mDialog.show();
+                DatabaseReference newPost = postAudio.push();
+                newPost.child("audioFile").setValue(uriAudio.toString());
+                newPost.child("username").setValue(MainPage.usernameInfo);
+                newPost.child("profileImage").setValue(MainPage.profielImage);
+                mDialog.dismiss();
+                buttonStart.setEnabled(true);
+                buttonStopPlayingRecording.setEnabled(false);
+                buttonStop.setEnabled(false);
+                buttonPlayLastRecordAudio.setEnabled(false);
+                buttonPost.setEnabled(false);
+                buttonUploadAudio.setEnabled(false);
             }
         });
 
