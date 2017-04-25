@@ -49,7 +49,7 @@ public class RecordAudio extends AppCompatActivity {
     DatabaseReference postAudio;
     ProgressDialog mDialog;
     Uri uriAudio;
-
+    //komentar
     private static final String LOG_TAG = "record_log";
     @Override
     protected void onCreate(Bundle savedInstanceState) {

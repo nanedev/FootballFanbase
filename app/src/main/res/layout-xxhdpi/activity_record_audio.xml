@@ -35,8 +35,10 @@
                 android:id="@+id/state_textview"
                 android:layout_below="@+id/imageView"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:visibility="invisible" />
+                android:layout_marginTop="21dp"
+                android:visibility="invisible"
+                android:textStyle="bold"
+                android:textSize="20sp" />
 
             <Button
                 android:layout_width="wrap_content"
