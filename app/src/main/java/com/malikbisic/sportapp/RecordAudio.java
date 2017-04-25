@@ -19,6 +19,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 public class RecordAudio extends AppCompatActivity implements View.OnTouchListener {
     Button holdToRecordBtn;
@@ -38,9 +39,10 @@ public class RecordAudio extends AppCompatActivity implements View.OnTouchListen
         recordingState = (TextView) findViewById(R.id.record_state);
 
         mDialog = new ProgressDialog(this);
+        Date createdTime = new Date();
 
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/recorded_audio.3gp";
+        mFileName += "/"+createdTime+"_recorded_audio.3gp";
 
         holdToRecordBtn.setOnTouchListener(this);
 
@@ -97,8 +99,8 @@ public class RecordAudio extends AppCompatActivity implements View.OnTouchListen
     private void uploadAudio() {
         mDialog.setMessage("Uploading audio...");
         mDialog.show();
-        filePath = audioReference.child("Audio").child("new_audio.3gp");
         Uri uri = Uri.fromFile(new File(mFileName));
+        filePath = audioReference.child("Audio").child(uri.getLastPathSegment());
         filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
