@@ -3,6 +3,7 @@ package com.malikbisic.sportapp;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,6 +46,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -369,6 +371,68 @@ public class MainPage extends AppCompatActivity
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthStateListener);
+
+
+        FirebaseRecyclerAdapter<Post, PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
+                Post.class,
+                R.layout.wall_row,
+                PostViewHolder.class,
+                postingDatabase
+        ) {
+            @Override
+            protected void populateViewHolder(PostViewHolder viewHolder, Post model, int position) {
+                viewHolder.setDesc(model.getDesc());
+                viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
+                viewHolder.setUsername(model.getUsername());
+            }
+        };
+        wallList.setAdapter(firebaseRecyclerAdapter);
+    }
+
+
+    public static class PostViewHolder extends RecyclerView.ViewHolder {
+        View mView;
+
+        public PostViewHolder(View itemView) {
+            super(itemView);
+
+            mView = itemView;
+        }
+
+        public void setDesc(String desc) {
+
+            TextView post_desc = (TextView) mView.findViewById(R.id.user_text_wall);
+            post_desc.setText(desc);
+        }
+
+        public void setUsername(String username) {
+            TextView post_username = (TextView) mView.findViewById(R.id.username_wall);
+            post_username.setText(username);
+
+
+        }
+
+        public void setProfileImage(Context ctx, String profileImage) {
+            ImageView post_profile_image = (ImageView) mView.findViewById(R.id.profile_image_wall);
+            Picasso.with(ctx).load(profileImage).into(post_profile_image);
+
+        }
+
+
+        public void setPhotoPost() {
+
+
+        }
+
+        public void setVideoPost() {
+
+
+        }
+
+        public void setAudioFile() {
+
+        }
+
     }
 
     @Override
@@ -424,4 +488,5 @@ public class MainPage extends AppCompatActivity
     public void afterTextChanged(Editable editable) {
 
     }
+
 }
