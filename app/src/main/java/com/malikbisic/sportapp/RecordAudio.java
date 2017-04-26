@@ -189,7 +189,7 @@ public class RecordAudio extends AppCompatActivity {
                 mDialog.setMessage("Uploading...");
                 mDialog.show();
                 StorageMetadata metadata = new StorageMetadata.Builder()
-                        .setContentType("audio/3GPP")
+                        .setContentType("audio/mpeg")
                         .build();
                 StorageReference filePath = mStorage.child("Audio").child(CreateRandomAudioFileName(5));
                 Uri uri = Uri.fromFile(new File(AudioSavePathInDevice));
@@ -238,7 +238,7 @@ public class RecordAudio extends AppCompatActivity {
     public void MediaRecorderReady() {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         mediaRecorder.setOutputFile(AudioSavePathInDevice);
     }
