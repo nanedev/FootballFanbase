@@ -21,6 +21,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -89,7 +91,7 @@ public class MainPage extends AppCompatActivity
     private EditText postText;
     MenuItem myMenu;
     private ProgressDialog postingDialog;
-
+    private RecyclerView wallList;
     static boolean photoSelected;
     static String usernameInfo;
     static String profielImage;
@@ -117,6 +119,9 @@ public class MainPage extends AppCompatActivity
         audioText = (TextView) findViewById(R.id.audioText);
         postText = (EditText) findViewById(R.id.postOnlyText);
         postingDialog = new ProgressDialog(this);
+        wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
+        wallList.setHasFixedSize(false);
+        wallList.setLayoutManager(new LinearLayoutManager(this));
 
         postText.addTextChangedListener(this);
         postText.setOnKeyListener(new View.OnKeyListener() {
