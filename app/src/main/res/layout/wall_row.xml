@@ -64,8 +64,8 @@
                 android:layout_marginTop="5dp" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:id="@+id/posted_image"
                 android:layout_below="@+id/horizontal_line_wall2"
                 android:layout_marginLeft="10dp"
@@ -76,8 +76,8 @@
                 />
 
             <VideoView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:id="@+id/posted_video"
                 android:layout_below="@+id/horizontal_line_wall2"
                 android:layout_marginLeft="10dp"
@@ -107,9 +107,9 @@
                 android:layout_marginTop="5dp"
                 android:visibility="gone" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <VideoView
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:id="@+id/audio_file"
                 android:layout_below="@+id/horizontal_line_wall2"
                 android:layout_marginLeft="10dp"

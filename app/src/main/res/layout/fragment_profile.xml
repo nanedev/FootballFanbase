@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.malikbisic.sportapp.ProfileFragment">
+    tools:context="com.malikbisic.sportapp.ProfileFragment"
+    android:background="@color/primary">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,31 +26,31 @@
                 android:id="@+id/backgroundProfile" />
 
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/get_profile_image_id"
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/profilimage"
-                    android:layout_marginTop="20dp" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/get_profile_image_id"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/profilimage"
+                android:layout_marginTop="20dp" />
 
-                <ProgressBar
-                    android:id="@+id/loadingProfileImageProgressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="60dp" />
+            <ProgressBar
+                android:id="@+id/loadingProfileImageProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="60dp" />
 
-                <TextView
-                    android:id="@+id/edit_profile_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/get_profile_image_id"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/rect_shape"
-                    android:text="Edit"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/edit_profile_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/get_profile_image_id"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/rect_shape"
+                android:text="Edit"
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
 
 

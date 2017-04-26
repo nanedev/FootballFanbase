@@ -45,6 +45,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -384,6 +385,8 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
+                viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
+               /* viewHolder.setAudioFile(getApplicationContext(),model.getAudioFile());*/
             }
         };
         wallList.setAdapter(firebaseRecyclerAdapter);
@@ -419,17 +422,23 @@ public class MainPage extends AppCompatActivity
         }
 
 
-        public void setPhotoPost() {
+        public void setPhotoPost(Context ctx, String photoPost) {
+            ImageView post_photo = (ImageView) mView.findViewById(R.id.posted_image);
+
+            Picasso.with(ctx).load(photoPost).into(post_photo);
+
+        }
+
+        public void setVideoPost(Context ctx, String videoPost) {
+
 
 
         }
 
-        public void setVideoPost() {
+        public void setAudioFile(Context ctx, String audioFile) {
 
-
-        }
-
-        public void setAudioFile() {
+        /*  VideoView post_audio = (VideoView)mView.findViewById(R.id.audio_file);
+           post_audio.setVideoURI(Uri.parse(audioFile));*/
 
         }
 
