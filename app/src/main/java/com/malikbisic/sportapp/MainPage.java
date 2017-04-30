@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -41,9 +43,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -64,11 +68,15 @@ import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
 import static android.R.attr.data;
+import static android.R.attr.mode;
 import static android.R.attr.theme;
+import static android.R.attr.track;
+
 
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher {
@@ -98,6 +106,7 @@ public class MainPage extends AppCompatActivity
     static boolean photoSelected;
     static String usernameInfo;
     static String profielImage;
+    String neznijavise;
 
 
     private static final int PHOTO_OPEN = 1;
@@ -381,12 +390,39 @@ public class MainPage extends AppCompatActivity
                 postingDatabase
         ) {
             @Override
-            protected void populateViewHolder(PostViewHolder viewHolder, Post model, int position) {
+            protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
-               /* viewHolder.setAudioFile(getApplicationContext(),model.getAudioFile());*/
+                viewHolder.setVideoPost(model.getVideoPost());
+                try {
+                    viewHolder.videoView.setMediaController(viewHolder.mediaController);
+                    viewHolder.videoView.setVideoURI(Uri.parse(model.getVideoPost()));
+                } catch (Exception e) {
+                    e.getMessage();
+                }
+                viewHolder.videoView.requestFocus();
+                viewHolder.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        viewHolder.videoView.start();
+                    }
+                });
+
+
+
+               /* viewHolder.setAudioFile(model.getAudioFile());*/
+
+             /*   viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewHolder.mPlayer = new MediaPlayer();
+                        viewHolder.setAudioFile(model.getAudioFile());
+                    }
+                });*/
+
+
             }
         };
         wallList.setAdapter(firebaseRecyclerAdapter);
@@ -395,11 +431,22 @@ public class MainPage extends AppCompatActivity
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {
         View mView;
-
+        Button play_button;
+        MediaPlayer mPlayer;
+        String url;
+        VideoView videoView;
+        MediaController mediaController;
         public PostViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
+            play_button = (Button) mView.findViewById(R.id.play_button);
+
+            mediaController = new MediaController(mView.getContext());
+
+            videoView = (VideoView) mView.findViewById(R.id.posted_video);
+
+
         }
 
         public void setDesc(String desc) {
@@ -429,17 +476,39 @@ public class MainPage extends AppCompatActivity
 
         }
 
-        public void setVideoPost(Context ctx, String videoPost) {
+        public void setVideoPost(String videoPost) {
 
-
+            try {
+                videoView.setVideoURI(Uri.parse(videoPost));
+            } catch (Exception e) {
+                e.getMessage();
+            }
 
         }
 
-        public void setAudioFile(Context ctx, String audioFile) {
 
-        /*  VideoView post_audio = (VideoView)mView.findViewById(R.id.audio_file);
-           post_audio.setVideoURI(Uri.parse(audioFile));*/
+        public void setAudioFile(String audioFile) {
+            mPlayer = new MediaPlayer();
+            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
+            try {
+                if (audioFile != null) {
+                    mPlayer.setDataSource(audioFile);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    try {
+                        mPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mPlayer.start();
+                }
+            });
         }
 
     }

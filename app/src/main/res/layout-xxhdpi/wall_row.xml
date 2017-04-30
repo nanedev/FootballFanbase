@@ -2,12 +2,14 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    android:layout_margin="20dp"
+    android:background="#ffffff">
 
     <RelativeLayout
         android:id="@+id/row_layout_relative"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#ffffff">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -28,7 +30,9 @@
             android:layout_marginTop="40dp"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:text="someusername" />
+            android:text="someusername"
+            android:textColor="#000000"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
@@ -53,7 +57,9 @@
                 android:text="SOME TEXT"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp" />
+                android:layout_marginStart="10dp"
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
             <View
                 android:layout_width="match_parent"
@@ -72,58 +78,74 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/fans"
+                android:visibility="gone"
 
                 />
 
-            <VideoView
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/posted_video"
+                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/horizontal_line_wall2"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
-                android:visibility="gone"
+                android:id="@+id/framelayout">
 
-                />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:id="@+id/horizontal_line_wall3"
-                android:layout_below="@+id/posted_image"
-                android:background="#9e9e9e"
-                android:layout_marginTop="5dp" />
+                <VideoView
+                    android:id="@+id/posted_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:visibility="visible" />
+            </FrameLayout>
 
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:id="@+id/horizontal_line_wall4"
-                android:layout_below="@+id/posted_video"
+                android:layout_below="@+id/framelayout"
                 android:background="#9e9e9e"
                 android:layout_marginTop="5dp"
                 android:visibility="gone" />
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/audio_file"
-                android:layout_below="@+id/horizontal_line_wall2"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:visibility="gone" />
+                android:id="@+id/layout_for_audio_player"
+                android:visibility="gone">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:id="@+id/horizontal_line5"
-                android:layout_below="@+id/audio_file"
-                android:background="#9e9e9e"
-                android:layout_marginTop="5dp"
-                android:visibility="gone" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/play_button"
+                    android:text="play" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stop_button"
+                    android:layout_alignBaseline="@+id/play_button"
+                    android:layout_toRightOf="@+id/play_button"
+                    android:layout_toEndOf="@+id/play_button"
+                    android:layout_marginLeft="10dp"
+
+                    android:text="stop" />
+
+                <SeekBar
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/audio_seek_bar"
+                    android:layout_toRightOf="@+id/stop_button"
+                    android:layout_toEndOf="@+id/stop_button" />
+
+            </RelativeLayout>
+
+
         </RelativeLayout>
 
         <LinearLayout
