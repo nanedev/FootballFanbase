@@ -396,19 +396,7 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
                 viewHolder.setVideoPost(model.getVideoPost());
-                try {
-                    viewHolder.videoView.setMediaController(viewHolder.mediaController);
-                    viewHolder.videoView.setVideoURI(Uri.parse(model.getVideoPost()));
-                } catch (Exception e) {
-                    e.getMessage();
-                }
-                viewHolder.videoView.requestFocus();
-                viewHolder.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        viewHolder.videoView.start();
-                    }
-                });
+
 
 
 
@@ -479,7 +467,16 @@ public class MainPage extends AppCompatActivity
         public void setVideoPost(String videoPost) {
 
             try {
+                videoView.setMediaController(mediaController);
+                videoView.setVisibility(View.VISIBLE);
                 videoView.setVideoURI(Uri.parse(videoPost));
+                videoView.requestFocus();
+                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        videoView.start();
+                    }
+                });
             } catch (Exception e) {
                 e.getMessage();
             }

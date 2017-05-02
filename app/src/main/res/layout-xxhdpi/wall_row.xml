@@ -92,14 +92,15 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
-                android:id="@+id/framelayout">
+                android:id="@+id/framelayout"
+                android:visibility="gone">
 
                 <VideoView
                     android:id="@+id/posted_video"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_gravity="center"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </FrameLayout>
 
 
@@ -109,8 +110,7 @@
                 android:id="@+id/horizontal_line_wall4"
                 android:layout_below="@+id/framelayout"
                 android:background="#9e9e9e"
-                android:layout_marginTop="5dp"
-                android:visibility="gone" />
+                android:layout_marginTop="5dp" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
