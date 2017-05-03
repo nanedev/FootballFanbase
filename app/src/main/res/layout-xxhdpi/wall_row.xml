@@ -92,8 +92,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
-                android:id="@+id/framelayout"
-                android:visibility="gone">
+                android:id="@+id/framelayout">
 
                 <VideoView
                     android:id="@+id/posted_video"
@@ -120,28 +119,27 @@
 
 
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:id="@+id/play_button"
-                    android:text="play" />
+                    android:background="@drawable/ic_play_circle_filled_black_24dp" />
 
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/stop_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/pause_button"
                     android:layout_alignBaseline="@+id/play_button"
                     android:layout_toRightOf="@+id/play_button"
                     android:layout_toEndOf="@+id/play_button"
                     android:layout_marginLeft="10dp"
-
-                    android:text="stop" />
+                    android:background="@drawable/ic_pause_circle_filled_black_24dp" />
 
                 <SeekBar
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/audio_seek_bar"
-                    android:layout_toRightOf="@+id/stop_button"
-                    android:layout_toEndOf="@+id/stop_button" />
+                    android:layout_toRightOf="@+id/pause_button"
+                    android:layout_toEndOf="@+id/pause_button" />
 
             </RelativeLayout>
 

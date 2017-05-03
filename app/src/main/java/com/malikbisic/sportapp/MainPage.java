@@ -49,6 +49,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -399,7 +400,14 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
 
 
+                viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewHolder.setAudioFile(model.getAudioFile());
 
+
+                    }
+                });
                /* viewHolder.setAudioFile(model.getAudioFile());*/
 
              /*   viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
@@ -426,6 +434,7 @@ public class MainPage extends AppCompatActivity
         ImageView post_photo;
         MediaController mediaController;
         FrameLayout videoLayout;
+        RelativeLayout audioLayout;
         public PostViewHolder(View itemView) {
             super(itemView);
 
@@ -437,6 +446,7 @@ public class MainPage extends AppCompatActivity
             videoView = (VideoView) mView.findViewById(R.id.posted_video);
             post_photo = (ImageView) mView.findViewById(R.id.posted_image);
            // videoLayout = (FrameLayout) mView.findViewById(R.id.framelayout);
+            audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
 
 
 
@@ -465,7 +475,7 @@ public class MainPage extends AppCompatActivity
         public void setPhotoPost(Context ctx, String photoPost) {
 
             if (photoPost != null){
-
+                post_photo.setVisibility(View.VISIBLE);
             Picasso.with(ctx).load(photoPost).into(post_photo);
             } else {
 
@@ -503,25 +513,29 @@ public class MainPage extends AppCompatActivity
         public void setAudioFile(String audioFile) {
             mPlayer = new MediaPlayer();
             mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
+            if (audioFile != null) {
+                audioLayout.setVisibility(View.VISIBLE);
             try {
-                if (audioFile != null) {
                     mPlayer.setDataSource(audioFile);
-                }
+
+                mPlayer.prepareAsync();
+                mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        if (mPlayer != null) {
+                            mPlayer.start();
+                        }
+                    }
+                });
+                mPlayer.start();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    try {
-                        mPlayer.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mPlayer.start();
-                }
-            });
+
+            } else {
+                audioLayout.setVisibility(View.GONE);
+            }
         }
 
     }
