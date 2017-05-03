@@ -45,6 +45,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
@@ -395,8 +396,7 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
-                viewHolder.setVideoPost(model.getVideoPost());
-
+                //viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
 
 
 
@@ -423,7 +423,9 @@ public class MainPage extends AppCompatActivity
         MediaPlayer mPlayer;
         String url;
         VideoView videoView;
+        ImageView post_photo;
         MediaController mediaController;
+        FrameLayout videoLayout;
         public PostViewHolder(View itemView) {
             super(itemView);
 
@@ -433,6 +435,9 @@ public class MainPage extends AppCompatActivity
             mediaController = new MediaController(mView.getContext());
 
             videoView = (VideoView) mView.findViewById(R.id.posted_video);
+            post_photo = (ImageView) mView.findViewById(R.id.posted_image);
+           // videoLayout = (FrameLayout) mView.findViewById(R.id.framelayout);
+
 
 
         }
@@ -458,29 +463,40 @@ public class MainPage extends AppCompatActivity
 
 
         public void setPhotoPost(Context ctx, String photoPost) {
-            ImageView post_photo = (ImageView) mView.findViewById(R.id.posted_image);
+
+            if (photoPost != null){
 
             Picasso.with(ctx).load(photoPost).into(post_photo);
+            } else {
+
+                post_photo.setVisibility(View.GONE);
+            }
 
         }
 
-        public void setVideoPost(String videoPost) {
+        public void setVideoPost(Context ctx, String videoPost) {
 
-            try {
-                videoView.setMediaController(mediaController);
-                videoView.setVisibility(View.VISIBLE);
-                videoView.setVideoURI(Uri.parse(videoPost));
-                videoView.requestFocus();
-                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        videoView.start();
-                    }
-                });
-            } catch (Exception e) {
-                e.getMessage();
+
+            if (videoPost != null) {
+
+                try {
+                    videoView.setMediaController(mediaController);
+                    videoView.setVisibility(View.VISIBLE);
+                    videoView.setVideoURI(Uri.parse(videoPost));
+                    videoView.requestFocus();
+                    videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            videoView.start();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.getMessage();
+                }
+
+            } else {
+                videoView.setVisibility(View.GONE);
             }
-
         }
 
 
