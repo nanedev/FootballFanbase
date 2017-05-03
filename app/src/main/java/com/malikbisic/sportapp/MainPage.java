@@ -396,7 +396,7 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
-                //viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
+                viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
 
 
 
