@@ -50,7 +50,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -59,6 +61,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.parse.FindCallback;
@@ -398,16 +401,75 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
                 viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
+                viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
+
+
+                viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                viewHolder.seekBar.setEnabled(false);
 
 
                 viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        viewHolder.setAudioFile(model.getAudioFile());
 
+                        try {
+                            viewHolder.mPlayer.prepareAsync();
+                            viewHolder.progressDialog.setMessage("Loading..");
+                            viewHolder.progressDialog.show();
+                            viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    viewHolder.progressDialog.dismiss();
+                                    viewHolder.mPlayer.start();
+
+                                }
+                            });
+                            viewHolder.mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                                @Override
+                                public boolean onError(MediaPlayer mp, int what, int extra) {
+                                    viewHolder.progressDialog.dismiss();
+                                    Toast.makeText(getApplicationContext(), "Error occured", Toast.LENGTH_LONG).show();
+                                    return false;
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 });
+
+                viewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        viewHolder.mPlayer.pause();
+
+                    }
+                });
+
+           /*     viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewHolder.mPlayer = new MediaPlayer();
+                        viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                        try {
+                            viewHolder.mPlayer.setDataSource(String.valueOf(Uri.parse(model.getAudioFile())));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        viewHolder.mPlayer.prepareAsync();
+                        viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                viewHolder.mPlayer.start();
+                            }
+                        });
+
+
+
+                    }
+                });*/
                /* viewHolder.setAudioFile(model.getAudioFile());*/
 
              /*   viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
@@ -425,6 +487,7 @@ public class MainPage extends AppCompatActivity
     }
 
 
+
     public static class PostViewHolder extends RecyclerView.ViewHolder {
         View mView;
         Button play_button;
@@ -435,11 +498,22 @@ public class MainPage extends AppCompatActivity
         MediaController mediaController;
         FrameLayout videoLayout;
         RelativeLayout audioLayout;
+        ProgressDialog progressDialog;
+        Button pause_button;
+        SeekBar seekBar;
+        boolean play = true;
+        boolean pause = true;
+
+        boolean resume = true;
+        boolean stop = true;
+
         public PostViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
             play_button = (Button) mView.findViewById(R.id.play_button);
+            pause_button = (Button) mView.findViewById(R.id.pause_button);
+
 
             mediaController = new MediaController(mView.getContext());
 
@@ -447,7 +521,9 @@ public class MainPage extends AppCompatActivity
             post_photo = (ImageView) mView.findViewById(R.id.posted_image);
            // videoLayout = (FrameLayout) mView.findViewById(R.id.framelayout);
             audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
-
+            mPlayer = new MediaPlayer();
+            progressDialog = new ProgressDialog(mView.getContext());
+            seekBar = (SeekBar) mView.findViewById(R.id.audio_seek_bar);
 
 
         }
@@ -510,35 +586,26 @@ public class MainPage extends AppCompatActivity
         }
 
 
-        public void setAudioFile(String audioFile) {
-            mPlayer = new MediaPlayer();
-            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        public void setAudioFile(Context context, String audioFile) {
+
             if (audioFile != null) {
                 audioLayout.setVisibility(View.VISIBLE);
-            try {
-                    mPlayer.setDataSource(audioFile);
+                try {
 
-                mPlayer.prepareAsync();
-                mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        if (mPlayer != null) {
-                            mPlayer.start();
-                        }
-                    }
-                });
-                mPlayer.start();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                    mPlayer.setDataSource(context, Uri.parse(audioFile));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             } else {
                 audioLayout.setVisibility(View.GONE);
             }
+
         }
 
+
     }
+
 
     @Override
     public void onStop() {
@@ -593,5 +660,6 @@ public class MainPage extends AppCompatActivity
     public void afterTextChanged(Editable editable) {
 
     }
+
 
 }

@@ -1,5 +1,8 @@
 package com.malikbisic.sportapp;
 
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
+
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 import com.parse.Parse;
@@ -12,9 +15,11 @@ import com.squareup.picasso.Picasso;
 
 public class Application extends android.app.Application {
 
+
     @Override
     public void onCreate() {
         super.onCreate();
+
 
         if (!FirebaseApp.getApps(this).isEmpty()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
@@ -34,4 +39,5 @@ public class Application extends android.app.Application {
         Picasso.setSingletonInstance(built);
 
     }
+
 }
