@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
@@ -113,6 +114,9 @@ public class MainPage extends AppCompatActivity
     static String profielImage;
     String neznijavise;
 
+    private boolean pauseAudioPressed = false;
+    private boolean audiofinished = false;
+    private int pausePosition;
 
     private static final int PHOTO_OPEN = 1;
     private static final int VIDEO_OPEN = 2;
@@ -145,7 +149,7 @@ public class MainPage extends AppCompatActivity
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
 
-                if (i == KeyEvent.KEYCODE_DEL){
+                if (i == KeyEvent.KEYCODE_DEL) {
                 }
 
                 return false;
@@ -159,7 +163,6 @@ public class MainPage extends AppCompatActivity
         videoText.setOnClickListener(this);
         audioIcon.setOnClickListener(this);
         audioText.setOnClickListener(this);
-
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -247,9 +250,6 @@ public class MainPage extends AppCompatActivity
         };
 
 
-
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -281,8 +281,7 @@ public class MainPage extends AppCompatActivity
                 startActivity(goToAddPhotoOrVideo);
                 Log.i("uri photo", String.valueOf(imageUri));
 
-            }
-            else if (requestCode == VIDEO_OPEN &&  resultCode == RESULT_OK) {
+            } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
                 Uri videoUri = data.getData();
                 Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
                 goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
@@ -290,8 +289,7 @@ public class MainPage extends AppCompatActivity
                 startActivity(goToAddPhotoOrVideo);
 
 
-            }
-             else {
+            } else {
 
                 for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                     fragment.onActivityResult(requestCode, resultCode, data);
@@ -341,8 +339,6 @@ public class MainPage extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -405,35 +401,59 @@ public class MainPage extends AppCompatActivity
 
 
                 viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                viewHolder.seekBar.setEnabled(false);
+                viewHolder.seekBar.setEnabled(true);
 
 
                 viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(final View v) {
 
-                        try {
-                            viewHolder.mPlayer.prepareAsync();
-                            viewHolder.progressDialog.setMessage("Loading..");
-                            viewHolder.progressDialog.show();
-                            viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                @Override
-                                public void onPrepared(MediaPlayer mp) {
-                                    viewHolder.progressDialog.dismiss();
+                        if (pauseAudioPressed == false) {
+                            try {
+                                viewHolder.mPlayer.prepareAsync();
+                                //viewHolder.mPlayer.reset();
+                                viewHolder.progressDialog.setMessage("Loading..");
+                                viewHolder.progressDialog.show();
+                                viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                    @Override
+                                    public void onPrepared(MediaPlayer mp) {
+                                        viewHolder.progressDialog.dismiss();
+                                        viewHolder.mPlayer.start();
+
+                                    }
+                                });
+                                if (audiofinished){
+                                    viewHolder.mPlayer.seekTo(0);
                                     viewHolder.mPlayer.start();
+                                }
+                                viewHolder.mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                                    @Override
+                                    public boolean onError(MediaPlayer mp, int what, int extra) {
+                                        viewHolder.progressDialog.dismiss();
+                                        Toast.makeText(getApplicationContext(), "Error occured", Toast.LENGTH_LONG).show();
+                                        return false;
+                                    }
+                                });
 
-                                }
-                            });
-                            viewHolder.mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                                @Override
-                                public boolean onError(MediaPlayer mp, int what, int extra) {
-                                    viewHolder.progressDialog.dismiss();
-                                    Toast.makeText(getApplicationContext(), "Error occured", Toast.LENGTH_LONG).show();
-                                    return false;
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                                viewHolder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                    @Override
+                                    public void onCompletion(MediaPlayer mediaPlayer) {
+
+                                        audiofinished = true;
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                    viewHolder.mPlayer.seekTo(pausePosition);
+                                    viewHolder.mPlayer.start();
+                                pauseAudioPressed = false;
+
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
 
                     }
@@ -443,10 +463,16 @@ public class MainPage extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
 
-                        viewHolder.mPlayer.pause();
+                        if (viewHolder.mPlayer.isPlaying()) {
+                            viewHolder.mPlayer.pause();
+                            pausePosition = viewHolder.mPlayer.getCurrentPosition();
+                            pauseAudioPressed = true;
+                        }
 
                     }
                 });
+
+
 
            /*     viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -487,7 +513,6 @@ public class MainPage extends AppCompatActivity
     }
 
 
-
     public static class PostViewHolder extends RecyclerView.ViewHolder {
         View mView;
         Button play_button;
@@ -519,7 +544,7 @@ public class MainPage extends AppCompatActivity
 
             videoView = (VideoView) mView.findViewById(R.id.posted_video);
             post_photo = (ImageView) mView.findViewById(R.id.posted_image);
-           // videoLayout = (FrameLayout) mView.findViewById(R.id.framelayout);
+            // videoLayout = (FrameLayout) mView.findViewById(R.id.framelayout);
             audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
             mPlayer = new MediaPlayer();
             progressDialog = new ProgressDialog(mView.getContext());
@@ -550,9 +575,9 @@ public class MainPage extends AppCompatActivity
 
         public void setPhotoPost(Context ctx, String photoPost) {
 
-            if (photoPost != null){
+            if (photoPost != null) {
                 post_photo.setVisibility(View.VISIBLE);
-            Picasso.with(ctx).load(photoPost).into(post_photo);
+                Picasso.with(ctx).load(photoPost).into(post_photo);
             } else {
 
                 post_photo.setVisibility(View.GONE);
@@ -589,6 +614,7 @@ public class MainPage extends AppCompatActivity
         public void setAudioFile(Context context, String audioFile) {
 
             if (audioFile != null) {
+                mPlayer.reset();
                 audioLayout.setVisibility(View.VISIBLE);
                 try {
 
@@ -619,12 +645,12 @@ public class MainPage extends AppCompatActivity
     @Override
     public void onClick(View view) {
 
-        if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText){
+        if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText) {
             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
             photoSelected = true;
             openGallery.setType("image/*");
             startActivityForResult(openGallery, PHOTO_OPEN);
-        } else if (view.getId() == R.id.vide_icon_content_main || view.getId() == R.id.videoText){
+        } else if (view.getId() == R.id.vide_icon_content_main || view.getId() == R.id.videoText) {
             Intent intent = new Intent();
             photoSelected = false;
             intent.setType("video/*");
@@ -648,12 +674,11 @@ public class MainPage extends AppCompatActivity
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
 
-
-            if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
-                myMenu.setEnabled(true);
-            } else if (postText.getText().toString().trim().length() < 3){
-                myMenu.setEnabled(false);
-            }
+        if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
+            myMenu.setEnabled(true);
+        } else if (postText.getText().toString().trim().length() < 3) {
+            myMenu.setEnabled(false);
+        }
     }
 
     @Override
