@@ -115,24 +115,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/layout_for_audio_player"
-                android:visibility="gone">
+                android:visibility="visible"
+                android:background="#81d4fa">
 
 
                 <Button
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:id="@+id/play_button"
+                    android:layout_centerVertical="true"
                     android:background="@drawable/ic_play_circle_filled_black_24dp" />
 
-                <Button
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/stop_button"
-                    android:layout_alignBaseline="@+id/play_button"
-                    android:layout_toRightOf="@+id/pause_button"
-                    android:layout_toEndOf="@+id/pause_button"
-                    android:layout_marginLeft="10dp"
-                    android:background="@drawable/ic_stop_black_24dp" />
 
                 <Button
                     android:layout_width="40dp"
@@ -142,14 +135,29 @@
                     android:layout_toRightOf="@+id/play_button"
                     android:layout_toEndOf="@+id/play_button"
                     android:layout_marginLeft="10dp"
+                    android:layout_centerVertical="true"
                     android:background="@drawable/ic_pause_circle_filled_black_24dp" />
+
+                <Button
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/stop_button"
+                    android:layout_centerVertical="true"
+                    android:layout_alignBaseline="@+id/play_button"
+                    android:layout_toRightOf="@+id/pause_button"
+                    android:layout_toEndOf="@+id/pause_button"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/ic_stop_black_24dp" />
+
                 <SeekBar
                     android:id="@+id/audio_seek_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/stop_button"
                     android:layout_toRightOf="@+id/stop_button"
-                    android:thumb="@color/authui_colorPrimaryDark" />
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp" />
 
             </RelativeLayout>
 

@@ -82,6 +82,7 @@ import static android.R.attr.data;
 import static android.R.attr.mode;
 import static android.R.attr.theme;
 import static android.R.attr.track;
+import static android.R.attr.voiceIcon;
 
 
 public class MainPage extends AppCompatActivity
@@ -120,6 +121,8 @@ public class MainPage extends AppCompatActivity
 
     private static final int PHOTO_OPEN = 1;
     private static final int VIDEO_OPEN = 2;
+    boolean pause_state;
+    boolean play_state;
 
 
     @Override
@@ -399,75 +402,46 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
                 viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
 
-
-                viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 viewHolder.seekBar.setEnabled(true);
-
-
                 viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
 
-                        if (pauseAudioPressed == false) {
-                            try {
-                                viewHolder.mPlayer.prepareAsync();
-                                //viewHolder.mPlayer.reset();
-                                viewHolder.progressDialog.setMessage("Loading..");
-                                viewHolder.progressDialog.show();
-                                viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                    @Override
-                                    public void onPrepared(MediaPlayer mp) {
-                                        viewHolder.progressDialog.dismiss();
-                                        viewHolder.mPlayer.start();
+                        viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-                                    }
-                                });
-                                if (audiofinished){
-                                    viewHolder.mPlayer.seekTo(0);
+                        try {
+                            viewHolder.mPlayer.prepareAsync();
+                            viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
                                     viewHolder.mPlayer.start();
                                 }
-                                viewHolder.mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                                    @Override
-                                    public boolean onError(MediaPlayer mp, int what, int extra) {
-                                        viewHolder.progressDialog.dismiss();
-                                        Toast.makeText(getApplicationContext(), "Error occured", Toast.LENGTH_LONG).show();
-                                        return false;
-                                    }
-                                });
+                            });
 
-                                viewHolder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                    @Override
-                                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                                        audiofinished = true;
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            try {
-                                    viewHolder.mPlayer.seekTo(pausePosition);
-                                    viewHolder.mPlayer.start();
-                                pauseAudioPressed = false;
 
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
+                        play_state = true;
+                        if (!pause_state) {
+                            viewHolder.mPlayer.start();
+                            pause_state = false;
                         }
 
                     }
+
+
                 });
 
                 viewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        if (viewHolder.mPlayer.isPlaying()) {
+                        pause_state = true;
+                        play_state = false;
+                        if (viewHolder.mPlayer.isPlaying() && pause_state)
                             viewHolder.mPlayer.pause();
-                            pausePosition = viewHolder.mPlayer.getCurrentPosition();
-                            pauseAudioPressed = true;
-                        }
+                        pause_state = false;
 
                     }
                 });
