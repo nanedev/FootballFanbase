@@ -425,8 +425,26 @@ public class MainPage extends AppCompatActivity
                                         @Override
                                         public void run() {
                                             viewHolder.seekBar.setProgress(viewHolder.mPlayer.getCurrentPosition());
+                                            viewHolder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                @Override
+                                                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                    if (fromUser) {
+                                                        viewHolder.mPlayer.seekTo(progress);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                }
+
+                                                @Override
+                                                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                }
+                                            });
                                         }
-                                    }, 0 , 1000);
+                                    }, 0, 100);
 
                                 }
                             });
@@ -440,7 +458,7 @@ public class MainPage extends AppCompatActivity
                                 }
                             });
                         } catch (Exception e) {
-                           e.printStackTrace();
+                            e.printStackTrace();
                         }
 
 
@@ -476,6 +494,8 @@ public class MainPage extends AppCompatActivity
                         stop_state = true;
                         if (viewHolder.mPlayer != null && stop_state) {
                             viewHolder.mPlayer.stop();
+                            viewHolder.seekBar.setMax(0);
+
 //sdasadas
                         }
                     }
@@ -617,7 +637,7 @@ public class MainPage extends AppCompatActivity
         public void setAudioFile(Context context, String audioFile) {
 
             if (audioFile != null) {
-               // mPlayer.reset();
+                // mPlayer.reset();
                 audioLayout.setVisibility(View.VISIBLE);
                 try {
 
