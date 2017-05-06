@@ -29,16 +29,31 @@
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/microphoneforsportapp" />
 
-            <TextView
+            <EditText
+                android:id="@+id/editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/state_textview"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
                 android:layout_below="@+id/imageView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="21dp"
-                android:visibility="invisible"
+                android:layout_marginTop="15dp"
+                android:ems="10"
+                android:hint="Say something about this"
+                android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/state_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/button2"
+                android:layout_alignStart="@+id/button2"
+                android:layout_below="@+id/editText"
+                android:layout_marginTop="6dp"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:textSize="20sp" />
+                android:visibility="invisible" />
 
             <Button
                 android:layout_width="wrap_content"
