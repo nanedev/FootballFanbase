@@ -77,6 +77,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.R.attr.data;
 import static android.R.attr.mode;
@@ -416,11 +418,29 @@ public class MainPage extends AppCompatActivity
                                 @Override
                                 public void onPrepared(MediaPlayer mp) {
                                     viewHolder.mPlayer.start();
+
+                                    viewHolder.seekBar.setMax(viewHolder.mPlayer.getDuration());
+
+                                    new Timer().scheduleAtFixedRate(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            viewHolder.seekBar.setProgress(viewHolder.mPlayer.getCurrentPosition());
+                                        }
+                                    }, 0 , 1000);
+
                                 }
                             });
 
+
+                            viewHolder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                @Override
+                                public void onCompletion(MediaPlayer mediaPlayer) {
+                                    Log.i("finished", "yes");
+
+                                }
+                            });
                         } catch (Exception e) {
-                            e.printStackTrace();
+                           e.printStackTrace();
                         }
 
 
@@ -434,6 +454,7 @@ public class MainPage extends AppCompatActivity
 
 
                 });
+
 
                 viewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -459,6 +480,8 @@ public class MainPage extends AppCompatActivity
                         }
                     }
                 });
+
+
 
            /*     viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -594,7 +617,7 @@ public class MainPage extends AppCompatActivity
         public void setAudioFile(Context context, String audioFile) {
 
             if (audioFile != null) {
-                mPlayer.reset();
+               // mPlayer.reset();
                 audioLayout.setVisibility(View.VISIBLE);
                 try {
 
