@@ -496,44 +496,13 @@ public class MainPage extends AppCompatActivity
                             viewHolder.mPlayer.stop();
                             viewHolder.seekBar.setMax(0);
 
-//sdasadas
+
                         }
                     }
                 });
 
 
 
-           /*     viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        viewHolder.mPlayer = new MediaPlayer();
-                        viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                        try {
-                            viewHolder.mPlayer.setDataSource(String.valueOf(Uri.parse(model.getAudioFile())));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        viewHolder.mPlayer.prepareAsync();
-                        viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                viewHolder.mPlayer.start();
-                            }
-                        });
-
-
-
-                    }
-                });*/
-               /* viewHolder.setAudioFile(model.getAudioFile());*/
-
-             /*   viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        viewHolder.mPlayer = new MediaPlayer();
-                        viewHolder.setAudioFile(model.getAudioFile());
-                    }
-                });*/
 
 
             }

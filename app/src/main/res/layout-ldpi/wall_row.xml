@@ -112,52 +112,57 @@
                 android:layout_marginTop="5dp" />
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
                 android:id="@+id/layout_for_audio_player"
                 android:visibility="visible"
                 android:background="#81d4fa">
 
 
                 <Button
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:id="@+id/play_button"
-                    android:layout_centerVertical="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_toStartOf="@+id/pause_button"
+                    android:layout_toLeftOf="@+id/pause_button"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginEnd="30dp"
                     android:background="@drawable/ic_play_circle_filled_black_24dp" />
 
 
                 <Button
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:id="@+id/pause_button"
                     android:layout_alignBaseline="@+id/play_button"
-                    android:layout_toRightOf="@+id/play_button"
-                    android:layout_toEndOf="@+id/play_button"
-                    android:layout_marginLeft="10dp"
-                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
                     android:background="@drawable/ic_pause_circle_filled_black_24dp" />
 
                 <Button
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:id="@+id/stop_button"
-                    android:layout_centerVertical="true"
-                    android:layout_alignBaseline="@+id/play_button"
+                    android:layout_alignBaseline="@+id/pause_button"
                     android:layout_toRightOf="@+id/pause_button"
                     android:layout_toEndOf="@+id/pause_button"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"
                     android:background="@drawable/ic_stop_black_24dp" />
 
                 <SeekBar
                     android:id="@+id/audio_seek_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/stop_button"
-                    android:layout_toRightOf="@+id/stop_button"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp" />
+
+                    android:layout_below="@+id/pause_button"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:progressBackgroundTint="@color/errorColor"
+                    android:thumb="@color/accent" />
 
             </RelativeLayout>
 
