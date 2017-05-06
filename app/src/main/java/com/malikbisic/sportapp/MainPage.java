@@ -455,7 +455,7 @@ public class MainPage extends AppCompatActivity
                         stop_state = true;
                         if (viewHolder.mPlayer != null && stop_state) {
                             viewHolder.mPlayer.stop();
-
+//sdasadas
                         }
                     }
                 });
