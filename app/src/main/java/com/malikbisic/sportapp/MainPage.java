@@ -455,13 +455,6 @@ public class MainPage extends AppCompatActivity
                         stop_state = true;
                         if (viewHolder.mPlayer != null && stop_state) {
                             viewHolder.mPlayer.stop();
-                            viewHolder.mPlayer.reset();
-                            viewHolder.mPlayer = new MediaPlayer();
-                            try {
-                                viewHolder.mPlayer.setDataSource(getApplicationContext(), Uri.parse(model.getAudioFile()));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
 
                         }
                     }
