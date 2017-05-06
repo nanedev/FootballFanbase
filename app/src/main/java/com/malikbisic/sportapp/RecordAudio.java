@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +51,7 @@ public class RecordAudio extends AppCompatActivity {
     DatabaseReference postAudio;
     ProgressDialog mDialog;
     Uri uriAudio;
+    EditText aboutAudio;
     //komentar
     private static final String LOG_TAG = "record_log";
     @Override
@@ -56,6 +59,7 @@ public class RecordAudio extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         postAudio = FirebaseDatabase.getInstance().getReference().child("Posting");
         setContentView(R.layout.activity_record_audio);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         buttonStart = (Button) findViewById(R.id.button);
         buttonStop = (Button) findViewById(R.id.button2);
         buttonPlayLastRecordAudio = (Button) findViewById(R.id.button3);
@@ -64,6 +68,7 @@ public class RecordAudio extends AppCompatActivity {
         buttonPost = (Button) findViewById(R.id.post_btn);
         mDialog = new ProgressDialog(this);
         stateText = (TextView) findViewById(R.id.state_textview);
+        aboutAudio = (EditText) findViewById(R.id.audioAbout);
 
         buttonStop.setEnabled(false);
         buttonPlayLastRecordAudio.setEnabled(false);
@@ -217,12 +222,14 @@ public class RecordAudio extends AppCompatActivity {
         buttonPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String about = aboutAudio.getText().toString().trim();
                 mDialog.setMessage("Posting...");
                 mDialog.show();
                 DatabaseReference newPost = postAudio.push();
                 newPost.child("audioFile").setValue(uriAudio.toString());
                 newPost.child("username").setValue(MainPage.usernameInfo);
                 newPost.child("profileImage").setValue(MainPage.profielImage);
+                newPost.child("desc").setValue(about);
                 mDialog.dismiss();
                 buttonStart.setEnabled(true);
                 buttonStopPlayingRecording.setEnabled(false);
