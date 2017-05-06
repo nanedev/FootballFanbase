@@ -123,6 +123,7 @@ public class MainPage extends AppCompatActivity
     private static final int VIDEO_OPEN = 2;
     boolean pause_state;
     boolean play_state;
+    boolean stop_state;
 
 
     @Override
@@ -446,7 +447,25 @@ public class MainPage extends AppCompatActivity
                     }
                 });
 
+                viewHolder.stop_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pause_state = false;
+                        play_state = false;
+                        stop_state = true;
+                        if (viewHolder.mPlayer != null && stop_state) {
+                            viewHolder.mPlayer.stop();
+                            viewHolder.mPlayer.reset();
+                            viewHolder.mPlayer = new MediaPlayer();
+                            try {
+                                viewHolder.mPlayer.setDataSource(getApplicationContext(), Uri.parse(model.getAudioFile()));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
+                        }
+                    }
+                });
 
            /*     viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -491,20 +510,15 @@ public class MainPage extends AppCompatActivity
         View mView;
         Button play_button;
         MediaPlayer mPlayer;
-        String url;
         VideoView videoView;
         ImageView post_photo;
         MediaController mediaController;
-        FrameLayout videoLayout;
         RelativeLayout audioLayout;
         ProgressDialog progressDialog;
         Button pause_button;
         SeekBar seekBar;
-        boolean play = true;
-        boolean pause = true;
+        Button stop_button;
 
-        boolean resume = true;
-        boolean stop = true;
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -512,13 +526,12 @@ public class MainPage extends AppCompatActivity
             mView = itemView;
             play_button = (Button) mView.findViewById(R.id.play_button);
             pause_button = (Button) mView.findViewById(R.id.pause_button);
-
+            stop_button = (Button) mView.findViewById(R.id.stop_button);
 
             mediaController = new MediaController(mView.getContext());
 
             videoView = (VideoView) mView.findViewById(R.id.posted_video);
             post_photo = (ImageView) mView.findViewById(R.id.posted_image);
-            // videoLayout = (FrameLayout) mView.findViewById(R.id.framelayout);
             audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
             mPlayer = new MediaPlayer();
             progressDialog = new ProgressDialog(mView.getContext());
