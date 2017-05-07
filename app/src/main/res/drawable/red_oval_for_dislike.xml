@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="false">
+    <item android:state_activated="false">
         <shape android:shape="oval">
-            <stroke android:width="3px" android:color="#424242" />
-            <solid android:color="#ef9a9a" />
+
+            <stroke android:width="3px" android:color="#d50000" />
+            <solid android:color="#00bbdefb" />
         </shape>
     </item>
-    <item android:state_enabled="true">
+    <item android:state_activated="true">
 
         <shape android:shape="oval">
             <stroke android:width="3px" android:color="#424242" />
-            <solid android:color="#d50000" />
+            <solid android:color="#ef5350" />
         </shape>
     </item>
 </selector>

@@ -7,21 +7,26 @@ package com.malikbisic.sportapp;
 public class Post {
     private String username;
     private String profileImage;
-    private String desc;
+    private String descForAudio;
     private String photoPost;
     private String videoPost;
     private String audioFile;
+    private String descForVideo;
+    private String descForPhoto;
+
 
     public Post() {
     }
 
-    public Post(String username, String profileImage, String desc, String photoPost, String videoPost, String audioFile) {
+    public Post(String username, String profileImage, String descForAudio, String descForVideo, String descForPhoto, String photoPost, String videoPost, String audioFile) {
         this.username = username;
         this.profileImage = profileImage;
-        this.desc = desc;
+        this.descForAudio = descForAudio;
         this.photoPost = photoPost;
         this.videoPost = videoPost;
         this.audioFile = audioFile;
+        this.descForPhoto = descForPhoto;
+        this.descForVideo = descForVideo;
     }
 
     public String getUsername() {
@@ -40,12 +45,12 @@ public class Post {
         this.profileImage = profileImage;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescForAudio() {
+        return descForAudio;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescForAudio(String descForAudio) {
+        this.descForAudio = descForAudio;
     }
 
     public String getPhotoPost() {
@@ -70,5 +75,21 @@ public class Post {
 
     public void setAudioFile(String audioFile) {
         this.audioFile = audioFile;
+    }
+
+    public String getDescForVideo() {
+        return descForVideo;
+    }
+
+    public void setDescForVideo(String descForVideo) {
+        this.descForVideo = descForVideo;
+    }
+
+    public String getDescForPhoto() {
+        return descForPhoto;
+    }
+
+    public void setDescForPhoto(String descForPhoto) {
+        this.descForPhoto = descForPhoto;
     }
 }

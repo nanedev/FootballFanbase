@@ -229,7 +229,7 @@ public class RecordAudio extends AppCompatActivity {
                 newPost.child("audioFile").setValue(uriAudio.toString());
                 newPost.child("username").setValue(MainPage.usernameInfo);
                 newPost.child("profileImage").setValue(MainPage.profielImage);
-                newPost.child("desc").setValue(about);
+                newPost.child("descForAudio").setValue(about);
                 mDialog.dismiss();
                 buttonStart.setEnabled(true);
                 buttonStopPlayingRecording.setEnabled(false);

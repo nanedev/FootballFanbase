@@ -8,6 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -398,7 +401,7 @@ public class MainPage extends AppCompatActivity
         ) {
             @Override
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
-                viewHolder.setDesc(model.getDesc());
+                viewHolder.setDescForAudio(model.getDescForAudio());
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
@@ -501,8 +504,20 @@ public class MainPage extends AppCompatActivity
                     }
                 });
 
+                viewHolder.like_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewHolder.like_button.setActivated(true);
+                    }
+                });
 
 
+                viewHolder.dislike_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewHolder.dislike_button.setActivated(true);
+                    }
+                });
 
 
             }
@@ -523,7 +538,8 @@ public class MainPage extends AppCompatActivity
         Button pause_button;
         SeekBar seekBar;
         Button stop_button;
-
+        ImageView like_button;
+        ImageView dislike_button;
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -541,15 +557,23 @@ public class MainPage extends AppCompatActivity
             mPlayer = new MediaPlayer();
             progressDialog = new ProgressDialog(mView.getContext());
             seekBar = (SeekBar) mView.findViewById(R.id.audio_seek_bar);
+            like_button = (ImageView) mView.findViewById(R.id.like_button);
+            dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
 
 
         }
 
-        public void setDesc(String desc) {
+        public void setDescForAudio(String descForAudio) {
 
-            TextView post_desc = (TextView) mView.findViewById(R.id.user_text_wall);
-            post_desc.setText(desc);
+            TextView post_desc_for_audio = (TextView) mView.findViewById(R.id.audio_textview);
+            if (descForAudio != null) {
+                post_desc_for_audio.setVisibility(View.VISIBLE);
+                post_desc_for_audio.setText(descForAudio);
+            } else {
+                post_desc_for_audio.setVisibility(View.GONE);
+            }
         }
+
 
         public void setUsername(String username) {
             TextView post_username = (TextView) mView.findViewById(R.id.username_wall);
