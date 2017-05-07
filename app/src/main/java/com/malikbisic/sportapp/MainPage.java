@@ -492,10 +492,8 @@ public class MainPage extends AppCompatActivity
                 viewHolder.stop_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pause_state = false;
-                        play_state = false;
-                        stop_state = true;
-                        if (viewHolder.mPlayer != null && stop_state) {
+
+                        if (viewHolder.mPlayer != null) {
                             viewHolder.mPlayer.stop();
                             viewHolder.seekBar.setMax(0);
 
