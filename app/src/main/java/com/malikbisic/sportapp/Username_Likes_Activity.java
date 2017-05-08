@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageView;
@@ -73,6 +74,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
         public void setProfilePhoto(Context ctx, String photoProfile){
             ImageView photo_image = (ImageView) mView.findViewById(R.id.profile_image_like);
             Picasso.with(ctx).load(photoProfile).into(photo_image);
+
         }
 
         public void setUsername (String username) {

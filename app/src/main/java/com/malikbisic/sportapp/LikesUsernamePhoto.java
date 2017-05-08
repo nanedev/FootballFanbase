@@ -6,22 +6,22 @@ package com.malikbisic.sportapp;
 
 public class LikesUsernamePhoto {
 
-    String photo, username;
+    String photoProfile, username;
 
     public LikesUsernamePhoto() {
     }
 
-    public LikesUsernamePhoto(String photo, String username) {
-        this.photo = photo;
+    public LikesUsernamePhoto(String photoProfile, String username) {
+        this.photoProfile = photoProfile;
         this.username = username;
     }
 
     public String getPhoto() {
-        return photo;
+        return photoProfile;
     }
 
     public void setPhoto(String photo) {
-        this.photo = photo;
+        this.photoProfile = photo;
     }
 
     public String getUsername() {

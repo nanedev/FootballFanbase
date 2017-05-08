@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="5dp">
+        android:layout_marginRight="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image_like"
@@ -31,6 +31,14 @@
             android:layout_marginTop="16dp"
             android:layout_toEndOf="@+id/profile_image_like"
             android:layout_toRightOf="@+id/profile_image_like" />
+
+        <View
+            android:id="@+id/horizontal_line_wall5"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/profile_image_like"
+            android:layout_marginTop="5dp"
+            android:background="#9e9e9e" />
 
 
     </RelativeLayout>
