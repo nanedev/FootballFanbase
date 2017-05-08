@@ -46,16 +46,25 @@
                 android:textColorLink="#1a237e"
                 android:textCursorDrawable="@null" />
 
-
-            <ImageView
-                android:id="@+id/post_image"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tell_something_about_video_image"
-                android:adjustViewBounds="true"
-                android:visibility="gone" />
+                android:layout_height="wrap_content"
+                android:id="@+id/imageContainer"
+                android:layout_below="@+id/tell_something_about_video_image">
+
+                <ImageView
+                    android:id="@+id/post_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/tell_something_about_video_image"
+                    android:layout_marginTop="20dp"
+
+                    android:scaleType="fitXY"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <VideoView
                 android:id="@+id/post_video"
@@ -64,7 +73,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/tell_something_about_video_image"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
 
         </RelativeLayout>

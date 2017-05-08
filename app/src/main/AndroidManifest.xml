@@ -81,9 +81,15 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="stateVisible|adjustPan" />
-        <activity android:name=".AddPhotoOrVideo" />
-        <activity android:name=".RecordAudio" />
-        <activity android:name=".Username_Likes_Activity"></activity>
+        <activity
+            android:name=".AddPhotoOrVideo"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".RecordAudio"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".Username_Likes_Activity"
+            android:theme="@style/AppTheme.Dark"></activity>
     </application>
 
 </manifest>

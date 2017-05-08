@@ -1,9 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.malikbisic.sportapp.AddPhotoOrVideo">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/container">
+
+
+        <Button
+            android:id="@+id/btn_post_photo_or_video"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_below="@+id/RL_POST"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/circle_button_shape_post_photo_video"
+            android:text="POST" />
+
+        <RelativeLayout
+            android:id="@+id/RL_POST"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+
+            <EditText
+                android:id="@+id/tell_something_about_video_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@null"
+                android:ems="10"
+                android:gravity="top"
+                android:hint="Tell something about this"
+                android:inputType="textMultiLine"
+                android:padding="5dp"
+                android:textColor="#000000"
+                android:textColorLink="#1a237e"
+                android:textCursorDrawable="@null" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageContainer"
+                android:layout_below="@+id/tell_something_about_video_image">
+
+                <ImageView
+                    android:id="@+id/post_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/tell_something_about_video_image"
+                    android:layout_marginTop="20dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <VideoView
+                android:id="@+id/post_video"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/tell_something_about_video_image"
+                android:visibility="gone" />
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</ScrollView>
