@@ -202,12 +202,11 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/number_of_likes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/number_of_likes"
-                android:text="likes"
-                android:textColor="#1976d2"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:textColor="#1976d2" />
 
 
             <ImageView

@@ -119,6 +119,7 @@ public class MainPage extends AppCompatActivity
     static String usernameInfo;
     static String profielImage;
     String neznijavise;
+    TextView numberofLikes;
 
     private boolean pauseAudioPressed = false;
     private boolean audiofinished = false;
@@ -154,6 +155,7 @@ public class MainPage extends AppCompatActivity
         wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
         wallList.setHasFixedSize(false);
         wallList.setLayoutManager(new LinearLayoutManager(this));
+
 
         postText.addTextChangedListener(this);
         postText.setOnKeyListener(new View.OnKeyListener() {
@@ -414,6 +416,7 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
                 viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
                 viewHolder.setLikeBtn(post_key);
+                viewHolder.setNumberLikes(post_key);
 
                 viewHolder.seekBar.setEnabled(true);
                 viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
@@ -525,10 +528,13 @@ public class MainPage extends AppCompatActivity
                                         likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
                                         like_process = false;
 
+
                                     } else {
 
-                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue(model.getUsername());
+                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue(MainPage.usernameInfo);
                                         like_process = false;
+
+
                                     }
                                 }
                             }
@@ -538,7 +544,6 @@ public class MainPage extends AppCompatActivity
 
                             }
                         });
-
 
                     }
                 });
@@ -554,8 +559,13 @@ public class MainPage extends AppCompatActivity
 
             }
         };
+
         wallList.setAdapter(firebaseRecyclerAdapter);
+
+
     }
+
+
 
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {
@@ -575,6 +585,7 @@ public class MainPage extends AppCompatActivity
         FirebaseDatabase database;
         DatabaseReference likeReference;
         FirebaseAuth mAuth;
+        TextView numberofLikes;
         RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText;
 
 
@@ -596,6 +607,7 @@ public class MainPage extends AppCompatActivity
             seekBar = (SeekBar) mView.findViewById(R.id.audio_seek_bar);
             like_button = (ImageView) mView.findViewById(R.id.like_button);
             dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
+            numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
 
             layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
             layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
@@ -608,6 +620,30 @@ public class MainPage extends AppCompatActivity
             likeReference.keepSynced(true);
 
 
+        }
+
+        public void setNumberLikes(String post_key){
+
+            likeReference.child(post_key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+
+                    long  numberLikes = dataSnapshot.getChildrenCount();
+                            if (numberLikes == 0) {
+                                numberofLikes.setText("");
+                            } else {
+                                numberofLikes.setText(String.valueOf(numberLikes));
+                            }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
         public void setLikeBtn(final String post_key) {
@@ -714,7 +750,7 @@ public class MainPage extends AppCompatActivity
         public void setAudioFile(Context context, String audioFile) {
 
             if (audioFile != null) {
-                // mPlayer.reset();
+                 mPlayer.reset();
                 audioLayout.setVisibility(View.VISIBLE);
                 try {
 
