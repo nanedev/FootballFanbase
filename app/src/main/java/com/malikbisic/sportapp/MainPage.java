@@ -100,7 +100,7 @@ public class MainPage extends AppCompatActivity
     private TextView email;
     private ImageView profile;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference, postingDatabase, likesReference;
+    private DatabaseReference mReference, postingDatabase, likesReference, dislikeReference;
     private BitmapDrawable obwer;
     private LinearLayout layout;
     private ImageView userProfileImage;
@@ -132,6 +132,7 @@ public class MainPage extends AppCompatActivity
     boolean stop_state;
 
     boolean like_process = false;
+    boolean dislike_process = false;
 
 
     @Override
@@ -181,7 +182,9 @@ public class MainPage extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         likesReference = mDatabase.getReference().child("Likes");
+        dislikeReference = mDatabase.getReference().child("Dislikes");
         likesReference.keepSynced(true);
+        dislikeReference.keepSynced(true);
 
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -418,6 +421,9 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setLikeBtn(post_key);
                 viewHolder.setNumberLikes(post_key);
 
+                viewHolder.setDislikeBtn(post_key);
+                viewHolder.setNumberDislikes(post_key);
+
                 viewHolder.seekBar.setEnabled(true);
                 viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -527,12 +533,17 @@ public class MainPage extends AppCompatActivity
 
                                         likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
                                         like_process = false;
+                                        viewHolder.dislike_button.setClickable(true);
+                                        viewHolder.like_button.setClickable(true);
 
 
                                     } else {
 
                                         likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue(MainPage.usernameInfo);
                                         like_process = false;
+                                        viewHolder.dislike_button.setClickable(false);
+                                        viewHolder.like_button.setClickable(true);
+
 
 
                                     }
@@ -552,7 +563,41 @@ public class MainPage extends AppCompatActivity
                 viewHolder.dislike_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        viewHolder.dislike_button.setActivated(true);
+                        dislike_process = true;
+                        dislikeReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (dislike_process) {
+                                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+
+                                        dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+                                        dislike_process = false;
+
+                                        viewHolder.dislike_button.setClickable(true);
+                                        viewHolder.like_button.setClickable(true);
+
+
+                                    } else {
+
+                                        dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue(MainPage.usernameInfo);
+                                        dislike_process = false;
+
+                                        viewHolder.dislike_button.setClickable(true);
+                                        viewHolder.like_button.setClickable(false);
+
+
+                                    }
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
                     }
                 });
 
@@ -583,9 +628,10 @@ public class MainPage extends AppCompatActivity
         ImageView like_button;
         ImageView dislike_button;
         FirebaseDatabase database;
-        DatabaseReference likeReference;
+        DatabaseReference likeReference, dislikeReference;
         FirebaseAuth mAuth;
         TextView numberofLikes;
+        TextView numberOfDislikes;
         RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText;
 
 
@@ -608,6 +654,7 @@ public class MainPage extends AppCompatActivity
             like_button = (ImageView) mView.findViewById(R.id.like_button);
             dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
             numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
+            numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
 
             layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
             layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
@@ -615,9 +662,11 @@ public class MainPage extends AppCompatActivity
 
             database = FirebaseDatabase.getInstance();
             likeReference = database.getReference().child("Likes");
+            dislikeReference = database.getReference().child("Dislikes");
             mAuth = FirebaseAuth.getInstance();
 
             likeReference.keepSynced(true);
+            dislikeReference.keepSynced(true);
 
 
         }
@@ -666,6 +715,52 @@ public class MainPage extends AppCompatActivity
 
                 }
             });
+        }
+
+        public void setNumberDislikes(String post_key) {
+
+            dislikeReference.child(post_key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                    long numberDislikes = dataSnapshot.getChildrenCount();
+                    if (numberDislikes == 0) {
+                        numberOfDislikes.setText("");
+                    } else {
+                        numberOfDislikes.setText(String.valueOf(numberDislikes));
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+
+        public void setDislikeBtn(final String post_key) {
+            dislikeReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+
+                        dislike_button.setActivated(true);
+
+                    } else {
+                        dislike_button.setActivated(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
         }
 
 

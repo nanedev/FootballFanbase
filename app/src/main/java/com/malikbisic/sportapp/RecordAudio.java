@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -237,6 +238,8 @@ public class RecordAudio extends AppCompatActivity {
                 buttonPlayLastRecordAudio.setEnabled(false);
                 buttonPost.setEnabled(false);
                 buttonUploadAudio.setEnabled(false);
+                Intent goToMain = new Intent(RecordAudio.this, MainPage.class);
+                startActivity(goToMain);
             }
         });
 
