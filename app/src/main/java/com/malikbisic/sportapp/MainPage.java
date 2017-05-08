@@ -120,6 +120,7 @@ public class MainPage extends AppCompatActivity
     static String profielImage;
     String neznijavise;
     TextView numberofLikes;
+    String post_key;
 
     private boolean pauseAudioPressed = false;
     private boolean audiofinished = false;
@@ -410,7 +411,7 @@ public class MainPage extends AppCompatActivity
         ) {
             @Override
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
-                final String post_key = getRef(position).getKey();
+                post_key = getRef(position).getKey();
                 viewHolder.setDescForAudio(model.getDescForAudio());
                 viewHolder.setDescForPhoto(model.getDescForPhoto());
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
@@ -539,7 +540,10 @@ public class MainPage extends AppCompatActivity
 
                                     } else {
 
-                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue(MainPage.usernameInfo);
+                                        DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
+
+                                        newPost.child("username").setValue(MainPage.usernameInfo);
+                                        newPost.child("photoProfile").setValue(MainPage.profielImage);
                                         like_process = false;
                                         viewHolder.dislike_button.setClickable(false);
                                         viewHolder.like_button.setClickable(true);

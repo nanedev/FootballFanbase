@@ -82,7 +82,8 @@
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity android:name=".AddPhotoOrVideo" />
-        <activity android:name=".RecordAudio"></activity>
+        <activity android:name=".RecordAudio" />
+        <activity android:name=".Username_Likes_Activity"></activity>
     </application>
 
 </manifest>
