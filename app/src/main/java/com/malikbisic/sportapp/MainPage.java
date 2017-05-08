@@ -100,7 +100,7 @@ public class MainPage extends AppCompatActivity
     private TextView email;
     private ImageView profile;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference, postingDatabase;
+    private DatabaseReference mReference, postingDatabase, likesReference;
     private BitmapDrawable obwer;
     private LinearLayout layout;
     private ImageView userProfileImage;
@@ -129,6 +129,8 @@ public class MainPage extends AppCompatActivity
     boolean pause_state;
     boolean play_state;
     boolean stop_state;
+
+    boolean like_process = false;
 
 
     @Override
@@ -176,6 +178,8 @@ public class MainPage extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
+        likesReference = mDatabase.getReference().child("Likes");
+        likesReference.keepSynced(true);
 
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -401,12 +405,14 @@ public class MainPage extends AppCompatActivity
         ) {
             @Override
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
+                final String post_key = getRef(position).getKey();
                 viewHolder.setDescForAudio(model.getDescForAudio());
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
                 viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
                 viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
+                viewHolder.setLikeBtn(post_key);
 
                 viewHolder.seekBar.setEnabled(true);
                 viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
@@ -505,7 +511,34 @@ public class MainPage extends AppCompatActivity
                 viewHolder.like_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        viewHolder.like_button.setActivated(true);
+                        like_process = true;
+
+
+                        likesReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (like_process) {
+                                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+
+                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+                                        like_process = false;
+
+                                    } else {
+
+                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("RandomValue");
+                                        like_process = false;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+
                     }
                 });
 
@@ -538,6 +571,10 @@ public class MainPage extends AppCompatActivity
         Button stop_button;
         ImageView like_button;
         ImageView dislike_button;
+        FirebaseDatabase database;
+        DatabaseReference likeReference;
+        FirebaseAuth mAuth;
+
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -558,8 +595,39 @@ public class MainPage extends AppCompatActivity
             like_button = (ImageView) mView.findViewById(R.id.like_button);
             dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
 
+            database = FirebaseDatabase.getInstance();
+            likeReference = database.getReference().child("Likes");
+            mAuth = FirebaseAuth.getInstance();
+
+            likeReference.keepSynced(true);
+
+
+
 
         }
+
+        public void setLikeBtn(final String post_key) {
+            likeReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+
+                        like_button.setActivated(true);
+
+                    } else {
+                        like_button.setActivated(false);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
 
         public void setDescForAudio(String descForAudio) {
 
