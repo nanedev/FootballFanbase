@@ -132,7 +132,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         Uri downloadUri = taskSnapshot.getDownloadUrl();
 
                         DatabaseReference newPost = postingDatabase.push();
-                        newPost.child("desc").setValue(aboutPhotoText);
+                        newPost.child("descForPhoto").setValue(aboutPhotoText);
                         newPost.child("username").setValue(username);
                         newPost.child("profileImage").setValue(profileImage);
                         newPost.child("photoPost").setValue(downloadUri.toString());
@@ -160,7 +160,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUri = taskSnapshot.getDownloadUrl();
                         DatabaseReference newPost = postingDatabase.push();
-                        newPost.child("desc").setValue(aboutVideoText);
+                        newPost.child("descVideo").setValue(aboutVideoText);
                         newPost.child("username").setValue(username);
                         newPost.child("profileImage").setValue(profileImage);
                         newPost.child("videoPost").setValue(downloadUri.toString());

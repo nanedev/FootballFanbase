@@ -98,7 +98,7 @@ public class ProfileFragment extends Fragment {
     private BitmapDrawable obwer;
     private ProgressBar loadProfile_image;
     private String uid;
-    private static final int GALLERY_REQUEST = 1;
+    private static final int GALLERY_REQUEST = 134;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
     boolean hasSetProfileImage = false;

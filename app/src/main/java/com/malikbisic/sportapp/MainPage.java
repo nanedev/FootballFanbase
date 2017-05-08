@@ -407,6 +407,7 @@ public class MainPage extends AppCompatActivity
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
                 final String post_key = getRef(position).getKey();
                 viewHolder.setDescForAudio(model.getDescForAudio());
+                viewHolder.setDescForPhoto(model.getDescForPhoto());
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
@@ -574,6 +575,7 @@ public class MainPage extends AppCompatActivity
         FirebaseDatabase database;
         DatabaseReference likeReference;
         FirebaseAuth mAuth;
+        RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText;
 
 
         public PostViewHolder(View itemView) {
@@ -595,13 +597,15 @@ public class MainPage extends AppCompatActivity
             like_button = (ImageView) mView.findViewById(R.id.like_button);
             dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
 
+            layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
+            layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
+            layoutAudioText = (RelativeLayout) mView.findViewById(R.id.layout_audio_textview);
+
             database = FirebaseDatabase.getInstance();
             likeReference = database.getReference().child("Likes");
             mAuth = FirebaseAuth.getInstance();
 
             likeReference.keepSynced(true);
-
-
 
 
         }
@@ -633,12 +637,26 @@ public class MainPage extends AppCompatActivity
 
             TextView post_desc_for_audio = (TextView) mView.findViewById(R.id.audio_textview);
             if (descForAudio != null) {
-                post_desc_for_audio.setVisibility(View.VISIBLE);
+                layoutAudioText.setVisibility(View.VISIBLE);
                 post_desc_for_audio.setText(descForAudio);
             } else {
-                post_desc_for_audio.setVisibility(View.GONE);
+                layoutAudioText.setVisibility(View.GONE);
             }
         }
+
+        public void setDescForPhoto(String descForPhoto){
+
+            TextView post_desc_for_photo = (TextView) mView.findViewById(R.id.text_for_image);
+
+            if (descForPhoto != null) {
+                layoutPhotoText.setVisibility(View.VISIBLE);
+                post_desc_for_photo.setText(descForPhoto);
+            }
+            else {
+                layoutPhotoText.setVisibility(View.GONE);
+            }
+        }
+
 
 
         public void setUsername(String username) {
@@ -658,11 +676,11 @@ public class MainPage extends AppCompatActivity
         public void setPhotoPost(Context ctx, String photoPost) {
 
             if (photoPost != null) {
-                post_photo.setVisibility(View.VISIBLE);
+                layoutPhoto.setVisibility(View.VISIBLE);
                 Picasso.with(ctx).load(photoPost).into(post_photo);
             } else {
 
-                post_photo.setVisibility(View.GONE);
+                layoutPhoto.setVisibility(View.GONE);
             }
 
         }
