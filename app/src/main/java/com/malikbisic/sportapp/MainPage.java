@@ -542,8 +542,7 @@ public class MainPage extends AppCompatActivity
 
                                         likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
                                         like_process = false;
-                                        viewHolder.dislike_button.setClickable(true);
-                                        viewHolder.like_button.setClickable(true);
+
 
 
                                     } else {
@@ -553,8 +552,7 @@ public class MainPage extends AppCompatActivity
                                         newPost.child("username").setValue(MainPage.usernameInfo);
                                         newPost.child("photoProfile").setValue(MainPage.profielImage);
                                         like_process = false;
-                                        viewHolder.dislike_button.setClickable(false);
-                                        viewHolder.like_button.setClickable(true);
+
 
 
 
@@ -588,8 +586,7 @@ public class MainPage extends AppCompatActivity
                                         dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
                                         dislike_process = false;
 
-                                        viewHolder.dislike_button.setClickable(true);
-                                        viewHolder.like_button.setClickable(true);
+
 
 
                                     } else {
@@ -597,8 +594,7 @@ public class MainPage extends AppCompatActivity
                                         dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue(MainPage.usernameInfo);
                                         dislike_process = false;
 
-                                        viewHolder.dislike_button.setClickable(true);
-                                        viewHolder.like_button.setClickable(false);
+
 
 
                                     }
@@ -715,10 +711,11 @@ public class MainPage extends AppCompatActivity
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
+                        dislike_button.setClickable(false);
                         like_button.setActivated(true);
 
                     } else {
+                        dislike_button.setClickable(true);
                         like_button.setActivated(false);
                     }
 
@@ -762,9 +759,11 @@ public class MainPage extends AppCompatActivity
                     if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
 
                         dislike_button.setActivated(true);
+                        like_button.setClickable(false);
 
                     } else {
                         dislike_button.setActivated(false);
+                        like_button.setClickable(true);
                     }
                 }
 
