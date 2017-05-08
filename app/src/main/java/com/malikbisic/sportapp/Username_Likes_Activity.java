@@ -22,12 +22,13 @@ public class Username_Likes_Activity extends AppCompatActivity {
     RecyclerView likesRec;
     DatabaseReference likesReferences;
     Intent myIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_username__likes_);
         myIntent = getIntent();
-        String post_key =  myIntent.getStringExtra("post_key");
+        String post_key = myIntent.getStringExtra("post_key");
 
         likesReferences = FirebaseDatabase.getInstance().getReference().child("Likes").child(post_key);
 
@@ -65,19 +66,20 @@ public class Username_Likes_Activity extends AppCompatActivity {
     public static class LikesViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
+
         public LikesViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
         }
 
-        public void setProfilePhoto(Context ctx, String photoProfile){
+        public void setProfilePhoto(Context ctx, String photoProfile) {
             ImageView photo_image = (ImageView) mView.findViewById(R.id.profile_image_like);
             Picasso.with(ctx).load(photoProfile).into(photo_image);
 
         }
 
-        public void setUsername (String username) {
+        public void setUsername(String username) {
 
             TextView usernameProfile = (TextView) mView.findViewById(R.id.username_like);
             usernameProfile.setText(username);

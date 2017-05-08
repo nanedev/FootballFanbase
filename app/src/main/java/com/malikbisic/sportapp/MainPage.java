@@ -527,6 +527,16 @@ public class MainPage extends AppCompatActivity
                     }
                 });
 
+                viewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent listUsername = new Intent(MainPage.this, Username_Dislikes_Activity.class);
+                        listUsername.putExtra("post_key", post_key);
+                        startActivity(listUsername);
+                    }
+                });
+
+
                 viewHolder.like_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -544,7 +554,6 @@ public class MainPage extends AppCompatActivity
                                         like_process = false;
 
 
-
                                     } else {
 
                                         DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
@@ -552,8 +561,6 @@ public class MainPage extends AppCompatActivity
                                         newPost.child("username").setValue(MainPage.usernameInfo);
                                         newPost.child("photoProfile").setValue(MainPage.profielImage);
                                         like_process = false;
-
-
 
 
                                     }
@@ -587,14 +594,14 @@ public class MainPage extends AppCompatActivity
                                         dislike_process = false;
 
 
-
-
                                     } else {
 
-                                        dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue(MainPage.usernameInfo);
+                                        DatabaseReference newPost = dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid());
+
+                                        newPost.child("username").setValue(MainPage.usernameInfo);
+                                        newPost.child("photoProfile").setValue(MainPage.profielImage);
+
                                         dislike_process = false;
-
-
 
 
                                     }
@@ -619,8 +626,6 @@ public class MainPage extends AppCompatActivity
 
 
     }
-
-
 
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {
@@ -681,20 +686,19 @@ public class MainPage extends AppCompatActivity
 
         }
 
-        public void setNumberLikes(String post_key){
+        public void setNumberLikes(String post_key) {
 
             likeReference.child(post_key).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-
-                    long  numberLikes = dataSnapshot.getChildrenCount();
-                            if (numberLikes == 0) {
-                                numberofLikes.setText("");
-                            } else {
-                                numberofLikes.setText(String.valueOf(numberLikes));
-                            }
+                    long numberLikes = dataSnapshot.getChildrenCount();
+                    if (numberLikes == 0) {
+                        numberofLikes.setText("");
+                    } else {
+                        numberofLikes.setText(String.valueOf(numberLikes));
+                    }
 
                 }
 
@@ -788,19 +792,17 @@ public class MainPage extends AppCompatActivity
             }
         }
 
-        public void setDescForPhoto(String descForPhoto){
+        public void setDescForPhoto(String descForPhoto) {
 
             TextView post_desc_for_photo = (TextView) mView.findViewById(R.id.text_for_image);
 
             if (descForPhoto != null) {
                 layoutPhotoText.setVisibility(View.VISIBLE);
                 post_desc_for_photo.setText(descForPhoto);
-            }
-            else {
+            } else {
                 layoutPhotoText.setVisibility(View.GONE);
             }
         }
-
 
 
         public void setUsername(String username) {
@@ -858,7 +860,7 @@ public class MainPage extends AppCompatActivity
         public void setAudioFile(Context context, String audioFile) {
 
             if (audioFile != null) {
-                 mPlayer.reset();
+                mPlayer.reset();
                 audioLayout.setVisibility(View.VISIBLE);
                 try {
 
