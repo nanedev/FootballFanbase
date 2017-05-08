@@ -527,7 +527,7 @@ public class MainPage extends AppCompatActivity
 
                                     } else {
 
-                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("RandomValue");
+                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue(model.getUsername());
                                         like_process = false;
                                     }
                                 }
