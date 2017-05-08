@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,10 +50,14 @@ public class Username_Likes_Activity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(LikesViewHolder viewHolder, LikesUsernamePhoto model, int position) {
 
-                viewHolder.setProfileImage(model.getPhoto());
+                viewHolder.setProfilePhoto(getApplicationContext(), model.getPhoto());
                 viewHolder.setUsername(model.getUsername());
+
+
             }
         };
+
+        likesRec.setAdapter(populateRecView);
 
     }
 
@@ -65,9 +70,9 @@ public class Username_Likes_Activity extends AppCompatActivity {
             mView = itemView;
         }
 
-        public void setProfileImage(String photoProfile){
+        public void setProfilePhoto(Context ctx, String photoProfile){
             ImageView photo_image = (ImageView) mView.findViewById(R.id.profile_image_like);
-            Picasso.with(mView.getContext()).load(photoProfile).into(photo_image);
+            Picasso.with(ctx).load(photoProfile).into(photo_image);
         }
 
         public void setUsername (String username) {
