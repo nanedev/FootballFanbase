@@ -8,9 +8,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/container">
-
 
         <Button
             android:id="@+id/btn_post_photo_or_video"
@@ -22,13 +21,15 @@
             android:background="@drawable/circle_button_shape_post_photo_video"
             android:text="POST" />
 
+
         <RelativeLayout
             android:id="@+id/RL_POST"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
+
 
 
             <EditText
@@ -42,29 +43,34 @@
                 android:hint="Tell something about this"
                 android:inputType="textMultiLine"
                 android:padding="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:textColor="#000000"
                 android:textColorLink="#1a237e"
                 android:textCursorDrawable="@null" />
 
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/tell_something_about_video_image">
 
-            <com.malikbisic.sportapp.DynamicImageView
+                <com.malikbisic.sportapp.DynamicImageView
                     android:id="@+id/post_image"
                     android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:layout_margin="10dp"
                     android:layout_below="@+id/tell_something_about_video_image"
-                    android:layout_marginTop="20dp"
-                android:visibility="visible" />
+                    android:visibility="visible"
+
+                    android:scrollbars="vertical" />
+            </ScrollView>
 
 
-
-            <VideoView
-                android:id="@+id/post_video"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/tell_something_about_video_image"
-                android:visibility="gone" />
 
 
         </RelativeLayout>
