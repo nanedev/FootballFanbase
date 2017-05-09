@@ -160,6 +160,8 @@ public class MainPage extends AppCompatActivity
         wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
         wallList.setHasFixedSize(false);
         wallList.setLayoutManager(new LinearLayoutManager(this));
+        wallList.setItemViewCacheSize(20);
+        wallList.setDrawingCacheEnabled(true);
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         String action = intent.getAction();
