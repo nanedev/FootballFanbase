@@ -60,6 +60,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.firebase.ui.auth.ui.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -68,6 +69,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
@@ -412,13 +414,18 @@ public class MainPage extends AppCompatActivity
             super.onStart();
             mAuth.addAuthStateListener(mAuthStateListener);
 
-
             FirebaseRecyclerAdapter<Post, PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
                     Post.class,
                     R.layout.wall_row,
                     PostViewHolder.class,
                     postingDatabase
             ) {
+
+
+                @Override
+                public Post getItem(int position) {
+                    return super.getItem(getItemCount() - 1 - position);
+                }
                 @Override
                 protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
                     final String post_key = getRef(position).getKey();
