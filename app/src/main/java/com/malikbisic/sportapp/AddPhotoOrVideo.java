@@ -66,7 +66,6 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
             photoSelected.setVisibility(View.VISIBLE);
             videoSelected.setVisibility(View.GONE);
             photoSelected.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
             Uri imageUri = Uri.parse(myIntent.getStringExtra("image-uri_selected"));
             photoSelected.setImageURI(imageUri);
 

@@ -90,6 +90,9 @@
         <activity
             android:name=".Username_Likes_Activity"
             android:theme="@style/AppTheme.Dark"></activity>
+        <activity
+            android:name=".Username_Dislikes_Activity"
+            android:theme="@style/AppTheme.Dark"></activity>
     </application>
 
 </manifest>

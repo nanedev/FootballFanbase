@@ -147,17 +147,15 @@
             <RelativeLayout
                 android:id="@+id/layout_for_image"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/layout_for_text_image"
                 android:visibility="gone">
 
-                <ImageView
+                <com.malikbisic.sportapp.DynamicImageView
                     android:id="@+id/posted_image"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
                     android:layout_below="@+id/layout_for_text_image"
                     android:src="@drawable/fans"
                     android:visibility="visible"

@@ -25,7 +25,7 @@
         <RelativeLayout
             android:id="@+id/RL_POST"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
@@ -46,25 +46,16 @@
                 android:textColorLink="#1a237e"
                 android:textCursorDrawable="@null" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageContainer"
-                android:layout_below="@+id/tell_something_about_video_image">
 
-                <ImageView
+            <com.malikbisic.sportapp.DynamicImageView
                     android:id="@+id/post_image"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
+                android:layout_height="wrap_content"
                     android:layout_below="@+id/tell_something_about_video_image"
                     android:layout_marginTop="20dp"
+                android:visibility="visible" />
 
-                    android:scaleType="fitXY"
-                    android:visibility="visible" />
 
-            </RelativeLayout>
 
             <VideoView
                 android:id="@+id/post_video"
