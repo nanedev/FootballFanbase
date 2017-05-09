@@ -99,7 +99,9 @@
         <activity
             android:name=".Username_Dislikes_Activity"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".FullScreenImage"></activity>
+        <activity
+            android:name=".FullScreenImage"
+            android:theme="@style/AppTheme.Dark"></activity>
     </application>
 
 </manifest>
