@@ -966,6 +966,7 @@ public class MainPage extends AppCompatActivity
 
         }
 
+        //nešto
         @Override
         public void onTextChanged (CharSequence charSequence,int i, int i1, int i2){
 

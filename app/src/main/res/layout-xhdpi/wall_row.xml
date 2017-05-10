@@ -179,6 +179,7 @@
                     android:layout_height="200dp"
                     android:layout_gravity="center"
                     android:visibility="gone" />
+
             </FrameLayout>
 
 
