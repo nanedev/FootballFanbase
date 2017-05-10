@@ -9,6 +9,7 @@ import com.parse.Parse;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
+
 /**
  * Created by Nane on 16.3.2017.
  */
@@ -37,6 +38,8 @@ public class Application extends android.app.Application {
         built.setIndicatorsEnabled(true);
         built.setLoggingEnabled(true);
         Picasso.setSingletonInstance(built);
+
+
 
     }
 

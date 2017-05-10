@@ -86,7 +86,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import static android.R.attr.data;
 import static android.R.attr.mode;
 import static android.R.attr.theme;
@@ -662,7 +661,7 @@ public class MainPage extends AppCompatActivity
             View mView;
             Button play_button;
             MediaPlayer mPlayer;
-            VideoView videoView;
+            com.devbrackets.android.exomedia.ui.widget.VideoView videoView;
             ImageView post_photo;
             MediaController mediaController;
             RelativeLayout audioLayout;
@@ -691,7 +690,7 @@ public class MainPage extends AppCompatActivity
 
                 mediaController = new MediaController(mView.getContext());
 
-                videoView = (VideoView) mView.findViewById(R.id.posted_video);
+                videoView = (com.devbrackets.android.exomedia.ui.widget.VideoView) mView.findViewById(R.id.posted_video);
                 post_photo = (ImageView) mView.findViewById(R.id.posted_image);
                 audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
                 mPlayer = new MediaPlayer();
@@ -886,16 +885,10 @@ public class MainPage extends AppCompatActivity
                 if (videoPost != null) {
 
                     try {
-                        videoView.setMediaController(mediaController);
+
                         videoView.setVisibility(View.VISIBLE);
                         videoView.setVideoURI(Uri.parse(videoPost));
                         videoView.requestFocus();
-                        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                videoView.start();
-                            }
-                        });
                     } catch (Exception e) {
                         e.getMessage();
                     }
@@ -932,6 +925,7 @@ public class MainPage extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
     }
 
     @Override
@@ -940,6 +934,7 @@ public class MainPage extends AppCompatActivity
             if (mAuthStateListener != null) {
                 mAuth.removeAuthStateListener(mAuthStateListener);
             }
+
         }
 
 
