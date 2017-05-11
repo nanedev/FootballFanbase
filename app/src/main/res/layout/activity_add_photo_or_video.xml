@@ -68,14 +68,19 @@
                     android:visibility="visible"
                     android:scrollbars="vertical" />
             </ScrollView>
-            <VideoView
-                android:id="@+id/post_video"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:layout_below="@id/tell_something_about_video_image"
-                android:visibility="gone" />
+                android:layout_height="match_parent"
+                android:layout_below="@id/tell_something_about_video_image">
 
+                <VideoView
+                    android:id="@+id/post_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_below="@id/tell_something_about_video_image"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+            </FrameLayout>
 
 
         </RelativeLayout>
