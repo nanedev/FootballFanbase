@@ -137,6 +137,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         newPost.child("profileImage").setValue(profileImage);
                         newPost.child("photoPost").setValue(downloadUri.toString());
                         postingDialog.dismiss();
+                        Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
+                        startActivity(goToMain);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -165,6 +167,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         newPost.child("profileImage").setValue(profileImage);
                         newPost.child("videoPost").setValue(downloadUri.toString());
                         postingDialog.dismiss();
+                        Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
+                        startActivity(goToMain);
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -175,6 +179,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                     }
                 });
             }
+
+
         }
 
     }
