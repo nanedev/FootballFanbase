@@ -86,6 +86,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+
 import static android.R.attr.data;
 import static android.R.attr.mode;
 import static android.R.attr.theme;
@@ -335,12 +339,21 @@ public class MainPage extends AppCompatActivity
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
+            } else if (JCVideoPlayer.backPress()) {
+                return;
             }
+            super.onBackPressed();
+
+
         }
 
-        @Override
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JCVideoPlayer.releaseAllVideos();
+    }
+
+    @Override
         public boolean onCreateOptionsMenu (Menu menu){
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.main_page, menu);
@@ -661,7 +674,7 @@ public class MainPage extends AppCompatActivity
             View mView;
             Button play_button;
             MediaPlayer mPlayer;
-            com.devbrackets.android.exomedia.ui.widget.VideoView videoView;
+            JCVideoPlayerStandard videoView;
             ImageView post_photo;
             MediaController mediaController;
             RelativeLayout audioLayout;
@@ -690,7 +703,7 @@ public class MainPage extends AppCompatActivity
 
                 mediaController = new MediaController(mView.getContext());
 
-                videoView = (com.devbrackets.android.exomedia.ui.widget.VideoView) mView.findViewById(R.id.posted_video);
+                videoView = (JCVideoPlayerStandard) mView.findViewById(R.id.posted_video);
                 post_photo = (ImageView) mView.findViewById(R.id.posted_image);
                 audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
                 mPlayer = new MediaPlayer();
@@ -887,7 +900,7 @@ public class MainPage extends AppCompatActivity
                     try {
 
                         videoView.setVisibility(View.VISIBLE);
-                        videoView.setVideoURI(Uri.parse(videoPost));
+                        videoView.setUp(videoPost, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
                         videoView.requestFocus();
                     } catch (Exception e) {
                         e.getMessage();

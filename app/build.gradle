@@ -69,8 +69,18 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     compile 'com.google.android.exoplayer:exoplayer:r2.0.0'
-    compile 'com.devbrackets.android:exomedia:4.0.0'
+    compile 'fm.jiecao:jiecaovideoplayer:5.5.4'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'
 //
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '25.3.0'
+            }
+        }
+    }
+}
