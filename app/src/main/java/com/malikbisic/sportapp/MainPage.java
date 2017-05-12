@@ -309,7 +309,7 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult ( int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (data != null) {
@@ -339,7 +339,7 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed () {
+    public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -358,7 +358,7 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu (Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_page, menu);
         myMenu = menu.findItem(R.id.postText);
@@ -366,7 +366,7 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected (MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -383,6 +383,7 @@ public class MainPage extends AppCompatActivity
             newPost.child("username").setValue(MainPage.usernameInfo);
             newPost.child("profileImage").setValue(MainPage.profielImage);
             postingDialog.dismiss();
+            postText.setText("");
             return true;
         }
 
@@ -392,7 +393,7 @@ public class MainPage extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected (MenuItem item){
+    public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -428,7 +429,7 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    public void onStart () {
+    public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthStateListener);
 
@@ -453,7 +454,7 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
                 viewHolder.setLikeBtn(post_key);
                 viewHolder.setNumberLikes(post_key);
-
+                viewHolder.setDesc(model.getDesc());
                 viewHolder.setDislikeBtn(post_key);
                 viewHolder.setNumberDislikes(post_key);
 
@@ -616,7 +617,7 @@ public class MainPage extends AppCompatActivity
                     @Override
                     public void onClick(View view) {
                         Intent openFullScreen = new Intent(MainPage.this, FullScreenImage.class);
-                        String  tag = (String) viewHolder.post_photo.getTag();
+                        String tag = (String) viewHolder.post_photo.getTag();
                         openFullScreen.putExtra("imageURL", tag);
                         startActivity(openFullScreen);
                     }
@@ -690,7 +691,7 @@ public class MainPage extends AppCompatActivity
         FirebaseAuth mAuth;
         TextView numberofLikes;
         TextView numberOfDislikes;
-        RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText, layoutVideoText;
+        RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText, layoutVideoText, single_post_layout;
         FrameLayout layoutVideo;
         ProgressBar loadPhoto;
 
@@ -715,6 +716,7 @@ public class MainPage extends AppCompatActivity
             dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
             numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
             numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
+            single_post_layout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_post);
 
             layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
             layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
@@ -733,7 +735,7 @@ public class MainPage extends AppCompatActivity
 
         }
 
-        public void onClick(View view){
+        public void onClick(View view) {
 
 
         }
@@ -790,7 +792,7 @@ public class MainPage extends AppCompatActivity
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    Log.i("fffff",String.valueOf(dataSnapshot.getChildrenCount()));
+                    Log.i("fffff", String.valueOf(dataSnapshot.getChildrenCount()));
                     long numberDislikes = dataSnapshot.getChildrenCount();
                     if (numberDislikes == 0) {
                         numberOfDislikes.setText("");
@@ -830,6 +832,16 @@ public class MainPage extends AppCompatActivity
             });
 
 
+        }
+
+        public void setDesc(String desc) {
+            if (desc != null) {
+                TextView single_post = (TextView) mView.findViewById(R.id.post_text_main_page);
+                single_post_layout.setVisibility(View.VISIBLE);
+                single_post.setText(desc);
+            } else {
+                single_post_layout.setVisibility(View.GONE);
+            }
         }
 
 
@@ -946,7 +958,6 @@ public class MainPage extends AppCompatActivity
         }
 
 
-
     }
 
 
@@ -957,7 +968,7 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    public void onStop () {
+    public void onStop() {
         super.onStop();
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
@@ -967,7 +978,7 @@ public class MainPage extends AppCompatActivity
 
 
     @Override
-    public void onClick (View view){
+    public void onClick(View view) {
 
         if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText) {
             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
@@ -990,13 +1001,13 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    public void beforeTextChanged (CharSequence charSequence,int i, int i1, int i2){
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
     }
 
     //neöto
     @Override
-    public void onTextChanged (CharSequence charSequence,int i, int i1, int i2){
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
 
         if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
@@ -1007,7 +1018,7 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    public void afterTextChanged (Editable editable){
+    public void afterTextChanged(Editable editable) {
 
     }
 
