@@ -45,9 +45,12 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="10dp"
-                android:text=">" />
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:text=">"
+                android:textColor="#0d47a1"
+                android:textStyle="bold"
+                android:textSize="30sp" />
 
         </RelativeLayout>
 
