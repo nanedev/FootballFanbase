@@ -29,7 +29,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
         setContentView(R.layout.activity_username__likes_);
         myIntent = getIntent();
         String post_key = myIntent.getStringExtra("post_key");
-        likesReferences = FirebaseDatabase.getInstance().getReference().child("Posting").child("Likes").child(post_key);
+        likesReferences = FirebaseDatabase.getInstance().getReference().child("Likes").child(post_key);
 
         likesRec = (RecyclerView) findViewById(R.id.rec_view_username_likes);
         likesRec.setHasFixedSize(false);

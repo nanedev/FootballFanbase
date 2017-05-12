@@ -29,7 +29,7 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
         myIntent = getIntent();
         String post_key = myIntent.getStringExtra("post_key");
 
-        dislikesReferences = FirebaseDatabase.getInstance().getReference().child("Posting").child("Dislikes").child(post_key);
+        dislikesReferences = FirebaseDatabase.getInstance().getReference().child("Dislikes").child(post_key);
 
         dislikesRec = (RecyclerView) findViewById(R.id.rec_view_dislike);
         dislikesRec.setHasFixedSize(false);

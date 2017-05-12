@@ -162,7 +162,11 @@ public class MainPage extends AppCompatActivity
         postingDialog = new ProgressDialog(this);
         wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
         wallList.setHasFixedSize(false);
-        wallList.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        wallList.setLayoutManager(linearLayoutManager);
         wallList.setItemViewCacheSize(20);
         wallList.setDrawingCacheEnabled(true);
         Intent intent = getIntent();
@@ -199,8 +203,8 @@ public class MainPage extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        likesReference = mDatabase.getReference().child("Posting").child("Likes");
-        dislikeReference = mDatabase.getReference().child("Posting").child("Dislikes");
+        likesReference = mDatabase.getReference().child("Likes");
+        dislikeReference = mDatabase.getReference().child("Dislikes");
         likesReference.keepSynced(true);
         dislikeReference.keepSynced(true);
 
@@ -436,10 +440,6 @@ public class MainPage extends AppCompatActivity
         ) {
 
 
-            @Override
-            public Post getItem(int position) {
-                return super.getItem(getItemCount() - 1 - position);
-            }
             @Override
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
                 final String post_key = getRef(position).getKey();
@@ -723,8 +723,8 @@ public class MainPage extends AppCompatActivity
             //loadPhoto = (ProgressBar) mView.findViewById(R.id.post_photo_bar_load);
             layoutVideoText = (RelativeLayout) mView.findViewById(R.id.layout_for_video_text);
             database = FirebaseDatabase.getInstance();
-            likeReference = database.getReference().child("Posting").child("Likes");
-            dislikeReference = database.getReference().child("Posting").child("Dislikes");
+            likeReference = database.getReference().child("Likes");
+            dislikeReference = database.getReference().child("Dislikes");
             mAuth = FirebaseAuth.getInstance();
 
             likeReference.keepSynced(true);
