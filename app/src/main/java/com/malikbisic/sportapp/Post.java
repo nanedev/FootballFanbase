@@ -11,14 +11,14 @@ public class Post {
     private String photoPost;
     private String videoPost;
     private String audioFile;
-    private String descForVideo;
+    private String descVideo;
     private String descForPhoto;
 
 
     public Post() {
     }
 
-    public Post(String username, String profileImage, String descForAudio, String descForVideo, String descForPhoto, String photoPost, String videoPost, String audioFile) {
+    public Post(String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile) {
         this.username = username;
         this.profileImage = profileImage;
         this.descForAudio = descForAudio;
@@ -26,7 +26,7 @@ public class Post {
         this.videoPost = videoPost;
         this.audioFile = audioFile;
         this.descForPhoto = descForPhoto;
-        this.descForVideo = descForVideo;
+        this.descVideo = descVideo;
     }
 
     public String getUsername() {
@@ -77,12 +77,12 @@ public class Post {
         this.audioFile = audioFile;
     }
 
-    public String getDescForVideo() {
-        return descForVideo;
+    public String getDescVideo() {
+        return descVideo;
     }
 
-    public void setDescForVideo(String descForVideo) {
-        this.descForVideo = descForVideo;
+    public void setDescVideo(String descVideo) {
+        this.descVideo = descVideo;
     }
 
     public String getDescForPhoto() {

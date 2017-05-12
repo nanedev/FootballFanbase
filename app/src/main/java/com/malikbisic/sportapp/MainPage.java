@@ -445,7 +445,7 @@ public class MainPage extends AppCompatActivity
                 final String post_key = getRef(position).getKey();
                 viewHolder.setDescForAudio(model.getDescForAudio());
                 viewHolder.setDescForPhoto(model.getDescForPhoto());
-                viewHolder.setDescForVideo(model.getDescForVideo());
+                viewHolder.setDescVideo(model.getDescVideo());
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
@@ -856,12 +856,12 @@ public class MainPage extends AppCompatActivity
             }
         }
 
-        public void setDescForVideo(String descForVideo) {
+        public void setDescVideo(String descVideo) {
             TextView post_desc_for_video = (TextView) mView.findViewById(R.id.text_for_video);
 
-            if (descForVideo != null) {
+            if (descVideo != null) {
                 layoutVideoText.setVisibility(View.VISIBLE);
-                post_desc_for_video.setText(descForVideo);
+                post_desc_for_video.setText(descVideo);
             } else {
                 layoutVideoText.setVisibility(View.GONE);
             }
