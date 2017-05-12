@@ -159,6 +159,7 @@ public class MainPage extends AppCompatActivity
         audioIcon = (ImageView) findViewById(R.id.talk_icon_content_main);
         audioText = (TextView) findViewById(R.id.audioText);
         postText = (EditText) findViewById(R.id.postOnlyText);
+
         postingDialog = new ProgressDialog(this);
         wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
         wallList.setHasFixedSize(false);
@@ -444,6 +445,7 @@ public class MainPage extends AppCompatActivity
             @Override
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
                 final String post_key = getRef(position).getKey();
+
                 viewHolder.setDescForAudio(model.getDescForAudio());
                 viewHolder.setDescForPhoto(model.getDescForPhoto());
                 viewHolder.setDescVideo(model.getDescVideo());
@@ -549,6 +551,15 @@ public class MainPage extends AppCompatActivity
 
 
                         }
+                    }
+                });
+
+                viewHolder.openSinglePost.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent openSinglePost = new Intent(MainPage.this, SinglePostViewActivity.class);
+                        openSinglePost.putExtra("post_id", post_key);
+                        startActivity(openSinglePost);
                     }
                 });
 
@@ -694,6 +705,7 @@ public class MainPage extends AppCompatActivity
         RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText, layoutVideoText, single_post_layout;
         FrameLayout layoutVideo;
         ProgressBar loadPhoto;
+        TextView openSinglePost;
 
 
         public PostViewHolder(View itemView) {
@@ -717,6 +729,7 @@ public class MainPage extends AppCompatActivity
             numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
             numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
             single_post_layout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_post);
+            openSinglePost = (TextView) mView.findViewById(R.id.openSinglePost);
 
             layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
             layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
