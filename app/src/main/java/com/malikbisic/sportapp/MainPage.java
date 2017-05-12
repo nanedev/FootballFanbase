@@ -445,6 +445,7 @@ public class MainPage extends AppCompatActivity
                 final String post_key = getRef(position).getKey();
                 viewHolder.setDescForAudio(model.getDescForAudio());
                 viewHolder.setDescForPhoto(model.getDescForPhoto());
+                viewHolder.setDescForVideo(model.getDescForVideo());
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
@@ -689,7 +690,8 @@ public class MainPage extends AppCompatActivity
         FirebaseAuth mAuth;
         TextView numberofLikes;
         TextView numberOfDislikes;
-        RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText;
+        RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText, layoutVideoText;
+        FrameLayout layoutVideo;
         ProgressBar loadPhoto;
 
 
@@ -717,8 +719,9 @@ public class MainPage extends AppCompatActivity
             layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
             layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
             layoutAudioText = (RelativeLayout) mView.findViewById(R.id.layout_audio_textview);
+            layoutVideo = (FrameLayout) mView.findViewById(R.id.framelayout);
             //loadPhoto = (ProgressBar) mView.findViewById(R.id.post_photo_bar_load);
-
+            layoutVideoText = (RelativeLayout) mView.findViewById(R.id.layout_for_video_text);
             database = FirebaseDatabase.getInstance();
             likeReference = database.getReference().child("Posting").child("Likes");
             dislikeReference = database.getReference().child("Posting").child("Dislikes");
@@ -853,6 +856,18 @@ public class MainPage extends AppCompatActivity
             }
         }
 
+        public void setDescForVideo(String descForVideo) {
+            TextView post_desc_for_video = (TextView) mView.findViewById(R.id.text_for_video);
+
+            if (descForVideo != null) {
+                layoutVideoText.setVisibility(View.VISIBLE);
+                post_desc_for_video.setText(descForVideo);
+            } else {
+                layoutVideoText.setVisibility(View.GONE);
+            }
+
+        }
+
 
         public void setUsername(String username) {
             TextView post_username = (TextView) mView.findViewById(R.id.username_wall);
@@ -899,7 +914,7 @@ public class MainPage extends AppCompatActivity
 
                 try {
 
-                    videoView.setVisibility(View.VISIBLE);
+                    layoutVideo.setVisibility(View.VISIBLE);
                     videoView.setUp(videoPost, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
                     videoView.requestFocus();
                 } catch (Exception e) {
@@ -907,7 +922,7 @@ public class MainPage extends AppCompatActivity
                 }
 
             } else {
-                videoView.setVisibility(View.GONE);
+                layoutVideo.setVisibility(View.GONE);
             }
         }
 
