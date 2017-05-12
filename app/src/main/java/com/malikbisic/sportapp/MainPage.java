@@ -176,176 +176,176 @@ public class MainPage extends AppCompatActivity
                 startActivity(openPhoto);
             }
         }
-            postText.addTextChangedListener(this);
-            postText.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        postText.addTextChangedListener(this);
+        postText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
 
-                    if (i == KeyEvent.KEYCODE_DEL) {
-                    }
-
-                    return false;
+                if (i == KeyEvent.KEYCODE_DEL) {
                 }
-            });
+
+                return false;
+            }
+        });
 
 
-            galleryIcon.setOnClickListener(this);
-            galleryText.setOnClickListener(this);
-            videoIcon.setOnClickListener(this);
-            videoText.setOnClickListener(this);
-            audioIcon.setOnClickListener(this);
-            audioText.setOnClickListener(this);
+        galleryIcon.setOnClickListener(this);
+        galleryText.setOnClickListener(this);
+        videoIcon.setOnClickListener(this);
+        videoText.setOnClickListener(this);
+        audioIcon.setOnClickListener(this);
+        audioText.setOnClickListener(this);
 
 
-            mAuth = FirebaseAuth.getInstance();
-            mDatabase = FirebaseDatabase.getInstance();
-            likesReference = mDatabase.getReference().child("Likes");
-            dislikeReference = mDatabase.getReference().child("Dislikes");
-            likesReference.keepSynced(true);
-            dislikeReference.keepSynced(true);
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
+        likesReference = mDatabase.getReference().child("Posting").child("Likes");
+        dislikeReference = mDatabase.getReference().child("Posting").child("Dislikes");
+        likesReference.keepSynced(true);
+        dislikeReference.keepSynced(true);
 
 
-            mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    if (user != null) {
-                        uid = user.getUid();
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    uid = user.getUid();
 
-                        Log.i("proba", uid);
+                    Log.i("proba", uid);
 
-                        mReference = mDatabase.getReference().child("Users").child(uid);
-                        mReference.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                                if (dataSnapshot.exists()) {
-                                    Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
+                    mReference = mDatabase.getReference().child("Users").child(uid);
+                    mReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                                    profielImage = String.valueOf(value.get("profileImage"));
-                                    Picasso.with(getApplicationContext())
-                                            .load(profielImage)
-                                            .into(profile);
-                                    username.setText(String.valueOf(value.get("username")));
-                                    usernameuser.setText(String.valueOf(value.get("username")));
-                                    usernameInfo = usernameuser.getText().toString().trim();
-
-                                    Picasso.with(getApplicationContext())
-                                            .load(profielImage)
-                                            .into(userProfileImage);
-
-                                    String country = String.valueOf(value.get("country"));
-                                    Log.i("country", country);
-
-                                    FirebaseUser user = mAuth.getCurrentUser();
-
-                                    email.setText(user.getEmail());
-
-                                    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
-                                    query.whereEqualTo("country", country);
-                                    query.findInBackground(new FindCallback<ParseObject>() {
-                                        @Override
-                                        public void done(List<ParseObject> objects, ParseException e) {
-                                            if (e == null)
-                                                for (ParseObject object : objects) {
-
-                                                    ParseFile file = (ParseFile) object.get("flag");
-                                                    file.getDataInBackground(new GetDataCallback() {
-                                                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                                                        @Override
-                                                        public void done(byte[] data, ParseException e) {
-                                                            if (e == null) {
+                            if (dataSnapshot.exists()) {
+                                Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
 
 
-                                                                Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                                                obwer = new BitmapDrawable(getResources(), bmp1);
-                                                                layout.setBackground(obwer);
-                                                            } else {
-                                                                Log.d("test", "There was a problem downloading the data.");
-                                                            }
+                                profielImage = String.valueOf(value.get("profileImage"));
+                                Picasso.with(getApplicationContext())
+                                        .load(profielImage)
+                                        .into(profile);
+                                username.setText(String.valueOf(value.get("username")));
+                                usernameuser.setText(String.valueOf(value.get("username")));
+                                usernameInfo = usernameuser.getText().toString().trim();
+
+                                Picasso.with(getApplicationContext())
+                                        .load(profielImage)
+                                        .into(userProfileImage);
+
+                                String country = String.valueOf(value.get("country"));
+                                Log.i("country", country);
+
+                                FirebaseUser user = mAuth.getCurrentUser();
+
+                                email.setText(user.getEmail());
+
+                                ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
+                                query.whereEqualTo("country", country);
+                                query.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> objects, ParseException e) {
+                                        if (e == null)
+                                            for (ParseObject object : objects) {
+
+                                                ParseFile file = (ParseFile) object.get("flag");
+                                                file.getDataInBackground(new GetDataCallback() {
+                                                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                                                    @Override
+                                                    public void done(byte[] data, ParseException e) {
+                                                        if (e == null) {
+
+
+                                                            Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                                            obwer = new BitmapDrawable(getResources(), bmp1);
+                                                            layout.setBackground(obwer);
+                                                        } else {
+                                                            Log.d("test", "There was a problem downloading the data.");
                                                         }
-                                                    });
-                                                }
-                                        }
-                                    });
-                                }
+                                                    }
+                                                });
+                                            }
+                                    }
+                                });
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                            }
-                        });
+                        }
+                    });
 
-
-                    }
 
                 }
-            };
+
+            }
+        };
 
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.addDrawerListener(toggle);
-            toggle.syncState();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(this);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
-            View header = navigationView.getHeaderView(0);
-            profile = (ImageView) header.findViewById(R.id.nav_header_profil_image);
-            username = (TextView) header.findViewById(R.id.header_username);
-            email = (TextView) header.findViewById(R.id.header_email);
-            layout = (LinearLayout) header.findViewById(R.id.nav_header_main_background);
-
-
-        }
-
-        @Override
-        protected void onActivityResult ( int requestCode, int resultCode, Intent data){
-            super.onActivityResult(requestCode, resultCode, data);
-
-            if (data != null) {
-                if (requestCode == PHOTO_OPEN && resultCode == RESULT_OK) {
-
-                    Uri imageUri = data.getData();
-                    Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
-                    goToAddPhotoOrVideo.putExtra("image-uri_selected", imageUri.toString());
-                    startActivity(goToAddPhotoOrVideo);
-                    Log.i("uri photo", String.valueOf(imageUri));
-
-                } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
-                    Uri videoUri = data.getData();
-                    Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
-                    goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
-                    Log.i("uri video", String.valueOf(videoUri));
-                    startActivity(goToAddPhotoOrVideo);
+        View header = navigationView.getHeaderView(0);
+        profile = (ImageView) header.findViewById(R.id.nav_header_profil_image);
+        username = (TextView) header.findViewById(R.id.header_username);
+        email = (TextView) header.findViewById(R.id.header_email);
+        layout = (LinearLayout) header.findViewById(R.id.nav_header_main_background);
 
 
-                } else {
+    }
 
-                    for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                        fragment.onActivityResult(requestCode, resultCode, data);
-                    }
+    @Override
+    protected void onActivityResult ( int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (data != null) {
+            if (requestCode == PHOTO_OPEN && resultCode == RESULT_OK) {
+
+                Uri imageUri = data.getData();
+                Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
+                goToAddPhotoOrVideo.putExtra("image-uri_selected", imageUri.toString());
+                startActivity(goToAddPhotoOrVideo);
+                Log.i("uri photo", String.valueOf(imageUri));
+
+            } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
+                Uri videoUri = data.getData();
+                Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
+                goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
+                Log.i("uri video", String.valueOf(videoUri));
+                startActivity(goToAddPhotoOrVideo);
+
+
+            } else {
+
+                for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                    fragment.onActivityResult(requestCode, resultCode, data);
                 }
             }
         }
+    }
 
-        @Override
-        public void onBackPressed () {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else if (JCVideoPlayer.backPress()) {
-                return;
-            }
-            super.onBackPressed();
-
-
+    @Override
+    public void onBackPressed () {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else if (JCVideoPlayer.backPress()) {
+            return;
         }
+        super.onBackPressed();
+
+
+    }
 
     @Override
     protected void onPause() {
@@ -354,585 +354,585 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-        public boolean onCreateOptionsMenu (Menu menu){
-            // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.main_page, menu);
-            myMenu = menu.findItem(R.id.postText);
+    public boolean onCreateOptionsMenu (Menu menu){
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_page, menu);
+        myMenu = menu.findItem(R.id.postText);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item){
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.postText) {
+            String textPost = postText.getText().toString().trim();
+
+            postingDialog.setMessage("Posting...");
+            postingDialog.show();
+            DatabaseReference newPost = postingDatabase.push();
+            newPost.child("desc").setValue(textPost);
+            newPost.child("username").setValue(MainPage.usernameInfo);
+            newPost.child("profileImage").setValue(MainPage.profielImage);
+            postingDialog.dismiss();
             return true;
         }
 
-        @Override
-        public boolean onOptionsItemSelected (MenuItem item){
-            // Handle action bar item clicks here. The action bar will
-            // automatically handle clicks on the Home/Up button, so long
-            // as you specify a parent activity in AndroidManifest.xml.
-            int id = item.getItemId();
+        return super.onOptionsItemSelected(item);
+    }
 
-            //noinspection SimplifiableIfStatement
-            if (id == R.id.postText) {
-                String textPost = postText.getText().toString().trim();
 
-                postingDialog.setMessage("Posting...");
-                postingDialog.show();
-                DatabaseReference newPost = postingDatabase.push();
-                newPost.child("desc").setValue(textPost);
-                newPost.child("username").setValue(MainPage.usernameInfo);
-                newPost.child("profileImage").setValue(MainPage.profielImage);
-                postingDialog.dismiss();
-                return true;
-            }
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected (MenuItem item){
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
 
-            return super.onOptionsItemSelected(item);
+        if (id == R.id.nav_profile) {
+            // Handle the camera action
+            ProfileFragment profileFragment = new ProfileFragment();
+
+            FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+
+            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+        } else if (id == R.id.nav_message) {
+
+        } else if (id == R.id.nav_notifications) {
+
+        } else if (id == R.id.premium_account) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        } else if (id == R.id.nav_logout) {
+            mAuth.signOut();
+            Intent goToLogin = new Intent(MainPage.this, LoginActivity.class);
+            goToLogin.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(goToLogin);
+            finish();
         }
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
-        @SuppressWarnings("StatementWithEmptyBody")
-        @Override
-        public boolean onNavigationItemSelected (MenuItem item){
-            // Handle navigation view item clicks here.
-            int id = item.getItemId();
+    @Override
+    public void onStart () {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
 
-            if (id == R.id.nav_profile) {
-                // Handle the camera action
-                ProfileFragment profileFragment = new ProfileFragment();
+        FirebaseRecyclerAdapter<Post, PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
+                Post.class,
+                R.layout.wall_row,
+                PostViewHolder.class,
+                postingDatabase
+        ) {
 
-                FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
-                manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                        R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-            } else if (id == R.id.nav_message) {
-
-            } else if (id == R.id.nav_notifications) {
-
-            } else if (id == R.id.premium_account) {
-
-            } else if (id == R.id.nav_share) {
-
-            } else if (id == R.id.nav_send) {
-
-            } else if (id == R.id.nav_logout) {
-                mAuth.signOut();
-                Intent goToLogin = new Intent(MainPage.this, LoginActivity.class);
-                goToLogin.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(goToLogin);
-                finish();
+            @Override
+            public Post getItem(int position) {
+                return super.getItem(getItemCount() - 1 - position);
             }
+            @Override
+            protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
+                final String post_key = getRef(position).getKey();
+                viewHolder.setDescForAudio(model.getDescForAudio());
+                viewHolder.setDescForPhoto(model.getDescForPhoto());
+                viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
+                viewHolder.setUsername(model.getUsername());
+                viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
+                viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
+                viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
+                viewHolder.setLikeBtn(post_key);
+                viewHolder.setNumberLikes(post_key);
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
-        }
+                viewHolder.setDislikeBtn(post_key);
+                viewHolder.setNumberDislikes(post_key);
 
-        @Override
-        public void onStart () {
-            super.onStart();
-            mAuth.addAuthStateListener(mAuthStateListener);
+                viewHolder.seekBar.setEnabled(true);
+                viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
 
-            FirebaseRecyclerAdapter<Post, PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
-                    Post.class,
-                    R.layout.wall_row,
-                    PostViewHolder.class,
-                    postingDatabase
-            ) {
+                        viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
+                        try {
+                            viewHolder.mPlayer.prepareAsync();
+                            viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    viewHolder.mPlayer.start();
 
-                @Override
-                public Post getItem(int position) {
-                    return super.getItem(getItemCount() - 1 - position);
-                }
-                @Override
-                protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
-                    final String post_key = getRef(position).getKey();
-                    viewHolder.setDescForAudio(model.getDescForAudio());
-                    viewHolder.setDescForPhoto(model.getDescForPhoto());
-                    viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
-                    viewHolder.setUsername(model.getUsername());
-                    viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
-                    viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
-                    viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
-                    viewHolder.setLikeBtn(post_key);
-                    viewHolder.setNumberLikes(post_key);
+                                    viewHolder.seekBar.setMax(viewHolder.mPlayer.getDuration());
 
-                    viewHolder.setDislikeBtn(post_key);
-                    viewHolder.setNumberDislikes(post_key);
-
-                    viewHolder.seekBar.setEnabled(true);
-                    viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-
-                            viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                            try {
-                                viewHolder.mPlayer.prepareAsync();
-                                viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                    @Override
-                                    public void onPrepared(MediaPlayer mp) {
-                                        viewHolder.mPlayer.start();
-
-                                        viewHolder.seekBar.setMax(viewHolder.mPlayer.getDuration());
-
-                                        new Timer().scheduleAtFixedRate(new TimerTask() {
-                                            @Override
-                                            public void run() {
-                                                viewHolder.seekBar.setProgress(viewHolder.mPlayer.getCurrentPosition());
-                                                viewHolder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                                    @Override
-                                                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                                        if (fromUser) {
-                                                            viewHolder.mPlayer.seekTo(progress);
-                                                        }
+                                    new Timer().scheduleAtFixedRate(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            viewHolder.seekBar.setProgress(viewHolder.mPlayer.getCurrentPosition());
+                                            viewHolder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                @Override
+                                                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                    if (fromUser) {
+                                                        viewHolder.mPlayer.seekTo(progress);
                                                     }
+                                                }
 
-                                                    @Override
-                                                    public void onStartTrackingTouch(SeekBar seekBar) {
+                                                @Override
+                                                public void onStartTrackingTouch(SeekBar seekBar) {
 
-                                                    }
+                                                }
 
-                                                    @Override
-                                                    public void onStopTrackingTouch(SeekBar seekBar) {
+                                                @Override
+                                                public void onStopTrackingTouch(SeekBar seekBar) {
 
-                                                    }
-                                                });
-                                            }
-                                        }, 0, 100);
+                                                }
+                                            });
+                                        }
+                                    }, 0, 100);
 
-                                    }
-                                });
-
-
-                                viewHolder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                    @Override
-                                    public void onCompletion(MediaPlayer mediaPlayer) {
-                                        Log.i("finished", "yes");
-
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                                }
+                            });
 
 
-                            play_state = true;
-                            if (!pause_state) {
-                                viewHolder.mPlayer.start();
-                                pause_state = false;
-                            }
+                            viewHolder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                @Override
+                                public void onCompletion(MediaPlayer mediaPlayer) {
+                                    Log.i("finished", "yes");
 
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
 
 
-                    });
-
-
-                    viewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            pause_state = true;
-                            play_state = false;
-                            if (viewHolder.mPlayer.isPlaying() && pause_state)
-                                viewHolder.mPlayer.pause();
+                        play_state = true;
+                        if (!pause_state) {
+                            viewHolder.mPlayer.start();
                             pause_state = false;
+                        }
+
+                    }
+
+
+                });
+
+
+                viewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pause_state = true;
+                        play_state = false;
+                        if (viewHolder.mPlayer.isPlaying() && pause_state)
+                            viewHolder.mPlayer.pause();
+                        pause_state = false;
+
+                    }
+                });
+
+                viewHolder.stop_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (viewHolder.mPlayer != null) {
+                            viewHolder.mPlayer.stop();
+                            viewHolder.seekBar.setMax(0);
+
 
                         }
-                    });
+                    }
+                });
 
-                    viewHolder.stop_button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent listUsername = new Intent(MainPage.this, Username_Likes_Activity.class);
+                        listUsername.putExtra("post_key", post_key);
+                        startActivity(listUsername);
+                    }
+                });
 
-                            if (viewHolder.mPlayer != null) {
-                                viewHolder.mPlayer.stop();
-                                viewHolder.seekBar.setMax(0);
+                viewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent listUsername = new Intent(MainPage.this, Username_Dislikes_Activity.class);
+                        listUsername.putExtra("post_key", post_key);
+                        startActivity(listUsername);
+                    }
+                });
 
+
+                viewHolder.like_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        like_process = true;
+
+
+                        likesReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (like_process) {
+                                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+
+                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+                                        like_process = false;
+
+
+                                    } else {
+
+                                        DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
+
+                                        newPost.child("username").setValue(MainPage.usernameInfo);
+                                        newPost.child("photoProfile").setValue(MainPage.profielImage);
+                                        like_process = false;
+
+
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                                Log.i("error", databaseError.getMessage());
 
                             }
-                        }
-                    });
+                        });
 
-                    viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent listUsername = new Intent(MainPage.this, Username_Likes_Activity.class);
-                            listUsername.putExtra("post_key", post_key);
-                            startActivity(listUsername);
-                        }
-                    });
-
-                    viewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent listUsername = new Intent(MainPage.this, Username_Dislikes_Activity.class);
-                            listUsername.putExtra("post_key", post_key);
-                            startActivity(listUsername);
-                        }
-                    });
+                    }
+                });
 
 
-                    viewHolder.like_button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            like_process = true;
+                viewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent openFullScreen = new Intent(MainPage.this, FullScreenImage.class);
+                        String  tag = (String) viewHolder.post_photo.getTag();
+                        openFullScreen.putExtra("imageURL", tag);
+                        startActivity(openFullScreen);
+                    }
+                });
+
+                viewHolder.dislike_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dislike_process = true;
+                        dislikeReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (dislike_process) {
+                                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+
+                                        dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+                                        dislike_process = false;
 
 
-                            likesReference.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    } else {
 
-                                    if (like_process) {
-                                        if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+                                        DatabaseReference newPost = dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid());
 
-                                            likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                            like_process = false;
+                                        newPost.child("username").setValue(MainPage.usernameInfo);
+                                        newPost.child("photoProfile").setValue(MainPage.profielImage);
 
-
-                                        } else {
-
-                                            DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
-
-                                            newPost.child("username").setValue(MainPage.usernameInfo);
-                                            newPost.child("photoProfile").setValue(MainPage.profielImage);
-                                            like_process = false;
+                                        dislike_process = false;
 
 
-                                        }
                                     }
                                 }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                            }
 
-                                    Log.i("error", databaseError.getMessage());
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                                }
-                            });
+                            }
+                        });
 
-                        }
-                    });
-
-
-                    viewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent openFullScreen = new Intent(MainPage.this, FullScreenImage.class);
-                            String  tag = (String) viewHolder.post_photo.getTag();
-                            openFullScreen.putExtra("imageURL", tag);
-                            startActivity(openFullScreen);
-                        }
-                    });
-
-                    viewHolder.dislike_button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dislike_process = true;
-                            dislikeReference.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    if (dislike_process) {
-                                        if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
-                                            dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                            dislike_process = false;
+                    }
+                });
 
 
-                                        } else {
+            }
+        };
 
-                                            DatabaseReference newPost = dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid());
-
-                                            newPost.child("username").setValue(MainPage.usernameInfo);
-                                            newPost.child("photoProfile").setValue(MainPage.profielImage);
-
-                                            dislike_process = false;
+        wallList.setAdapter(firebaseRecyclerAdapter);
 
 
-                                        }
-                                    }
+    }
 
-                                }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+    public static class PostViewHolder extends RecyclerView.ViewHolder {
+        View mView;
+        Button play_button;
+        MediaPlayer mPlayer;
+        JCVideoPlayerStandard videoView;
+        ImageView post_photo;
+        MediaController mediaController;
+        RelativeLayout audioLayout;
+        ProgressDialog progressDialog;
+        Button pause_button;
+        SeekBar seekBar;
+        Button stop_button;
+        ImageView like_button;
+        ImageView dislike_button;
+        FirebaseDatabase database;
+        DatabaseReference likeReference, dislikeReference;
+        FirebaseAuth mAuth;
+        TextView numberofLikes;
+        TextView numberOfDislikes;
+        RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText;
+        ProgressBar loadPhoto;
 
-                                }
-                            });
 
-                        }
-                    });
+        public PostViewHolder(View itemView) {
+            super(itemView);
 
+            mView = itemView;
+            play_button = (Button) mView.findViewById(R.id.play_button);
+            pause_button = (Button) mView.findViewById(R.id.pause_button);
+            stop_button = (Button) mView.findViewById(R.id.stop_button);
+
+            mediaController = new MediaController(mView.getContext());
+
+            videoView = (JCVideoPlayerStandard) mView.findViewById(R.id.posted_video);
+            post_photo = (ImageView) mView.findViewById(R.id.posted_image);
+            audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
+            mPlayer = new MediaPlayer();
+            progressDialog = new ProgressDialog(mView.getContext());
+            seekBar = (SeekBar) mView.findViewById(R.id.audio_seek_bar);
+            like_button = (ImageView) mView.findViewById(R.id.like_button);
+            dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
+            numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
+            numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
+
+            layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
+            layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
+            layoutAudioText = (RelativeLayout) mView.findViewById(R.id.layout_audio_textview);
+            //loadPhoto = (ProgressBar) mView.findViewById(R.id.post_photo_bar_load);
+
+            database = FirebaseDatabase.getInstance();
+            likeReference = database.getReference().child("Posting").child("Likes");
+            dislikeReference = database.getReference().child("Posting").child("Dislikes");
+            mAuth = FirebaseAuth.getInstance();
+
+            likeReference.keepSynced(true);
+            dislikeReference.keepSynced(true);
+
+
+        }
+
+        public void onClick(View view){
+
+
+        }
+
+        public void setNumberLikes(String post_key) {
+
+            likeReference.child(post_key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                    long numberLikes = dataSnapshot.getChildrenCount();
+                    if (numberLikes == 0) {
+                        numberofLikes.setText("");
+                    } else {
+                        numberofLikes.setText(String.valueOf(numberLikes));
+                    }
 
                 }
-            };
 
-            wallList.setAdapter(firebaseRecyclerAdapter);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        public void setLikeBtn(final String post_key) {
+            likeReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+                        dislike_button.setClickable(false);
+                        like_button.setActivated(true);
+
+                    } else {
+                        dislike_button.setClickable(true);
+                        like_button.setActivated(false);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        public void setNumberDislikes(String post_key) {
+
+            dislikeReference.child(post_key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    Log.i("fffff",String.valueOf(dataSnapshot.getChildrenCount()));
+                    long numberDislikes = dataSnapshot.getChildrenCount();
+                    if (numberDislikes == 0) {
+                        numberOfDislikes.setText("");
+                    } else {
+                        numberOfDislikes.setText(String.valueOf(numberDislikes));
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+
+        public void setDislikeBtn(final String post_key) {
+            dislikeReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+
+                        dislike_button.setActivated(true);
+                        like_button.setClickable(false);
+
+                    } else {
+                        dislike_button.setActivated(false);
+                        like_button.setClickable(true);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
 
         }
 
 
-        public static class PostViewHolder extends RecyclerView.ViewHolder {
-            View mView;
-            Button play_button;
-            MediaPlayer mPlayer;
-            JCVideoPlayerStandard videoView;
-            ImageView post_photo;
-            MediaController mediaController;
-            RelativeLayout audioLayout;
-            ProgressDialog progressDialog;
-            Button pause_button;
-            SeekBar seekBar;
-            Button stop_button;
-            ImageView like_button;
-            ImageView dislike_button;
-            FirebaseDatabase database;
-            DatabaseReference likeReference, dislikeReference;
-            FirebaseAuth mAuth;
-            TextView numberofLikes;
-            TextView numberOfDislikes;
-            RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText;
-            ProgressBar loadPhoto;
+        public void setDescForAudio(String descForAudio) {
 
-
-            public PostViewHolder(View itemView) {
-                super(itemView);
-
-                mView = itemView;
-                play_button = (Button) mView.findViewById(R.id.play_button);
-                pause_button = (Button) mView.findViewById(R.id.pause_button);
-                stop_button = (Button) mView.findViewById(R.id.stop_button);
-
-                mediaController = new MediaController(mView.getContext());
-
-                videoView = (JCVideoPlayerStandard) mView.findViewById(R.id.posted_video);
-                post_photo = (ImageView) mView.findViewById(R.id.posted_image);
-                audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
-                mPlayer = new MediaPlayer();
-                progressDialog = new ProgressDialog(mView.getContext());
-                seekBar = (SeekBar) mView.findViewById(R.id.audio_seek_bar);
-                like_button = (ImageView) mView.findViewById(R.id.like_button);
-                dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
-                numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
-                numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
-
-                layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
-                layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
-                layoutAudioText = (RelativeLayout) mView.findViewById(R.id.layout_audio_textview);
-                //loadPhoto = (ProgressBar) mView.findViewById(R.id.post_photo_bar_load);
-
-                database = FirebaseDatabase.getInstance();
-                likeReference = database.getReference().child("Likes");
-                dislikeReference = database.getReference().child("Dislikes");
-                mAuth = FirebaseAuth.getInstance();
-
-                likeReference.keepSynced(true);
-                dislikeReference.keepSynced(true);
-
-
+            TextView post_desc_for_audio = (TextView) mView.findViewById(R.id.audio_textview);
+            if (descForAudio != null) {
+                layoutAudioText.setVisibility(View.VISIBLE);
+                post_desc_for_audio.setText(descForAudio);
+            } else {
+                layoutAudioText.setVisibility(View.GONE);
             }
+        }
 
-            public void onClick(View view){
+        public void setDescForPhoto(String descForPhoto) {
 
+            TextView post_desc_for_photo = (TextView) mView.findViewById(R.id.text_for_image);
 
+            if (descForPhoto != null) {
+                layoutPhotoText.setVisibility(View.VISIBLE);
+                post_desc_for_photo.setText(descForPhoto);
+            } else {
+                layoutPhotoText.setVisibility(View.GONE);
             }
-
-            public void setNumberLikes(String post_key) {
-
-                likeReference.child(post_key).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+        }
 
 
-                        long numberLikes = dataSnapshot.getChildrenCount();
-                        if (numberLikes == 0) {
-                            numberofLikes.setText("");
-                        } else {
-                            numberofLikes.setText(String.valueOf(numberLikes));
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-            public void setLikeBtn(final String post_key) {
-                likeReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-                            dislike_button.setClickable(false);
-                            like_button.setActivated(true);
-
-                        } else {
-                            dislike_button.setClickable(true);
-                            like_button.setActivated(false);
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-            public void setNumberDislikes(String post_key) {
-
-                dislikeReference.child(post_key).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                        long numberDislikes = dataSnapshot.getChildrenCount();
-                        if (numberDislikes == 0) {
-                            numberOfDislikes.setText("");
-                        } else {
-                            numberOfDislikes.setText(String.valueOf(numberDislikes));
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-
-            public void setDislikeBtn(final String post_key) {
-                dislikeReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
-                            dislike_button.setActivated(true);
-                            like_button.setClickable(false);
-
-                        } else {
-                            dislike_button.setActivated(false);
-                            like_button.setClickable(true);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-
-            }
-
-
-            public void setDescForAudio(String descForAudio) {
-
-                TextView post_desc_for_audio = (TextView) mView.findViewById(R.id.audio_textview);
-                if (descForAudio != null) {
-                    layoutAudioText.setVisibility(View.VISIBLE);
-                    post_desc_for_audio.setText(descForAudio);
-                } else {
-                    layoutAudioText.setVisibility(View.GONE);
-                }
-            }
-
-            public void setDescForPhoto(String descForPhoto) {
-
-                TextView post_desc_for_photo = (TextView) mView.findViewById(R.id.text_for_image);
-
-                if (descForPhoto != null) {
-                    layoutPhotoText.setVisibility(View.VISIBLE);
-                    post_desc_for_photo.setText(descForPhoto);
-                } else {
-                    layoutPhotoText.setVisibility(View.GONE);
-                }
-            }
-
-
-            public void setUsername(String username) {
-                TextView post_username = (TextView) mView.findViewById(R.id.username_wall);
-                post_username.setText(username);
-
-
-            }
-
-            public void setProfileImage(Context ctx, String profileImage) {
-                ImageView post_profile_image = (ImageView) mView.findViewById(R.id.profile_image_wall);
-                Picasso.with(ctx).load(profileImage).into(post_profile_image);
-
-            }
-
-
-            public void setPhotoPost(Context ctx, String photoPost) {
-
-                if (photoPost != null) {
-                    layoutPhoto.setVisibility(View.VISIBLE);
-                    Picasso.with(ctx).load(photoPost).into(post_photo, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                       //     loadPhoto.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
-                    post_photo.setTag(photoPost);
-                } else {
-
-                    layoutPhoto.setVisibility(View.GONE);
-                    // loadPhoto.setVisibility(View.GONE);
-                }
-
-            }
-
-            public void setVideoPost(Context ctx, String videoPost) {
-
-
-                if (videoPost != null) {
-
-                    try {
-
-                        videoView.setVisibility(View.VISIBLE);
-                        videoView.setUp(videoPost, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
-                        videoView.requestFocus();
-                    } catch (Exception e) {
-                        e.getMessage();
-                    }
-
-                } else {
-                    videoView.setVisibility(View.GONE);
-                }
-            }
-
-
-            public void setAudioFile(Context context, String audioFile) {
-
-                if (audioFile != null) {
-                    mPlayer.reset();
-                    audioLayout.setVisibility(View.VISIBLE);
-                    try {
-
-                        mPlayer.setDataSource(context, Uri.parse(audioFile));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    audioLayout.setVisibility(View.GONE);
-                }
-
-            }
-
+        public void setUsername(String username) {
+            TextView post_username = (TextView) mView.findViewById(R.id.username_wall);
+            post_username.setText(username);
 
 
         }
+
+        public void setProfileImage(Context ctx, String profileImage) {
+            ImageView post_profile_image = (ImageView) mView.findViewById(R.id.profile_image_wall);
+            Picasso.with(ctx).load(profileImage).into(post_profile_image);
+
+        }
+
+
+        public void setPhotoPost(Context ctx, String photoPost) {
+
+            if (photoPost != null) {
+                layoutPhoto.setVisibility(View.VISIBLE);
+                Picasso.with(ctx).load(photoPost).into(post_photo, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        //     loadPhoto.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+                post_photo.setTag(photoPost);
+            } else {
+
+                layoutPhoto.setVisibility(View.GONE);
+                // loadPhoto.setVisibility(View.GONE);
+            }
+
+        }
+
+        public void setVideoPost(Context ctx, String videoPost) {
+
+
+            if (videoPost != null) {
+
+                try {
+
+                    videoView.setVisibility(View.VISIBLE);
+                    videoView.setUp(videoPost, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
+                    videoView.requestFocus();
+                } catch (Exception e) {
+                    e.getMessage();
+                }
+
+            } else {
+                videoView.setVisibility(View.GONE);
+            }
+        }
+
+
+        public void setAudioFile(Context context, String audioFile) {
+
+            if (audioFile != null) {
+                mPlayer.reset();
+                audioLayout.setVisibility(View.VISIBLE);
+                try {
+
+                    mPlayer.setDataSource(context, Uri.parse(audioFile));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                audioLayout.setVisibility(View.GONE);
+            }
+
+        }
+
+
+
+    }
 
 
     @Override
@@ -942,59 +942,59 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-        public void onStop () {
-            super.onStop();
-            if (mAuthStateListener != null) {
-                mAuth.removeAuthStateListener(mAuthStateListener);
-            }
-
+    public void onStop () {
+        super.onStop();
+        if (mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
         }
-
-
-        @Override
-        public void onClick (View view){
-
-            if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText) {
-                Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
-                photoSelected = true;
-                openGallery.setType("image/*");
-                startActivityForResult(openGallery, PHOTO_OPEN);
-            } else if (view.getId() == R.id.vide_icon_content_main || view.getId() == R.id.videoText) {
-                Intent intent = new Intent();
-                photoSelected = false;
-                intent.setType("video/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), VIDEO_OPEN);
-
-            } else if (view.getId() == R.id.talk_icon_content_main || view.getId() == R.id.audioText) {
-
-                Intent intent = new Intent(MainPage.this, RecordAudio.class);
-                startActivity(intent);
-            }
-
-        }
-
-        @Override
-        public void beforeTextChanged (CharSequence charSequence,int i, int i1, int i2){
-
-        }
-
-        //nešto
-        @Override
-        public void onTextChanged (CharSequence charSequence,int i, int i1, int i2){
-
-
-            if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
-                myMenu.setEnabled(true);
-            } else if (postText.getText().toString().trim().length() < 3) {
-                myMenu.setEnabled(false);
-            }
-        }
-
-        @Override
-        public void afterTextChanged (Editable editable){
-
-        }
-
 
     }
+
+
+    @Override
+    public void onClick (View view){
+
+        if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText) {
+            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+            photoSelected = true;
+            openGallery.setType("image/*");
+            startActivityForResult(openGallery, PHOTO_OPEN);
+        } else if (view.getId() == R.id.vide_icon_content_main || view.getId() == R.id.videoText) {
+            Intent intent = new Intent();
+            photoSelected = false;
+            intent.setType("video/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Complete action using"), VIDEO_OPEN);
+
+        } else if (view.getId() == R.id.talk_icon_content_main || view.getId() == R.id.audioText) {
+
+            Intent intent = new Intent(MainPage.this, RecordAudio.class);
+            startActivity(intent);
+        }
+
+    }
+
+    @Override
+    public void beforeTextChanged (CharSequence charSequence,int i, int i1, int i2){
+
+    }
+
+    //neöto
+    @Override
+    public void onTextChanged (CharSequence charSequence,int i, int i1, int i2){
+
+
+        if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
+            myMenu.setEnabled(true);
+        } else if (postText.getText().toString().trim().length() < 3) {
+            myMenu.setEnabled(false);
+        }
+    }
+
+    @Override
+    public void afterTextChanged (Editable editable){
+
+    }
+
+
+}
