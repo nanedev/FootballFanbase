@@ -36,6 +36,7 @@ public class SinglePostViewActivity extends AppCompatActivity {
     private EditText post_text_video;
     private EditText post_text_image;
     private EditText post_text_audio;
+    private EditText post_only_text;
     private RelativeLayout layoutAudio;
     private RelativeLayout layoutImage;
     @Override
@@ -54,6 +55,7 @@ public class SinglePostViewActivity extends AppCompatActivity {
         post_text_audio = (EditText) findViewById(R.id.audio_textview);
         layoutAudio = (RelativeLayout) findViewById(R.id.layout_for_audio_player);
         layoutImage = (RelativeLayout) findViewById(R.id.layout_for_image);
+        post_only_text = (EditText)  findViewById(R.id.post_text_main_page);
 
 
         Intent myIntent = getIntent();
@@ -70,6 +72,7 @@ public class SinglePostViewActivity extends AppCompatActivity {
                 String descVideo = (String) dataSnapshot.child("descVideo").getValue();
                 String descImage = (String) dataSnapshot.child("descForPhoto").getValue();
                 String postAudio = (String) dataSnapshot.child("audioFile").getValue();
+                String postText = (String) dataSnapshot.child("desc").getValue();
 
                 Picasso.with(SinglePostViewActivity.this).load(profileImage).into(profile_image);
                 username.setText(profileUsername);
@@ -78,12 +81,20 @@ public class SinglePostViewActivity extends AppCompatActivity {
                     layoutImage.setVisibility(View.VISIBLE);
                     post_text_video.setVisibility(View.GONE);
                     post_text_audio.setVisibility(View.GONE);
+                    post_only_text.setVisibility(View.GONE);
                     Picasso.with(SinglePostViewActivity.this).load(postImage).into(post_image);
                 } else {
 
                     layoutImage.setVisibility(View.GONE);
                 }
 
+                if (postText != null) {
+                    post_text_video.setVisibility(View.GONE);
+                    post_text_audio.setVisibility(View.GONE);
+                    post_text_image.setVisibility(View.GONE);
+
+                    post_only_text.setText(postText);
+                }
                 post_text_image.setText(descImage);
                 post_text_video.setText(descVideo);
 
@@ -91,6 +102,7 @@ public class SinglePostViewActivity extends AppCompatActivity {
                     post_video.setVisibility(View.VISIBLE);
                     post_text_audio.setVisibility(View.GONE);
                     post_text_image.setVisibility(View.GONE);
+                    post_only_text.setVisibility(View.GONE);
                     post_video.setUp(postVideo, JCVideoPlayer.SCREEN_LAYOUT_NORMAL, "proba");
                 } else {
                     post_video.setVisibility(View.GONE);
@@ -125,10 +137,38 @@ public class SinglePostViewActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.save_edit_text) {
-           DatabaseReference editPostComplete =  editPost.child(post_key);
-            String newText = post_text_video.getText().toString().trim();
+           final DatabaseReference editPostComplete =  editPost.child(post_key);
+            final String newTextVideo = post_text_video.getText().toString().trim();
+            final String newTextImage = post_text_image.getText().toString().trim();
+            final String newTextAudio = post_text_audio.getText().toString().trim();
+            final String newText = post_only_text.getText().toString().trim();
 
-            editPostComplete.child("descVideo").setValue(newText);
+            editPostComplete.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child("descVideo").exists()) {
+                        editPostComplete.child("descVideo").setValue(newTextVideo);
+                    }
+
+                    if (dataSnapshot.child("desc").exists()) {
+                        editPostComplete.child("desc").setValue(newText);
+                    }
+
+                    if (dataSnapshot.child("descForPhoto").exists()) {
+                        editPostComplete.child("descForPhoto").setValue(newTextImage);
+                    }
+
+                    if (dataSnapshot.child("descForAudio").exists()) {
+                        editPostComplete.child("descForAudio").setValue(newTextAudio);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
         }
 
 
