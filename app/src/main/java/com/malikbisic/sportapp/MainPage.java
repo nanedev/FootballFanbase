@@ -130,6 +130,7 @@ public class MainPage extends AppCompatActivity
     String neznijavise;
     TextView numberofLikes;
 
+
     private boolean pauseAudioPressed = false;
     private boolean audiofinished = false;
     private int pausePosition;
@@ -385,6 +386,7 @@ public class MainPage extends AppCompatActivity
             newPost.child("desc").setValue(textPost);
             newPost.child("username").setValue(MainPage.usernameInfo);
             newPost.child("profileImage").setValue(MainPage.profielImage);
+            newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
             postingDialog.dismiss();
             postText.setText("");
             return true;
@@ -676,26 +678,46 @@ public class MainPage extends AppCompatActivity
                 });
 
 
-                viewHolder.arrow_down.setOnClickListener(new View.OnClickListener() {
+                postingDatabase.addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onClick(View v) {
-                        final String[] items = {"Edit post", "Delete post", "Cancel"};
-                        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.mView.getContext());
-                        dialog.setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                if (items[i].equals("Edit post")) {
-                                    Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_LONG).show();
-                                } else if (items[i].equals("Delete post")) {
-                                    Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_LONG).show();
-                                } else if (items[i].equals("Cancel")) {
+                        if (dataSnapshot.child(post_key).child("uid").exists()) {
+                            if (mAuth.getCurrentUser().getUid().equals(dataSnapshot.child(post_key).child("uid").getValue().toString())) {
+                                viewHolder.arrow_down.setVisibility(View.VISIBLE);
 
-                                }
+                                viewHolder.arrow_down.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        final String[] items = {"Edit post", "Delete post", "Cancel"};
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.mView.getContext());
+                                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                if (items[i].equals("Edit post")) {
+
+                                                } else if (items[i].equals("Delete post")) {
+
+                                                    postingDatabase.child(post_key).removeValue();
+                                                } else if (items[i].equals("Cancel")) {
+
+
+                                                }
+                                            }
+                                        });
+                                        dialog.create();
+                                        dialog.show();
+                                    }
+                                });
                             }
-                        });
-                        dialog.create();
-                        dialog.show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
                     }
                 });
 

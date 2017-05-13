@@ -21,6 +21,7 @@ import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -43,6 +44,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     private FirebaseStorage mStorage;
     private DatabaseReference postingDatabase;
     private FirebaseDatabase mDatabase;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -60,6 +62,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         post = (Button) findViewById(R.id.btn_post_photo_or_video);
         post.setOnClickListener(this);
         postingDialog = new ProgressDialog(this);
+        mAuth = FirebaseAuth.getInstance();
 
 
         mFilePath = FirebaseStorage.getInstance().getReference();
@@ -136,6 +139,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         newPost.child("username").setValue(username);
                         newPost.child("profileImage").setValue(profileImage);
                         newPost.child("photoPost").setValue(downloadUri.toString());
+                        newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
                         postingDialog.dismiss();
                         Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
                         startActivity(goToMain);
@@ -166,6 +170,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         newPost.child("username").setValue(username);
                         newPost.child("profileImage").setValue(profileImage);
                         newPost.child("videoPost").setValue(downloadUri.toString());
+                        newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
                         postingDialog.dismiss();
                         Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
                         startActivity(goToMain);

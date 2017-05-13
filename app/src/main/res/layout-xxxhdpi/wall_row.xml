@@ -58,7 +58,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/arrow_down"
-                android:id="@+id/down_arrow" />
+                android:id="@+id/down_arrow"
+                android:visibility="gone" />
 
         </RelativeLayout>
 

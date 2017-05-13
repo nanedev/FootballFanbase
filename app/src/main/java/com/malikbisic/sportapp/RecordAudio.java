@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -53,6 +54,7 @@ public class RecordAudio extends AppCompatActivity {
     ProgressDialog mDialog;
     Uri uriAudio;
     EditText aboutAudio;
+    FirebaseAuth mAuth;
     //komentar
     private static final String LOG_TAG = "record_log";
     @Override
@@ -70,7 +72,7 @@ public class RecordAudio extends AppCompatActivity {
         mDialog = new ProgressDialog(this);
         stateText = (TextView) findViewById(R.id.state_textview);
         aboutAudio = (EditText) findViewById(R.id.audioAbout);
-
+        mAuth = FirebaseAuth.getInstance();
         buttonStop.setEnabled(false);
         buttonPlayLastRecordAudio.setEnabled(false);
         buttonStopPlayingRecording.setEnabled(false);
@@ -231,6 +233,7 @@ public class RecordAudio extends AppCompatActivity {
                 newPost.child("username").setValue(MainPage.usernameInfo);
                 newPost.child("profileImage").setValue(MainPage.profielImage);
                 newPost.child("descForAudio").setValue(about);
+                newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
                 mDialog.dismiss();
                 buttonStart.setEnabled(true);
                 buttonStopPlayingRecording.setEnabled(false);
