@@ -14,12 +14,13 @@ public class Post {
     private String descVideo;
     private String descForPhoto;
     private String desc;
+    private String uid;
 
 
     public Post() {
     }
 
-    public Post(String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc) {
+    public Post(String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid) {
         this.username = username;
         this.profileImage = profileImage;
         this.descForAudio = descForAudio;
@@ -29,6 +30,15 @@ public class Post {
         this.descForPhoto = descForPhoto;
         this.descVideo = descVideo;
         this.desc = desc;
+        this.uid = uid;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getUsername() {

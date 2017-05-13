@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,27 +28,30 @@ public class SinglePostViewActivity extends AppCompatActivity {
     private String post_key = null;
 
     private DatabaseReference postReference;
+    private DatabaseReference editPost;
     private ImageView post_image;
     private ImageView profile_image;
     private TextView username;
     private JCVideoPlayerStandard post_video;
-    private TextView post_text_video;
-    private TextView post_text_image;
-    private TextView post_text_audio;
+    private EditText post_text_video;
+    private EditText post_text_image;
+    private EditText post_text_audio;
     private RelativeLayout layoutAudio;
     private RelativeLayout layoutImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_post_view);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         postReference = FirebaseDatabase.getInstance().getReference().child("Posting");
+        editPost = FirebaseDatabase.getInstance().getReference().child("Posting");
         profile_image = (ImageView) findViewById(R.id.profile_image_wall);
         username = (TextView) findViewById(R.id.username_wall);
         post_image = (ImageView) findViewById(R.id.posted_image);
         post_video = (JCVideoPlayerStandard) findViewById(R.id.posted_video);
-        post_text_image = (TextView) findViewById(R.id.text_for_image);
-        post_text_video = (TextView) findViewById(R.id.text_for_video);
-        post_text_audio = (TextView) findViewById(R.id.audio_textview);
+        post_text_image = (EditText) findViewById(R.id.text_for_image);
+        post_text_video = (EditText) findViewById(R.id.text_for_video);
+        post_text_audio = (EditText) findViewById(R.id.audio_textview);
         layoutAudio = (RelativeLayout) findViewById(R.id.layout_for_audio_player);
         layoutImage = (RelativeLayout) findViewById(R.id.layout_for_image);
 
@@ -104,5 +111,29 @@ public class SinglePostViewActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.edit_post_text, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.save_edit_text) {
+           DatabaseReference editPostComplete =  editPost.child(post_key);
+            String newText = post_text_video.getText().toString().trim();
+
+            editPostComplete.child("descVideo").setValue(newText);
+        }
+
+
+        return super.onOptionsItemSelected(item);
+
+
     }
 }

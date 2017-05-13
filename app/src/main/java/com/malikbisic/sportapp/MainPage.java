@@ -449,7 +449,7 @@ public class MainPage extends AppCompatActivity
             @Override
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
                 final String post_key = getRef(position).getKey();
-
+                final String link_post = getRef(position).toString();
                 viewHolder.setDescForAudio(model.getDescForAudio());
                 viewHolder.setDescForPhoto(model.getDescForPhoto());
                 viewHolder.setDescVideo(model.getDescVideo());
@@ -558,14 +558,15 @@ public class MainPage extends AppCompatActivity
                     }
                 });
 
-                viewHolder.openSinglePost.setOnClickListener(new View.OnClickListener() {
+                /*viewHolder.openSinglePost.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent openSinglePost = new Intent(MainPage.this, SinglePostViewActivity.class);
                         openSinglePost.putExtra("post_id", post_key);
                         startActivity(openSinglePost);
+                        Log.i("linkPost", link_post);
                     }
-                });
+                }); */
 
                 viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -697,7 +698,9 @@ public class MainPage extends AppCompatActivity
                                             public void onClick(DialogInterface dialogInterface, int i) {
 
                                                 if (items[i].equals("Edit post")) {
-
+                                                    Intent openSinglePost = new Intent(MainPage.this, SinglePostViewActivity.class);
+                                                    openSinglePost.putExtra("post_id", post_key);
+                                                    startActivity(openSinglePost);
                                                 } else if (items[i].equals("Delete post")) {
 
                                                     postingDatabase.child(post_key).removeValue();
