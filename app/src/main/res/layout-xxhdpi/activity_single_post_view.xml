@@ -55,7 +55,7 @@
                 android:id="@+id/layout_audio_textview">
 
 
-                <TextView
+                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="You didn't said anything about this audio file"
@@ -65,6 +65,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_marginLeft="10dp"
+                    android:inputType="textMultiLine"
                     android:layout_marginStart="10dp"
 
                     />
@@ -134,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible">
 
-                <TextView
+                <EditText
                     android:id="@+id/text_for_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -144,6 +145,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_marginLeft="10dp"
+                    android:inputType="textMultiLine"
                     android:layout_marginStart="10dp" />
             </RelativeLayout>
 
@@ -172,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible">
 
-                <TextView
+                <EditText
                     android:id="@+id/text_for_video"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -182,6 +184,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_marginLeft="10dp"
+                    android:inputType="textMultiLine"
                     android:layout_marginStart="10dp" />
             </RelativeLayout>
 
@@ -322,6 +325,7 @@
 
 
     </RelativeLayout>
+
 
 
 </RelativeLayout>

@@ -132,6 +132,7 @@ public class SinglePostViewActivity extends AppCompatActivity {
         }
 
 
+
         return super.onOptionsItemSelected(item);
 
 
