@@ -163,6 +163,7 @@ public class SinglePostViewActivity extends AppCompatActivity {
                     }
                 }
 
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 

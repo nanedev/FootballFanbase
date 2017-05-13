@@ -209,7 +209,8 @@
                 android:id="@+id/layout_for_only_post"
                 android:visibility="visible">
 
-                <TextView
+                <EditText
+                    android:inputType="textMultiLine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
