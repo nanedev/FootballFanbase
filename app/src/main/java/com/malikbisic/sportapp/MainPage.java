@@ -13,6 +13,7 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -91,6 +92,7 @@ import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
 import static android.R.attr.data;
+import static android.R.attr.dial;
 import static android.R.attr.mode;
 import static android.R.attr.theme;
 import static android.R.attr.track;
@@ -674,6 +676,30 @@ public class MainPage extends AppCompatActivity
                 });
 
 
+                viewHolder.arrow_down.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String[] items = {"Edit post", "Delete post", "Cancel"};
+                        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.mView.getContext());
+                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                if (items[i].equals("Edit post")) {
+                                    Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_LONG).show();
+                                } else if (items[i].equals("Delete post")) {
+                                    Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_LONG).show();
+                                } else if (items[i].equals("Cancel")) {
+
+                                }
+                            }
+                        });
+                        dialog.create();
+                        dialog.show();
+                    }
+                });
+
+
             }
         };
 
@@ -706,6 +732,7 @@ public class MainPage extends AppCompatActivity
         FrameLayout layoutVideo;
         ProgressBar loadPhoto;
         TextView openSinglePost;
+        ImageView arrow_down;
 
 
         public PostViewHolder(View itemView) {
@@ -730,7 +757,7 @@ public class MainPage extends AppCompatActivity
             numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
             single_post_layout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_post);
             openSinglePost = (TextView) mView.findViewById(R.id.openSinglePost);
-
+            arrow_down = (ImageView) mView.findViewById(R.id.down_arrow);
             layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
             layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
             layoutAudioText = (RelativeLayout) mView.findViewById(R.id.layout_audio_textview);
