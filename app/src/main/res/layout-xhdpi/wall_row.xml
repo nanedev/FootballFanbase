@@ -324,7 +324,7 @@
             android:id="@+id/horizontal_line_wall5"
             android:layout_below="@+id/like_dislike_layout" />
 
-        <EditText
+        <TextView
             android:id="@+id/comment_something"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

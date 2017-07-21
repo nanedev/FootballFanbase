@@ -104,7 +104,8 @@
         <activity
             android:name=".FullScreenImage"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".SinglePostViewActivity"></activity>
+        <activity android:name=".SinglePostViewActivity" />
+        <activity android:name=".CommentsActivity"></activity>
     </application>
 
 </manifest>
