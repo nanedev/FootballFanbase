@@ -330,11 +330,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/horizontal_line_wall5"
             android:background="@null"
-            android:cursorVisible="true"
             android:ems="10"
             android:gravity="top"
             android:hint="comment something..."
-            android:inputType="textMultiLine"
             android:padding="5dp"
             android:textColor="#000000"
             android:textCursorDrawable="@null" />

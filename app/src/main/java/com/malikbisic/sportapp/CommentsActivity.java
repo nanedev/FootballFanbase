@@ -2,6 +2,7 @@ package com.malikbisic.sportapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -102,6 +103,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
         public void setTextComment(String textComment) {
                 commentsText.setText(textComment);
+            commentsText.setTextColor(Color.parseColor("#000000"));
                 Log.i("comment", textComment);
 
         }
