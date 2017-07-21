@@ -33,5 +33,4 @@ public class Comments {
         this.profileImage = profileImage;
     }
 
-
 }
