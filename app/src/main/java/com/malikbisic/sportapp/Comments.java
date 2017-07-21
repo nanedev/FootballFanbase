@@ -21,7 +21,7 @@ public class Comments {
         return textComment;
     }
 
-    public void setTextComment(String text) {
+    public void setTextComment(String textComment) {
         this.textComment = textComment;
     }
 
@@ -29,8 +29,7 @@ public class Comments {
         return profileImage;
     }
 
-    public void setProfileImage(String profile) {
+    public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
-
 }

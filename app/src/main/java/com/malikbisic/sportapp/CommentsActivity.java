@@ -53,7 +53,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         comments.setLayoutManager(linearLayoutManager);
 
         sendComment.setOnClickListener(this);
-        FirebaseRecyclerAdapter<Comments, CommentsViewHolder> populateComment = new FirebaseRecyclerAdapter<Comments, CommentsViewHolder>(
+        FirebaseRecyclerAdapter<Comments, CommentsActivity.CommentsViewHolder> populateComment = new FirebaseRecyclerAdapter<Comments, CommentsActivity.CommentsViewHolder>(
                 Comments.class,
                 R.layout.comments_wall,
                 CommentsViewHolder.class,
@@ -80,8 +80,8 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         if (view.getId() == R.id.sendComment){
             String textComment = writeComment.getText().toString().trim();
-
-           DatabaseReference post_comment = setCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(key).push();
+            setCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(key).push();
+           DatabaseReference post_comment = setCommentRef ;
             post_comment.child("textComment").setValue(textComment);
             post_comment.child("profileImage").setValue(profileImage);
         }
@@ -101,17 +101,16 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         }
 
         public void setTextComment(String textComment) {
-            if (textComment != null) {
                 commentsText.setText(textComment);
                 Log.i("comment", textComment);
-            }
+
         }
 
         public void setProfileImage(Context ctx, String profileImage) {
-            if (profileImage != null) {
+
                 Picasso.with(ctx).load(profileImage).into(profileImageImg);
-                Log.i("prp", profileImage);
-            }
+               // Log.i("prp", profileImage);
+
         }
     }
 }
