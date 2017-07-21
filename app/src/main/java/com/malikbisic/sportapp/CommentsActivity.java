@@ -45,7 +45,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         writeComment = (EditText) findViewById(R.id.writeComment);
         comments = (RecyclerView) findViewById(R.id.rec_view_comments);
 
-        comments.setHasFixedSize(false);
+        comments.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         linearLayoutManager.setStackFromEnd(true);
@@ -73,6 +73,8 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         super.onStart();
 
     }
+
+    //nees
 
     @Override
     public void onClick(View view) {
