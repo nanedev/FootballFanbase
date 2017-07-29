@@ -75,7 +75,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private TextView birthdayErrorTxt;
     private TextView clubError;
     private TextView countryError;
-    private EditText selectCountry;
+    private TextView selectCountry;
     String googleUser_id;
     String googleFirstName;
     String googleLastName;
@@ -122,7 +122,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         countryError = (TextView) findViewById(R.id.input_counryError);
         usernameList = new ArrayList<>();
         continueBtn = (Button) findViewById(R.id.continueToMainPage);
-        selectCountry = (EditText) findViewById(R.id.countrySelect);
+        selectCountry = (TextView) findViewById(R.id.countrySelect);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mDialog = new ProgressDialog(this);
@@ -153,27 +153,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         selectCountry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            Intent intent = new Intent(EnterUsernameForApp.this,SearchableCountry.class);
+                startActivity(intent);
 
-                picker = CountryPicker.newInstance("Select Country");
-                picker.show(getSupportFragmentManager(), "COUNTRY_PICKER");
-                picker.setListener(new CountryPickerListener() {
-                    @Override
-                    public void onSelectCountry(String name, String code, String dialCode, int flagDrawableResID) {
-                        picker.dismiss();
-                        int imageCountry = flagDrawableResID;
-                        Log.i("image", String.valueOf(imageCountry));
-
-                        selectCountry.setCompoundDrawablesWithIntrinsicBounds(imageCountry, 0, 0, 0);
-                        selectCountry.setText(name);
-                        // Implement your code here
-                        BitmapFactory.Options dimensions = new BitmapFactory.Options();
-
-                        bitmap = BitmapFactory.decodeResource(getResources(), imageCountry, dimensions);
-
-
-
-                    }
-                });
             }
         });
 

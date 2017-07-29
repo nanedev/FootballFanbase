@@ -91,27 +91,29 @@
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
             android:name=".AddPhotoOrVideo"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".RecordAudio"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".Username_Likes_Activity"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".Username_Dislikes_Activity"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".FullScreenImage"
             android:theme="@style/AppTheme.Dark" />
         <activity android:name=".SinglePostViewActivity" />
-        <activity android:name=".CommentsActivity"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".CommentsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".SearchableCountry"></activity>
     </application>
 
 </manifest>
