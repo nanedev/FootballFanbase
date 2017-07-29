@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -75,8 +77,13 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    //neesto
-
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
+    }
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.sendComment){
@@ -85,6 +92,10 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
            DatabaseReference post_comment = setCommentRef ;
             post_comment.child("textComment").setValue(textComment);
             post_comment.child("profileImage").setValue(profileImage);
+
+            writeComment.setText("");
+            hideSoftKeyboard(CommentsActivity.this);
+
         }
     }
 

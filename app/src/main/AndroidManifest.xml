@@ -91,29 +91,33 @@
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
             android:name=".AddPhotoOrVideo"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".RecordAudio"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Username_Likes_Activity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Username_Dislikes_Activity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".FullScreenImage"
             android:theme="@style/AppTheme.Dark" />
         <activity android:name=".SinglePostViewActivity" />
-        <activity
-            android:name=".CommentsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".SearchableCountry"></activity>
+        <activity android:name=".CommentsActivity"
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".SearchableCountry"
+            android:theme="@style/AppTheme.Dark" ></activity>
+        <activity android:name=".SelectLeagueActivity"
+            android:theme="@style/AppTheme.Dark"></activity>
+        <activity android:name=".SelectClubActivity"
+            android:theme="@style/AppTheme.Dark" ></activity>
     </application>
 
 </manifest>

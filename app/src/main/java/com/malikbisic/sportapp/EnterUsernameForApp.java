@@ -130,6 +130,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
 
+        favoriteClub.setOnClickListener(this);
+
         Locale locale = Locale.ENGLISH;
         Locale.setDefault(locale);
         Configuration config = new Configuration();
@@ -287,6 +289,13 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             new DatePickerDialog(EnterUsernameForApp.this, date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
+        }
+
+        if (v.getId() == R.id.favoriteClubEnterId) {
+
+            Intent openLeague = new Intent(EnterUsernameForApp.this, SelectLeagueActivity.class);
+            startActivity(openLeague);
 
         }
 
@@ -530,5 +539,11 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
+        Intent backLogin = new Intent(EnterUsernameForApp.this, LoginActivity.class);
+        startActivity(backLogin);
+    }
 }
