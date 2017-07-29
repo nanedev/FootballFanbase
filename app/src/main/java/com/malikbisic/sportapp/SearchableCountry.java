@@ -122,6 +122,8 @@ public class SearchableCountry extends AppCompatActivity {
 
         }
 
+
+
         public void updateUI(CountryModel model) throws SVGParseException {
 
 
