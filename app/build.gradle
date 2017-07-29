@@ -71,8 +71,8 @@ dependencies {
     compile 'fm.jiecao:jiecaovideoplayer:5.5.4'
     compile 'com.android.volley:volley:1.0.0'
     testCompile 'junit:junit:4.12'
-    compile files('androidsvg-1.2.2-beta-1.jar')
     compile 'com.pixplicity.sharp:library:1.1.0'
+    compile files('src/androidsvg-1.2.2-beta-1.jar')
 }
 apply plugin: 'com.google.gms.google-services'
 //
