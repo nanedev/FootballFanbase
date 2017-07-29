@@ -119,6 +119,7 @@ public class SearchableCountry extends AppCompatActivity {
             context = itemView.getContext();
 
 
+
         }
 
         public void updateUI(CountryModel model) throws SVGParseException {
