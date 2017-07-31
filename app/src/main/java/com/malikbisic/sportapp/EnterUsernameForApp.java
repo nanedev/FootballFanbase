@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -26,6 +27,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.GenericRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.caverock.androidsvg.SVG;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,12 +54,15 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
 
@@ -97,7 +108,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private ArrayList<String> usernameList;
     private static final int GALLERY_REQUEST = 2;
     String uid;
-
+    Intent getImgAndNameCountry;
+CircleImageView countryImage;
     private StorageReference mFilePath;
     private FirebaseStorage mStorage;
     private StorageReference profileImageRef;
@@ -105,7 +117,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private Uri resultUri = null;
     Bitmap bitmap;
     CountryPicker picker;
-
+String imageOfCountry;
+    String nameOfCountry;
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +142,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         addImage = (ImageView) findViewById(R.id.addImage);
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
-
+countryImage = (CircleImageView) findViewById(R.id.country_image_get);
         favoriteClub.setOnClickListener(this);
 
         Locale locale = Locale.ENGLISH;
@@ -195,6 +208,37 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 }
             }
         });
+
+        getImgAndNameCountry = getIntent();
+      nameOfCountry= getImgAndNameCountry.getStringExtra("countryName");
+         imageOfCountry = getImgAndNameCountry.getStringExtra("countryImg");
+        selectCountry.setText(nameOfCountry);
+
+
+        GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+        requestBuilder = Glide
+                .with(getApplicationContext())
+                .using(Glide.buildStreamModelLoader(Uri.class, getApplicationContext()), InputStream.class)
+                .from(Uri.class)
+                .as(SVG.class)
+                .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                .sourceEncoder(new StreamEncoder())
+                .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                .decoder(new SearchableCountry.SvgDecoder())
+                .animate(android.R.anim.fade_in);
+if (imageOfCountry != null) {
+
+    Uri uri = Uri.parse(imageOfCountry);
+
+    requestBuilder
+            // SVG cannot be serialized so it's not worth to cache it
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .load(uri)
+            .into(countryImage);
+
+}
+
 
         genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

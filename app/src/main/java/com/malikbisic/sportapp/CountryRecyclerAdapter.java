@@ -21,11 +21,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class CountryRecyclerAdapter extends RecyclerView.Adapter<SearchableCountry.CountriesViewHolder> {
-    ArrayList<CountryModel> countriesList ;
+    ArrayList<CountryModel> countriesList;
+    Context context;
 
 
-    public CountryRecyclerAdapter(ArrayList<CountryModel> countriesList) {
+    public CountryRecyclerAdapter(ArrayList<CountryModel> countriesList, Context context) {
         this.countriesList = countriesList;
+        this.context = context;
 
     }
 
@@ -33,7 +35,7 @@ public class CountryRecyclerAdapter extends RecyclerView.Adapter<SearchableCount
     public SearchableCountry.CountriesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_search_countries, parent, false);
 
-        return new SearchableCountry.CountriesViewHolder(view);
+        return new SearchableCountry.CountriesViewHolder(view, context, countriesList);
     }
 
     @Override
@@ -52,8 +54,11 @@ public class CountryRecyclerAdapter extends RecyclerView.Adapter<SearchableCount
         return countriesList.size();
     }
 
-
-
+    public void setFilter(ArrayList<CountryModel> newList) {
+        countriesList = new ArrayList<>();
+        countriesList.addAll(newList);
+        notifyDataSetChanged();
+    }
 
 
 }

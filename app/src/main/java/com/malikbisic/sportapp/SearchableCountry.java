@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -51,12 +53,12 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SearchableCountry extends AppCompatActivity {
+public class SearchableCountry extends AppCompatActivity implements SearchView.OnQueryTextListener {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     CountryRecyclerAdapter adapter;
     ArrayList<CountryModel> countryList = new ArrayList<>();
-
+SearchView searchView;
     String url;
 
     @Override
@@ -67,10 +69,42 @@ public class SearchableCountry extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        adapter = new CountryRecyclerAdapter(countryList);
+        adapter = new CountryRecyclerAdapter(countryList,this);
         recyclerView.setAdapter(adapter);
+        searchView = (SearchView) findViewById(R.id.search_id);
+        searchView.setOnQueryTextListener(this);
         url = "https://restcountries.eu/rest/v2/all";
+searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
 
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+
+        newText = newText.toLowerCase();
+        ArrayList<CountryModel> newList = new ArrayList<>();
+        for (CountryModel countryModel : countryList){
+            String name = countryModel.getCountryName().toLowerCase();
+            if (name.contains(newText)){
+
+                newList.add(countryModel);
+
+
+            }
+        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(SearchableCountry.this));
+        adapter = new CountryRecyclerAdapter(newList,SearchableCountry.this);
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+
+        return true;
+    }
+
+});
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -103,20 +137,35 @@ public class SearchableCountry extends AppCompatActivity {
         Volley.newRequestQueue(this).add(request);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
 
-    public static class CountriesViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        return true;
+    }
+
+
+    public static class CountriesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         CircleImageView flag;
         TextView country_name;
         Context context;
+        ArrayList<CountryModel> countries = new ArrayList<>();
 
-        public CountriesViewHolder(View itemView) {
+        public CountriesViewHolder(View itemView,Context context,ArrayList<CountryModel> countries) {
             super(itemView);
+            this.countries = countries;
+            this.context = context;
+            itemView.setOnClickListener(this);
             country_name = (TextView) itemView.findViewById(R.id.country_name);
             flag = (CircleImageView) itemView.findViewById(R.id.country_image);
             flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
-            context = itemView.getContext();
+
 
 
 
@@ -149,6 +198,17 @@ public class SearchableCountry extends AppCompatActivity {
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .load(uri)
                     .into(flag);
+        }
+
+        @Override
+        public void onClick(View v) {
+int position = getAdapterPosition();
+            CountryModel country = this.countries.get(position);
+            Intent intent = new Intent(this.context,EnterUsernameForApp.class);
+            intent.putExtra("countryName",country.getCountryName());
+            intent.putExtra("countryImg",country.getCountryImage());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            this.context.startActivity(intent);
         }
     }
 
