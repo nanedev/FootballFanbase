@@ -48,6 +48,20 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         leagueListView.setTextFilterEnabled(true);
         setupSearchView();
 
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return true;
+
+
+            }
+        });
+
         final String url = URL_BASE + URL_APIKEY;
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {

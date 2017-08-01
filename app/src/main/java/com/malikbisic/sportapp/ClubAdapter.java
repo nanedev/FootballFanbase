@@ -1,5 +1,7 @@
 package com.malikbisic.sportapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +16,11 @@ import java.util.ArrayList;
 public class ClubAdapter extends RecyclerView.Adapter<SelectClubActivity.ClubViewHolder> {
 
     ArrayList<ClubModel> clubModelArrayList = new ArrayList<>();
+    Context ctx;
 
-    public ClubAdapter(ArrayList<ClubModel> clubModelArrayList) {
+    public ClubAdapter(ArrayList<ClubModel> clubModelArrayList, Context ctx) {
         this.clubModelArrayList = clubModelArrayList;
+        this.ctx = ctx;
     }
 
 
@@ -29,9 +33,21 @@ public class ClubAdapter extends RecyclerView.Adapter<SelectClubActivity.ClubVie
     }
 
     @Override
-    public void onBindViewHolder(SelectClubActivity.ClubViewHolder holder, int position) {
+    public void onBindViewHolder(final SelectClubActivity.ClubViewHolder holder, int position) {
         ClubModel clubModel = clubModelArrayList.get(position);
         holder.updateUI(clubModel);
+
+        holder.vm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sendClub = new Intent(ctx, EnterUsernameForApp.class);
+                sendClub.putExtra("clubName", holder.clubName.getText());
+                sendClub.putExtra("clubLogo", (String) holder.clubLogo.getTag());
+                sendClub.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(sendClub);
+
+            }
+        });
     }
 
     @Override

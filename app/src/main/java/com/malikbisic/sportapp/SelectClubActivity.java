@@ -47,7 +47,7 @@ public class SelectClubActivity extends AppCompatActivity {
         myIntent = getIntent();
 
         clubRecView = (RecyclerView) findViewById(R.id.rec_view_favoriteClub);
-        adapter = new ClubAdapter(club);
+        adapter = new ClubAdapter(club, getApplicationContext());
         clubRecView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         clubRecView.setLayoutManager(layoutManager);
@@ -101,12 +101,13 @@ public class SelectClubActivity extends AppCompatActivity {
         ImageView clubLogo;
         TextView clubName;
         Context ctx;
+        View vm;
 
         public ClubViewHolder(View itemView) {
             super(itemView);
-
-            clubLogo = (ImageView) itemView.findViewById(R.id.club_logo);
-            clubName = (TextView) itemView.findViewById(R.id.club_Name);
+            vm = itemView;
+            clubLogo = (ImageView) vm.findViewById(R.id.club_logo);
+            clubName = (TextView) vm.findViewById(R.id.club_Name);
             ctx = itemView.getContext();
         }
 

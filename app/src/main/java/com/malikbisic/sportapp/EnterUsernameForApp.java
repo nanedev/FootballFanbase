@@ -53,6 +53,7 @@ import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -81,12 +82,13 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private int realYear;
     private Calendar minAdultAge;
     private ImageView addImage;
-    private EditText favoriteClub;
+    private TextView favoriteClub;
     private TextView usernameErrorTxt;
     private TextView birthdayErrorTxt;
     private TextView clubError;
     private TextView countryError;
     private TextView selectCountry;
+    private CircleImageView clubLogoImage;
     String googleUser_id;
     String googleFirstName;
     String googleLastName;
@@ -102,14 +104,13 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private static final String TAG = "EnterUsernameForApp";
 
 
-
     private boolean hasSetProfileImage = false;
     private EditText birthday;
     private ArrayList<String> usernameList;
     private static final int GALLERY_REQUEST = 2;
     String uid;
-    Intent getImgAndNameCountry;
-CircleImageView countryImage;
+    Intent getImgAndNameCountry, getClubNameAndLogo;
+    CircleImageView countryImage;
     private StorageReference mFilePath;
     private FirebaseStorage mStorage;
     private StorageReference profileImageRef;
@@ -117,8 +118,12 @@ CircleImageView countryImage;
     private Uri resultUri = null;
 
     CountryPicker picker;
-String imageOfCountry;
+    String imageOfCountry;
     String nameOfCountry;
+
+    String clubName;
+    String clubLogo;
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,20 +135,28 @@ String imageOfCountry;
         genderItems = (Spinner) findViewById(R.id.genderSetUp);
         usernameErrorTxt = (TextView) findViewById(R.id.input_usernameError);
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
-        favoriteClub = (EditText) findViewById(R.id.favoriteClubEnterId);
+        favoriteClub = (TextView) findViewById(R.id.favoriteClubEnterId);
         clubError = (TextView) findViewById(R.id.input_cluberror);
         countryError = (TextView) findViewById(R.id.input_counryError);
         usernameList = new ArrayList<>();
         continueBtn = (Button) findViewById(R.id.continueToMainPage);
         selectCountry = (TextView) findViewById(R.id.countrySelect);
+        clubLogoImage = (CircleImageView) findViewById(R.id.clubLogo);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mDialog = new ProgressDialog(this);
         addImage = (ImageView) findViewById(R.id.addImage);
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
-countryImage = (CircleImageView) findViewById(R.id.country_image_get);
+        countryImage = (CircleImageView) findViewById(R.id.country_image_get);
         favoriteClub.setOnClickListener(this);
+
+        getClubNameAndLogo = getIntent();
+        clubName = getClubNameAndLogo.getStringExtra("clubName");
+        clubLogo = getClubNameAndLogo.getStringExtra("clubLogo");
+
+        favoriteClub.setText(clubName);
+        Picasso.with(this).load(clubLogo).into(clubLogoImage);
 
         Locale locale = Locale.ENGLISH;
         Locale.setDefault(locale);
@@ -168,7 +181,7 @@ countryImage = (CircleImageView) findViewById(R.id.country_image_get);
         selectCountry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Intent intent = new Intent(EnterUsernameForApp.this,SearchableCountry.class);
+                Intent intent = new Intent(EnterUsernameForApp.this, SearchableCountry.class);
                 startActivity(intent);
 
             }
@@ -210,8 +223,8 @@ countryImage = (CircleImageView) findViewById(R.id.country_image_get);
         });
 
         getImgAndNameCountry = getIntent();
-      nameOfCountry= getImgAndNameCountry.getStringExtra("countryName");
-         imageOfCountry = getImgAndNameCountry.getStringExtra("countryImg");
+        nameOfCountry = getImgAndNameCountry.getStringExtra("countryName");
+        imageOfCountry = getImgAndNameCountry.getStringExtra("countryImg");
         selectCountry.setText(nameOfCountry);
 
 
@@ -227,17 +240,17 @@ countryImage = (CircleImageView) findViewById(R.id.country_image_get);
                 .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
                 .decoder(new SearchableCountry.SvgDecoder())
                 .animate(android.R.anim.fade_in);
-if (imageOfCountry != null) {
+        if (imageOfCountry != null) {
 
-    Uri uri = Uri.parse(imageOfCountry);
+            Uri uri = Uri.parse(imageOfCountry);
 
-    requestBuilder
-            // SVG cannot be serialized so it's not worth to cache it
-            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-            .load(uri)
-            .into(countryImage);
+            requestBuilder
+                    // SVG cannot be serialized so it's not worth to cache it
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .load(uri)
+                    .into(countryImage);
 
-}
+        }
 
 
         genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -365,17 +378,17 @@ if (imageOfCountry != null) {
             usernameErrorTxt.setText("Username already exists,can not continue!");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
-        } else if (username.length() < 3 || username.length() > 8){
+        } else if (username.length() < 3 || username.length() > 8) {
 
             usernameErrorTxt.setText("Username must be between 3 and 8 characters!");
             usernameErrorTxt.setVisibility(View.VISIBLE);
-        } else{
+        } else {
             usernameErrorTxt.setText("");
             usernameErrorTxt.setVisibility(View.GONE);
 
         }
 
-        if (selectCountry.getText().toString().isEmpty()){
+        if (selectCountry.getText().toString().isEmpty()) {
             countryError.setText("Field can not be empty");
             countryError.setVisibility(View.VISIBLE);
             valid = false;
@@ -394,7 +407,7 @@ if (imageOfCountry != null) {
             birthdayErrorTxt.setVisibility(View.GONE);
         }
 
-        if (favoriteClub.getText().toString().isEmpty()){
+        if (favoriteClub.getText().toString().isEmpty()) {
             clubError.setText("Field can not be blank");
             clubError.setVisibility(View.VISIBLE);
             valid = false;
@@ -414,6 +427,7 @@ if (imageOfCountry != null) {
         favoriteClubString = favoriteClub.getText().toString().trim();
         countryString = selectCountry.getText().toString().trim();
 
+
         profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
         mDialog.show();
@@ -425,31 +439,31 @@ if (imageOfCountry != null) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
 
-                        mReference = mDatabase.getReference().child("Users").child(uid);
-                        mReference.child("name").setValue(googleFirstName);
-                        mReference.child("surname").setValue(googleLastName);
-                        mReference.child("username").setValue(username);
-                        mReference.child("date").setValue(userDate);
-                        mReference.child("gender").setValue(gender);
-                        mReference.child("profileImage").setValue(downloadUrl.toString());
-                        mReference.child("country").setValue(countryString);
-                        mReference.child("flag").setValue(imageOfCountry);
-                        mReference.child("favoriteClub").setValue(favoriteClubString);
+                mReference = mDatabase.getReference().child("Users").child(uid);
+                mReference.child("name").setValue(googleFirstName);
+                mReference.child("surname").setValue(googleLastName);
+                mReference.child("username").setValue(username);
+                mReference.child("date").setValue(userDate);
+                mReference.child("gender").setValue(gender);
+                mReference.child("profileImage").setValue(downloadUrl.toString());
+                mReference.child("country").setValue(countryString);
+                mReference.child("flag").setValue(imageOfCountry);
+                mReference.child("favoriteClub").setValue(favoriteClubString);
 
 
-                        ParseObject object = new ParseObject("Usernames");
-                        object.put("username", username);
-                        object.saveInBackground();
-                        mDialog.dismiss();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                ParseObject object = new ParseObject("Usernames");
+                object.put("username", username);
+                object.saveInBackground();
+                mDialog.dismiss();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                        Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
-                    }
-                });
+            }
+        });
 
 
     }
@@ -479,13 +493,12 @@ if (imageOfCountry != null) {
         }
 
 
-
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
 
 
-                            onSignupSuccess();
+                        onSignupSuccess();
 
                         mDialog.dismiss();
                     }
@@ -499,6 +512,7 @@ if (imageOfCountry != null) {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
     public void loginEnterDatabase() {
         username = enterUsername.getText().toString().trim();
         userDate = birthday.getText().toString().trim();
@@ -510,34 +524,34 @@ if (imageOfCountry != null) {
         mDialog.show();
 
 
-
         profileImageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
 
-                        mReference = mDatabase.getReference().child("Users").child(uid);
-                        mReference.child("username").setValue(username);
-                        mReference.child("date").setValue(userDate);
-                        mReference.child("gender").setValue(gender);
-                        mReference.child("profileImage").setValue(downloadUrl.toString());
-                        mReference.child("country").setValue(countryString);
-                        mReference.child("flag").setValue(imageOfCountry);
-                        mReference.child("favoriteClub").setValue(favoriteClub.getText().toString().trim());
+                mReference = mDatabase.getReference().child("Users").child(uid);
+                mReference.child("username").setValue(username);
+                mReference.child("date").setValue(userDate);
+                mReference.child("gender").setValue(gender);
+                mReference.child("profileImage").setValue(downloadUrl.toString());
+                mReference.child("country").setValue(countryString);
+                mReference.child("flag").setValue(imageOfCountry);
+                mReference.child("favoriteClub").setValue(clubName);
+                mReference.child("clubLogo").setValue(clubLogo);
 
 
-                        ParseObject object = new ParseObject("Usernames");
-                        object.put("username", username);
-                        object.saveInBackground();
-                        mDialog.dismiss();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                ParseObject object = new ParseObject("Usernames");
+                object.put("username", username);
+                object.saveInBackground();
+                mDialog.dismiss();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                        Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         });
 
     }
