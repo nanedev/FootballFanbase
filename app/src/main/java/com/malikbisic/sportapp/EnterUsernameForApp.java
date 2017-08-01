@@ -115,7 +115,7 @@ CircleImageView countryImage;
     private StorageReference profileImageRef;
     private StorageReference countryFlag;
     private Uri resultUri = null;
-    Bitmap bitmap;
+
     CountryPicker picker;
 String imageOfCountry;
     String nameOfCountry;
@@ -418,23 +418,12 @@ if (imageOfCountry != null) {
         mDialog.setMessage("Registering...");
         mDialog.show();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        bitmap.setHasAlpha(true);
-        final byte[] data = baos.toByteArray();
 
         profileImageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
-
-                UploadTask uploadTask = countryFlag.putBytes(data);
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        downloadFlagUri = taskSnapshot.getDownloadUrl();
 
                         mReference = mDatabase.getReference().child("Users").child(uid);
                         mReference.child("name").setValue(googleFirstName);
@@ -444,7 +433,7 @@ if (imageOfCountry != null) {
                         mReference.child("gender").setValue(gender);
                         mReference.child("profileImage").setValue(downloadUrl.toString());
                         mReference.child("country").setValue(countryString);
-                        mReference.child("flag").setValue(downloadFlagUri.toString());
+                        mReference.child("flag").setValue(imageOfCountry);
                         mReference.child("favoriteClub").setValue(favoriteClubString);
 
 
@@ -461,8 +450,6 @@ if (imageOfCountry != null) {
 
                     }
                 });
-            }
-        });
 
 
     }
@@ -522,23 +509,13 @@ if (imageOfCountry != null) {
         mDialog.setMessage("Registering...");
         mDialog.show();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        bitmap.setHasAlpha(true);
-        final byte[] data = baos.toByteArray();
+
 
         profileImageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                countryFlag = mFilePath.child("Country_Flag").child(String.valueOf(bitmap.getGenerationId()));
-
-                UploadTask uploadTask = countryFlag.putBytes(data);
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        downloadFlagUri = taskSnapshot.getDownloadUrl();
 
                         mReference = mDatabase.getReference().child("Users").child(uid);
                         mReference.child("username").setValue(username);
@@ -546,7 +523,7 @@ if (imageOfCountry != null) {
                         mReference.child("gender").setValue(gender);
                         mReference.child("profileImage").setValue(downloadUrl.toString());
                         mReference.child("country").setValue(countryString);
-                        mReference.child("flag").setValue(downloadFlagUri.toString());
+                        mReference.child("flag").setValue(imageOfCountry);
                         mReference.child("favoriteClub").setValue(favoriteClub.getText().toString().trim());
 
 
@@ -560,11 +537,7 @@ if (imageOfCountry != null) {
                     public void onFailure(@NonNull Exception e) {
 
                         Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
-
                     }
-                });
-
-            }
         });
 
     }
