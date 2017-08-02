@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -47,7 +48,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
 
         leagueListView = (RecyclerView) findViewById(R.id.league_list);
         arrayListLeague = new ArrayList<>();
-        adapterLeague = new LeagueAdapter(arrayListLeague, getApplicationContext());
+        adapterLeague = new LeagueAdapter(arrayListLeague, this, this);
         leagueListView.setAdapter(adapterLeague);
         leagueListView.setLayoutManager(new LinearLayoutManager(this));
         mSearchView = (SearchView) findViewById(R.id.search_league);
@@ -77,7 +78,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
                     }
                 }
                 leagueListView.setLayoutManager(new LinearLayoutManager(SelectLeagueActivity.this));
-                adapterLeague = new LeagueAdapter(newList, getApplicationContext());
+                adapterLeague = new LeagueAdapter(newList, SelectLeagueActivity.this, SelectLeagueActivity.this);
                 leagueListView.setAdapter(adapterLeague);
                 adapterLeague.notifyDataSetChanged();
 
@@ -130,7 +131,22 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        adapterLeague.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == adapterLeague.OPEN_CLUB && resultCode == RESULT_OK){
+            String clubName = data.getStringExtra("clubNameLeague");
+            String clubLogo = data.getStringExtra("clubLogoLeague");
+
+            Intent backToEnterusername = new Intent(SelectLeagueActivity.this, EnterUsernameForApp.class);
+            backToEnterusername.putExtra("clubName", clubName);
+            backToEnterusername.putExtra("clubLogo", clubLogo);
+            setResult(Activity.RESULT_OK, backToEnterusername);
+            finish();
+        }
+    }
 
     private void setupSearchView() {
         mSearchView.setIconifiedByDefault(false);

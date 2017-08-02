@@ -3,6 +3,7 @@ package com.malikbisic.sportapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,18 +17,18 @@ import java.util.ArrayList;
  * Created by korisnik on 01/08/2017.
  */
 
-public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.LeagueViewHolder> {
+public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.LeagueViewHolder> implements PreferenceManager.OnActivityResultListener {
 
     ArrayList<LeagueModel> leagueModelArrayList = new ArrayList<>();
     Context ctx;
     Activity activity;
+    static int OPEN_CLUB = 345;
 
     public LeagueAdapter(ArrayList<LeagueModel> leagueModelArrayList, Context ctx, Activity activity) {
         this.leagueModelArrayList = leagueModelArrayList;
         this.ctx = ctx;
         this.activity = activity;
     }
-
 
 
     @Override
@@ -45,21 +46,29 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
         holder.vm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("LEAGUE", "ID: "+ leagueModel.getCurrent_season_id());
+                Log.i("LEAGUE", "ID: " + leagueModel.getCurrent_season_id());
 
                 Intent openClub = new Intent(ctx, SelectClubActivity.class);
                 openClub.putExtra("leagueID", leagueModel.getCurrent_season_id());
                 openClub.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ctx.startActivity(openClub);
+                activity.startActivityForResult(openClub, OPEN_CLUB);
             }
         });
     }
 
 
-
-
     @Override
     public int getItemCount() {
         return leagueModelArrayList.size();
+    }
+
+    @Override
+    public boolean onActivityResult(int requestData, int resultCode, Intent data) {
+
+
+
+
+
+        return true;
     }
 }

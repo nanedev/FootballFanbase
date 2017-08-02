@@ -43,9 +43,9 @@ public class ClubAdapter extends RecyclerView.Adapter<SelectClubActivity.ClubVie
         holder.vm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent sendClub = new Intent(ctx, EnterUsernameForApp.class);
-                sendClub.putExtra("clubName", clubModel.getName());
-                sendClub.putExtra("clubLogo", clubModel.getLogo_path());
+                Intent sendClub = new Intent(ctx, SelectLeagueActivity.class);
+                sendClub.putExtra("clubNameLeague", clubModel.getName());
+                sendClub.putExtra("clubLogoLeague", clubModel.getLogo_path());
                 sendClub.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 activity.setResult(Activity.RESULT_OK, sendClub);
                 activity.finish();

@@ -33,7 +33,7 @@ public class CountryRecyclerAdapter extends RecyclerView.Adapter<SearchableCount
         this.activity = activity;
 
     }
-
+//nsestovd
     @Override
     public SearchableCountry.CountriesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_search_countries, parent, false);
