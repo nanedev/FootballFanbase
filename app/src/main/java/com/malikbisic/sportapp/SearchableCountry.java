@@ -156,8 +156,9 @@ searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
         TextView country_name;
         Context context;
         ArrayList<CountryModel> countries = new ArrayList<>();
-Activity activity;
-        public CountriesViewHolder(View itemView, Context context, ArrayList<CountryModel> countries, Activity activity) {
+        Activity activity;
+
+        public CountriesViewHolder(View itemView,Context context,ArrayList<CountryModel> countries,Activity activity) {
             super(itemView);
             this.countries = countries;
             this.context = context;
@@ -214,7 +215,6 @@ int position = getAdapterPosition();
         }
     }
 
-    //nesto
 
     public static class SvgDecoder implements ResourceDecoder<InputStream, SVG> {
         private SvgFileResolver svgFileResolver;

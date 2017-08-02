@@ -365,7 +365,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
+//kom
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.profile_menu, menu);
 
