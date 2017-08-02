@@ -214,6 +214,7 @@ int position = getAdapterPosition();
         }
     }
 
+    //nesto
 
     public static class SvgDecoder implements ResourceDecoder<InputStream, SVG> {
         private SvgFileResolver svgFileResolver;

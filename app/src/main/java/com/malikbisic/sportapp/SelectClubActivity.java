@@ -40,6 +40,8 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
     SearchView searchViewClub;
     Intent myIntent;
 
+    //nesto
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

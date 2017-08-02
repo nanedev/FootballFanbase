@@ -46,7 +46,6 @@ public class ClubAdapter extends RecyclerView.Adapter<SelectClubActivity.ClubVie
                 Intent sendClub = new Intent(ctx, SelectLeagueActivity.class);
                 sendClub.putExtra("clubNameLeague", clubModel.getName());
                 sendClub.putExtra("clubLogoLeague", clubModel.getLogo_path());
-                sendClub.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 activity.setResult(Activity.RESULT_OK, sendClub);
                 activity.finish();
 

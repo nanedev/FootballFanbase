@@ -109,6 +109,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private ArrayList<String> usernameList;
     private static final int GALLERY_REQUEST = 2;
     private static final int RESULT_COUNTRY = 5;
+    private static final int RESULT_CLUB = 6;
     String uid;
     Intent getImgAndNameCountry, getClubNameAndLogo;
     CircleImageView countryImage;
@@ -183,7 +184,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(EnterUsernameForApp.this, SearchableCountry.class);
-                startActivity(intent);
+                startActivityForResult(intent, RESULT_COUNTRY);
 
             }
         });
@@ -223,32 +224,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             }
         });
 
-
-
-
-        GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
-
-        requestBuilder = Glide
-                .with(getApplicationContext())
-                .using(Glide.buildStreamModelLoader(Uri.class, getApplicationContext()), InputStream.class)
-                .from(Uri.class)
-                .as(SVG.class)
-                .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-                .sourceEncoder(new StreamEncoder())
-                .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
-                .decoder(new SearchableCountry.SvgDecoder())
-                .animate(android.R.anim.fade_in);
-        if (imageOfCountry != null) {
-
-            Uri uri = Uri.parse(imageOfCountry);
-
-            requestBuilder
-                    // SVG cannot be serialized so it's not worth to cache it
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .load(uri)
-                    .into(countryImage);
-
-        }
 
 
         genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -324,7 +299,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             }
         }
 
-        if  (requestCode == RESULT_COUNTRY && resultCode == RESULT_OK) {
+        if (requestCode == RESULT_COUNTRY && resultCode == RESULT_OK) {
 
 
             nameOfCountry = data.getStringExtra("countryName");
@@ -357,6 +332,15 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
 
         }
+
+        if (requestCode == RESULT_CLUB && resultCode == RESULT_OK) {
+
+            clubName = data.getStringExtra("clubName");
+            clubLogo = data.getStringExtra("clubLogo");
+
+            favoriteClub.setText(clubName);
+            Picasso.with(this).load(clubLogo).into(clubLogoImage);
+        }
     }
 
 
@@ -384,7 +368,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (v.getId() == R.id.favoriteClubEnterId) {
 
             Intent openLeague = new Intent(EnterUsernameForApp.this, SelectLeagueActivity.class);
-            startActivity(openLeague);
+            startActivityForResult(openLeague, RESULT_CLUB);
 
         }
 
