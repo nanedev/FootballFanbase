@@ -45,7 +45,7 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_club);
         myIntent = getIntent();
-        adapter = new ClubAdapter(club, this);
+        adapter = new ClubAdapter(club, this, this);
         clubRecView = (RecyclerView) findViewById(R.id.rec_view_favoriteClub);
         clubRecView.setAdapter(adapter);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -80,7 +80,7 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
                     }
                 }
                 clubRecView.setLayoutManager(new LinearLayoutManager(SelectClubActivity.this));
-                adapter = new ClubAdapter(newList, getApplicationContext());
+                adapter = new ClubAdapter(newList, SelectClubActivity.this, SelectClubActivity.this);
                 clubRecView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
 

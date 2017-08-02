@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,11 +24,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CountryRecyclerAdapter extends RecyclerView.Adapter<SearchableCountry.CountriesViewHolder> {
     ArrayList<CountryModel> countriesList;
     Context context;
+    Activity activity;
 
 
-    public CountryRecyclerAdapter(ArrayList<CountryModel> countriesList, Context context) {
+    public CountryRecyclerAdapter(ArrayList<CountryModel> countriesList, Context context, Activity activity) {
         this.countriesList = countriesList;
         this.context = context;
+        this.activity = activity;
 
     }
 
@@ -35,7 +38,7 @@ public class CountryRecyclerAdapter extends RecyclerView.Adapter<SearchableCount
     public SearchableCountry.CountriesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_search_countries, parent, false);
 
-        return new SearchableCountry.CountriesViewHolder(view, context, countriesList);
+        return new SearchableCountry.CountriesViewHolder(view, context, countriesList, activity);
     }
 
     @Override

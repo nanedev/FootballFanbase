@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +20,12 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
 
     ArrayList<LeagueModel> leagueModelArrayList = new ArrayList<>();
     Context ctx;
+    Activity activity;
 
-    public LeagueAdapter(ArrayList<LeagueModel> leagueModelArrayList, Context ctx) {
+    public LeagueAdapter(ArrayList<LeagueModel> leagueModelArrayList, Context ctx, Activity activity) {
         this.leagueModelArrayList = leagueModelArrayList;
         this.ctx = ctx;
+        this.activity = activity;
     }
 
 
@@ -51,6 +54,8 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
             }
         });
     }
+
+
 
 
     @Override

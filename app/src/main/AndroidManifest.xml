@@ -81,6 +81,7 @@
             android:name=".EnterUsernameForApp"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:alwaysRetainTaskState="true"
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".MainPage"

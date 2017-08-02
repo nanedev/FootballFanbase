@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -17,10 +18,12 @@ public class ClubAdapter extends RecyclerView.Adapter<SelectClubActivity.ClubVie
 
     ArrayList<ClubModel> clubModelArrayList = new ArrayList<>();
     Context ctx;
+    Activity activity;
 
-    public ClubAdapter(ArrayList<ClubModel> clubModelArrayList, Context ctx) {
+    public ClubAdapter(ArrayList<ClubModel> clubModelArrayList, Context ctx, Activity activity) {
         this.clubModelArrayList = clubModelArrayList;
         this.ctx = ctx;
+        this.activity = activity;
     }
 
 
@@ -44,11 +47,14 @@ public class ClubAdapter extends RecyclerView.Adapter<SelectClubActivity.ClubVie
                 sendClub.putExtra("clubName", clubModel.getName());
                 sendClub.putExtra("clubLogo", clubModel.getLogo_path());
                 sendClub.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ctx.startActivity(sendClub);
+                activity.setResult(Activity.RESULT_OK, sendClub);
+                activity.finish();
 
             }
         });
     }
+
+
 
     @Override
     public int getItemCount() {
