@@ -4,27 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.malikbisic.sportapp.SelectLeagueActivity">
-
+    tools:context="com.malikbisic.sportapp.SelectClubActivity">
 
     <SearchView
-        android:id="@+id/search_league"
+        android:id="@+id/search_club"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:queryHint="Search league"
+        android:queryHint="Search club"
         android:gravity="right"/>
 
     <View android:background="#ffffff"
         android:layout_width = "match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/search_league"/>
+        android:id="@+id/line"
+        android:layout_below="@id/search_club"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/league_list"
+        android:id="@+id/rec_view_favoriteClub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/search_league"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/line"></android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

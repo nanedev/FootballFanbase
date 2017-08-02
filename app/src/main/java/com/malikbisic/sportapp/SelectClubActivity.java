@@ -28,7 +28,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class SelectClubActivity extends AppCompatActivity {
+public class SelectClubActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/teams";
     final String URL_LEAGUEID = "/season/";
@@ -37,7 +37,7 @@ public class SelectClubActivity extends AppCompatActivity {
     ArrayList<ClubModel> club = new ArrayList<>();
     ClubAdapter adapter;
     RecyclerView clubRecView;
-
+    SearchView searchViewClub;
     Intent myIntent;
 
     @Override
@@ -45,17 +45,52 @@ public class SelectClubActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_club);
         myIntent = getIntent();
-
+        adapter = new ClubAdapter(club, this);
         clubRecView = (RecyclerView) findViewById(R.id.rec_view_favoriteClub);
-        adapter = new ClubAdapter(club, getApplicationContext());
         clubRecView.setAdapter(adapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         clubRecView.setLayoutManager(layoutManager);
+        searchViewClub = (SearchView) findViewById(R.id.search_club);
+        searchViewClub.setOnQueryTextListener(this);
 
 
         String leagueID = URL_LEAGUEID + myIntent.getStringExtra("leagueID");
 
         final String url = URL_BASE + leagueID + URL_APIKEY;
+
+        searchViewClub.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+
+                newText = newText.toLowerCase();
+                ArrayList<ClubModel> newList = new ArrayList<>();
+                for (ClubModel clubModel : club) {
+                    String name = clubModel.getName().toLowerCase();
+                    if (name.contains(newText)) {
+
+                        newList.add(clubModel);
+
+
+                    }
+                }
+                clubRecView.setLayoutManager(new LinearLayoutManager(SelectClubActivity.this));
+                adapter = new ClubAdapter(newList, getApplicationContext());
+                clubRecView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
+
+                return true;
+            }
+
+        });
+
+
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -96,6 +131,16 @@ public class SelectClubActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return true;
+    }
+
     public static class ClubViewHolder extends RecyclerView.ViewHolder {
 
         ImageView clubLogo;
@@ -103,12 +148,14 @@ public class SelectClubActivity extends AppCompatActivity {
         Context ctx;
         View vm;
 
-        public ClubViewHolder(View itemView) {
+        ArrayList<ClubModel> clubs = new ArrayList<>();
+        public ClubViewHolder(View itemView, ArrayList<ClubModel> clubs) {
             super(itemView);
             vm = itemView;
             clubLogo = (ImageView) vm.findViewById(R.id.club_logo);
             clubName = (TextView) vm.findViewById(R.id.club_Name);
             ctx = itemView.getContext();
+            this.clubs = clubs;
         }
 
         public void updateUI(ClubModel model){

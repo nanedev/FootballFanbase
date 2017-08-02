@@ -3,6 +3,8 @@ package com.malikbisic.sportapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.WindowManager;
 import android.widget.SearchView;
 import android.text.TextUtils;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -23,15 +26,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class SelectLeagueActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/leagues";
     final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
 
-    ListView leagueListView;
-    ArrayList<String> arrayListLeague;
-    ArrayAdapter adapterLeague;
+    RecyclerView leagueListView;
+    ArrayList<LeagueModel> arrayListLeague;
+
+    LeagueAdapter adapterLeague;
     SearchView mSearchView;
 
     @Override
@@ -39,13 +44,15 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_league);
 
-        leagueListView = (ListView) findViewById(R.id.league_list);
+
+        leagueListView = (RecyclerView) findViewById(R.id.league_list);
         arrayListLeague = new ArrayList<>();
-        adapterLeague = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayListLeague);
+        adapterLeague = new LeagueAdapter(arrayListLeague, getApplicationContext());
         leagueListView.setAdapter(adapterLeague);
+        leagueListView.setLayoutManager(new LinearLayoutManager(this));
         mSearchView = (SearchView) findViewById(R.id.search_league);
 
-        leagueListView.setTextFilterEnabled(true);
+
         setupSearchView();
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -55,7 +62,26 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
+            public boolean onQueryTextChange(String newText) {
+
+
+                newText = newText.toLowerCase();
+                ArrayList<LeagueModel> newList = new ArrayList<>();
+                for (LeagueModel leagueModel : arrayListLeague) {
+                    String name = leagueModel.getName().toLowerCase();
+                    if (name.contains(newText)) {
+
+                        newList.add(leagueModel);
+
+
+                    }
+                }
+                leagueListView.setLayoutManager(new LinearLayoutManager(SelectLeagueActivity.this));
+                adapterLeague = new LeagueAdapter(newList, getApplicationContext());
+                leagueListView.setAdapter(adapterLeague);
+                adapterLeague.notifyDataSetChanged();
+
+
                 return true;
 
 
@@ -76,29 +102,13 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
                         JSONObject objectLeague = arrayLeague.getJSONObject(i);
 
                         String leagueName = objectLeague.getString("name");
-                        arrayListLeague.add(leagueName);
+                        String leagueID = objectLeague.getString("current_season_id");
+
+                        LeagueModel model = new LeagueModel(leagueName, leagueID);
+                        arrayListLeague.add(model);
                         adapterLeague.notifyDataSetChanged();
 
-                        leagueListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
 
-                                try {
-                                    JSONObject seasonID = arrayLeague.getJSONObject(pos);
-
-
-                                    String leagueID = seasonID.getString("current_season_id");
-
-
-                                Intent cnt = new Intent(SelectLeagueActivity.this, SelectClubActivity.class);
-                                cnt.putExtra("leagueID", leagueID);
-                                startActivity(cnt);
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
 
 
                     }
@@ -116,7 +126,11 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         });
 
         Volley.newRequestQueue(this).add(request);
+
+
     }
+
+
 
     private void setupSearchView() {
         mSearchView.setIconifiedByDefault(false);
@@ -126,6 +140,25 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         mSearchView.setQueryHint("Search league");
     }
 
+    public static class LeagueViewHolder extends RecyclerView.ViewHolder{
+
+        TextView leagueName;
+        ArrayList<LeagueModel> leagues = new ArrayList<>();
+        View vm;
+
+        public LeagueViewHolder(View itemView, ArrayList<LeagueModel> leagues) {
+            super(itemView);
+            vm = itemView;
+            leagueName = (TextView) vm.findViewById(R.id.leagueName);
+            this.leagues = leagues;
+        }
+
+        public void updateUI(LeagueModel model){
+
+            leagueName.setText(model.getName());
+        }
+    }
+
     @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
@@ -133,11 +166,6 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (TextUtils.isEmpty(newText)) {
-            adapterLeague.getFilter().filter(null);
-        } else {
-            adapterLeague.getFilter().filter(newText);
-        }
-        return true;
+        return  true;
     }
 }

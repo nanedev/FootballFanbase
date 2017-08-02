@@ -29,20 +29,20 @@ public class ClubAdapter extends RecyclerView.Adapter<SelectClubActivity.ClubVie
     public SelectClubActivity.ClubViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View card_view = LayoutInflater.from(parent.getContext()).inflate(R.layout.club_item, parent, false);
 
-        return new SelectClubActivity.ClubViewHolder(card_view);
+        return new SelectClubActivity.ClubViewHolder(card_view, clubModelArrayList);
     }
 
     @Override
     public void onBindViewHolder(final SelectClubActivity.ClubViewHolder holder, int position) {
-        ClubModel clubModel = clubModelArrayList.get(position);
+        final ClubModel clubModel = clubModelArrayList.get(position);
         holder.updateUI(clubModel);
 
         holder.vm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent sendClub = new Intent(ctx, EnterUsernameForApp.class);
-                sendClub.putExtra("clubName", holder.clubName.getText());
-                sendClub.putExtra("clubLogo", (String) holder.clubLogo.getTag());
+                sendClub.putExtra("clubName", clubModel.getName());
+                sendClub.putExtra("clubLogo", clubModel.getLogo_path());
                 sendClub.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 ctx.startActivity(sendClub);
 
