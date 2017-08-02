@@ -108,6 +108,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private EditText birthday;
     private ArrayList<String> usernameList;
     private static final int GALLERY_REQUEST = 2;
+    private static final int RESULT_COUNTRY = 5;
     String uid;
     Intent getImgAndNameCountry, getClubNameAndLogo;
     CircleImageView countryImage;
@@ -222,10 +223,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             }
         });
 
-        getImgAndNameCountry = getIntent();
-        nameOfCountry = getImgAndNameCountry.getStringExtra("countryName");
-        imageOfCountry = getImgAndNameCountry.getStringExtra("countryImg");
-        selectCountry.setText(nameOfCountry);
+
 
 
         GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
@@ -324,6 +322,40 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
+        }
+
+        if  (requestCode == RESULT_COUNTRY && resultCode == RESULT_OK) {
+
+
+            nameOfCountry = data.getStringExtra("countryName");
+            imageOfCountry = data.getStringExtra("countryImg");
+            selectCountry.setText(nameOfCountry);
+
+            GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+            requestBuilder = Glide
+                    .with(getApplicationContext())
+                    .using(Glide.buildStreamModelLoader(Uri.class, getApplicationContext()), InputStream.class)
+                    .from(Uri.class)
+                    .as(SVG.class)
+                    .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                    .sourceEncoder(new StreamEncoder())
+                    .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                    .decoder(new SearchableCountry.SvgDecoder())
+                    .animate(android.R.anim.fade_in);
+            if (imageOfCountry != null) {
+
+                Uri uri = Uri.parse(imageOfCountry);
+
+                requestBuilder
+                        // SVG cannot be serialized so it's not worth to cache it
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .load(uri)
+                        .into(countryImage);
+
+            }
+
+
         }
     }
 

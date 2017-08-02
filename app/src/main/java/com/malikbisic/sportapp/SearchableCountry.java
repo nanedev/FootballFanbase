@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -69,7 +70,7 @@ SearchView searchView;
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        adapter = new CountryRecyclerAdapter(countryList,this);
+        adapter = new CountryRecyclerAdapter(countryList,this,SearchableCountry.this);
         recyclerView.setAdapter(adapter);
         searchView = (SearchView) findViewById(R.id.search_id);
         searchView.setOnQueryTextListener(this);
@@ -96,7 +97,7 @@ searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             }
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(SearchableCountry.this));
-        adapter = new CountryRecyclerAdapter(newList,SearchableCountry.this);
+        adapter = new CountryRecyclerAdapter(newList,SearchableCountry.this,SearchableCountry.this);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -155,11 +156,12 @@ searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
         TextView country_name;
         Context context;
         ArrayList<CountryModel> countries = new ArrayList<>();
-
-        public CountriesViewHolder(View itemView,Context context,ArrayList<CountryModel> countries) {
+Activity activity;
+        public CountriesViewHolder(View itemView, Context context, ArrayList<CountryModel> countries, Activity activity) {
             super(itemView);
             this.countries = countries;
             this.context = context;
+            this.activity = activity;
             itemView.setOnClickListener(this);
             country_name = (TextView) itemView.findViewById(R.id.country_name);
             flag = (CircleImageView) itemView.findViewById(R.id.country_image);
@@ -204,11 +206,11 @@ searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
         public void onClick(View v) {
 int position = getAdapterPosition();
             CountryModel country = this.countries.get(position);
-            Intent intent = new Intent(this.context,EnterUsernameForApp.class);
-            intent.putExtra("countryName",country.getCountryName());
-            intent.putExtra("countryImg",country.getCountryImage());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            this.context.startActivity(intent);
+            Intent intent = new Intent(this.context, EnterUsernameForApp.class);
+            intent.putExtra("countryName", country.getCountryName());
+            intent.putExtra("countryImg", country.getCountryImage());
+            activity.setResult(RESULT_OK, intent);
+            activity.finish();
         }
     }
 

@@ -9,21 +9,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.text.InputType;
-import android.text.TextUtils;
+
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -34,16 +32,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.DatePicker;
-import android.widget.EditText;
+
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
+
+import com.bumptech.glide.GenericRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+
+import com.caverock.androidsvg.SVG;
+
+import com.caverock.androidsvg.SVGParseException;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,23 +59,20 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mukesh.countrypicker.fragments.CountryPicker;
-import com.mukesh.countrypicker.interfaces.CountryPickerListener;
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.GetDataCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -76,8 +80,10 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static android.app.Activity.RESULT_OK;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 
 
 /**
@@ -209,17 +215,26 @@ public class ProfileFragment extends Fragment {
                 flagImageFirebase = String.valueOf(value.get("flag"));
                 Log.i("flag uri", flagImageFirebase);
 
-                Picasso.Builder builder = new Picasso.Builder(getContext());
-                builder.listener(new Picasso.Listener()
-                {
-                    @Override
-                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
-                    {
-                        exception.printStackTrace();
-                        Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-                builder.build().load(flagImageFirebase).into(flag);
+                GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+                requestBuilder = Glide
+                        .with(getActivity())
+                        .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
+                        .from(Uri.class)
+                        .as(SVG.class)
+                        .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                        .sourceEncoder(new StreamEncoder())
+                        .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                        .decoder(new SearchableCountry.SvgDecoder())
+                        .animate(android.R.anim.fade_in);
+
+
+                Uri uri = Uri.parse(flagImageFirebase);
+                requestBuilder
+                        // SVG cannot be serialized so it's not worth to cache it
+                        .diskCacheStrategy(SOURCE)
+                        .load(uri)
+                        .into(flag);
 
                 /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
@@ -258,37 +273,16 @@ public class ProfileFragment extends Fragment {
     }
 
     public void backgroundImage() {
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
-        query.whereEqualTo("country", country.getText().toString().trim());
-        Log.i("countr", String.valueOf(country.getText()));
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null)
-                    for (ParseObject object : objects) {
 
-                        ParseFile file = (ParseFile) object.get("flag");
-                        file.getDataInBackground(new GetDataCallback() {
-                            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                            @Override
-                            public void done(byte[] data, ParseException e) {
-                                if (e == null) {
+    HttpImageRequestTask task = new HttpImageRequestTask();
+        try {
+            task.execute(flagImageFirebase).get();
 
-
-                                    Bitmap bmp1 = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                    obwer = new BitmapDrawable(getResources(), bmp1);
-                                    backgroundImage.setImageDrawable(obwer);
-
-
-                                } else {
-                                    Toast.makeText(ProfileFragment.this.getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-
-                                }
-                            }
-                        });
-                    }
-            }
-        });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -388,9 +382,43 @@ public class ProfileFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
     }
+    private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
 
+        @Override
+        protected Drawable doInBackground(String... params) {
+            try {
 
+
+                URL url = new URL(params[0]);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = urlConnection.getInputStream();
+                SVG svg = SVG.getFromInputStream(inputStream);
+                Drawable drawable = new PictureDrawable(svg.renderToPicture());
+
+                return drawable;
+            } catch (Exception e) {
+                Log.e("MainActivity", e.getMessage(), e);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            // Update the view
+            updateImageView(drawable);
+        }
+        private void updateImageView(Drawable drawable){
+            if(drawable != null){
+
+                // Try using your library and adding this layer type before switching your SVG parsing
+
+                backgroundImage.setImageDrawable(drawable);
+
+            }
+        }
+    }
 }
 
 
