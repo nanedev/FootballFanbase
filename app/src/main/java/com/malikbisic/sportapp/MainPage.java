@@ -783,13 +783,15 @@ public class MainPage extends AppCompatActivity
                                     String usernameFirebase = userInfo.getUsername();
 
                                     if (username.equals(usernameFirebase)) {
-                                        String uid = userInfo.getUserID();
+                                        final String uid = userInfo.getUserID();
 
                                         DatabaseReference profileInfo = profileUsers.child(uid);
 
                                         profileInfo.addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                String ref = String.valueOf(dataSnapshot.getRef());
                                                 String country = userInfo.getCountry();
                                                 String date = userInfo.getDate();
                                                 String favClub = userInfo.getFavoriteClub();
@@ -800,43 +802,70 @@ public class MainPage extends AppCompatActivity
                                                 String profileImage = userInfo.getProfileImage();
                                                 String username = userInfo.getUsername();
 
-                                                if (!TextUtils.isEmpty(country)) {
-                                                    Log.i("userCountry", country);
-                                                }
 
-                                                if (!TextUtils.isEmpty(date)) {
+                                                Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
+                                                openUserProfile.putExtra("userID", uid);
+                                                startActivity(openUserProfile);
+                                            }
 
-                                                }
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
 
-                                                if (!TextUtils.isEmpty(favClub)) {
-                                                    Log.i("userClub", favClub);
-                                                }
+                                            }
+                                        });
 
-                                                if (!TextUtils.isEmpty(favClubLogo)) {
-                                                    Log.i("userLogo", favClubLogo);
-                                                }
+                                    }
+                                }
+                            }
 
-                                                if (!TextUtils.isEmpty(flag)) {
-                                                    Log.i("userFlag", flag);
-                                                }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                                                if (!TextUtils.isEmpty(gender)) {
+                            }
+                        });
+                    }
+                });
 
-                                                }
+                viewHolder.post_profile_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final String username = viewHolder.post_username.getText().toString().trim();
+                        Log.i("username", username);
 
-                                                if (!TextUtils.isEmpty(name)) {
+                        profileUsers.child("Users").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                }
+                                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
 
-                                                if (!TextUtils.isEmpty(profileImage)) {
+                                    final UsersModel userInfo = dataSnapshot1.getValue(UsersModel.class);
 
-                                                }
+                                    String usernameFirebase = userInfo.getUsername();
 
-                                                if (!TextUtils.isEmpty(username)) {
+                                    if (username.equals(usernameFirebase)) {
+                                        final String uid = userInfo.getUserID();
 
-                                                }
+                                        DatabaseReference profileInfo = profileUsers.child(uid);
+
+                                        profileInfo.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                String ref = String.valueOf(dataSnapshot.getRef());
+                                                String country = userInfo.getCountry();
+                                                String date = userInfo.getDate();
+                                                String favClub = userInfo.getFavoriteClub();
+                                                String favClubLogo = userInfo.getFavoriteClubLogo();
+                                                String flag = userInfo.getFlag();
+                                                String gender = userInfo.getGender();
+                                                String name = userInfo.getName();
+                                                String profileImage = userInfo.getProfileImage();
+                                                String username = userInfo.getUsername();
 
 
+                                                Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
+                                                openUserProfile.putExtra("userID", uid);
+                                                startActivity(openUserProfile);
                                             }
 
                                             @Override

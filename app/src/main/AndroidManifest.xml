@@ -79,9 +79,9 @@
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".EnterUsernameForApp"
+            android:alwaysRetainTaskState="true"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:alwaysRetainTaskState="true"
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".MainPage"
@@ -92,33 +92,38 @@
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
             android:name=".AddPhotoOrVideo"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".RecordAudio"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".Username_Likes_Activity"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".Username_Dislikes_Activity"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".FullScreenImage"
             android:theme="@style/AppTheme.Dark" />
         <activity android:name=".SinglePostViewActivity" />
-        <activity android:name=".CommentsActivity"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".SearchableCountry"
-            android:theme="@style/AppTheme.Dark" ></activity>
-        <activity android:name=".SelectLeagueActivity"
-            android:theme="@style/AppTheme.Dark"></activity>
-        <activity android:name=".SelectClubActivity"
-            android:theme="@style/AppTheme.Dark" ></activity>
+        <activity
+            android:name=".CommentsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".SearchableCountry"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".SelectLeagueActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".SelectClubActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".UserProfileActivity"></activity>
     </application>
 
 </manifest>
