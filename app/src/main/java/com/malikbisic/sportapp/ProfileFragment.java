@@ -235,7 +235,7 @@ public class ProfileFragment extends Fragment {
                         .diskCacheStrategy(SOURCE)
                         .load(uri)
                         .into(flag);
-
+flag.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
                 /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
                         .networkPolicy(NetworkPolicy.OFFLINE)
@@ -413,7 +413,7 @@ public class ProfileFragment extends Fragment {
             if(drawable != null){
 
                 // Try using your library and adding this layer type before switching your SVG parsing
-
+backgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
                 backgroundImage.setImageDrawable(drawable);
 
             }

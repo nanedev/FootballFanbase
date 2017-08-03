@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.malikbisic.sportapp.ProfileFragment">
+    tools:context="com.malikbisic.sportapp.ProfileFragment"
+    android:background="@color/primary">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,48 +18,47 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-            <RelativeLayout
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/profileImageLayout"
-                android:background="@drawable/fans">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/get_profile_image_id"
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/profilimage" />
-
-                <ProgressBar
-                    android:id="@+id/loadingProfileImageProgressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true" />
-
-                <TextView
-                    android:id="@+id/edit_profile_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_below="@id/get_profile_image_id"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/rect_shape"
-                    android:text="Edit"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
+                android:layout_height="200dp"
+                android:src="@drawable/fans"
+                android:scaleType="centerCrop"
+                android:id="@+id/backgroundProfile" />
 
 
-            </RelativeLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/get_profile_image_id"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/profilimage"
+                android:layout_marginTop="20dp" />
+
+            <ProgressBar
+                android:id="@+id/loadingProfileImageProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="60dp" />
+
+            <TextView
+                android:id="@+id/edit_profile_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/get_profile_image_id"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/rect_shape"
+                android:text="Edit"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+
 
             <TextView
                 android:id="@+id/name_surname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/profileImageLayout"
+                android:layout_below="@+id/backgroundProfile"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:text="Ime Prezime"
@@ -71,7 +71,6 @@
                 android:layout_height="30dp"
                 android:layout_above="@+id/horizontal_line"
                 android:layout_below="@+id/name_surname"
-
                 android:layout_toLeftOf="@+id/user_country"
                 android:layout_toStartOf="@id/user_country"
                 android:layout_marginRight="5dp"

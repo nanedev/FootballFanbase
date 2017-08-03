@@ -12,11 +12,14 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.media.AudioManager;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -62,6 +65,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.GenericRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.caverock.androidsvg.SVG;
 import com.firebase.ui.auth.ui.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -83,11 +91,15 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
@@ -98,6 +110,7 @@ import static android.R.attr.mode;
 import static android.R.attr.theme;
 import static android.R.attr.track;
 import static android.R.attr.voiceIcon;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 
 
 public class MainPage extends AppCompatActivity
@@ -112,7 +125,7 @@ public class MainPage extends AppCompatActivity
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference, postingDatabase, likesReference, dislikeReference;
     private BitmapDrawable obwer;
-    private LinearLayout layout;
+    private ImageView backgroundHeader;
     private ImageView userProfileImage;
     private TextView usernameuser;
     private ImageView galleryIcon;
@@ -130,7 +143,7 @@ public class MainPage extends AppCompatActivity
     static String profielImage;
     String neznijavise;
     TextView numberofLikes;
-
+    String country;
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private static Bundle mBundleRecyclerViewState;
 
@@ -248,13 +261,15 @@ public class MainPage extends AppCompatActivity
                                         .load(profielImage)
                                         .into(userProfileImage);
 
-                                String country = String.valueOf(value.get("country"));
+                                 country = String.valueOf(value.get("flag"));
                                 Log.i("country", country);
 
                                 FirebaseUser user = mAuth.getCurrentUser();
 
                                 email.setText(user.getEmail());
+                                backgroundImage();
 
+/*
                                 ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Flags");
                                 query.whereEqualTo("country", country);
                                 query.findInBackground(new FindCallback<ParseObject>() {
@@ -281,7 +296,7 @@ public class MainPage extends AppCompatActivity
                                                 });
                                             }
                                     }
-                                });
+                                });*/
                             }
                         }
 
@@ -311,7 +326,7 @@ public class MainPage extends AppCompatActivity
         profile = (ImageView) header.findViewById(R.id.nav_header_profil_image);
         username = (TextView) header.findViewById(R.id.header_username);
         email = (TextView) header.findViewById(R.id.header_email);
-        layout = (LinearLayout) header.findViewById(R.id.nav_header_main_background);
+        backgroundHeader = (ImageView) header.findViewById(R.id.backgroundImgForHeader);
 
 
     }
@@ -1111,6 +1126,54 @@ public class MainPage extends AppCompatActivity
     public void afterTextChanged(Editable editable) {
 
     }
+    private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
+
+        @Override
+        protected Drawable doInBackground(String... params) {
+            try {
+
+
+                URL url = new URL(params[0]);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = urlConnection.getInputStream();
+                SVG svg = SVG.getFromInputStream(inputStream);
+                Drawable drawable = new PictureDrawable(svg.renderToPicture());
+
+                return drawable;
+            } catch (Exception e) {
+                Log.e("MainActivity", e.getMessage(), e);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            // Update the view
+            updateImageView(drawable);
+        }
+        private void updateImageView(Drawable drawable){
+            if(drawable != null){
+
+                // Try using your library and adding this layer type before switching your SVG parsing
+                backgroundHeader.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                backgroundHeader.setImageDrawable(drawable);
+
+            }
+        }
+    }
+    public void backgroundImage() {
+HttpImageRequestTask imageRequestTask = new HttpImageRequestTask();
+        try {
+            imageRequestTask.execute(country).get();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }
