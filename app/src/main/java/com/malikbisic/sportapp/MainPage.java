@@ -71,9 +71,12 @@ import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.auth.ui.User;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -95,6 +98,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -261,7 +265,7 @@ public class MainPage extends AppCompatActivity
                                         .load(profielImage)
                                         .into(userProfileImage);
 
-                                 country = String.valueOf(value.get("flag"));
+                                country = String.valueOf(value.get("flag"));
                                 Log.i("country", country);
 
                                 FirebaseUser user = mAuth.getCurrentUser();
@@ -461,6 +465,8 @@ public class MainPage extends AppCompatActivity
         super.onStart();
         mAuth.addAuthStateListener(mAuthStateListener);
 
+        final DatabaseReference profileUsers = FirebaseDatabase.getInstance().getReference();
+
         FirebaseRecyclerAdapter<Post, PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
                 Post.class,
                 R.layout.wall_row,
@@ -470,7 +476,7 @@ public class MainPage extends AppCompatActivity
 
 
             @Override
-            protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, int position) {
+            protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, final int position) {
                 final String post_key = getRef(position).getKey();
                 final String link_post = getRef(position).toString();
                 viewHolder.setDescForAudio(model.getDescForAudio());
@@ -486,6 +492,7 @@ public class MainPage extends AppCompatActivity
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setDislikeBtn(post_key);
                 viewHolder.setNumberDislikes(post_key);
+
 
                 viewHolder.seekBar.setEnabled(true);
                 viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
@@ -757,12 +764,51 @@ public class MainPage extends AppCompatActivity
                     }
                 });
 
+                final String userid = profileUsers.getRef().getKey();
+
+                if (userid != null) {
+                    Log.i("userid", userid);
+                }
+
+                final ArrayList<String> userIdList = new ArrayList<>();
+                viewHolder.post_username.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final String username = viewHolder.post_username.getText().toString().trim();
+                        Log.i("username", username);
+
+                        profileUsers.child("Users").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+
+                                    UsersModel userInfo = dataSnapshot1.getValue(UsersModel.class);
+
+                                    String usernameFirebase = userInfo.getUsername();
+
+                                    if (username.equals(usernameFirebase)) {
+                                        String uid = userInfo.getUserID();
+
+
+
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
+
 
             }
         };
 
         wallList.setAdapter(firebaseRecyclerAdapter);
-
 
 
     }
@@ -793,6 +839,8 @@ public class MainPage extends AppCompatActivity
         TextView openSinglePost;
         ImageView arrow_down;
         TextView openComment;
+        TextView post_username;
+        ImageView post_profile_image;
 
 
         public PostViewHolder(View itemView) {
@@ -829,6 +877,8 @@ public class MainPage extends AppCompatActivity
             dislikeReference = database.getReference().child("Dislikes");
             mAuth = FirebaseAuth.getInstance();
             openComment = (TextView) mView.findViewById(R.id.comment_something);
+            post_username = (TextView) mView.findViewById(R.id.username_wall);
+            post_profile_image = (ImageView) mView.findViewById(R.id.profile_image_wall);
 
             likeReference.keepSynced(true);
             dislikeReference.keepSynced(true);
@@ -983,14 +1033,14 @@ public class MainPage extends AppCompatActivity
 
 
         public void setUsername(String username) {
-            TextView post_username = (TextView) mView.findViewById(R.id.username_wall);
+
             post_username.setText(username);
 
 
         }
 
         public void setProfileImage(Context ctx, String profileImage) {
-            ImageView post_profile_image = (ImageView) mView.findViewById(R.id.profile_image_wall);
+
             Picasso.with(ctx).load(profileImage).into(post_profile_image);
 
         }
@@ -1126,6 +1176,7 @@ public class MainPage extends AppCompatActivity
     public void afterTextChanged(Editable editable) {
 
     }
+
     private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
 
@@ -1153,18 +1204,20 @@ public class MainPage extends AppCompatActivity
             // Update the view
             updateImageView(drawable);
         }
-        private void updateImageView(Drawable drawable){
-            if(drawable != null){
+
+        private void updateImageView(Drawable drawable) {
+            if (drawable != null) {
 
                 // Try using your library and adding this layer type before switching your SVG parsing
-                backgroundHeader.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                backgroundHeader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 backgroundHeader.setImageDrawable(drawable);
 
             }
         }
     }
+
     public void backgroundImage() {
-HttpImageRequestTask imageRequestTask = new HttpImageRequestTask();
+        HttpImageRequestTask imageRequestTask = new HttpImageRequestTask();
         try {
             imageRequestTask.execute(country).get();
 

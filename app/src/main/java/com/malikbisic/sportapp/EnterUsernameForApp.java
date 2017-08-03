@@ -466,6 +466,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("flag").setValue(imageOfCountry);
                 mReference.child("favoriteClub").setValue(favoriteClubString);
                 mReference.child("favoriteClubLogo").setValue(clubLogo);
+                mReference.child("userID").setValue(uid);
 
 
                 ParseObject object = new ParseObject("Usernames");
