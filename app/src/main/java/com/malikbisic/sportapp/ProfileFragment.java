@@ -82,6 +82,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static android.app.Activity.RESULT_OK;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 
@@ -122,6 +124,8 @@ public class ProfileFragment extends Fragment {
     String flagImageFirebase;
     Uri imageUri;
     ImageView backgroundImage;
+    CircleImageView logoClub;
+    String clubLogoFirebase;
 
 
 
@@ -152,6 +156,7 @@ public class ProfileFragment extends Fragment {
         club = (TextView) view.findViewById(R.id.user_club);
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
         backgroundImage = (ImageView) view.findViewById(R.id.backgroundProfile);
+        logoClub = (CircleImageView) view.findViewById(R.id.club_logo_profile);
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
         dialog = new ProgressDialog(getContext());
@@ -215,6 +220,10 @@ public class ProfileFragment extends Fragment {
                 flagImageFirebase = String.valueOf(value.get("flag"));
                 Log.i("flag uri", flagImageFirebase);
 
+                clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
+
+                flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
                 requestBuilder = Glide
@@ -235,8 +244,12 @@ public class ProfileFragment extends Fragment {
                         .diskCacheStrategy(SOURCE)
                         .load(uri)
                         .into(flag);
-flag.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
-                /*Picasso.with(ProfileFragment.this.getActivity())
+
+
+
+               Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
+
+                               /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
                         .networkPolicy(NetworkPolicy.OFFLINE)
                         .into(flag, new Callback() {
@@ -277,11 +290,13 @@ flag.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
     HttpImageRequestTask task = new HttpImageRequestTask();
         try {
             task.execute(flagImageFirebase).get();
+            backgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+
 
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.e("error1",e.getLocalizedMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.e("error2", e.getLocalizedMessage());
         }
 
     }
@@ -413,7 +428,7 @@ flag.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
             if(drawable != null){
 
                 // Try using your library and adding this layer type before switching your SVG parsing
-backgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+
                 backgroundImage.setImageDrawable(drawable);
 
             }
