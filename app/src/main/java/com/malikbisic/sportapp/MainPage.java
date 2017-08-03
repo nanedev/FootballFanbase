@@ -36,6 +36,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -764,13 +765,7 @@ public class MainPage extends AppCompatActivity
                     }
                 });
 
-                final String userid = profileUsers.getRef().getKey();
 
-                if (userid != null) {
-                    Log.i("userid", userid);
-                }
-
-                final ArrayList<String> userIdList = new ArrayList<>();
                 viewHolder.post_username.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -783,14 +778,72 @@ public class MainPage extends AppCompatActivity
 
                                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
 
-                                    UsersModel userInfo = dataSnapshot1.getValue(UsersModel.class);
+                                    final UsersModel userInfo = dataSnapshot1.getValue(UsersModel.class);
 
                                     String usernameFirebase = userInfo.getUsername();
 
                                     if (username.equals(usernameFirebase)) {
                                         String uid = userInfo.getUserID();
 
+                                        DatabaseReference profileInfo = profileUsers.child(uid);
 
+                                        profileInfo.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                String country = userInfo.getCountry();
+                                                String date = userInfo.getDate();
+                                                String favClub = userInfo.getFavoriteClub();
+                                                String favClubLogo = userInfo.getFavoriteClubLogo();
+                                                String flag = userInfo.getFlag();
+                                                String gender = userInfo.getGender();
+                                                String name = userInfo.getName();
+                                                String profileImage = userInfo.getProfileImage();
+                                                String username = userInfo.getUsername();
+
+                                                if (!TextUtils.isEmpty(country)) {
+                                                    Log.i("userCountry", country);
+                                                }
+
+                                                if (!TextUtils.isEmpty(date)) {
+
+                                                }
+
+                                                if (!TextUtils.isEmpty(favClub)) {
+                                                    Log.i("userClub", favClub);
+                                                }
+
+                                                if (!TextUtils.isEmpty(favClubLogo)) {
+                                                    Log.i("userLogo", favClubLogo);
+                                                }
+
+                                                if (!TextUtils.isEmpty(flag)) {
+                                                    Log.i("userFlag", flag);
+                                                }
+
+                                                if (!TextUtils.isEmpty(gender)) {
+
+                                                }
+
+                                                if (!TextUtils.isEmpty(name)) {
+
+                                                }
+
+                                                if (!TextUtils.isEmpty(profileImage)) {
+
+                                                }
+
+                                                if (!TextUtils.isEmpty(username)) {
+
+                                                }
+
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
 
                                     }
                                 }
