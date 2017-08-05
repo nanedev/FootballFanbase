@@ -1,5 +1,9 @@
 package com.malikbisic.sportapp;
 
+import android.util.Log;
+
+import java.util.ArrayList;
+
 /**
  * Created by korisnik on 03/08/2017.
  */
@@ -17,11 +21,13 @@ public class UsersModel {
     String surname;
     String userID;
     String username;
+    boolean premium;
+    String favoritePostClub;
 
     public UsersModel() {
     }
 
-    public UsersModel(String country, String date, String favoriteClub, String favoriteClubLogo, String flag, String gender, String name, String profileImage, String surname, String userID, String username) {
+    public UsersModel(String country, String date, String favoriteClub, String favoriteClubLogo, String flag, String gender, String name, String profileImage, String surname, String userID, String username, boolean premium, String favoritePostClub) {
         this.country = country;
         this.date = date;
         this.favoriteClub = favoriteClub;
@@ -33,6 +39,8 @@ public class UsersModel {
         this.surname = surname;
         this.userID = userID;
         this.username = username;
+        this.premium = premium;
+        this.favoritePostClub = favoritePostClub;
     }
 
     public String getCountry() {
@@ -121,5 +129,21 @@ public class UsersModel {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public boolean isPremium() {
+        return premium;
+    }
+
+    public void setPremium(boolean premium) {
+        this.premium = premium;
+    }
+
+    public String getFavoritePostClub() {
+        return favoritePostClub;
+    }
+
+    public void setFavoritePostClub(String favoritePostClub) {
+        this.favoritePostClub = favoritePostClub;
     }
 }
