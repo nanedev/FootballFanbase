@@ -12,6 +12,7 @@ import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -68,7 +69,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView birthday;
     private TextView country;
     private TextView club;
-    private TextView name_surname;
+CircleImageView genderImageUser;
 
     private Calendar minAdultAge;
     private BitmapDrawable obwer;
@@ -87,11 +88,11 @@ public class UserProfileActivity extends AppCompatActivity {
     StorageReference profileImageUpdate;
     ProgressDialog dialog;
     String name;
-    TextView editProfilePicture;
+
     String profileImage;
     String flagImageFirebase;
     Uri imageUri;
-    ImageView backgroundImage;
+
     CircleImageView logoClub;
     String clubLogoFirebase;
     Intent myIntent;
@@ -106,41 +107,21 @@ public class UserProfileActivity extends AppCompatActivity {
         uid = myIntent.getStringExtra("userID");
         mReference = mDatabase.getReference().child("Users").child(uid);
         profile = (ImageView) findViewById(R.id.get_profile_image_idUser);
-        name_surname = (TextView) findViewById(R.id.name_surnameUser);
         flag = (ImageView) findViewById(R.id.user_countryFlagUser);
         username = (TextView) findViewById(R.id.user_usernameUser);
         gender = (TextView) findViewById(R.id.user_genderUser);
         birthday = (TextView) findViewById(R.id.user_dateUser);
         country = (TextView) findViewById(R.id.user_countryUser);
         club = (TextView) findViewById(R.id.user_clubUser);
-        editProfilePicture = (TextView) findViewById(R.id.edit_profile_imageUser);
-        backgroundImage = (ImageView) findViewById(R.id.backgroundProfileUser);
+        genderImageUser = (CircleImageView) findViewById(R.id.gender_imageUser);
+
+
         logoClub = (CircleImageView) findViewById(R.id.club_logo_profileUser);
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
         dialog = new ProgressDialog(this);
         loadProfile_image = (ProgressBar) findViewById(R.id.loadingProfileImageProgressBarUser);;
         minAdultAge = new GregorianCalendar();
-        editProfilePicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String[] items = {"Open gallery"};
-                AlertDialog.Builder dialog = new AlertDialog.Builder(UserProfileActivity.this, R.style.AppTheme_Dark_Dialog);
-                dialog.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                        if (items[i].equals("Open gallery")){
-                            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
-                            openGallery.setType("image/*");
-                            startActivityForResult(openGallery, GALLERY_REQUEST);
-                        }
-                    }
-                });
-                dialog.create();
-                dialog.show();
-            }
-        });
 
 
         loadProfile_image.getIndeterminateDrawable()
@@ -169,10 +150,18 @@ public class UserProfileActivity extends AppCompatActivity {
                             }
                         });
 
-                name = value.get("name") + " " + value.get("surname");
-                name_surname.setText(name);
                 username.setText(String.valueOf(value.get("username")));
                 gender.setText(String.valueOf(value.get("gender")));
+                if (String.valueOf(value.get("gender")).equals("Male")){
+                    genderImageUser.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                    genderImageUser.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.male,null));
+                }else if (String.valueOf(value.get("gender")).equals("Female")){
+                    genderImageUser.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                    genderImageUser.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.female,null));
+                }
+
+
+
                 birthday.setText(String.valueOf(value.get("date")));
                 club.setText(String.valueOf(value.get("favoriteClub")));
 
@@ -247,7 +236,7 @@ public class UserProfileActivity extends AppCompatActivity {
         HttpImageRequestTask task = new HttpImageRequestTask();
         try {
             task.execute(flagImageFirebase).get();
-            backgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+
 
 
         } catch (InterruptedException e) {
@@ -367,8 +356,9 @@ public class UserProfileActivity extends AppCompatActivity {
             if(drawable != null){
 
                 // Try using your library and adding this layer type before switching your SVG parsing
+                flag.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+flag.setImageDrawable(drawable);
 
-                backgroundImage.setImageDrawable(drawable);
 
             }
         }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -32,11 +33,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText mPasswordText;
     private EditText mReEnterPasswordText;
     private Button mSignupButton;
-    private TextView mLoginLink;
+    TextView mLoginLink;
     private TextView errorName, errorSurname, errorEmail, errorPassword, errorRePassword;
     private String userName;
-    private String userEmail;
-    private String userPassword;
+    String userEmail;
+    String userPassword;
     private String userSurname;
     static String user_id;
     static String name;
@@ -47,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private DatabaseReference mReferenceUsers;
     static boolean checkLoginPressed = false;
 
-    private LinearLayout layout;
+    LinearLayout layout;
 
     private ProgressDialog progressDialog;
 
@@ -140,7 +141,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                         if (error == null) {
                             onSignupSuccess();
-                        }else if (error != null){
+                        } else if (error != null) {
                             onSignupFailed();
                             error = null;
                         }
@@ -170,7 +171,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String reEnterPassword = mReEnterPasswordText.getText().toString();
 
 
-        if (mEmailText.getText().toString().isEmpty()){
+        if (mEmailText.getText().toString().isEmpty()) {
             errorEmail.setText("Field can not be empty");
             errorEmail.setVisibility(View.VISIBLE);
             valid = false;
@@ -264,20 +265,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getInstance().getCurrentUser();
-                        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(RegisterActivity.this, "Check your email!", Toast.LENGTH_LONG).show();
+                        if (user != null)
+                            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(RegisterActivity.this, "Check your email!", Toast.LENGTH_LONG).show();
+                                    }
                                 }
-                            }
 
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(RegisterActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(RegisterActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            });
 
 
                         if (task.isSuccessful()) {
@@ -295,8 +297,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
-                error = e.getMessage();
-
+                    error = e.getMessage();
 
 
                     errorEmail.setText(e.getMessage());

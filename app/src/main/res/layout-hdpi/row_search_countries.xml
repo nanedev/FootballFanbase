@@ -1,29 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginRight="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginTop="1dp"
+    app:cardBackgroundColor="#4Dbdbdbd">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:id="@+id/country_image"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/country_name"
-        android:text="samonestoonako"
-        android:layout_toEndOf="@+id/country_image"
-        android:layout_toRightOf="@+id/country_image"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        />
+        android:id="@+id/layout_for_row_countries"
+
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/country_image"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_margin="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/country_name"
+            android:layout_toEndOf="@+id/country_image"
+            android:layout_toRightOf="@+id/country_image"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#9e9e9e"
+            android:layout_below="@+id/country_image"
+            />
 
     </RelativeLayout>
+
+
 </android.support.v7.widget.CardView>

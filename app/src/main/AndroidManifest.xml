@@ -108,7 +108,8 @@
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".FullScreenImage"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
         <activity android:name=".SinglePostViewActivity" />
         <activity
             android:name=".CommentsActivity"
@@ -116,14 +117,19 @@
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".SearchableCountry"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SelectLeagueActivity"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SelectClubActivity"
-            android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".UserProfileActivity"></activity>
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".UserProfileActivity"
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

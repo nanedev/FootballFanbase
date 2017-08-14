@@ -8,12 +8,18 @@
     <RelativeLayout
         android:id="@+id/row_layout_relative"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="#ffffff">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/picture_and_username">
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:id="@+id/image_post_background"
+    android:scaleType="centerCrop"
+    />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image_wall"
@@ -37,16 +43,12 @@
                 android:text="someusername"
                 android:textColor="#000000"
                 android:textStyle="bold" />
-            <TextView
-                android:id="@+id/openSinglePost"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/clubLogoPost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
-                android:text=">"
-                android:textColor="#0d47a1"
-                android:textStyle="bold"
-                android:textSize="30sp"
                 android:layout_alignTop="@+id/profile_image_wall"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />

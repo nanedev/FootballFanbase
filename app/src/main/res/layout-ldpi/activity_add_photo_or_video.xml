@@ -18,7 +18,7 @@
             android:layout_below="@+id/RL_POST"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:background="@drawable/circle_button_shape_post_photo_video"
+
             android:text="POST" />
 
 
@@ -37,19 +37,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:background="@null"
-                android:ems="10"
                 android:gravity="top"
                 android:hint="Tell something about this"
                 android:inputType="textMultiLine"
-                android:padding="5dp"
+
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:textColor="#000000"
-                android:textColorLink="#1a237e"
-                android:textCursorDrawable="@null" />
+                android:layout_marginEnd="10dp" />
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -64,12 +59,9 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:layout_margin="10dp"
-                    android:layout_below="@+id/tell_something_about_video_image"
                     android:visibility="visible"
-
                     android:scrollbars="vertical" />
             </ScrollView>
-
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

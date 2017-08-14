@@ -16,16 +16,27 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/nav_header_profil_image"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-     android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp"
-        android:paddingTop="16dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/profilimage" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/country_header_imageview"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/clubheader_imageview"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/header_username"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="Android Studio"

@@ -56,9 +56,11 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -99,7 +101,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String userDate;
     private String favoriteClubString;
     private String countryString;
-    Uri downloadFlagUri;
+
     private ProgressDialog mDialog;
     private static final String TAG = "EnterUsernameForApp";
 
@@ -111,14 +113,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private static final int RESULT_COUNTRY = 5;
     private static final int RESULT_CLUB = 6;
     String uid;
-    Intent getImgAndNameCountry, getClubNameAndLogo;
+    Intent  getClubNameAndLogo;
     CircleImageView countryImage;
     private StorageReference mFilePath;
     private FirebaseStorage mStorage;
     private StorageReference profileImageRef;
     private StorageReference countryFlag;
     private Uri resultUri = null;
-
+    String todayDateTime;
     CountryPicker picker;
     String imageOfCountry;
     String nameOfCountry;
@@ -165,6 +167,15 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         Configuration config = new Configuration();
         config.setLocale(locale);
         getApplicationContext().getApplicationContext().getResources().updateConfiguration(config, null);
+
+
+
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
+        dateFormat.setLenient(false);
+        Date today = new Date();
+        todayDateTime = dateFormat.format(today);
+
+
         mFilePath = FirebaseStorage.getInstance().getReference(); //mStorage.getReferenceFromUrl("gs://sportapp-11328.appspot.com");
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -391,7 +402,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else if (usernameList.contains(username)) {
-            usernameErrorTxt.setText("Username already exists,can not continue!");
+            usernameErrorTxt.setText("Username already exists");
             usernameErrorTxt.setVisibility(View.VISIBLE);
             valid = false;
         } else if (username.length() < 3 || username.length() > 8) {
@@ -461,13 +472,15 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("username").setValue(username);
                 mReference.child("date").setValue(userDate);
                 mReference.child("gender").setValue(gender);
+                if (downloadUrl != null)
                 mReference.child("profileImage").setValue(downloadUrl.toString());
                 mReference.child("country").setValue(countryString);
                 mReference.child("flag").setValue(imageOfCountry);
                 mReference.child("favoriteClub").setValue(favoriteClubString);
                 mReference.child("favoriteClubLogo").setValue(clubLogo);
                 mReference.child("userID").setValue(uid);
-
+                mReference.child("premium").setValue(true);
+                mReference.child("premiumDate").setValue(todayDateTime);
 
                 ParseObject object = new ParseObject("Usernames");
                 object.put("username", username);
@@ -552,12 +565,15 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("username").setValue(username);
                 mReference.child("date").setValue(userDate);
                 mReference.child("gender").setValue(gender);
+                if (downloadUrl != null)
                 mReference.child("profileImage").setValue(downloadUrl.toString());
                 mReference.child("country").setValue(countryString);
                 mReference.child("flag").setValue(imageOfCountry);
                 mReference.child("favoriteClub").setValue(clubName);
                 mReference.child("clubLogo").setValue(clubLogo);
-
+                mReference.child("userID").setValue(uid);
+                mReference.child("premium").setValue(true);
+                mReference.child("todayDateTime").setValue(todayDateTime);
 
                 ParseObject object = new ParseObject("Usernames");
                 object.put("username", username);

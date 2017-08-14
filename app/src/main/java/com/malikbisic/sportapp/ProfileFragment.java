@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
 import android.widget.DatePicker;
 
@@ -73,9 +75,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -94,19 +99,21 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 public class ProfileFragment extends Fragment {
 
     private ImageView profile;
-    private ImageView flag;
+    private CircleImageView flag;
     private TextView username;
     private TextView gender;
     private TextView birthday;
     private TextView country;
     private TextView club;
+    TextView addBackground;
     private TextView name_surname;
+    CircleImageView genderImage;
 
     private Calendar minAdultAge;
-    private BitmapDrawable obwer;
     private ProgressBar loadProfile_image;
     private String uid;
     private static final int GALLERY_REQUEST = 134;
+    private static final int BACKGROUND_REQUEST = 137;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
     boolean hasSetProfileImage = false;
@@ -117,17 +124,28 @@ public class ProfileFragment extends Fragment {
     Uri resultUri;
     StorageReference mFilePath;
     StorageReference profileImageUpdate;
+    StorageReference backgroundUpdate;
     ProgressDialog dialog;
     String name;
     TextView editProfilePicture;
     String profileImage;
     String flagImageFirebase;
     Uri imageUri;
+    Uri backgroundUri;
     ImageView backgroundImage;
-    CircleImageView logoClub;
+    ImageView logoClub;
     String clubLogoFirebase;
-
-
+    DateFormat dateFormat;
+    Calendar calendar;
+    Date currentDateOfUser;
+    String getDateFromDatabase;
+    TextView premiumTrialDate;
+    String trialDate;
+    Date dateRightNow;
+    String dateRightNowInString;
+    TextView premiumTextview;
+    View premiumLinija;
+    RelativeLayout premiumLayout;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -135,7 +153,7 @@ public class ProfileFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -147,20 +165,32 @@ public class ProfileFragment extends Fragment {
         uid = MainPage.uid;
         mReference = mDatabase.getReference().child("Users").child(uid);
         profile = (ImageView) view.findViewById(R.id.get_profile_image_id);
-        name_surname = (TextView) view.findViewById(R.id.name_surname);
-        flag = (ImageView) view.findViewById(R.id.user_countryFlag);
+        //  name_surname = (TextView) view.findViewById(R.id.name_surname);
+        flag = (CircleImageView) view.findViewById(R.id.user_countryFlag);
         username = (TextView) view.findViewById(R.id.user_username);
         gender = (TextView) view.findViewById(R.id.user_gender);
         birthday = (TextView) view.findViewById(R.id.user_date);
         country = (TextView) view.findViewById(R.id.user_country);
         club = (TextView) view.findViewById(R.id.user_club);
+        premiumTrialDate = (TextView) view.findViewById(R.id.user_premium_date);
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
         backgroundImage = (ImageView) view.findViewById(R.id.backgroundProfile);
-        logoClub = (CircleImageView) view.findViewById(R.id.club_logo_profile);
+        logoClub = (ImageView) view.findViewById(R.id.club_logo_profile);
+        calendar = Calendar.getInstance();
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
         dialog = new ProgressDialog(getContext());
-        loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);;
+        loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);
+        premiumLinija = view.findViewById(R.id.sixthline);
+        premiumLayout = (RelativeLayout) view.findViewById(R.id.premium_layout);
+        premiumTextview = (TextView) view.findViewById(R.id.your_premium);
+        genderImage = (CircleImageView) view.findViewById(R.id.gender_image);
+
+
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        dateRightNow = new Date();
+        dateRightNowInString = dateFormat.format(dateRightNow);
+        Log.i("proba", dateRightNowInString);
         minAdultAge = new GregorianCalendar();
         editProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,7 +201,7 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        if (items[i].equals("Open gallery")){
+                        if (items[i].equals("Open gallery")) {
                             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
                             openGallery.setType("image/*");
                             getActivity().startActivityForResult(openGallery, GALLERY_REQUEST);
@@ -185,7 +215,7 @@ public class ProfileFragment extends Fragment {
 
 
         loadProfile_image.getIndeterminateDrawable()
-                .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN );
+                .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN);
         mReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -211,11 +241,45 @@ public class ProfileFragment extends Fragment {
                         });
 
                 name = value.get("name") + " " + value.get("surname");
-                name_surname.setText(name);
+//                name_surname.setText(name);
                 username.setText(String.valueOf(value.get("username")));
                 gender.setText(String.valueOf(value.get("gender")));
+                if (String.valueOf(value.get("gender")).equals("Male")) {
+                    genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.male, null));
+                } else if (String.valueOf(value.get("gender")).equals("Female")) {
+                    genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.female, null));
+                }
+
+
                 birthday.setText(String.valueOf(value.get("date")));
                 club.setText(String.valueOf(value.get("favoriteClub")));
+
+                getDateFromDatabase = String.valueOf(value.get("premiumDate"));
+                try {
+                    currentDateOfUser = dateFormat.parse(getDateFromDatabase);
+                    calendar.setTime(currentDateOfUser);
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                calendar.add(Calendar.DAY_OF_MONTH, 10);
+                trialDate = dateFormat.format(calendar.getTime());
+                Log.i("proba", trialDate);
+
+                premiumTrialDate.setText(trialDate);
+
+
+                if (dateRightNowInString.equals(trialDate)) {
+                    premiumTextview.setVisibility(View.GONE);
+                    premiumLayout.setVisibility(View.GONE);
+                    premiumLinija.setVisibility(View.GONE);
+                    mReference.child("premium").setValue(false);
+
+                    Log.i("proba", "isti su");
+                }
+
 
                 flagImageFirebase = String.valueOf(value.get("flag"));
                 Log.i("flag uri", flagImageFirebase);
@@ -246,8 +310,7 @@ public class ProfileFragment extends Fragment {
                         .into(flag);
 
 
-
-               Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
+                Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
 
                                /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
@@ -287,7 +350,7 @@ public class ProfileFragment extends Fragment {
 
     public void backgroundImage() {
 
-    HttpImageRequestTask task = new HttpImageRequestTask();
+   /* HttpImageRequestTask task = new HttpImageRequestTask();
         try {
             task.execute(flagImageFirebase).get();
             backgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
@@ -297,7 +360,7 @@ public class ProfileFragment extends Fragment {
             Log.e("error1",e.getLocalizedMessage());
         } catch (ExecutionException e) {
             Log.e("error2", e.getLocalizedMessage());
-        }
+        }*/
 
     }
 
@@ -337,10 +400,10 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             profile.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            profile.setAlpha(254);
+            profile.setAlpha(0.9f);
             imageUri = data.getData();
             profile.setImageURI(imageUri);
 
@@ -365,7 +428,8 @@ public class ProfileFragment extends Fragment {
                         Uri downloadUri = taskSnapshot.getDownloadUrl();
 
                         mReference = mDatabase.getReference().child("Users").child(uid);
-                        mReference.child("profileImage").setValue(downloadUri.toString());
+                        if (downloadUri != null)
+                            mReference.child("profileImage").setValue(downloadUri.toString());
                     }
                 });
                 hasSetProfileImage = true;
@@ -374,8 +438,14 @@ public class ProfileFragment extends Fragment {
                 Log.i("errorCrop", String.valueOf(error));
             }
         }
-    }
+        if (requestCode == BACKGROUND_REQUEST && resultCode == RESULT_OK) {
 
+            backgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            backgroundImage.setAlpha(0.9f);
+            backgroundUri = data.getData();
+            backgroundImage.setImageURI(backgroundUri);
+        }
+    }
 
 
     @Override
@@ -396,43 +466,10 @@ public class ProfileFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
-    }
-    private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
 
-        @Override
-        protected Drawable doInBackground(String... params) {
-            try {
 
 
-                URL url = new URL(params[0]);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                InputStream inputStream = urlConnection.getInputStream();
-                SVG svg = SVG.getFromInputStream(inputStream);
-                Drawable drawable = new PictureDrawable(svg.renderToPicture());
-
-                return drawable;
-            } catch (Exception e) {
-                Log.e("MainActivity", e.getMessage(), e);
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Drawable drawable) {
-            // Update the view
-            updateImageView(drawable);
-        }
-        private void updateImageView(Drawable drawable){
-            if(drawable != null){
-
-                // Try using your library and adding this layer type before switching your SVG parsing
-
-                backgroundImage.setImageDrawable(drawable);
-
-            }
-        }
     }
 }
 

@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,8 +37,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -169,11 +168,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // signed in user can be handled in the listener.
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-
-                        gFirstName = acct.getGivenName();
-                        gLastName = acct.getFamilyName();
-                        gUserId = user.getUid();
-
+                        if (user != null) {
+                            gFirstName = acct.getGivenName();
+                            gLastName = acct.getFamilyName();
+                            gUserId = user.getUid();
+                        }
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
@@ -181,7 +180,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     Toast.LENGTH_SHORT).show();
                         } else {
 
-                           checkUserExists();
+                            checkUserExists();
 
                             mDialog.dismiss();
 
@@ -190,8 +189,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
     }
-
-
 
 
     private void checkLogin() {
@@ -206,7 +203,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (task.isSuccessful()) {
 
                         FirebaseUser user = mAuth.getCurrentUser();
-                        userIdLogin = user.getUid();
+                        if (user != null)
+                            userIdLogin = user.getUid();
                         checkUserExists();
 
                     } else {
@@ -272,7 +270,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             mDialog.dismiss();
                             Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
                         }
-                    }  else {
+                    } else {
                         Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                         goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToSetUp);
@@ -290,33 +288,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void autoLogin(){
-        user_id = mAuth.getCurrentUser().getUid();
-        mReferenceUsers = mDatabase.getReference("Users");
+    private void autoLogin() {
+        if (mAuth.getCurrentUser() != null) {
+            user_id = mAuth.getCurrentUser().getUid();
+            mReferenceUsers = mDatabase.getReference("Users");
 
 
-        mReferenceUsers.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(user_id)) {
+            mReferenceUsers.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(user_id)) {
 
-                    FirebaseUser user = mAuth.getCurrentUser();
+                        FirebaseUser user = mAuth.getCurrentUser();
 
-                    if (user.isEmailVerified() && dataSnapshot.child(user_id).hasChild("username")) {
-                        Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
-                        startActivity(setupIntent);
-                        mDialog.dismiss();
-                        finish();
+                        if (user.isEmailVerified() && dataSnapshot.child(user_id).hasChild("username")) {
+                            Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                            startActivity(setupIntent);
+                            mDialog.dismiss();
+                            finish();
+                        }
                     }
+
                 }
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+                }
+            });
+        }
     }
 
 

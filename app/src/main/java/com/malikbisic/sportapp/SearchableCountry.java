@@ -73,6 +73,7 @@ SearchView searchView;
         adapter = new CountryRecyclerAdapter(countryList,this,SearchableCountry.this);
         recyclerView.setAdapter(adapter);
         searchView = (SearchView) findViewById(R.id.search_id);
+        searchView.setQueryHint("Search country");
         searchView.setOnQueryTextListener(this);
         url = "https://restcountries.eu/rest/v2/all";
 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

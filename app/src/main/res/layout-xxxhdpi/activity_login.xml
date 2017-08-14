@@ -1,6 +1,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -11,12 +11,13 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
-        <ImageView
-            android:src="@drawable/footballimage"
+        <ImageView android:src="@drawable/footballimage"
             android:layout_width="wrap_content"
             android:layout_height="72dp"
             android:layout_marginBottom="24dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/imagestatic"
+            android:contentDescription="@string/image_desc"/>
 
         <!--  Email Label -->
         <android.support.design.widget.TextInputLayout
@@ -29,7 +30,7 @@
                 android:id="@+id/input_email_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
+                android:hint="@string/hint_email"
                 android:inputType="textEmailAddress" />
 
             <TextView
@@ -51,9 +52,8 @@
                 android:id="@+id/input_password_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
+                android:hint="@string/hint_pass"
                 android:inputType="textPassword" />
-
             <TextView
                 android:id="@+id/passwordInfoErrorLogin"
                 android:layout_width="match_parent"
@@ -68,35 +68,34 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:padding="12dp"
-            android:text="Login" />
+            android:text="@string/hint_login"/>
 
         <TextView
             android:id="@+id/forgot_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Forgot password ?"
+            android:text="@string/forgot_pass"
             android:layout_marginTop="10dp"
             android:textColor="@color/blueColor"
             android:gravity="center"
             android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/link_signup"
+        <TextView android:id="@+id/link_signup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:layout_marginTop="20dp"
-            android:text="No account yet? Create one"
+            android:text="@string/no_acc_yet"
             android:gravity="center"
-            android:textSize="16dip" />
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/login_with"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="or login with"
+            android:text="@string/or_login_with"
             android:gravity="center"
-            android:textSize="16dip" />
+            android:textSize="16sp" />
 
 
         <LinearLayout
@@ -115,7 +114,9 @@
                 android:src="@drawable/ic_google"
                 android:tint="@android:color/white"
                 android:padding="12dp"
-                android:layout_marginRight="12dp" />
+                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/image_desc"/>
 
         </LinearLayout>
 

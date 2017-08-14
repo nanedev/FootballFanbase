@@ -28,4 +28,33 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="register_Activity">Register Activity</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_surname">Surname</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_pass">Password</string>
+    <string name="hint_reenter_pass">Re-enter Password</string>
+    <string name="create_acc">Create Account</string>
+    <string name="already_member">Already a member? Login</string>
+    <string name="empty_field_reg_act">Field can not be empty</string>
+
+    <string name="login_Activity">Login Activity</string>
+    <string name="image_desc">desc</string>
+    <string name="hint_login">Login</string>
+    <string name="forgot_pass">Forgot password ?</string>
+    <string name="no_acc_yet">No account yet? Create one</string>
+    <string name="or_login_with">or login with</string>
+
+
+    <string name="enter_username_Activity">Enterusername Activity</string>
+<string name="pls_add_prof_img">Please add your profile image:</string>
+    <string name="username_enter">Username:</string>
+    <string name="date_enter">Date:</string>
+    <string name="gender_enter">Gender:</string>
+    <string name="country_enter">Country:</string>
+    <string name="club_enter">Club:</string>
+    <string name="tap_enter">TAP</string>
+    <string name="fav_club_enter">Favorite Club</string>
+    <string name="continue_btn">Continue</string>
+
 </resources>

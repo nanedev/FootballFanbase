@@ -15,12 +15,17 @@ public class Post {
     private String descForPhoto;
     private String desc;
     private String uid;
+    private String country;
+    String clubLogo;
+
 
 
     public Post() {
     }
 
-    public Post(String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid) {
+
+
+    public Post(String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo) {
         this.username = username;
         this.profileImage = profileImage;
         this.descForAudio = descForAudio;
@@ -31,7 +36,12 @@ public class Post {
         this.descVideo = descVideo;
         this.desc = desc;
         this.uid = uid;
+        this.country = country;
+        this.clubLogo = clubLogo;
+
     }
+
+
 
     public String getUid() {
         return uid;
@@ -111,5 +121,21 @@ public class Post {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getClubLogo() {
+        return clubLogo;
+    }
+
+    public void setClubLogo(String clubLogo) {
+        this.clubLogo = clubLogo;
     }
 }

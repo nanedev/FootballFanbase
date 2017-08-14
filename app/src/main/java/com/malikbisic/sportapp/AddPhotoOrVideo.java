@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 
 import android.net.Uri;
 import android.os.Handler;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -122,6 +123,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 final String aboutPhotoText = saySomething.getText().toString().trim();
                 final String username = MainPage.usernameInfo;
                 final String profileImage = MainPage.profielImage;
+                final String country = MainPage.country;
+                final String clubLogo = MainPage.clubHeaderString;
 
                 Log.i("name", username);
 
@@ -140,6 +143,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         newPost.child("profileImage").setValue(profileImage);
                         newPost.child("photoPost").setValue(downloadUri.toString());
                         newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
+                        newPost.child("country").setValue(country);
+                        newPost.child("clubLogo").setValue(clubLogo);
                         postingDialog.dismiss();
                         Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
                         startActivity(goToMain);
