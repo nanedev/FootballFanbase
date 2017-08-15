@@ -70,6 +70,7 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
@@ -1662,8 +1663,28 @@ public class MainPage extends AppCompatActivity
 
 
         public void setCountry(Context ctx,String country) {
+            if (country!=null) {
+                GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+                requestBuilder = Glide
+                        .with(ctx)
+                        .using(Glide.buildStreamModelLoader(Uri.class, ctx), InputStream.class)
+                        .from(Uri.class)
+                        .as(SVG.class)
+                        .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                        .sourceEncoder(new StreamEncoder())
+                        .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                        .decoder(new SearchableCountry.SvgDecoder())
+                        .animate(android.R.anim.fade_in);
 
 
+                Uri uri = Uri.parse(country);
+                requestBuilder
+                        // SVG cannot be serialized so it's not worth to cache it
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .load(uri)
+                        .into(postBackgroundImage);
+            }
         }
 
 
