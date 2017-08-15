@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
@@ -159,7 +160,7 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
 
         mDatabase = FirebaseDatabase.getInstance();
         uid = MainPage.uid;
@@ -445,6 +446,8 @@ public class ProfileFragment extends Fragment {
             backgroundUri = data.getData();
             backgroundImage.setImageURI(backgroundUri);
         }
+
+
     }
 
 
@@ -453,6 +456,7 @@ public class ProfileFragment extends Fragment {
 //kom
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.profile_menu, menu);
+        menu.clear();
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -463,6 +467,7 @@ public class ProfileFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
 
         //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
