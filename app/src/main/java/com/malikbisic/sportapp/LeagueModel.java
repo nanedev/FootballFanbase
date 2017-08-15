@@ -8,13 +8,15 @@ public class LeagueModel {
 
     String name;
     String current_season_id;
+    String country_name;
 
     public LeagueModel() {
     }
 
-    public LeagueModel(String name, String current_season_id) {
+    public LeagueModel(String name, String current_season_id, String country_name) {
         this.name = name;
         this.current_season_id = current_season_id;
+        this.country_name = country_name;
     }
 
     public String getName() {
@@ -31,5 +33,13 @@ public class LeagueModel {
 
     public void setCurrent_season_id(String current_season_id) {
         this.current_season_id = current_season_id;
+    }
+
+    public String getCountry_name() {
+        return country_name;
+    }
+
+    public void setCountry_name(String country_name) {
+        this.country_name = country_name;
     }
 }

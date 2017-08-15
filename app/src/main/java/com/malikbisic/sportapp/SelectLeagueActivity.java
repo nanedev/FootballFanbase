@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -93,7 +94,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(final JSONObject response) {
 
                 try {
                     final JSONArray arrayLeague = response.getJSONArray("data");
@@ -102,12 +103,40 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
 
                         JSONObject objectLeague = arrayLeague.getJSONObject(i);
 
-                        String leagueName = objectLeague.getString("name");
-                        String leagueID = objectLeague.getString("current_season_id");
+                        final String leagueName = objectLeague.getString("name");
+                        final String leagueID = objectLeague.getString("current_season_id");
+                        String countryID = objectLeague.getString("country_id");
 
-                        LeagueModel model = new LeagueModel(leagueName, leagueID);
-                        arrayListLeague.add(model);
-                        adapterLeague.notifyDataSetChanged();
+                        String urlCountry = "https://soccer.sportmonks.com/api/v2.0/countries/"+countryID+URL_APIKEY;
+
+                        JsonObjectRequest requestCountry = new JsonObjectRequest(Request.Method.GET, urlCountry, null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response2) {
+
+                                try {
+                                    JSONObject countryObject = response2.getJSONObject("data");
+
+
+                                        String countryName = countryObject.getString("name");
+
+                                        LeagueModel model = new LeagueModel(leagueName, leagueID, countryName);
+                                        arrayListLeague.add(model);
+                                        adapterLeague.notifyDataSetChanged();
+
+
+                                } catch (JSONException e) {
+                                    Log.e("countryError", e.getLocalizedMessage());
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        });
+
+                        Volley.newRequestQueue(SelectLeagueActivity.this).add(requestCountry);
 
 
 
@@ -160,6 +189,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
     public static class LeagueViewHolder extends RecyclerView.ViewHolder{
 
         TextView leagueName;
+        TextView countryName;
         ArrayList<LeagueModel> leagues = new ArrayList<>();
         View vm;
 
@@ -167,12 +197,17 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
             super(itemView);
             vm = itemView;
             leagueName = (TextView) vm.findViewById(R.id.leagueName);
+            countryName = (TextView) vm.findViewById(R.id.countryName);
             this.leagues = leagues;
         }
 
         public void updateUI(LeagueModel model){
 
             leagueName.setText(model.getName());
+            countryName.setText(model.getCountry_name());
+
+            Log.i("country: ", model.getCountry_name() + " , league: " + model.getName());
+
         }
     }
 
