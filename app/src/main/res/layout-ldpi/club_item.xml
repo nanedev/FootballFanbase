@@ -32,12 +32,13 @@
             android:layout_toEndOf="@+id/club_logo"
             android:layout_toRightOf="@+id/club_logo"
             android:layout_centerVertical="true"
+            android:textColor="#000"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#9e9e9e"
+            android:background="#000"
             android:layout_below="@+id/club_logo"
             />
 
