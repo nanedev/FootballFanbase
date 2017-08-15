@@ -444,7 +444,8 @@ public class MainPage extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.postText) {
             String textPost = postText.getText().toString().trim();
-
+            final String country = MainPage.country;
+            final String clubLogo = MainPage.clubHeaderString;
             postingDialog.setMessage("Posting...");
             postingDialog.show();
             DatabaseReference newPost = postingDatabase.push();
@@ -452,6 +453,8 @@ public class MainPage extends AppCompatActivity
             newPost.child("username").setValue(MainPage.usernameInfo);
             newPost.child("profileImage").setValue(MainPage.profielImage);
             newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
+            newPost.child("country").setValue(country);
+            newPost.child("clubLogo").setValue(clubLogo);
             postingDialog.dismiss();
             postText.setText("");
             return true;
@@ -1684,6 +1687,8 @@ public class MainPage extends AppCompatActivity
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .load(uri)
                         .into(postBackgroundImage);
+                postBackgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                postBackgroundImage.setAlpha(0.4f);
             }
         }
 

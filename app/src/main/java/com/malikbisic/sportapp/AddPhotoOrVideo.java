@@ -161,7 +161,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 final String aboutVideoText = saySomething.getText().toString().trim();
                 final String username = MainPage.usernameInfo;
                 final String profileImage = MainPage.profielImage;
-
+                final String country = MainPage.country;
+                final String clubLogo = MainPage.clubHeaderString;
                 postVideo = mFilePath.child("Post_Video").child(videoUri.getLastPathSegment());
                 postingDialog.setMessage("Posting");
                 postingDialog.show();
@@ -176,6 +177,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         newPost.child("profileImage").setValue(profileImage);
                         newPost.child("videoPost").setValue(downloadUri.toString());
                         newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
+                        newPost.child("country").setValue(country);
+                        newPost.child("clubLogo").setValue(clubLogo);
                         postingDialog.dismiss();
                         Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
                         startActivity(goToMain);

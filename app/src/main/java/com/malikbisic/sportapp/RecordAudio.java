@@ -225,6 +225,8 @@ public class RecordAudio extends AppCompatActivity {
         buttonPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final String country = MainPage.country;
+                final String clubLogo = MainPage.clubHeaderString;
                 String about = aboutAudio.getText().toString().trim();
                 mDialog.setMessage("Posting...");
                 mDialog.show();
@@ -234,6 +236,8 @@ public class RecordAudio extends AppCompatActivity {
                 newPost.child("profileImage").setValue(MainPage.profielImage);
                 newPost.child("descForAudio").setValue(about);
                 newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
+                newPost.child("country").setValue(country);
+                newPost.child("clubLogo").setValue(clubLogo);
                 mDialog.dismiss();
                 buttonStart.setEnabled(true);
                 buttonStopPlayingRecording.setEnabled(false);

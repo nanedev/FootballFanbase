@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+    android:layout_margin="10dp"
     android:background="#ffffff">
 
     <RelativeLayout
@@ -16,9 +16,9 @@
             android:id="@+id/picture_and_username">
 <ImageView
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="200dp"
     android:id="@+id/image_post_background"
-    android:scaleType="fitXY"
+    android:scaleType="centerCrop"
     />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -29,6 +29,7 @@
                 android:layout_toStartOf="@+id/username_wall"
                 android:layout_toLeftOf="@+id/username_wall"
                 android:layout_marginTop="20dp"
+                android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:paddingBottom="10dp" />
 
@@ -41,6 +42,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
                 android:text="someusername"
+                android:layout_centerVertical="true"
                 android:textColor="#000000"
                 android:textStyle="bold" />
             <de.hdodenhof.circleimageview.CircleImageView
@@ -49,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
                 android:layout_alignTop="@+id/profile_image_wall"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
