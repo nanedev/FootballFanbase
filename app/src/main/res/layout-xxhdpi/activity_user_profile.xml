@@ -10,56 +10,57 @@
 
 
 
-        <RelativeLayout
-            android:id="@+id/backgorund_profil_layout"
-            android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/backgorund_profil_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/get_profile_image_idUser"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+
+            />
+
+        <ProgressBar
+            android:id="@+id/loadingProfileImageProgressBarUser"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="30dp" />
 
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/get_profile_image_idUser"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-
-                />
-
-            <ProgressBar
-                android:id="@+id/loadingProfileImageProgressBarUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="30dp" />
-
-
-            <TextView
-                android:id="@+id/user_usernameUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/get_profile_image_idUser"
-                android:layout_centerHorizontal="true"
-                android:textSize="24sp"
-                android:gravity="center"
-                android:textStyle="bold"  />
-
-            <View
-                android:id="@+id/secondlineUser"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="10dp"
-                android:layout_below="@id/user_usernameUser"
-                android:background="#000" />
-
-        </RelativeLayout>
-        <ScrollView
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/user_usernameUser"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/backgorund_profil_layout">
+            android:layout_below="@+id/get_profile_image_idUser"
+            android:layout_centerHorizontal="true"
+            android:textSize="24sp"
+
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
+
+        <View
+            android:id="@+id/secondlineUser"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/user_usernameUser"
+            android:background="#000" />
+
+    </RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/backgorund_profil_layout">
         <RelativeLayout
             android:id="@+id/user_info_layout"
             android:layout_width="match_parent"
@@ -255,7 +256,7 @@
                 android:background="#9e9e9e" />
 
 
-           </RelativeLayout>
+        </RelativeLayout>
 
     </ScrollView>
 

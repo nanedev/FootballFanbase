@@ -44,8 +44,9 @@
             android:layout_below="@+id/get_profile_image_idUser"
             android:layout_centerHorizontal="true"
             android:textSize="24sp"
-            android:gravity="center"
-            android:textStyle="bold"  />
+
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
 
         <View
             android:id="@+id/secondlineUser"

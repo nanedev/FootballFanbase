@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_margin="20dp"
     android:background="#ffffff">
 
     <RelativeLayout
@@ -265,16 +265,16 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
                 android:textColor="#1976d2"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
 
             <ImageView
                 android:id="@+id/like_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
                 android:layout_marginTop="5dp"
                 android:layout_toEndOf="@+id/number_of_likes"
                 android:layout_toRightOf="@+id/number_of_likes"
@@ -283,6 +283,25 @@
                 android:src="@drawable/bluelike"
 
 
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/comments_textview"
+                android:text="Comments"
+                android:textColor="#1976d2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/number_comments"
+                android:layout_below="@+id/comments_textview"
+                android:layout_centerHorizontal="true"
+
+                android:textColor="#1976d2"
                 />
 
             <TextView
@@ -295,16 +314,16 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
                 android:textColor="#d50000"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
 
             <ImageView
                 android:id="@+id/dislike_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginRight="15dp"
                 android:layout_marginTop="5dp"
                 android:layout_toLeftOf="@+id/number_of_dislikes"
                 android:layout_toStartOf="@+id/number_of_dislikes"

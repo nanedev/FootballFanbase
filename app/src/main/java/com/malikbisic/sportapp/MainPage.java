@@ -296,14 +296,12 @@ public class MainPage extends AppCompatActivity
                                 Log.i("country", country);
 
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                if(user != null)
-                                email.setText(user.getEmail());
+                                if (user != null)
+                                    email.setText(user.getEmail());
                                 backgroundImage();
 
 
-
-
-                                        // SVG cannot be serialized so it's not worth to cache it
+                                // SVG cannot be serialized so it's not worth to cache it
 
 
 
@@ -369,7 +367,6 @@ public class MainPage extends AppCompatActivity
         clubHeader = (CircleImageView) header.findViewById(R.id.clubheader_imageview);
         nameSurname = (TextView) header.findViewById(R.id.name_surname);
         backgroundHeader = (ImageView) header.findViewById(R.id.backgroundImgForHeader);
-
 
 
     }
@@ -546,10 +543,10 @@ public class MainPage extends AppCompatActivity
                             viewHolder.setNumberLikes(post_key);
                             viewHolder.setDesc(model.getDesc());
                             viewHolder.setDislikeBtn(post_key);
+                            viewHolder.setNumberComments(post_key);
                             viewHolder.setNumberDislikes(post_key);
-                            viewHolder.setClubLogo(getApplicationContext(),model.getClubLogo());
-                            viewHolder.setCountry(getApplicationContext(),model.getCountry());
-
+                            viewHolder.setClubLogo(getApplicationContext(), model.getClubLogo());
+                            viewHolder.setCountry(getApplicationContext(), model.getCountry());
 
 
                             viewHolder.seekBar.setEnabled(true);
@@ -655,6 +652,7 @@ public class MainPage extends AppCompatActivity
                         Log.i("linkPost", link_post);
                     }
                 }); */
+
 
                             viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -985,8 +983,9 @@ public class MainPage extends AppCompatActivity
                                     viewHolder.setNumberLikes(post_key);
                                     viewHolder.setDesc(model.getDesc());
                                     viewHolder.setDislikeBtn(post_key);
+                                    viewHolder.setNumberComments(post_key);
                                     viewHolder.setNumberDislikes(post_key);
-                                    viewHolder.setClubLogo(getApplicationContext(),model.getClubLogo());
+                                    viewHolder.setClubLogo(getApplicationContext(), model.getClubLogo());
 
 
                                     viewHolder.seekBar.setEnabled(true);
@@ -1426,6 +1425,7 @@ public class MainPage extends AppCompatActivity
         FirebaseDatabase database;
         DatabaseReference likeReference, dislikeReference;
         DatabaseReference userReference;
+        DatabaseReference numberCommentsReference;
         FirebaseAuth mAuth;
         TextView numberofLikes;
         TextView numberOfDislikes;
@@ -1441,6 +1441,8 @@ public class MainPage extends AppCompatActivity
         RelativeLayout backgroundImage;
         ImageView postBackgroundImage;
         CircleImageView post_clubLogo;
+        TextView comments;
+        TextView numberComments;
         String logo;
         String usersFavClub;
         String myClub;
@@ -1480,13 +1482,15 @@ public class MainPage extends AppCompatActivity
             likeReference = database.getReference().child("Likes");
             dislikeReference = database.getReference().child("Dislikes");
             userReference = database.getReference().child("Users");
+            numberCommentsReference = database.getReference().child("Comments");
             mAuth = FirebaseAuth.getInstance();
             openComment = (TextView) mView.findViewById(R.id.comment_something);
             post_username = (TextView) mView.findViewById(R.id.username_wall);
             post_profile_image = (ImageView) mView.findViewById(R.id.profile_image_wall);
             post_clubLogo = (CircleImageView) mView.findViewById(R.id.clubLogoPost);
             postBackgroundImage = (ImageView) mView.findViewById(R.id.image_post_background);
-
+            comments = (TextView) mView.findViewById(R.id.comments_textview);
+            numberComments = (TextView) mView.findViewById(R.id.number_comments);
             likeReference.keepSynced(true);
             dislikeReference.keepSynced(true);
 
@@ -1526,6 +1530,32 @@ public class MainPage extends AppCompatActivity
             });
         }
 
+
+        public void setNumberComments(String post_key) {
+
+            numberCommentsReference.child(post_key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    long numberOfComments = dataSnapshot.getChildrenCount();
+
+                    if (numberOfComments == 0) {
+
+                        numberComments.setText("");
+                    } else {
+
+                        numberComments.setText(String.valueOf(numberOfComments));
+                    }
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
 
 
         public void setLikeBtn(final String post_key) {
@@ -1660,14 +1690,14 @@ public class MainPage extends AppCompatActivity
 
         }
 
-        public void setClubLogo( Context ctx, String clubLogo) {
+        public void setClubLogo(Context ctx, String clubLogo) {
 
             Picasso.with(ctx).load(clubLogo).into(post_clubLogo);
         }
 
 
-        public void setCountry(Context ctx,String country) {
-            if (country!=null) {
+        public void setCountry(Context ctx, String country) {
+            if (country != null) {
                 GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
                 requestBuilder = Glide
@@ -1688,7 +1718,7 @@ public class MainPage extends AppCompatActivity
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .load(uri)
                         .into(postBackgroundImage);
-                postBackgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                postBackgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 postBackgroundImage.setAlpha(0.4f);
             }
         }
@@ -1824,7 +1854,6 @@ public class MainPage extends AppCompatActivity
     public void afterTextChanged(Editable editable) {
 
     }
-
 
 
     private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
