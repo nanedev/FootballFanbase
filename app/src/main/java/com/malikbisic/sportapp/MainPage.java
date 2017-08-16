@@ -1468,7 +1468,7 @@ public class MainPage extends AppCompatActivity
             numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
             numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
             single_post_layout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_post);
-            openSinglePost = (TextView) mView.findViewById(R.id.openSinglePost);
+
             arrow_down = (ImageView) mView.findViewById(R.id.down_arrow);
             layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image);
             layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image);
@@ -1618,6 +1618,7 @@ public class MainPage extends AppCompatActivity
                 post_desc_for_audio.setText(descForAudio);
             } else {
                 layoutAudioText.setVisibility(View.GONE);
+                post_desc_for_audio.setVisibility(View.GONE);
             }
         }
 
