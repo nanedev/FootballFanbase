@@ -764,6 +764,27 @@ public class MainPage extends AppCompatActivity
                                 }
                             });
 
+                            viewHolder.comments.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent openCom = new Intent(MainPage.this, CommentsActivity.class);
+                                    openCom.putExtra("keyComment", post_key);
+                                    openCom.putExtra("profileComment", MainPage.profielImage);
+                                    startActivity(openCom);
+                                }
+                            });
+
+                            viewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent openCom = new Intent(MainPage.this, CommentsActivity.class);
+                                    openCom.putExtra("keyComment", post_key);
+                                    openCom.putExtra("profileComment", MainPage.profielImage);
+                                    startActivity(openCom);
+                                }
+                            });
+
+
 
                             viewHolder.openComment.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -1199,6 +1220,26 @@ public class MainPage extends AppCompatActivity
                                                 }
                                             });
 
+                                        }
+                                    });
+
+                                    viewHolder.comments.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent openCom = new Intent(MainPage.this, CommentsActivity.class);
+                                            openCom.putExtra("keyComment", post_key);
+                                            openCom.putExtra("profileComment", MainPage.profielImage);
+                                            startActivity(openCom);
+                                        }
+                                    });
+
+                                    viewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent openCom = new Intent(MainPage.this, CommentsActivity.class);
+                                            openCom.putExtra("keyComment", post_key);
+                                            openCom.putExtra("profileComment", MainPage.profielImage);
+                                            startActivity(openCom);
                                         }
                                     });
 

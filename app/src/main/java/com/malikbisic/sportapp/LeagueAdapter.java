@@ -23,6 +23,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
     Context ctx;
     Activity activity;
     static int OPEN_CLUB = 345;
+    boolean isOpened = true;
 
     public LeagueAdapter(ArrayList<LeagueModel> leagueModelArrayList, Context ctx, Activity activity) {
         this.leagueModelArrayList = leagueModelArrayList;
@@ -43,14 +44,29 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
         final LeagueModel leagueModel = leagueModelArrayList.get(position);
         holder.updateUI(leagueModel);
 
-        holder.vm.setOnClickListener(new View.OnClickListener() {
+        holder.leagueName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("LEAGUE", "ID: " + leagueModel.getCurrent_season_id());
-
                 Intent openClub = new Intent(ctx, SelectClubActivity.class);
                 openClub.putExtra("leagueID", leagueModel.getCurrent_season_id());
                 activity.startActivityForResult(openClub, OPEN_CLUB);
+            }
+        });
+
+        holder.countryName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+                if (isOpened){
+                    holder.leagueName.setVisibility(View.GONE);
+                    isOpened = false;
+                } else {
+                    holder.leagueName.setVisibility(View.VISIBLE);
+                    isOpened = true;
+                }
+
             }
         });
     }

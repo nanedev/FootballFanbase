@@ -1,6 +1,8 @@
 package com.malikbisic.sportapp;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +21,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
-public class SinglePostViewActivity extends AppCompatActivity {
+public class SinglePostViewActivity extends AppCompatActivity{
     private String post_key = null;
 
     private DatabaseReference postReference;
@@ -39,6 +42,8 @@ public class SinglePostViewActivity extends AppCompatActivity {
     private EditText post_only_text;
     private RelativeLayout layoutAudio;
     private RelativeLayout layoutImage;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +61,8 @@ public class SinglePostViewActivity extends AppCompatActivity {
         layoutAudio = (RelativeLayout) findViewById(R.id.layout_for_audio_player);
         layoutImage = (RelativeLayout) findViewById(R.id.layout_for_image);
         post_only_text = (EditText)  findViewById(R.id.post_text_main_page);
+
+
 
 
         Intent myIntent = getIntent();
@@ -94,9 +101,12 @@ public class SinglePostViewActivity extends AppCompatActivity {
                     post_text_image.setVisibility(View.GONE);
 
                     post_only_text.setText(postText);
+
+
                 }
                 post_text_image.setText(descImage);
                 post_text_video.setText(descVideo);
+
 
                 if (postVideo != null) {
                     post_video.setVisibility(View.VISIBLE);
@@ -134,7 +144,7 @@ public class SinglePostViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        final int id = item.getItemId();
 
         if (id == R.id.save_edit_text) {
            final DatabaseReference editPostComplete =  editPost.child(post_key);
@@ -161,7 +171,13 @@ public class SinglePostViewActivity extends AppCompatActivity {
                     if (dataSnapshot.child("descForAudio").exists()) {
                         editPostComplete.child("descForAudio").setValue(newTextAudio);
                     }
+
+                    Intent backToMainPage = new Intent(SinglePostViewActivity.this, MainPage.class);
+                    startActivity(backToMainPage);
+                    finish();
+
                 }
+
 
 
                 @Override
@@ -178,4 +194,6 @@ public class SinglePostViewActivity extends AppCompatActivity {
 
 
     }
+
+
 }
