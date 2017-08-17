@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -184,6 +185,10 @@ public class MainPage extends AppCompatActivity
     boolean like_process = false;
     boolean dislike_process = false;
 
+    LinearLayoutManager linearLayoutManager;
+
+    int positionRec;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +212,7 @@ public class MainPage extends AppCompatActivity
         postingDialog = new ProgressDialog(this);
         wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
         wallList.setHasFixedSize(false);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setReverseLayout(true);
@@ -414,14 +419,6 @@ public class MainPage extends AppCompatActivity
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        JCVideoPlayer.releaseAllVideos();
-        mBundleRecyclerViewState = new Bundle();
-        Parcelable listState = wallList.getLayoutManager().onSaveInstanceState();
-        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -506,7 +503,7 @@ public class MainPage extends AppCompatActivity
         final DatabaseReference profileUsers = FirebaseDatabase.getInstance().getReference();
 
         FirebaseUser user = mAuth.getCurrentUser();
-        String myUserId = user.getUid();
+        final String myUserId = user.getUid();
 
 
         DatabaseReference checkPremiumUser = FirebaseDatabase.getInstance().getReference().child("Users").child(myUserId);
@@ -785,7 +782,6 @@ public class MainPage extends AppCompatActivity
                             });
 
 
-
                             viewHolder.openComment.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -861,36 +857,40 @@ public class MainPage extends AppCompatActivity
 
                                                 if (username.equals(usernameFirebase)) {
                                                     final String uid = userInfo.getUserID();
+                                                    FirebaseUser user1 = mAuth.getCurrentUser();
+                                                    String myUID = user1.getUid();
+                                                    Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
-                                                    DatabaseReference profileInfo = profileUsers.child(uid);
+                                                    if (uid.equals(myUID)) {
 
-                                                    profileInfo.addValueEventListener(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        ProfileFragment profileFragment = new ProfileFragment();
 
-                                                            String ref = String.valueOf(dataSnapshot.getRef());
-                                                            String country = userInfo.getCountry();
-                                                            String date = userInfo.getDate();
-                                                            String favClub = userInfo.getFavoriteClub();
-                                                            String favClubLogo = userInfo.getFavoriteClubLogo();
-                                                            String flag = userInfo.getFlag();
-                                                            String gender = userInfo.getGender();
-                                                            String name = userInfo.getName();
-                                                            String profileImage = userInfo.getProfileImage();
-                                                            String username = userInfo.getUsername();
+                                                        FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+
+                                                        manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                                R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                                        Log.i("tacno", "true");
+
+                                                    } else {
+
+                                                        DatabaseReference profileInfo = profileUsers.child(uid);
+
+                                                        profileInfo.addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                                                            Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
-                                                            openUserProfile.putExtra("userID", uid);
-                                                            startActivity(openUserProfile);
-                                                        }
+                                                                Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
+                                                                openUserProfile.putExtra("userID", uid);
+                                                                startActivity(openUserProfile);
+                                                            }
 
-                                                        @Override
-                                                        public void onCancelled(DatabaseError databaseError) {
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
 
-                                                        }
-                                                    });
-
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                             }
                                         }
@@ -922,35 +922,42 @@ public class MainPage extends AppCompatActivity
                                                 if (username.equals(usernameFirebase)) {
                                                     final String uid = userInfo.getUserID();
 
-                                                    DatabaseReference profileInfo = profileUsers.child(uid);
+                                                    FirebaseUser user1 = mAuth.getCurrentUser();
+                                                    String myUID = user1.getUid();
+                                                    Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
-                                                    profileInfo.addValueEventListener(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    if (uid.equals(myUID)) {
 
-                                                            String ref = String.valueOf(dataSnapshot.getRef());
-                                                            String country = userInfo.getCountry();
-                                                            String date = userInfo.getDate();
-                                                            String favClub = userInfo.getFavoriteClub();
-                                                            String favClubLogo = userInfo.getFavoriteClubLogo();
-                                                            String flag = userInfo.getFlag();
-                                                            String gender = userInfo.getGender();
-                                                            String name = userInfo.getName();
-                                                            String profileImage = userInfo.getProfileImage();
-                                                            String username = userInfo.getUsername();
+                                                        ProfileFragment profileFragment = new ProfileFragment();
+
+                                                        FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+
+                                                        manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                                R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                                        Log.i("tacno", "true");
+
+                                                    } else {
+
+                                                        DatabaseReference profileInfo = profileUsers.child(uid);
+
+                                                        profileInfo.addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                                                            Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
-                                                            openUserProfile.putExtra("userID", uid);
-                                                            startActivity(openUserProfile);
-                                                        }
+                                                                Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
+                                                                openUserProfile.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                                                                openUserProfile.putExtra("userID", uid);
+                                                                startActivity(openUserProfile);
+                                                            }
 
-                                                        @Override
-                                                        public void onCancelled(DatabaseError databaseError) {
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
 
-                                                        }
-                                                    });
+                                                            }
+                                                        });
 
+                                                    }
                                                 }
                                             }
                                         }
@@ -1319,35 +1326,40 @@ public class MainPage extends AppCompatActivity
                                                         if (username.equals(usernameFirebase)) {
                                                             final String uid = userInfo.getUserID();
 
-                                                            DatabaseReference profileInfo = profileUsers.child(uid);
+                                                            FirebaseUser user1 = mAuth.getCurrentUser();
+                                                            String myUID = user1.getUid();
+                                                            Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
-                                                            profileInfo.addValueEventListener(new ValueEventListener() {
-                                                                @Override
-                                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                            if (uid.equals(myUID)) {
 
-                                                                    String ref = String.valueOf(dataSnapshot.getRef());
-                                                                    String country = userInfo.getCountry();
-                                                                    String date = userInfo.getDate();
-                                                                    String favClub = userInfo.getFavoriteClub();
-                                                                    String favClubLogo = userInfo.getFavoriteClubLogo();
-                                                                    String flag = userInfo.getFlag();
-                                                                    String gender = userInfo.getGender();
-                                                                    String name = userInfo.getName();
-                                                                    String profileImage = userInfo.getProfileImage();
-                                                                    String username = userInfo.getUsername();
+                                                                ProfileFragment profileFragment = new ProfileFragment();
 
+                                                                FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
-                                                                    Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
-                                                                    openUserProfile.putExtra("userID", uid);
-                                                                    startActivity(openUserProfile);
-                                                                }
+                                                                manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                                        R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                                                Log.i("tacno", "true");
 
-                                                                @Override
-                                                                public void onCancelled(DatabaseError databaseError) {
+                                                            } else {
 
-                                                                }
-                                                            });
+                                                                DatabaseReference profileInfo = profileUsers.child(uid);
 
+                                                                profileInfo.addValueEventListener(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                                        Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
+                                                                        openUserProfile.putExtra("userID", uid);
+                                                                        startActivity(openUserProfile);
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                                    }
+                                                                });
+
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1379,35 +1391,40 @@ public class MainPage extends AppCompatActivity
                                                         if (username.equals(usernameFirebase)) {
                                                             final String uid = userInfo.getUserID();
 
-                                                            DatabaseReference profileInfo = profileUsers.child(uid);
+                                                            FirebaseUser user1 = mAuth.getCurrentUser();
+                                                            String myUID = user1.getUid();
+                                                            Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
-                                                            profileInfo.addValueEventListener(new ValueEventListener() {
-                                                                @Override
-                                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                            if (uid.equals(myUID)) {
 
-                                                                    String ref = String.valueOf(dataSnapshot.getRef());
-                                                                    String country = userInfo.getCountry();
-                                                                    String date = userInfo.getDate();
-                                                                    String favClub = userInfo.getFavoriteClub();
-                                                                    String favClubLogo = userInfo.getFavoriteClubLogo();
-                                                                    String flag = userInfo.getFlag();
-                                                                    String gender = userInfo.getGender();
-                                                                    String name = userInfo.getName();
-                                                                    String profileImage = userInfo.getProfileImage();
-                                                                    String username = userInfo.getUsername();
+                                                                ProfileFragment profileFragment = new ProfileFragment();
+
+                                                                FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+
+                                                                manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                                        R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                                                Log.i("tacno", "true");
+
+                                                            } else {
+
+                                                                DatabaseReference profileInfo = profileUsers.child(uid);
+
+                                                                profileInfo.addValueEventListener(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                                                                    Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
-                                                                    openUserProfile.putExtra("userID", uid);
-                                                                    startActivity(openUserProfile);
-                                                                }
+                                                                        Intent openUserProfile = new Intent(MainPage.this, UserProfileActivity.class);
+                                                                        openUserProfile.putExtra("userID", uid);
+                                                                        startActivity(openUserProfile);
+                                                                    }
 
-                                                                @Override
-                                                                public void onCancelled(DatabaseError databaseError) {
+                                                                    @Override
+                                                                    public void onCancelled(DatabaseError databaseError) {
 
-                                                                }
-                                                            });
-
+                                                                    }
+                                                                });
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1827,18 +1844,31 @@ public class MainPage extends AppCompatActivity
 
         }
 
-
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mBundleRecyclerViewState != null) {
-            Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
-            wallList.getLayoutManager().onRestoreInstanceState(listState);
+        @Override
+        protected void onResume() {
+            super.onResume();
+            if (mBundleRecyclerViewState != null) {
+                Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+                linearLayoutManager.onRestoreInstanceState(listState);
+            }
         }
-    }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            JCVideoPlayer.releaseAllVideos();
+            mBundleRecyclerViewState = new Bundle();
+            Parcelable listState = linearLayoutManager.onSaveInstanceState();
+            mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
+
+
+        }
+
+
+
 
     @Override
     public void onStop() {
@@ -1847,7 +1877,9 @@ public class MainPage extends AppCompatActivity
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
 
-
+        mBundleRecyclerViewState = new Bundle();
+        Parcelable listState = linearLayoutManager.onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
     }
 
 
