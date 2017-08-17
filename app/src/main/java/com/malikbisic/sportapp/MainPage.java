@@ -105,8 +105,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -170,18 +175,24 @@ public class MainPage extends AppCompatActivity
     static String country;
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private static Bundle mBundleRecyclerViewState;
-
-
+Date nowDate;
+    DateFormat nowDateFormat;
+    DateFormat trialDateFormat;
+String trialDateString;
+    Date trialDate;
+DateFormat dateFormat;
+    String dateOfFirstLogin;
     private boolean pauseAudioPressed = false;
     private boolean audiofinished = false;
     private int pausePosition;
-
+Calendar calendar;
     private static final int PHOTO_OPEN = 1;
     private static final int VIDEO_OPEN = 2;
     boolean pause_state;
     boolean play_state;
     boolean stop_state;
-
+    Date currentDateOfUserMainPage;
+    String getDateFromDatabaseMainPage;
     boolean like_process = false;
     boolean dislike_process = false;
 
@@ -208,7 +219,7 @@ public class MainPage extends AppCompatActivity
         audioText = (TextView) findViewById(R.id.audioText);
         postText = (EditText) findViewById(R.id.postOnlyText);
         backgroundUserPost = (RelativeLayout) findViewById(R.id.relativeLayout);
-
+calendar = Calendar.getInstance();
         postingDialog = new ProgressDialog(this);
         wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
         wallList.setHasFixedSize(false);
@@ -219,6 +230,12 @@ public class MainPage extends AppCompatActivity
         wallList.setLayoutManager(linearLayoutManager);
         wallList.setItemViewCacheSize(20);
         wallList.setDrawingCacheEnabled(true);
+        trialDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        nowDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        nowDate = new Date();
+
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         String action = intent.getAction();
@@ -297,6 +314,24 @@ public class MainPage extends AppCompatActivity
                                 Picasso.with(getApplicationContext())
                                         .load(clubHeaderString)
                                         .into(clubHeader);
+                                getDateFromDatabaseMainPage = String.valueOf(value.get("premiumDate"));
+                                try {
+                                    currentDateOfUserMainPage = dateFormat.parse(getDateFromDatabaseMainPage);
+                                    calendar.setTime(currentDateOfUserMainPage);
+
+                                } catch (java.text.ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                calendar.add(Calendar.DAY_OF_MONTH, 15);
+                                trialDate = calendar.getTime();
+                                trialDateString = dateFormat.format(trialDate);
+                                mReference.child("trialPremiumDate").setValue(trialDateString);
+
+
+                               if (nowDate.equals(trialDate) || nowDate.after(trialDate)){
+                                   mReference.child("premium").setValue(false);
+                               }
 
                                 Log.i("country", country);
 

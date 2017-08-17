@@ -141,9 +141,9 @@ public class ProfileFragment extends Fragment {
     Date currentDateOfUser;
     String getDateFromDatabase;
     TextView premiumTrialDate;
-    String trialDate;
+    Date trialDate;
+    String trialDateString;
     Date dateRightNow;
-    String dateRightNowInString;
     TextView premiumTextview;
     View premiumLinija;
     RelativeLayout premiumLayout;
@@ -190,8 +190,7 @@ public class ProfileFragment extends Fragment {
 
         dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         dateRightNow = new Date();
-        dateRightNowInString = dateFormat.format(dateRightNow);
-        Log.i("proba", dateRightNowInString);
+
         minAdultAge = new GregorianCalendar();
         editProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -265,14 +264,15 @@ public class ProfileFragment extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                calendar.add(Calendar.DAY_OF_MONTH, 10);
-                trialDate = dateFormat.format(calendar.getTime());
-                Log.i("proba", trialDate);
+                calendar.add(Calendar.DAY_OF_MONTH, 15);
+                trialDate = calendar.getTime();
+                trialDateString = dateFormat.format(trialDate);
+                mReference.child("trialPremiumDate").setValue(trialDateString);
 
-                premiumTrialDate.setText(trialDate);
+                premiumTrialDate.setText(trialDateString);
 
 
-                if (dateRightNowInString.equals(trialDate)) {
+                if (dateRightNow.equals(trialDate) || dateRightNow.after(trialDate)) {
                     premiumTextview.setVisibility(View.GONE);
                     premiumLayout.setVisibility(View.GONE);
                     premiumLinija.setVisibility(View.GONE);
