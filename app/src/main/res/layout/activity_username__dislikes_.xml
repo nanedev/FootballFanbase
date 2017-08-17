@@ -4,13 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/dislike_layout"
     tools:context="com.malikbisic.sportapp.Username_Dislikes_Activity">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rec_view_dislike">
-
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"
+        android:id="@+id/rec_view_dislike"></android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>
