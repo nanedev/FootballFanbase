@@ -171,7 +171,7 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
                                             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
                                             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.dislike_layout, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
                                             Log.i("tacno", "true");
 
                                         } else {

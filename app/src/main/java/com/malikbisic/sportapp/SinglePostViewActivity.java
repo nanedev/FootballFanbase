@@ -153,7 +153,7 @@ public class SinglePostViewActivity extends AppCompatActivity{
             final String newTextAudio = post_text_audio.getText().toString().trim();
             final String newText = post_only_text.getText().toString().trim();
 
-            editPostComplete.addValueEventListener(new ValueEventListener() {
+            editPostComplete.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.child("descVideo").exists()) {
