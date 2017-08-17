@@ -81,15 +81,15 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp" />
+
+                />
 
 
             <TextView
                 android:id="@+id/galleryText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add photo"
+                android:text="Photo"
                 android:textStyle="bold"
                 android:layout_toRightOf="@+id/gallery_icon_content_main"
                 android:layout_toEndOf="@+id/gallery_icon_content_main"
@@ -129,7 +129,7 @@
                 android:id="@+id/videoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add video"
+                android:text="Video"
 
                 android:layout_toRightOf="@+id/vide_icon_content_main"
                 android:layout_toEndOf="@+id/vide_icon_content_main"
@@ -169,7 +169,7 @@
                 android:id="@+id/audioText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Record audio"
+                android:text="Audio"
 
                 android:layout_toRightOf="@+id/talk_icon_content_main"
                 android:layout_toEndOf="@+id/talk_icon_content_main"

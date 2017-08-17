@@ -24,8 +24,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image_wall"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true" />
 
@@ -37,7 +37,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:textColor="#000000"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -229,7 +229,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:textSize="30sp"
+                    android:textSize="24sp"
                     android:textColor="#000000"
                     android:textStyle="bold" />
 
@@ -262,8 +262,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:textColor="#1976d2"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -273,8 +273,8 @@
                 android:id="@+id/like_button"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_toEndOf="@+id/number_of_likes"
                 android:layout_toRightOf="@+id/number_of_likes"
@@ -310,8 +310,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
                 android:textColor="#d50000"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -321,8 +321,8 @@
                 android:id="@+id/dislike_button"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginRight="15dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_toLeftOf="@+id/number_of_dislikes"
                 android:layout_toStartOf="@+id/number_of_dislikes"
