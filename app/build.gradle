@@ -44,10 +44,11 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
-    compile 'com.android.volley:volley:1.0.0'
     compile files('src/androidsvg-1.2.2-beta-1.jar')
     compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
+    compile 'com.android.volley:volley:1.0.0'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
+    compile 'com.android.volley:volley:1.0.0'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
@@ -69,7 +70,6 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     compile 'com.google.android.exoplayer:exoplayer:r2.0.0'
-    compile 'com.android.volley:volley:1.0.0'
     compile 'fm.jiecao:jiecaovideoplayer:5.5.4'
     compile 'com.pixplicity.sharp:library:1.1.0'
     testCompile 'junit:junit:4.12'

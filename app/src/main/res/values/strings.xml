@@ -47,7 +47,7 @@
 
 
     <string name="enter_username_Activity">Enterusername Activity</string>
-<string name="pls_add_prof_img">Please add your profile image:</string>
+    <string name="pls_add_prof_img">Please add your profile image:</string>
     <string name="username_enter">Username:</string>
     <string name="date_enter">Date:</string>
     <string name="gender_enter">Gender:</string>

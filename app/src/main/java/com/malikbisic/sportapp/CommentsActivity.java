@@ -313,6 +313,13 @@ FirebaseAuth auth;
 
                     }
                 });
+                viewHolder.commentSomething.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
+                        startActivity(intent);
+                    }
+                });
 
             }
         };
@@ -353,7 +360,7 @@ FirebaseAuth auth;
 
     public static class CommentsViewHolder extends RecyclerView.ViewHolder {
         View mView;
-
+TextView commentSomething;
         ImageView profileImageImg;
         TextView commentsText;
         ImageView downArrow;
@@ -378,6 +385,7 @@ FirebaseAuth auth;
             dislikeCommentImg = (ImageView) mView.findViewById(R.id.dislikecommentsimage);
             numberLikes = (TextView) mView.findViewById(R.id.number_of_likes_comments);
             numberDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes_comments);
+            commentSomething = (TextView) mView.findViewById(R.id.comment_something_comments);
             mAuth = FirebaseAuth.getInstance();
             likeReference = database.getReference().child("LikesComments");
             dislikeReference = database.getReference().child("DislikesComments");
