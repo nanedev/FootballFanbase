@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Objects;
 
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
@@ -161,7 +165,9 @@ public class SinglePostViewActivity extends AppCompatActivity{
                     }
 
                     if (dataSnapshot.child("desc").exists()) {
-                        editPostComplete.child("desc").setValue(newText);
+
+                        DatabaseReference newTekstSet = editPostComplete;
+                        newTekstSet.child("desc").setValue(newText);
                     }
 
                     if (dataSnapshot.child("descForPhoto").exists()) {

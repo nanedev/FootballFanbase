@@ -802,6 +802,7 @@ calendar = Calendar.getInstance();
                                     Intent openCom = new Intent(MainPage.this, CommentsActivity.class);
                                     openCom.putExtra("keyComment", post_key);
                                     openCom.putExtra("profileComment", MainPage.profielImage);
+                                    openCom.putExtra("username", MainPage.usernameInfo);
                                     startActivity(openCom);
                                 }
                             });
@@ -812,6 +813,7 @@ calendar = Calendar.getInstance();
                                     Intent openCom = new Intent(MainPage.this, CommentsActivity.class);
                                     openCom.putExtra("keyComment", post_key);
                                     openCom.putExtra("profileComment", MainPage.profielImage);
+                                    openCom.putExtra("username", MainPage.usernameInfo);
                                     startActivity(openCom);
                                 }
                             });
@@ -820,9 +822,11 @@ calendar = Calendar.getInstance();
                             viewHolder.openComment.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
+
                                     Intent openCom = new Intent(MainPage.this, CommentsActivity.class);
                                     openCom.putExtra("keyComment", post_key);
                                     openCom.putExtra("profileComment", MainPage.profielImage);
+                                    openCom.putExtra("username", MainPage.usernameInfo);
                                     startActivity(openCom);
                                 }
                             });
@@ -1882,27 +1886,25 @@ calendar = Calendar.getInstance();
     }
 
 
-        @Override
-        protected void onResume() {
-            super.onResume();
-            if (mBundleRecyclerViewState != null) {
-                Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
-                linearLayoutManager.onRestoreInstanceState(listState);
-            }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mBundleRecyclerViewState != null) {
+            Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+            linearLayoutManager.onRestoreInstanceState(listState);
         }
+    }
 
-        @Override
-        public void onPause() {
-            super.onPause();
-            JCVideoPlayer.releaseAllVideos();
-            mBundleRecyclerViewState = new Bundle();
-            Parcelable listState = linearLayoutManager.onSaveInstanceState();
-            mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
-
-
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        JCVideoPlayer.releaseAllVideos();
+        mBundleRecyclerViewState = new Bundle();
+        Parcelable listState = linearLayoutManager.onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
 
 
+    }
 
 
     @Override
@@ -1951,10 +1953,13 @@ calendar = Calendar.getInstance();
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
 
-        if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
-            myMenu.setEnabled(true);
-        } else if (postText.getText().toString().trim().length() < 3) {
-            myMenu.setEnabled(false);
+        if (myMenu != null) {
+
+            if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
+                myMenu.setEnabled(true);
+            } else if (postText.getText().toString().trim().length() < 3) {
+                myMenu.setEnabled(false);
+            }
         }
     }
 

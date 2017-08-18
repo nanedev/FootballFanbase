@@ -41,8 +41,15 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
 
         myIntent = getIntent();
         String post_key = myIntent.getStringExtra("post_key");
+        String post_keyComments = myIntent.getStringExtra("post_keyComment");
+        boolean isComment = myIntent.getBooleanExtra("isDislikeComment", false);
 
-        dislikesReferences = FirebaseDatabase.getInstance().getReference().child("Dislikes").child(post_key);
+        if (isComment){
+            dislikesReferences = FirebaseDatabase.getInstance().getReference().child("DislikesComments").child(post_keyComments);
+        } else {
+
+            dislikesReferences = FirebaseDatabase.getInstance().getReference().child("Dislikes").child(post_key);
+        }
         profileUsers = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
