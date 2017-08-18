@@ -317,6 +317,7 @@ FirebaseAuth auth;
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
+                        intent.putExtra("keyComment", post_key_comments);
                         startActivity(intent);
                     }
                 });

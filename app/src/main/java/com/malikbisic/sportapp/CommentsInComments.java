@@ -44,10 +44,13 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments_in_comments);
+        myIntent = getIntent();
+        auth = FirebaseAuth.getInstance();
         sendComment = (ImageButton) findViewById(R.id.sendCommentInComments);
+        key = myIntent.getStringExtra("keyComment");
         getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(key);
         writeComment = (EditText) findViewById(R.id.writeCommentInComments);
-        commentsInComments = (RecyclerView) findViewById(R.id.rec_view_comments_in_comments);
+        commentsInComments = (RecyclerView) findViewById(R.id.rec_view_comments);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -85,14 +88,16 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
         };
 
 
+
+
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.sendCommentInComments) {
             String textComment = writeComment.getText().toString().trim();
-            setCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(key).push();
-            DatabaseReference post_comment = setCommentRef;
+            setCommentRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference post_comment = setCommentRef.child("CommentsInComments").child(key).push();
             post_comment.child("textComment").setValue(textComment);
             post_comment.child("profileImage").setValue(profileImage);
             post_comment.child("username").setValue(username);
