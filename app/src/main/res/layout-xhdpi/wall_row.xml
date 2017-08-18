@@ -87,10 +87,13 @@
                     android:id="@+id/audio_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:textColor="#000000"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    />
 
             </RelativeLayout>
 
@@ -161,10 +164,12 @@
                     android:id="@+id/text_for_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:textColor="#000000"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textSize="20sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -196,10 +201,12 @@
                     android:id="@+id/text_for_video"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:textColor="#000000"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textSize="20sp" />
             </RelativeLayout>
 
             <FrameLayout
@@ -228,10 +235,12 @@
                     android:id="@+id/post_text_main_page"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textSize="30sp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:textColor="#000000"
-                    android:textStyle="bold" />
+                    android:textSize="20sp" />
 
             </RelativeLayout>
 

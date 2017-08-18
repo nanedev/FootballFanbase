@@ -5,18 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.malikbisic.sportapp.CommentsActivity">
-
-    <android.support.v7.widget.RecyclerView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rec_view_comments"
-        >
+        android:layout_height="match_parent"
+        android:id="@+id/containercommentslayout"
+        android:layout_above="@+id/writeCommentlayout">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recviewcommentslayout">
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rec_view_comments"
 
-    </android.support.v7.widget.RecyclerView>
+                >
+
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
+
+    </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:id="@+id/writeCommentlayout"
         android:background="#000"
         android:padding="5dp">
         <EditText
@@ -37,5 +50,4 @@
             android:src="@drawable/ic_send_black_24dp"
             android:layout_alignParentRight="true" />
     </RelativeLayout>
-
 </RelativeLayout>
