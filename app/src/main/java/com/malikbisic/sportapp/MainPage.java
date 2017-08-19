@@ -1638,10 +1638,16 @@ calendar = Calendar.getInstance();
 
                     if (numberOfComments == 0) {
 
+                        comments.setVisibility(View.GONE);
                         numberComments.setText("");
-                    } else {
+                    } else if (numberOfComments == 1){
 
+                        comments.setText("Comment");
                         numberComments.setText(String.valueOf(numberOfComments));
+                    } else {
+                        comments.setText("Comments");
+                        numberComments.setText(String.valueOf(numberOfComments));
+
                     }
 
 

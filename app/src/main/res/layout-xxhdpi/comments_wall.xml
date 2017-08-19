@@ -111,8 +111,28 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentsInComments_textview"
+            android:layout_below="@id/linecomments"
+            android:text="Reply"
+            android:textColor="#1976d2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
 
-    <ImageView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/number_commentsInComments"
+            android:layout_below="@+id/commentsInComments_textview"
+            android:layout_centerHorizontal="true"
+
+            android:textColor="#1976d2"
+            />
+
+
+        <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/dislikecommentsimage"

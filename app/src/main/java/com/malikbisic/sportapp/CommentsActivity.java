@@ -102,6 +102,7 @@ FirebaseAuth auth;
                 viewHolder.setDislikeBtn(post_key_comments);
                 viewHolder.setNumberLikes(post_key_comments);
                 viewHolder.setNumberDislikes(post_key_comments);
+                viewHolder.setNumberComments(post_key_comments);
 
                 viewHolder.likeCommentsImg.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -324,6 +325,28 @@ FirebaseAuth auth;
                     }
                 });
 
+                viewHolder.commentsReply.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
+                        intent.putExtra("keyComment", post_key_comments);
+                        intent.putExtra("profileComment", model.getProfileImage());
+                        intent.putExtra("username", model.getUsername());
+                        startActivity(intent);
+                    }
+                });
+
+                viewHolder.commentsReplyNumber.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
+                        intent.putExtra("keyComment", post_key_comments);
+                        intent.putExtra("profileComment", model.getProfileImage());
+                        intent.putExtra("username", model.getUsername());
+                        startActivity(intent);
+                    }
+                });
+
             }
         };
     comments.setAdapter(populateComment);
@@ -371,10 +394,12 @@ TextView commentSomething;
         FirebaseDatabase database;
         ImageView likeCommentsImg;
         ImageView dislikeCommentImg;
-        DatabaseReference likeReference, dislikeReference;
+        DatabaseReference likeReference, dislikeReference, numberCommentsReference;
         FirebaseAuth mAuth;
         TextView numberLikes;
         TextView numberDislikes;
+        TextView commentsReply;
+        TextView commentsReplyNumber;
         public CommentsViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
@@ -389,9 +414,12 @@ TextView commentSomething;
             numberLikes = (TextView) mView.findViewById(R.id.number_of_likes_comments);
             numberDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes_comments);
             commentSomething = (TextView) mView.findViewById(R.id.comment_something_comments);
+            commentsReply = (TextView) mView.findViewById(R.id.commentsInComments_textview);
+            commentsReplyNumber = (TextView) mView.findViewById(R.id.number_commentsInComments);
             mAuth = FirebaseAuth.getInstance();
             likeReference = database.getReference().child("LikesComments");
             dislikeReference = database.getReference().child("DislikesComments");
+            numberCommentsReference = database.getReference().child("CommentsInComments");
         }
 
         public void setTextComment(String textComment) {
@@ -501,6 +529,37 @@ TextView commentSomething;
                     } else {
                         numberDislikes.setText(String.valueOf(numberDislikesNumber));
                     }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        public void setNumberComments(String post_key) {
+
+            numberCommentsReference.child(post_key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    long numberOfComments = dataSnapshot.getChildrenCount();
+
+                    if (numberOfComments == 0) {
+
+                        commentsReply.setVisibility(View.GONE);
+                        commentsReplyNumber.setText("");
+                    } else if (numberOfComments == 1){
+
+                        commentsReply.setText("Reply");
+                        commentsReplyNumber.setText(String.valueOf(numberOfComments));
+                    } else {
+                        commentsReply.setText("Replies");
+                        commentsReplyNumber.setText(String.valueOf(numberOfComments));
+                    }
+
 
                 }
 
