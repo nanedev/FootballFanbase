@@ -2,6 +2,7 @@ package com.malikbisic.sportapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -48,6 +49,8 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
         auth = FirebaseAuth.getInstance();
         sendComment = (ImageButton) findViewById(R.id.sendCommentInComments);
         key = myIntent.getStringExtra("keyComment");
+        profileImage = myIntent.getStringExtra("profileComment");
+        username = myIntent.getStringExtra("username");
         getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(key);
         writeComment = (EditText) findViewById(R.id.writeCommentInComments);
         commentsInComments = (RecyclerView) findViewById(R.id.rec_view_comments);
@@ -77,11 +80,54 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
 
 
             @Override
-            protected void populateViewHolder(CommentsInCommentsViewHolder viewHolder, CommentsInCommentsModel model, int position) {
+            protected void populateViewHolder(final CommentsInCommentsViewHolder viewHolder, CommentsInCommentsModel model, int position) {
 
+                final String post_key_comments = getRef(position).getKey();
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setTextComment(model.getTextComment());
+
+                getCommentRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.child(post_key_comments).child("uid").exists()) {
+
+
+                            if (auth.getCurrentUser().getUid().equals(dataSnapshot.child(post_key_comments).child("uid").getValue().toString())) {
+                                viewHolder.downArrow.setVisibility(View.VISIBLE);
+
+                                viewHolder.downArrow.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        final String[] items = {"Delete comment", "Cancel"};
+
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.mView.getContext());
+                                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (items[which].equals("Delete comment")) {
+                                                    getCommentRef.child(post_key_comments).removeValue();
+                                                } else if (items[which].equals("Cancel")) {
+
+                                                }
+                                            }
+
+                                        });
+                                        dialog.create();
+                                        dialog.show();
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 
 
@@ -89,6 +135,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
 
 
 
+        commentsInComments.setAdapter(populate);
 
     }
 

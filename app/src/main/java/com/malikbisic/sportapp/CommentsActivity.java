@@ -318,6 +318,8 @@ FirebaseAuth auth;
                     public void onClick(View v) {
                         Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
                         intent.putExtra("keyComment", post_key_comments);
+                        intent.putExtra("profileComment", model.getProfileImage());
+                        intent.putExtra("username", model.getUsername());
                         startActivity(intent);
                     }
                 });
