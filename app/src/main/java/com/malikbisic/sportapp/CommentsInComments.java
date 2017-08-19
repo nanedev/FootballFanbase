@@ -53,7 +53,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
         username = myIntent.getStringExtra("username");
         getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(key);
         writeComment = (EditText) findViewById(R.id.writeCommentInComments);
-        commentsInComments = (RecyclerView) findViewById(R.id.rec_view_comments);
+        commentsInComments = (RecyclerView) findViewById(R.id.rec_view_comments_in_comments);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
