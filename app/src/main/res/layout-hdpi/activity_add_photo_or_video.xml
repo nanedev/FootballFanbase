@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.malikbisic.sportapp.AddPhotoOrVideo">
+    tools:context="com.malikbisic.sportapp.activity.AddPhotoOrVideo">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,7 +53,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_below="@+id/tell_something_about_video_image">
 
-                <com.malikbisic.sportapp.DynamicImageView
+                <com.malikbisic.sportapp.activity.DynamicImageView
                     android:id="@+id/post_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

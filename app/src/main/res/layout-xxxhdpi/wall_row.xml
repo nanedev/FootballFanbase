@@ -179,7 +179,7 @@
                 android:layout_below="@id/layout_for_text_image"
                 android:visibility="gone">
 
-                <com.malikbisic.sportapp.DynamicImageView
+                <com.malikbisic.sportapp.activity.DynamicImageView
                     android:id="@+id/posted_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

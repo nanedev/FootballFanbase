@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.malikbisic.sportapp.SearchableCountry">
+    tools:context="com.malikbisic.sportapp.activity.SearchableCountry">
 
     <android.support.v7.widget.SearchView
         android:id="@+id/search_id"

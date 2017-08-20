@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000"
-    tools:context="com.malikbisic.sportapp.FullScreenImage">
+    tools:context="com.malikbisic.sportapp.activity.FullScreenImage">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:scrollbarAlwaysDrawVerticalTrack="true">
 
-        <com.malikbisic.sportapp.DynamicImageView
+        <com.malikbisic.sportapp.activity.DynamicImageView
             android:id="@+id/fullScreenImageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
