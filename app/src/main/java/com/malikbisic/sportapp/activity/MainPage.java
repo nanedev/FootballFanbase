@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity;
 
+import android.annotation.TargetApi;
 import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,11 +12,13 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -154,6 +157,10 @@ public class MainPage extends AppCompatActivity
     DatabaseReference profileUsers;
     UsersModel model;
 
+    int current_page = 0;
+
+    String oldestPostId;
+    int limit = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,6 +192,7 @@ public class MainPage extends AppCompatActivity
         wallList.setLayoutManager(linearLayoutManager);
         wallList.setItemViewCacheSize(20);
         wallList.setDrawingCacheEnabled(true);
+        wallList.setItemAnimator(new DefaultItemAnimator());
         trialDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         nowDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -344,6 +352,21 @@ public class MainPage extends AppCompatActivity
             }
         };
 
+        postingDatabase.limitToFirst(3).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    oldestPostId = child.getKey();
+                    System.out.println("here si the data==>>" + child.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -501,22 +524,33 @@ public class MainPage extends AppCompatActivity
 
         DatabaseReference checkPremiumUser = FirebaseDatabase.getInstance().getReference().child("Users").child(myUserId);
         checkPremiumUser.addValueEventListener(new ValueEventListener() {
+            @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 model = dataSnapshot.getValue(UsersModel.class);
 
-                boolean isPremium = model.isPremium();
+                final boolean isPremium = model.isPremium();
+
+
 
                 if (isPremium) {
-
-                    premiumUsers();
-
+                    premiumUsers(limit);
                 } else {
-
                     freeUser();
                 }
 
+                wallList.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+                    @Override
+                    public void onLoadMore(int current_page) {
+                        limit = limit + 5;
+
+                        if (isPremium) {
+                            Log.i("limit", String.valueOf(limit));
+                            premiumUsers(limit);
+                        }
+                    }
+                });
 
             }
 
@@ -530,13 +564,21 @@ public class MainPage extends AppCompatActivity
     }
 
 
-    public void premiumUsers() {
+
+
+    public void premiumUsers(int limit) {
+
+
+
+
+
+        Query premiumRterieve = postingDatabase.limitToLast(limit);
 
         FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder>(
                 Post.class,
                 R.layout.wall_row,
                 MainPage.PostViewHolder.class,
-                postingDatabase
+                premiumRterieve
         ) {
 
 
@@ -994,6 +1036,7 @@ public class MainPage extends AppCompatActivity
         };
 
         wallList.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.notifyDataSetChanged();
     }
 
     public void freeUser() {
@@ -1001,8 +1044,9 @@ public class MainPage extends AppCompatActivity
 
         DatabaseReference checkFavClub = FirebaseDatabase.getInstance().getReference().child("Posting");
         final Query query = checkFavClub
+                .limitToFirst(10)
                 .orderByChild("favoritePostClub")
-                .equalTo(myClub);
+                .startAt(myClub);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1462,6 +1506,7 @@ public class MainPage extends AppCompatActivity
 
 
                 wallList.setAdapter(firebaseRecyclerAdapter);
+                firebaseRecyclerAdapter.notifyDataSetChanged();
             }
 
 
