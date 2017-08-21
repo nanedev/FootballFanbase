@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.media.AudioManager;
@@ -18,12 +19,14 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -58,6 +61,7 @@ import com.caverock.androidsvg.SVG;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -161,10 +165,10 @@ public class MainPage extends AppCompatActivity
     DatabaseReference profileUsers;
     UsersModel model;
 
-    int current_page2 = 0;
+    boolean isPremium;
 
-    String oldestPostId;
-    int limit = 5;
+    TextView notificationCounterNumber;
+    DatabaseReference notificationReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,6 +179,7 @@ public class MainPage extends AppCompatActivity
         setSupportActionBar(toolbar);
         postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
         profileUsers = FirebaseDatabase.getInstance().getReference();
+        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         userProfileImage = (ImageView) findViewById(R.id.userProfilImage);
         usernameuser = (TextView) findViewById(R.id.user_username);
         galleryIcon = (ImageView) findViewById(R.id.gallery_icon_content_main);
@@ -356,20 +361,6 @@ public class MainPage extends AppCompatActivity
             }
         };
 
-        postingDatabase.limitToFirst(3).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    oldestPostId = child.getKey();
-                    System.out.println("here si the data==>>" + child.getKey());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -390,7 +381,39 @@ public class MainPage extends AppCompatActivity
         nameSurname = (TextView) header.findViewById(R.id.name_surname);
         backgroundHeader = (ImageView) header.findViewById(R.id.backgroundImgForHeader);
 
+        notificationCounterNumber = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_notifications));
 
+        initializeCountDrawer();
+    }
+
+    private void initializeCountDrawer(){
+        //Gravity property aligns the text
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        final String myUserId = user.getUid();
+        notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
+        notificationCounterNumber.setTypeface(null, Typeface.BOLD);
+        notificationCounterNumber.setTextColor(getResources().getColor(R.color.redError));
+
+        notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
+
+        notificationCounterNumber.setText("99+");
+
+        DatabaseReference getNumberNotification = notificationReference.child(myUserId);
+
+        getNumberNotification.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int  number = (int) dataSnapshot.getChildrenCount();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -534,8 +557,7 @@ public class MainPage extends AppCompatActivity
 
                 model = dataSnapshot.getValue(UsersModel.class);
 
-                final boolean isPremium = model.isPremium();
-
+                isPremium = model.isPremium();
 
 
                 if (isPremium) {
@@ -735,10 +757,32 @@ public class MainPage extends AppCompatActivity
 
                                     } else {
 
-                                        DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
+                                        final DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
 
                                         newPost.child("username").setValue(MainPage.usernameInfo);
                                         newPost.child("photoProfile").setValue(MainPage.profielImage);
+
+                                        DatabaseReference getIduserpost = postingDatabase;
+                                        getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+
+                                                DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                                                notifSet.child("action").setValue("like");
+                                                notifSet.child("uid").setValue(uid);
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+
+
+
                                         like_process = false;
 
 
@@ -1591,6 +1635,7 @@ public class MainPage extends AppCompatActivity
             numberComments = (TextView) mView.findViewById(R.id.number_comments);
             likeReference.keepSynced(true);
             dislikeReference.keepSynced(true);
+            loadPhoto = (ProgressBar) mView.findViewById(R.id.loadImagePost);
 
 
 
@@ -1839,19 +1884,6 @@ public class MainPage extends AppCompatActivity
                         .load(photoPost)
                         .asBitmap()
                         .centerCrop()
-                        .listener(new RequestListener<String, Bitmap>() {
-                            @Override
-                            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-
-
-                                return false;
-                            }
-                        })
                         .into(new SimpleTarget< Bitmap >() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
