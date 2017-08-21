@@ -50,6 +50,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -157,7 +161,7 @@ public class MainPage extends AppCompatActivity
     DatabaseReference profileUsers;
     UsersModel model;
 
-    int current_page = 0;
+    int current_page2 = 0;
 
     String oldestPostId;
     int limit = 5;
@@ -535,22 +539,10 @@ public class MainPage extends AppCompatActivity
 
 
                 if (isPremium) {
-                    premiumUsers(limit);
+                    premiumUsers();
                 } else {
                     freeUser();
                 }
-
-                wallList.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
-                    @Override
-                    public void onLoadMore(int current_page) {
-                        limit = limit + 5;
-
-                        if (isPremium) {
-                            Log.i("limit", String.valueOf(limit));
-                            premiumUsers(limit);
-                        }
-                    }
-                });
 
             }
 
@@ -566,19 +558,15 @@ public class MainPage extends AppCompatActivity
 
 
 
-    public void premiumUsers(int limit) {
+    public void premiumUsers() {
 
 
-
-
-
-        Query premiumRterieve = postingDatabase.limitToLast(limit);
 
         FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder>(
                 Post.class,
                 R.layout.wall_row,
                 MainPage.PostViewHolder.class,
-                premiumRterieve
+                postingDatabase
         ) {
 
 
@@ -1605,6 +1593,8 @@ public class MainPage extends AppCompatActivity
             dislikeReference.keepSynced(true);
 
 
+
+
         }
 
         public void checkPremium() {
@@ -1844,17 +1834,42 @@ public class MainPage extends AppCompatActivity
 
             if (photoPost != null) {
                 layoutPhoto.setVisibility(View.VISIBLE);
-                Picasso.with(ctx).load(photoPost).into(post_photo, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        //     loadPhoto.setVisibility(View.GONE);
-                    }
 
-                    @Override
-                    public void onError() {
+                Glide.with(ctx)
+                        .load(photoPost)
+                        .asBitmap()
+                        .centerCrop()
+                        .listener(new RequestListener<String, Bitmap>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                                return false;
+                            }
 
-                    }
-                });
+                            @Override
+                            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+
+
+                                return false;
+                            }
+                        })
+                        .into(new SimpleTarget< Bitmap >() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                post_photo.setImageBitmap(resource);
+                            }
+
+                        });
+//                Picasso.with(ctx).load(photoPost).into(post_photo, new Callback() {
+//                    @Override
+//                    public void onSuccess() {
+//                        //     loadPhoto.setVisibility(View.GONE);
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//
+//                    }
+//                });
                 post_photo.setTag(photoPost);
             } else {
 
