@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.SharedElementCallback;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -70,7 +71,22 @@ public class NotificationFragment extends Fragment {
         String uid = user.getUid();
 
         notificationRef = FirebaseDatabase.getInstance().getReference().child("Notification").child(uid);
+        final DatabaseReference setSeen = notificationRef;
 
+
+            setSeen.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        snapshot.child("seen").getRef().setValue(true);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         return view;
     }
 
@@ -140,7 +156,13 @@ public class NotificationFragment extends Fragment {
         }
 
         public void setAction (String action){
-            actionTxt.setText(action);
+            actionTxt.setText(action + " your ");
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().finish();
     }
 }

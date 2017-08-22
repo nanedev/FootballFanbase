@@ -62,16 +62,16 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.malikbisic.sportapp.model.Post;
+import com.malikbisic.sportapp.model.*;
 import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.model.SvgDrawableTranscoder;
-import com.malikbisic.sportapp.model.UsersModel;
+import com.malikbisic.sportapp.model.Notification;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -401,13 +401,19 @@ public class MainPage extends AppCompatActivity
 
         DatabaseReference getNumberNotification = notificationReference.child(myUserId);
 
-        getNumberNotification.addValueEventListener(new ValueEventListener() {
+        Query query = getNumberNotification.orderByChild("seen").equalTo(false);
+
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                int  number = (int) dataSnapshot.getChildrenCount();
-                notificationCounterNumber.setText(""+ number);
+                    int number = (int) dataSnapshot.getChildrenCount();
 
+                if (number == 0){
+                    notificationCounterNumber.setVisibility(View.GONE);
+                } else {
+                    notificationCounterNumber.setText("" + number);
+                }
             }
 
             @Override
@@ -415,6 +421,7 @@ public class MainPage extends AppCompatActivity
 
             }
         });
+
     }
 
     @Override
@@ -777,6 +784,7 @@ public class MainPage extends AppCompatActivity
 
                                                 DatabaseReference notifSet = notificationReference.child(userpostUID).push();
                                                 notifSet.child("action").setValue("like");
+                                                notifSet.child("seen").setValue(false);
                                                 notifSet.child("uid").setValue(uid);
 
                                             }

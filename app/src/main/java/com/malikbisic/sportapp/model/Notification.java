@@ -9,12 +9,14 @@ public class Notification {
     String action;
     String uid;
 
+
     public Notification() {
     }
 
     public Notification(String action, String uid) {
         this.action = action;
         this.uid = uid;
+
     }
 
     public String getAction() {
