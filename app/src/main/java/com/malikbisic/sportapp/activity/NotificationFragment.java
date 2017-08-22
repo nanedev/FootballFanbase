@@ -71,22 +71,8 @@ public class NotificationFragment extends Fragment {
         String uid = user.getUid();
 
         notificationRef = FirebaseDatabase.getInstance().getReference().child("Notification").child(uid);
-        final DatabaseReference setSeen = notificationRef;
 
 
-            setSeen.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                        snapshot.child("seen").getRef().setValue(true);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
         return view;
     }
 
@@ -168,6 +154,7 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        getActivity().finish();
+
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 }

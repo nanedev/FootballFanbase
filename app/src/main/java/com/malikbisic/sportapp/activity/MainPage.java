@@ -166,6 +166,7 @@ public class MainPage extends AppCompatActivity
     UsersModel model;
 
     boolean isPremium;
+    static boolean isNotificationClicked = false;
 
     TextView notificationCounterNumber;
     DatabaseReference notificationReference;
@@ -469,6 +470,7 @@ public class MainPage extends AppCompatActivity
         super.onBackPressed();
 
 
+
     }
 
 
@@ -534,6 +536,27 @@ public class MainPage extends AppCompatActivity
 
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
                     R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, notificationFragment, notificationFragment.getTag()).addToBackStack(null).commit();
+
+            isNotificationClicked = true;
+
+
+                final DatabaseReference setSeen = FirebaseDatabase.getInstance().getReference().child("Notification").child(uid);
+
+
+                setSeen.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            snapshot.child("seen").getRef().setValue(true);
+                            isNotificationClicked = false;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
         } else if (id == R.id.premium_account) {
 
@@ -785,6 +808,7 @@ public class MainPage extends AppCompatActivity
                                                 DatabaseReference notifSet = notificationReference.child(userpostUID).push();
                                                 notifSet.child("action").setValue("like");
                                                 notifSet.child("uid").setValue(uid);
+                                                notifSet.child("seen").setValue(false);
 
                                             }
 
@@ -857,7 +881,7 @@ public class MainPage extends AppCompatActivity
                                                 DatabaseReference notifSet = notificationReference.child(userpostUID).push();
                                                 notifSet.child("action").setValue("disliked");
                                                 notifSet.child("uid").setValue(uid);
-                                                //dasdas
+                                                notifSet.child("seen").setValue(false);
 
                                             }
 
@@ -1294,6 +1318,25 @@ public class MainPage extends AppCompatActivity
                                                 newPost.child("photoProfile").setValue(MainPage.profielImage);
                                                 like_process = false;
 
+                                                DatabaseReference getIduserpost = postingDatabase;
+                                                getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+
+                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                                                        notifSet.child("action").setValue("like");
+                                                        notifSet.child("uid").setValue(uid);
+                                                        notifSet.child("seen").setValue(false);
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
 
                                             }
                                         }
@@ -1344,6 +1387,25 @@ public class MainPage extends AppCompatActivity
                                                 newPost.child("photoProfile").setValue(MainPage.profielImage);
 
                                                 dislike_process = false;
+
+                                                DatabaseReference getIduserpost = postingDatabase;
+                                                getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+
+                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                                                        notifSet.child("action").setValue("like");
+                                                        notifSet.child("uid").setValue(uid);
+                                                        notifSet.child("seen").setValue(false);
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
 
 
                                             }
