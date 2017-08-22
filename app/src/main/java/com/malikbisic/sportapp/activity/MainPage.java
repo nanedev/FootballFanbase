@@ -397,7 +397,7 @@ public class MainPage extends AppCompatActivity
 
         notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
 
-        notificationCounterNumber.setText("99+");
+
 
         DatabaseReference getNumberNotification = notificationReference.child(myUserId);
 
@@ -406,6 +406,7 @@ public class MainPage extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 int  number = (int) dataSnapshot.getChildrenCount();
+                notificationCounterNumber.setText(""+ number);
 
             }
 
@@ -520,6 +521,12 @@ public class MainPage extends AppCompatActivity
         } else if (id == R.id.nav_message) {
 
         } else if (id == R.id.nav_notifications) {
+            NotificationFragment notificationFragment = new NotificationFragment();
+
+            FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+
+            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, notificationFragment, notificationFragment.getTag()).addToBackStack(null).commit();
 
         } else if (id == R.id.premium_account) {
 
@@ -1635,7 +1642,6 @@ public class MainPage extends AppCompatActivity
             numberComments = (TextView) mView.findViewById(R.id.number_comments);
             likeReference.keepSynced(true);
             dislikeReference.keepSynced(true);
-            loadPhoto = (ProgressBar) mView.findViewById(R.id.loadImagePost);
 
 
 
