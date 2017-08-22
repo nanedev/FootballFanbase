@@ -122,6 +122,8 @@ public class NotificationFragment extends Fragment {
         TextView username;
         CircleImageView profileImage;
         TextView actionTxt;
+        String usernameTxt;
+        String actionString;
         public NotificationViewHolder(View itemView) {
             super(itemView);
             itemview = itemView;
@@ -139,11 +141,14 @@ public class NotificationFragment extends Fragment {
                     Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
 
                     UsersModel model = dataSnapshot.getValue(UsersModel.class);
-                    String usernameTxt = model.getUsername(); //String.valueOf(value.get("username"));
+                    usernameTxt = model.getUsername(); //String.valueOf(value.get("username"));
                     String profileIMG = model.getProfileImage();
 
                     username.setText(usernameTxt);
+
                     Picasso.with(ctx).load(profileIMG).into(profileImage);
+
+
 
 
                 }
@@ -156,7 +161,7 @@ public class NotificationFragment extends Fragment {
         }
 
         public void setAction (String action){
-            actionTxt.setText(action + " your ");
+            actionTxt.setText(action);
         }
     }
 

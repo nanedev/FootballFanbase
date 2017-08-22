@@ -96,7 +96,7 @@ public class ProfileFragment extends Fragment {
     private ProgressBar loadProfile_image;
     private String uid;
     private static final int GALLERY_REQUEST = 134;
-    private static final int BACKGROUND_REQUEST = 137;
+
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
     boolean hasSetProfileImage = false;
@@ -159,7 +159,7 @@ public class ProfileFragment extends Fragment {
         club = (TextView) view.findViewById(R.id.user_club);
         premiumTrialDate = (TextView) view.findViewById(R.id.user_premium_date);
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
-        backgroundImage = (ImageView) view.findViewById(R.id.backgroundProfile);
+
         logoClub = (ImageView) view.findViewById(R.id.club_logo_profile);
         calendar = Calendar.getInstance();
         usernameList = new ArrayList<>();
@@ -423,13 +423,7 @@ public class ProfileFragment extends Fragment {
                 Log.i("errorCrop", String.valueOf(error));
             }
         }
-        if (requestCode == BACKGROUND_REQUEST && resultCode == RESULT_OK) {
 
-            backgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            backgroundImage.setAlpha(0.9f);
-            backgroundUri = data.getData();
-            backgroundImage.setImageURI(backgroundUri);
-        }
 
 
     }
