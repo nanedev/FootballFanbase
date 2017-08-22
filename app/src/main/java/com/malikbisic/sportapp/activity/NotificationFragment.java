@@ -161,7 +161,7 @@ public class NotificationFragment extends Fragment {
         }
 
         public void setAction (String action){
-            actionTxt.setText(action);
+            actionTxt.setText(action + " your post!");
         }
     }
 
