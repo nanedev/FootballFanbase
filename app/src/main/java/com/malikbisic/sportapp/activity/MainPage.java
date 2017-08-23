@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -38,6 +39,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -170,6 +172,7 @@ public class MainPage extends AppCompatActivity
 
     TextView notificationCounterNumber;
     DatabaseReference notificationReference;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +210,7 @@ public class MainPage extends AppCompatActivity
         nowDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         nowDate = new Date();
+
 
 
         Intent intent = getIntent();
@@ -370,7 +374,7 @@ public class MainPage extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         View header = navigationView.getHeaderView(0);
@@ -384,46 +388,10 @@ public class MainPage extends AppCompatActivity
 
         notificationCounterNumber = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_notifications));
 
-        initializeCountDrawer();
+
+
     }
 
-    private void initializeCountDrawer(){
-        //Gravity property aligns the text
-
-        FirebaseUser user = mAuth.getCurrentUser();
-        final String myUserId = user.getUid();
-        notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
-        notificationCounterNumber.setTypeface(null, Typeface.BOLD);
-        notificationCounterNumber.setTextColor(getResources().getColor(R.color.redError));
-
-        notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
-
-
-
-        DatabaseReference getNumberNotification = notificationReference.child(myUserId);
-
-        Query query = getNumberNotification.orderByChild("seen").equalTo(false);
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    int number = (int) dataSnapshot.getChildrenCount();
-
-                if (number == 0){
-                    notificationCounterNumber.setVisibility(View.GONE);
-                } else {
-                    notificationCounterNumber.setText("" + number);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -526,7 +494,9 @@ public class MainPage extends AppCompatActivity
             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                    R.anim.push_left_out, R.anim.push_left_out).
+                    replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null)
+                    .commit();
         } else if (id == R.id.nav_message) {
 
         } else if (id == R.id.nav_notifications) {
@@ -535,7 +505,9 @@ public class MainPage extends AppCompatActivity
             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, notificationFragment, notificationFragment.getTag()).addToBackStack(null).commit();
+                    R.anim.push_left_out, R.anim.push_left_out).
+                    replace(R.id.mainpage_fragment, notificationFragment, notificationFragment.getTag()).addToBackStack(null)
+                    .commit();
 
             isNotificationClicked = true;
 
@@ -581,6 +553,8 @@ public class MainPage extends AppCompatActivity
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthStateListener);
+
+        initializeCountDrawer();
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
@@ -809,6 +783,7 @@ public class MainPage extends AppCompatActivity
                                                 notifSet.child("action").setValue("like");
                                                 notifSet.child("uid").setValue(uid);
                                                 notifSet.child("seen").setValue(false);
+                                                notifSet.child("whatIS").setValue("post");
 
                                             }
 
@@ -882,6 +857,7 @@ public class MainPage extends AppCompatActivity
                                                 notifSet.child("action").setValue("disliked");
                                                 notifSet.child("uid").setValue(uid);
                                                 notifSet.child("seen").setValue(false);
+                                                notifSet.child("whatIS").setValue("post");
 
                                             }
 
@@ -1328,6 +1304,7 @@ public class MainPage extends AppCompatActivity
                                                         notifSet.child("action").setValue("like");
                                                         notifSet.child("uid").setValue(uid);
                                                         notifSet.child("seen").setValue(false);
+                                                        notifSet.child("whatIS").setValue("post");
 
                                                     }
 
@@ -1398,6 +1375,7 @@ public class MainPage extends AppCompatActivity
                                                         notifSet.child("action").setValue("like");
                                                         notifSet.child("uid").setValue(uid);
                                                         notifSet.child("seen").setValue(false);
+                                                        notifSet.child("whatIS").setValue("post");
 
                                                     }
 
@@ -1529,7 +1507,7 @@ public class MainPage extends AppCompatActivity
                                                     FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
                                                     manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                                            R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                                            R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).commit();
                                                     Log.i("tacno", "true");
 
                                                 } else {
@@ -1644,6 +1622,47 @@ public class MainPage extends AppCompatActivity
             }
         });
     }
+
+
+
+    private void initializeCountDrawer(){
+        //Gravity property aligns the text
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        final String myUserId = user.getUid();
+        notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
+        notificationCounterNumber.setTypeface(null, Typeface.BOLD);
+        notificationCounterNumber.setTextColor(getResources().getColor(R.color.redError));
+
+        notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
+
+
+
+        DatabaseReference getNumberNotification = notificationReference.child(myUserId);
+
+        Query query = getNumberNotification.orderByChild("seen").equalTo(false);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int number = (int) dataSnapshot.getChildrenCount();
+
+                if (number == 0){
+                    notificationCounterNumber.setText("");
+                } else {
+                    notificationCounterNumber.setText("" + number);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {

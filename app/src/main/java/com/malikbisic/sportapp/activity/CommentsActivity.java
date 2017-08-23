@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,7 +45,7 @@ FirebaseAuth auth;
     String key;
     String profileImage;
     String username;
-    DatabaseReference profileUsers;
+    DatabaseReference profileUsers, postingDatabase, notificationReference;
     FirebaseAuth.AuthStateListener mAuthStateListener;
 
     DatabaseReference likesReference, dislikeReference;
@@ -60,6 +61,8 @@ FirebaseAuth auth;
         profileImage = myIntent.getStringExtra("profileComment");
         username = myIntent.getStringExtra("username");
         profileUsers = FirebaseDatabase.getInstance().getReference();
+        postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
+        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
 
         likesReference = FirebaseDatabase.getInstance().getReference().child("LikesComments");
         dislikeReference = FirebaseDatabase.getInstance().getReference().child("DislikesComments");
@@ -127,9 +130,30 @@ FirebaseAuth auth;
                                     } else {
 
                                         DatabaseReference newPost = likesReference.child(post_key_comments).child(auth.getCurrentUser().getUid());
-
                                         newPost.child("username").setValue(MainPage.usernameInfo);
                                         newPost.child("photoProfile").setValue(MainPage.profielImage);
+
+
+
+                                        DatabaseReference getIduserpost = getCommentRef;
+                                        getIduserpost.child(post_key_comments).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+
+                                                DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                                                notifSet.child("action").setValue("like");
+                                                notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
+                                                notifSet.child("seen").setValue(false);
+                                                notifSet.child("whatIS").setValue("comment");
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
                                         like_process = false;
 
 
@@ -166,6 +190,26 @@ FirebaseAuth auth;
 
                                                 newPost.child("username").setValue(MainPage.usernameInfo);
                                                 newPost.child("photoProfile").setValue(MainPage.profielImage);
+
+                                                DatabaseReference getIduserpost = getCommentRef;
+                                                getIduserpost.child(post_key_comments).addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+
+                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                                                        notifSet.child("action").setValue("disliked");
+                                                        notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
+                                                        notifSet.child("seen").setValue(false);
+                                                        notifSet.child("whatIS").setValue("comment");
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
 
                                                 dislike_process = false;
 
@@ -322,6 +366,7 @@ FirebaseAuth auth;
                     public void onClick(View v) {
                         Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
                         intent.putExtra("keyComment", post_key_comments);
+                        intent.putExtra("keyPost", key);
                         intent.putExtra("profileComment", model.getProfileImage());
                         intent.putExtra("username", model.getUsername());
                         startActivity(intent);
@@ -333,6 +378,7 @@ FirebaseAuth auth;
                     public void onClick(View v) {
                         Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
                         intent.putExtra("keyComment", post_key_comments);
+                        intent.putExtra("keyPost", key);
                         intent.putExtra("profileComment", model.getProfileImage());
                         intent.putExtra("username", model.getUsername());
                         startActivity(intent);
@@ -344,6 +390,7 @@ FirebaseAuth auth;
                     public void onClick(View v) {
                         Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
                         intent.putExtra("keyComment", post_key_comments);
+                        intent.putExtra("keyPost", key);
                         intent.putExtra("profileComment", model.getProfileImage());
                         intent.putExtra("username", model.getUsername());
                         startActivity(intent);
@@ -380,6 +427,26 @@ FirebaseAuth auth;
             post_comment.child("profileImage").setValue(profileImage);
             post_comment.child("username").setValue(username);
             post_comment.child("uid").setValue(auth.getCurrentUser().getUid());
+
+            DatabaseReference getIduserpost = postingDatabase;
+            getIduserpost.child(key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+
+                    DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                    notifSet.child("action").setValue("comment");
+                    notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
+                    notifSet.child("seen").setValue(false);
+                    notifSet.child("whatIS").setValue("post");
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
             writeComment.setText("");
             hideSoftKeyboard(CommentsActivity.this);

@@ -92,7 +92,7 @@ public class NotificationFragment extends Fragment {
             protected void populateViewHolder(NotificationViewHolder viewHolder, Notification model, int position) {
 
                 viewHolder.setUid(getContext(), model.getUid());
-                viewHolder.setAction(model.getAction());
+                viewHolder.setAction(model.getAction(), model.getWhatIS());
             }
         };
 
@@ -146,15 +146,10 @@ public class NotificationFragment extends Fragment {
             });
         }
 
-        public void setAction (String action){
-            actionTxt.setText(action + " your post!");
+        public void setAction (String action, String whatIS){
+            actionTxt.setText(action + " your " + whatIS +"!");
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
 
-        getActivity().getSupportFragmentManager().popBackStack();
-    }
 }

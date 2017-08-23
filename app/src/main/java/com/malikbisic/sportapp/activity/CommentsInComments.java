@@ -33,7 +33,7 @@ import com.malikbisic.sportapp.model.UsersModel;
 import com.squareup.picasso.Picasso;
 
 public class CommentsInComments extends AppCompatActivity implements View.OnClickListener {
-    DatabaseReference setCommentRef, getCommentRef;
+    DatabaseReference setCommentRef, getCommentRef, postingDatabase, notificationReference;
     ImageButton sendComment;
     EditText writeComment;
     RecyclerView commentsInComments;
@@ -41,6 +41,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
     Intent myIntent;
 
     String key;
+    String keyPost;
     String profileImage;
     String username;
     DatabaseReference profileUsers;
@@ -54,9 +55,12 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
         auth = FirebaseAuth.getInstance();
         sendComment = (ImageButton) findViewById(R.id.sendCommentInComments);
         key = myIntent.getStringExtra("keyComment");
+        keyPost = myIntent.getStringExtra("keyPost");
         profileImage = myIntent.getStringExtra("profileComment");
         username = myIntent.getStringExtra("username");
         getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(key);
+        postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
+        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         writeComment = (EditText) findViewById(R.id.writeCommentInComments);
         commentsInComments = (RecyclerView) findViewById(R.id.rec_view_comments_in_comments);
         profileUsers = FirebaseDatabase.getInstance().getReference();
@@ -220,6 +224,26 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
             post_comment.child("profileImage").setValue(profileImage);
             post_comment.child("username").setValue(username);
             post_comment.child("uid").setValue(auth.getCurrentUser().getUid());
+
+            DatabaseReference getIduserpost = FirebaseDatabase.getInstance().getReference().child("Comments").child(keyPost);
+            getIduserpost.child(key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+
+                    DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                    notifSet.child("action").setValue("comment");
+                    notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
+                    notifSet.child("seen").setValue(false);
+                    notifSet.child("whatIS").setValue("reply");
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
             writeComment.setText("");
             hideSoftKeyboard(CommentsInComments.this);

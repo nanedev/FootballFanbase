@@ -8,14 +8,16 @@ public class Notification {
 
     String action;
     String uid;
+    String whatIS;
 
 
     public Notification() {
     }
 
-    public Notification(String action, String uid) {
+    public Notification(String action, String uid, String whatIS) {
         this.action = action;
         this.uid = uid;
+        this.whatIS = whatIS;
 
     }
 
@@ -33,5 +35,13 @@ public class Notification {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getWhatIS() {
+        return whatIS;
+    }
+
+    public void setWhatIS(String whatIS) {
+        this.whatIS = whatIS;
     }
 }
