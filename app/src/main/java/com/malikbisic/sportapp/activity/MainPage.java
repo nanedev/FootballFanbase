@@ -414,6 +414,10 @@ public class MainPage extends AppCompatActivity
                 Uri videoUri = data.getData();
                 Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
                 goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
+                goToAddPhotoOrVideo.putExtra("username", usernameInfo);
+                goToAddPhotoOrVideo.putExtra("profileImage", profielImage);
+                goToAddPhotoOrVideo.putExtra("country", country);
+                goToAddPhotoOrVideo.putExtra("clubheader", clubHeaderString);
                 Log.i("uri video", String.valueOf(videoUri));
                 startActivity(goToAddPhotoOrVideo);
 

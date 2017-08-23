@@ -207,6 +207,8 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.notification_menu, menu);
+        MenuItem post = menu.findItem(R.id.postText);
+        post.setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
