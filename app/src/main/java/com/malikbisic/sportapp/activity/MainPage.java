@@ -1997,6 +1997,7 @@ public class MainPage extends AppCompatActivity
                 Glide.with(ctx)
                         .load(photoPost)
                         .asBitmap()
+                        .override(720,640)
                         .centerCrop()
                         .into(new SimpleTarget< Bitmap >() {
                             @Override
