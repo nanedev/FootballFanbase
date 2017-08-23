@@ -367,8 +367,8 @@ FirebaseAuth auth;
                         Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
                         intent.putExtra("keyComment", post_key_comments);
                         intent.putExtra("keyPost", key);
-                        intent.putExtra("profileComment", model.getProfileImage());
-                        intent.putExtra("username", model.getUsername());
+                        intent.putExtra("profileComment", MainPage.profielImage);
+                        intent.putExtra("username", MainPage.usernameInfo);
                         startActivity(intent);
                     }
                 });

@@ -132,9 +132,11 @@
             android:name=".activity.UserProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.CommentsInComments"
+        <activity
+            android:name=".activity.CommentsInComments"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.SinglePostViewNotificationActivity"></activity>
     </application>
 
 </manifest>
