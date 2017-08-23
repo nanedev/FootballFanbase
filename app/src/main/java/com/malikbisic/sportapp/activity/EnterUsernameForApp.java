@@ -566,10 +566,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("country").setValue(countryString);
                 mReference.child("flag").setValue(imageOfCountry);
                 mReference.child("favoriteClub").setValue(clubName);
-                mReference.child("clubLogo").setValue(clubLogo);
+                mReference.child("favoriteClubLogo").setValue(clubLogo);
                 mReference.child("userID").setValue(uid);
                 mReference.child("premium").setValue(true);
-                mReference.child("todayDateTime").setValue(todayDateTime);
+                mReference.child("premiumDate").setValue(todayDateTime);
 
                 ParseObject object = new ParseObject("Usernames");
                 object.put("username", username);
