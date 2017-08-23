@@ -2,15 +2,22 @@ package com.malikbisic.sportapp.activity;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -27,6 +34,7 @@ import com.malikbisic.sportapp.model.Notification;
 import com.malikbisic.sportapp.model.UsersModel;
 import com.squareup.picasso.Picasso;
 
+import java.util.Date;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,6 +58,7 @@ public class NotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
 
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
         auth = FirebaseAuth.getInstance();
@@ -89,10 +98,53 @@ public class NotificationFragment extends Fragment {
                 notificationRef
         ) {
             @Override
-            protected void populateViewHolder(NotificationViewHolder viewHolder, Notification model, int position) {
-
+            protected void populateViewHolder(final NotificationViewHolder viewHolder, Notification model, int position) {
+                final String post_key_notification = getRef(position).getKey();
                 viewHolder.setUid(getContext(), model.getUid());
                 viewHolder.setAction(model.getAction(), model.getWhatIS());
+
+                notificationRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.child(post_key_notification).child("uid").exists()) {
+
+                            viewHolder.downArrowNotification.setVisibility(View.VISIBLE);
+
+                            viewHolder.downArrowNotification.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    final String[] items = {"Delete notification", "Cancel"};
+
+                                    android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.itemView.getContext());
+                                    dialog.setItems(items, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (items[which].equals("Delete notification")) {
+                                                notificationRef.child(post_key_notification).removeValue();
+                                            } else if (items[which].equals("Cancel")) {
+
+                                            }
+                                        }
+
+                                    });
+                                    dialog.create();
+                                    dialog.show();
+                                }
+                            });
+
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
             }
         };
 
@@ -102,7 +154,7 @@ public class NotificationFragment extends Fragment {
     }
 
 
-    public static class NotificationViewHolder extends RecyclerView.ViewHolder{
+    public static class NotificationViewHolder extends RecyclerView.ViewHolder {
 
         View itemview;
         TextView username;
@@ -110,6 +162,8 @@ public class NotificationFragment extends Fragment {
         TextView actionTxt;
         String usernameTxt;
         String actionString;
+        ImageView downArrowNotification;
+
         public NotificationViewHolder(View itemView) {
             super(itemView);
             itemview = itemView;
@@ -117,9 +171,10 @@ public class NotificationFragment extends Fragment {
             username = (TextView) itemview.findViewById(R.id.notification_username);
             profileImage = (CircleImageView) itemview.findViewById(R.id.notification_profil_image);
             actionTxt = (TextView) itemview.findViewById(R.id.notification_action);
+            downArrowNotification = (ImageView) itemView.findViewById(R.id.down_arrow_notification);
         }
 
-        public void setUid(final Context ctx, String uid){
+        public void setUid(final Context ctx, String uid) {
             DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
             usersRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -135,8 +190,6 @@ public class NotificationFragment extends Fragment {
                     Picasso.with(ctx).load(profileIMG).into(profileImage);
 
 
-
-
                 }
 
                 @Override
@@ -146,10 +199,55 @@ public class NotificationFragment extends Fragment {
             });
         }
 
-        public void setAction (String action, String whatIS){
-            actionTxt.setText(action + " your " + whatIS +"!");
+        public void setAction(String action, String whatIS) {
+            actionTxt.setText(action + " your " + whatIS + "!");
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.notification_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.notification_clear_id) {
+            notificationRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final String[] items = {"Delete all notification", "Cancel"};
+
+
+                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getActivity());
+                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                if (items[which].equals("Delete all notification")) {
+                                    notificationRef.removeValue();
+
+                                } else if (items[which].equals("Cancel")) {
+
+                                }
+                            }
+
+                        });
+                        dialog.create();
+                        dialog.show();
+                    }
+
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
