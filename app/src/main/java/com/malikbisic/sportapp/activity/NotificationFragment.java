@@ -3,6 +3,7 @@ package com.malikbisic.sportapp.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -103,6 +104,28 @@ public class NotificationFragment extends Fragment {
                 viewHolder.setUid(getContext(), model.getUid());
                 viewHolder.setAction(model.getAction(), model.getWhatIS());
 
+                viewHolder.itemview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatabaseReference getKey = notificationRef.child(post_key_notification);
+                        getKey.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String key = String.valueOf(dataSnapshot.child("postKey").getValue());
+                                Intent openSinglePost = new Intent(getContext(), SinglePostViewNotificationActivity.class);
+                                openSinglePost.putExtra("post_key", key);
+                                startActivity(openSinglePost);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                });
+
                 notificationRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -202,18 +225,23 @@ public class NotificationFragment extends Fragment {
         public void setAction(String action, String whatIS) {
             actionTxt.setText(action + " your " + whatIS + "!");
         }
+
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
         inflater.inflate(R.menu.notification_menu, menu);
         MenuItem post = menu.findItem(R.id.postText);
         post.setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+
 
         if (item.getItemId() == R.id.notification_clear_id) {
             notificationRef.addValueEventListener(new ValueEventListener() {

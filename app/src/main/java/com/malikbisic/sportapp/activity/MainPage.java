@@ -863,6 +863,7 @@ public class MainPage extends AppCompatActivity
                                                 notifSet.child("uid").setValue(uid);
                                                 notifSet.child("seen").setValue(false);
                                                 notifSet.child("whatIS").setValue("post");
+                                                notifSet.child("postKey").setValue(post_key);
 
                                             }
 
@@ -1310,6 +1311,7 @@ public class MainPage extends AppCompatActivity
                                                         notifSet.child("uid").setValue(uid);
                                                         notifSet.child("seen").setValue(false);
                                                         notifSet.child("whatIS").setValue("post");
+                                                        notifSet.child("postKey").setValue(post_key);
 
                                                     }
 
@@ -1381,6 +1383,8 @@ public class MainPage extends AppCompatActivity
                                                         notifSet.child("uid").setValue(uid);
                                                         notifSet.child("seen").setValue(false);
                                                         notifSet.child("whatIS").setValue("post");
+                                                        notifSet.child("postKey").setValue(post_key);
+
 
                                                     }
 
