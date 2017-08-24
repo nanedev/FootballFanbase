@@ -136,7 +136,8 @@
             android:name=".activity.CommentsInComments"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.SinglePostViewNotificationActivity"></activity>
+        <activity android:name=".activity.SinglePostViewNotificationActivity" />
+        <activity android:name=".activity.MyPostsActivity"></activity>
     </application>
 
 </manifest>

@@ -34,6 +34,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText mPasswordText;
     private EditText mReEnterPasswordText;
     private Button mSignupButton;
+
     TextView mLoginLink;
     private TextView errorName, errorSurname, errorEmail, errorPassword, errorRePassword;
     private String userName;
@@ -109,8 +110,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
+
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
@@ -155,6 +155,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mSignupButton.setEnabled(true);
         setResult(RESULT_OK, null);
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        intent.putExtra("email",userEmail);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -289,6 +290,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             mReferenceUsers = mDatabase.getReference().child("Users").child(user_id);
                             mReferenceUsers.child("name").setValue(userName);
                             mReferenceUsers.child("surname").setValue(userSurname);
+
 
                         }
 

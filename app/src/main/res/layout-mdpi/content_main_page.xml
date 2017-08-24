@@ -32,8 +32,8 @@
                 android:layout_height="wrap_content"
                 android:text="username"
                 android:layout_below="@+id/userProfilImage"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_alignStart="@+id/userProfilImage"
+                android:layout_alignLeft="@+id/userProfilImage"
                 android:id="@+id/user_username"
                 android:textStyle="bold"
                 />

@@ -66,6 +66,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static String userIdLogin;
     public static boolean checkGoogleSignIn = false;
     public static boolean checkLoginPressed = false;
+    String getUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         emailError = (TextView) findViewById(R.id.emailInfoErrorLogin);
         passwordError = (TextView) findViewById(R.id.passwordInfoErrorLogin);
         mForgotPassword = (TextView) findViewById(R.id.forgot_password);
+
+        Intent intent = getIntent();
+        getUserEmail = intent.getStringExtra("email");
+        mEmailText.setText(getUserEmail,TextView.BufferType.EDITABLE);
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();

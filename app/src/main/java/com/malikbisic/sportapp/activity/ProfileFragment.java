@@ -91,6 +91,7 @@ public class ProfileFragment extends Fragment {
     TextView addBackground;
     private TextView name_surname;
     CircleImageView genderImage;
+    TextView myPosts;
 
     private Calendar minAdultAge;
     private ProgressBar loadProfile_image;
@@ -159,6 +160,7 @@ public class ProfileFragment extends Fragment {
         club = (TextView) view.findViewById(R.id.user_club);
         premiumTrialDate = (TextView) view.findViewById(R.id.user_premium_date);
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
+        myPosts = (TextView) view.findViewById(R.id.my_posts_id);
 
         logoClub = (ImageView) view.findViewById(R.id.club_logo_profile);
         calendar = Calendar.getInstance();
@@ -196,7 +198,13 @@ public class ProfileFragment extends Fragment {
                 dialog.show();
             }
         });
-
+myPosts.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(getActivity(),MyPostsActivity.class);
+        startActivity(intent);
+    }
+});
 
         loadProfile_image.getIndeterminateDrawable()
                 .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN);
