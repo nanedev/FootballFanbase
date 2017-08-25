@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.ShortcutInfo;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -103,7 +105,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class MainPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher, Badger {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -1667,10 +1669,14 @@ public class MainPage extends AppCompatActivity
 
                 if (number == 0){
                     notificationCounterNumber.setText("");
+                    ShortcutBadger.removeCount(MainPage.this);
+
 
                 } else {
                     notificationCounterNumber.setText("" + number);
-                    ShortcutBadger.applyCount(MainPage.this, 4);
+                    startService(
+                            new Intent(MainPage.this, BadgeServices.class).putExtra("badgeCount", number)
+                    );
                 }
             }
 
@@ -1680,17 +1686,14 @@ public class MainPage extends AppCompatActivity
             }
         });
 
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        String currentHomePackage = resolveInfo.activityInfo.packageName;
+
+
     }
 
-    @Override
-    public void executeBadge(Context context, ComponentName componentName, int badgeCount) throws ShortcutBadgeException {
-
-    }
-
-    @Override
-    public List<String> getSupportLaunchers() {
-        return null;
-    }
 
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {

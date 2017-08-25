@@ -145,6 +145,11 @@
         <activity android:name=".activity.SeeUsersPostsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"></activity>
+
+
+        <service
+            android:name=".activity.BadgeServices"
+            android:exported="false"></service>
     </application>
 
 </manifest>
