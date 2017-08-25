@@ -100,6 +100,8 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
     String myClub;
     boolean isPremium;
     String key;
+    String action;
+    String whatIS;
     Intent myIntent;
 
     boolean pause_state;
@@ -152,6 +154,8 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
         notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         myIntent = getIntent();
         key = myIntent.getStringExtra("post_key");
+        action = myIntent.getStringExtra("action");
+        whatIS = myIntent.getStringExtra("whatIS");
         postingReference = FirebaseDatabase.getInstance().getReference().child("Posting").child(key);
         profileUsers = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -181,7 +185,7 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                    Map<String, Object> map = (HashMap<String, Object>) dataSnapshot.getValue();
+
                     Post model = dataSnapshot.getValue(Post.class);
 
                     setDescForAudio(model.getDescForAudio());
@@ -978,4 +982,10 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
 
         }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        finish();
+    }
 }

@@ -49,6 +49,7 @@ public class NotificationFragment extends Fragment {
     FirebaseAuth auth;
     FirebaseAuth.AuthStateListener authStateListener;
     RecyclerView notificationRecView;
+    static boolean isNotificationClicked = false;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -107,14 +108,34 @@ public class NotificationFragment extends Fragment {
                 viewHolder.itemview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        DatabaseReference getKey = notificationRef.child(post_key_notification);
+                        final DatabaseReference getKey = notificationRef.child(post_key_notification);
                         getKey.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                String key = String.valueOf(dataSnapshot.child("postKey").getValue());
-                                Intent openSinglePost = new Intent(getContext(), SinglePostViewNotificationActivity.class);
-                                openSinglePost.putExtra("post_key", key);
-                                startActivity(openSinglePost);
+                                String key = String.valueOf(dataSnapshot.child("post_key").getValue());
+                                String action = String.valueOf(dataSnapshot.child("action").getValue());
+                                String whatIS = String.valueOf(dataSnapshot.child("whatIS").getValue());
+                                if (whatIS.equals("post")) {
+                                    Intent openSinglePost = new Intent(getContext(), SinglePostViewNotificationActivity.class);
+                                    openSinglePost.putExtra("post_key", key);
+                                    isNotificationClicked = true;
+                                    startActivity(openSinglePost);
+                                } else if (whatIS.equals("comment")){
+                                    Intent openCom = new Intent(getContext(), CommentsActivity.class);
+                                    openCom.putExtra("keyComment2", key);
+                                    isNotificationClicked = true;
+                                    openCom.putExtra("profileComment", MainPage.profielImage);
+                                    openCom.putExtra("username", MainPage.usernameInfo);
+                                    startActivity(openCom);
+                                } else if (whatIS.equals("reply")) {
+                                    Intent intent = new Intent(getContext(),CommentsInComments.class);
+                                    intent.putExtra("keyComment3", key);
+                                    isNotificationClicked = true;
+                                    intent.putExtra("keyPost", CommentsActivity.key);
+                                    intent.putExtra("profileComment", MainPage.profielImage);
+                                    intent.putExtra("username", MainPage.usernameInfo);
+                                    startActivity(intent);
+                                }
                             }
 
                             @Override

@@ -42,7 +42,8 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 FirebaseAuth auth;
     Intent myIntent;
 
-    String key;
+    static String key;
+    String keyNotif;
     String profileImage;
     String username;
     DatabaseReference profileUsers, postingDatabase, notificationReference;
@@ -58,6 +59,7 @@ FirebaseAuth auth;
         auth = FirebaseAuth.getInstance();
         myIntent = getIntent();
         key = myIntent.getStringExtra("keyComment");
+        keyNotif = myIntent.getStringExtra("keyComment2");
         profileImage = myIntent.getStringExtra("profileComment");
         username = myIntent.getStringExtra("username");
         profileUsers = FirebaseDatabase.getInstance().getReference();
@@ -69,8 +71,14 @@ FirebaseAuth auth;
         likesReference.keepSynced(true);
         dislikeReference.keepSynced(true);
 
-        getCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(key);
-        Log.i("key", key);
+        if (!NotificationFragment.isNotificationClicked) {
+
+            getCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(key);
+        }
+        else {
+            getCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(keyNotif);
+            NotificationFragment.isNotificationClicked = false;
+        }
 
 
         sendComment = (ImageButton) findViewById(R.id.sendComment);
@@ -146,6 +154,7 @@ FirebaseAuth auth;
                                                 notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
                                                 notifSet.child("seen").setValue(false);
                                                 notifSet.child("whatIS").setValue("comment");
+                                                notifSet.child("post_key").setValue(post_key_comments);
 
                                             }
 
@@ -202,6 +211,7 @@ FirebaseAuth auth;
                                                         notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
                                                         notifSet.child("seen").setValue(false);
                                                         notifSet.child("whatIS").setValue("comment");
+                                                        notifSet.child("post_key").setValue(post_key_comments);
 
                                                     }
 
@@ -439,6 +449,7 @@ FirebaseAuth auth;
                     notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
                     notifSet.child("seen").setValue(false);
                     notifSet.child("whatIS").setValue("post");
+                    notifSet.child("post_key").setValue(key);
 
                 }
 

@@ -41,6 +41,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
     Intent myIntent;
 
     String key;
+    String keyNotif;
     String keyPost;
     String profileImage;
     String username;
@@ -55,10 +56,17 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
         auth = FirebaseAuth.getInstance();
         sendComment = (ImageButton) findViewById(R.id.sendCommentInComments);
         key = myIntent.getStringExtra("keyComment");
+        keyNotif = myIntent.getStringExtra("keyComment3");
+
         keyPost = myIntent.getStringExtra("keyPost");
         profileImage = myIntent.getStringExtra("profileComment");
         username = myIntent.getStringExtra("username");
-        getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(key);
+        if (!NotificationFragment.isNotificationClicked) {
+            getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(key);
+        } else {
+            getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(keyNotif);
+            NotificationFragment.isNotificationClicked = false;
+        }
         postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
         notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         writeComment = (EditText) findViewById(R.id.writeCommentInComments);
@@ -236,6 +244,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
                     notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
                     notifSet.child("seen").setValue(false);
                     notifSet.child("whatIS").setValue("reply");
+                    notifSet.child("post_key").setValue(key);
 
                 }
 
