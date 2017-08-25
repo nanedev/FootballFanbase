@@ -9,7 +9,6 @@ import android.graphics.drawable.PictureDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -36,7 +35,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -57,7 +55,7 @@ import java.util.TimerTask;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
-public class MyPostsActivity extends AppCompatActivity {
+public class SeeUsersPostsActivity extends AppCompatActivity {
     UsersModel model;
     FirebaseAuth mAuth;
     RecyclerView postRecyclerView;
@@ -68,16 +66,17 @@ public class MyPostsActivity extends AppCompatActivity {
     boolean like_process = false;
     boolean dislike_process = false;
     private FirebaseDatabase mDatabase;
-    String uid;
-
+    Intent getUserUid;
+    String getUserUidString;
+String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_posts);
+        setContentView(R.layout.activity_see_users_posts);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
-        postRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_my_posts);
+        postRecyclerView = (RecyclerView) findViewById(R.id.see_users_posts_recycler_view);
         postRecyclerView.setHasFixedSize(false);
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -87,28 +86,31 @@ public class MyPostsActivity extends AppCompatActivity {
         postRecyclerView.setItemViewCacheSize(20);
         postRecyclerView.setDrawingCacheEnabled(true);
         postRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
+        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         likesReference = mDatabase.getReference().child("Likes");
         dislikeReference = mDatabase.getReference().child("Dislikes");
         likesReference.keepSynced(true);
         dislikeReference.keepSynced(true);
-        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
-uid = MainPage.uid;
+        getUserUid = getIntent();
+        uid = MainPage.uid;
+        getUserUidString =  getUserUid.getStringExtra("userProfileUid");
+
+
         DatabaseReference myPostsReference = FirebaseDatabase.getInstance().getReference().child("Posting");
         final Query query = myPostsReference
                 .orderByChild("uid")
-                .equalTo(mAuth.getCurrentUser().getUid());
+                .equalTo(getUserUidString);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                FirebaseRecyclerAdapter<Post, PostViewHolder> recyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
+                FirebaseRecyclerAdapter<Post, SeeUsersPostsActivity.PostViewHolder> recyclerAdapter = new FirebaseRecyclerAdapter<Post, SeeUsersPostsActivity.PostViewHolder>(
                         Post.class,
-                        R.layout.my_posts_row,
-                        PostViewHolder.class,
+                        R.layout.see_users_posts_row,
+                        SeeUsersPostsActivity.PostViewHolder.class,
                         query
                 ) {
                     @Override
-                    protected void populateViewHolder(final PostViewHolder viewHolder, Post model, int position) {
+                    protected void populateViewHolder(final SeeUsersPostsActivity.PostViewHolder viewHolder, Post model, int position) {
 
                         final String post_key = getRef(position).getKey();
                         viewHolder.setDescForAudio(model.getDescForAudio());
@@ -233,7 +235,7 @@ uid = MainPage.uid;
                         viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent listUsername = new Intent(MyPostsActivity.this, Username_Likes_Activity.class);
+                                Intent listUsername = new Intent(SeeUsersPostsActivity.this, Username_Likes_Activity.class);
                                 listUsername.putExtra("post_key", post_key);
                                 startActivity(listUsername);
                             }
@@ -242,7 +244,7 @@ uid = MainPage.uid;
                         viewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent listUsername = new Intent(MyPostsActivity.this, Username_Dislikes_Activity.class);
+                                Intent listUsername = new Intent(SeeUsersPostsActivity.this, Username_Dislikes_Activity.class);
                                 listUsername.putExtra("post_key", post_key);
                                 startActivity(listUsername);
                             }
@@ -272,7 +274,6 @@ uid = MainPage.uid;
 
                                                 newPost.child("username").setValue(MainPage.usernameInfo);
                                                 newPost.child("photoProfile").setValue(MainPage.profielImage);
-
 
                                                 DatabaseReference getIduserpost = postingDatabase;
                                                 getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
@@ -317,7 +318,7 @@ uid = MainPage.uid;
                         viewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent openFullScreen = new Intent(MyPostsActivity.this, FullScreenImage.class);
+                                Intent openFullScreen = new Intent(SeeUsersPostsActivity.this, FullScreenImage.class);
                                 String tag = (String) viewHolder.post_photo.getTag();
                                 openFullScreen.putExtra("imageURL", tag);
                                 startActivity(openFullScreen);
@@ -346,7 +347,6 @@ uid = MainPage.uid;
                                                 newPost.child("username").setValue(MainPage.usernameInfo);
                                                 newPost.child("photoProfile").setValue(MainPage.profielImage);
 
-
                                                 DatabaseReference getIduserpost = postingDatabase;
                                                 getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
                                                     @Override
@@ -368,6 +368,7 @@ uid = MainPage.uid;
                                                     }
                                                 });
 
+
                                                 dislike_process = false;
 
 
@@ -388,7 +389,7 @@ uid = MainPage.uid;
                         viewHolder.comments.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent openCom = new Intent(MyPostsActivity.this, CommentsActivity.class);
+                                Intent openCom = new Intent(SeeUsersPostsActivity.this, CommentsActivity.class);
                                 openCom.putExtra("keyComment", post_key);
                                 openCom.putExtra("profileComment", MainPage.profielImage);
                                 startActivity(openCom);
@@ -398,7 +399,7 @@ uid = MainPage.uid;
                         viewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent openCom = new Intent(MyPostsActivity.this, CommentsActivity.class);
+                                Intent openCom = new Intent(SeeUsersPostsActivity.this, CommentsActivity.class);
                                 openCom.putExtra("keyComment", post_key);
                                 openCom.putExtra("profileComment", MainPage.profielImage);
                                 startActivity(openCom);
@@ -409,7 +410,7 @@ uid = MainPage.uid;
                         viewHolder.openComment.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent openCom = new Intent(MyPostsActivity.this, CommentsActivity.class);
+                                Intent openCom = new Intent(SeeUsersPostsActivity.this, CommentsActivity.class);
                                 openCom.putExtra("keyComment", post_key);
                                 openCom.putExtra("profileComment", MainPage.profielImage);
                                 startActivity(openCom);
@@ -435,7 +436,7 @@ uid = MainPage.uid;
                                                     public void onClick(DialogInterface dialogInterface, int i) {
 
                                                         if (items[i].equals("Edit post")) {
-                                                            Intent openSinglePost = new Intent(MyPostsActivity.this, SinglePostViewActivity.class);
+                                                            Intent openSinglePost = new Intent(SeeUsersPostsActivity.this, SinglePostViewActivity.class);
                                                             openSinglePost.putExtra("post_id", post_key);
                                                             startActivity(openSinglePost);
                                                         } else if (items[i].equals("Delete post")) {
@@ -526,44 +527,44 @@ uid = MainPage.uid;
             super(itemView);
 
             mView = itemView;
-            play_button = (Button) mView.findViewById(R.id.play_button_my_posts);
-            pause_button = (Button) mView.findViewById(R.id.pause_button_my_posts);
-            stop_button = (Button) mView.findViewById(R.id.stop_button_my_posts);
+            play_button = (Button) mView.findViewById(R.id.play_button_users_posts);
+            pause_button = (Button) mView.findViewById(R.id.pause_button_users_posts);
+            stop_button = (Button) mView.findViewById(R.id.stop_button_users_posts);
 
             mediaController = new MediaController(mView.getContext());
 
-            videoView = (JCVideoPlayerStandard) mView.findViewById(R.id.posted_video_my_posts);
-            post_photo = (ImageView) mView.findViewById(R.id.posted_image_my_posts);
-            audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player_my_posts);
+            videoView = (JCVideoPlayerStandard) mView.findViewById(R.id.posted_video_users_posts);
+            post_photo = (ImageView) mView.findViewById(R.id.posted_image_users_posts);
+            audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player_users_posts);
             mPlayer = new MediaPlayer();
             progressDialog = new ProgressDialog(mView.getContext());
-            seekBar = (SeekBar) mView.findViewById(R.id.audio_seek_bar_my_posts);
-            like_button = (ImageView) mView.findViewById(R.id.like_button_my_posts);
-            dislike_button = (ImageView) mView.findViewById(R.id.dislike_button_my_posts);
-            numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes_my_posts);
-            numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes_my_posts);
-            single_post_layout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_post_my_posts);
+            seekBar = (SeekBar) mView.findViewById(R.id.audio_seek_bar_users_posts);
+            like_button = (ImageView) mView.findViewById(R.id.like_button_users_posts);
+            dislike_button = (ImageView) mView.findViewById(R.id.dislike_button_users_posts);
+            numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes_users_posts);
+            numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes_users_posts);
+            single_post_layout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_post_users_posts);
 
-            arrow_down = (ImageView) mView.findViewById(R.id.down_arrow_my_posts);
-            layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image_my_posts);
-            layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image_my_posts);
-            layoutAudioText = (RelativeLayout) mView.findViewById(R.id.layout_audio_textview_my_posts);
-            layoutVideo = (FrameLayout) mView.findViewById(R.id.framelayout_my_posts);
+            arrow_down = (ImageView) mView.findViewById(R.id.down_arrow_users_posts);
+            layoutPhotoText = (RelativeLayout) mView.findViewById(R.id.layout_for_text_image_users_posts);
+            layoutPhoto = (RelativeLayout) mView.findViewById(R.id.layout_for_image_users_posts);
+            layoutAudioText = (RelativeLayout) mView.findViewById(R.id.layout_audio_textview_users_posts);
+            layoutVideo = (FrameLayout) mView.findViewById(R.id.framelayout_users_posts);
             //loadPhoto = (ProgressBar) mView.findViewById(R.id.post_photo_bar_load);
-            layoutVideoText = (RelativeLayout) mView.findViewById(R.id.layout_for_video_text_my_posts);
+            layoutVideoText = (RelativeLayout) mView.findViewById(R.id.layout_for_video_text_users_posts);
             database = FirebaseDatabase.getInstance();
             likeReference = database.getReference().child("Likes");
             dislikeReference = database.getReference().child("Dislikes");
             userReference = database.getReference().child("Users");
             numberCommentsReference = database.getReference().child("Comments");
             mAuth = FirebaseAuth.getInstance();
-            openComment = (TextView) mView.findViewById(R.id.comment_something_my_posts);
-            post_username = (TextView) mView.findViewById(R.id.username_wall_my_posts);
-            post_profile_image = (ImageView) mView.findViewById(R.id.profile_image_wall_my_posts);
-            post_clubLogo = (CircleImageView) mView.findViewById(R.id.clubLogoPost_my_posts);
-            postBackgroundImage = (ImageView) mView.findViewById(R.id.image_post_background_my_posts);
-            comments = (TextView) mView.findViewById(R.id.comments_textview_my_posts);
-            numberComments = (TextView) mView.findViewById(R.id.number_comments_my_posts);
+            openComment = (TextView) mView.findViewById(R.id.comment_something_users_posts);
+            post_username = (TextView) mView.findViewById(R.id.username_wall_users_posts);
+            post_profile_image = (ImageView) mView.findViewById(R.id.profile_image_wall_users_posts);
+            post_clubLogo = (CircleImageView) mView.findViewById(R.id.clubLogoPost_users_posts);
+            postBackgroundImage = (ImageView) mView.findViewById(R.id.image_post_background_users_posts);
+            comments = (TextView) mView.findViewById(R.id.comments_textview_users_posts);
+            numberComments = (TextView) mView.findViewById(R.id.number_comments_users_posts);
             likeReference.keepSynced(true);
             dislikeReference.keepSynced(true);
 
@@ -701,7 +702,7 @@ uid = MainPage.uid;
 
         public void setDesc(String desc) {
             if (desc != null) {
-                TextView single_post = (TextView) mView.findViewById(R.id.post_text_main_page_my_posts);
+                TextView single_post = (TextView) mView.findViewById(R.id.post_text_main_page_users_posts);
                 single_post_layout.setVisibility(View.VISIBLE);
                 single_post.setText(desc);
             } else {
@@ -712,7 +713,7 @@ uid = MainPage.uid;
 
         public void setDescForAudio(String descForAudio) {
 
-            TextView post_desc_for_audio = (TextView) mView.findViewById(R.id.audio_textview_my_posts);
+            TextView post_desc_for_audio = (TextView) mView.findViewById(R.id.audio_textview_users_posts);
             if (descForAudio != null) {
                 layoutAudioText.setVisibility(View.VISIBLE);
                 post_desc_for_audio.setText(descForAudio);
@@ -724,7 +725,7 @@ uid = MainPage.uid;
 
         public void setDescForPhoto(String descForPhoto) {
 
-            TextView post_desc_for_photo = (TextView) mView.findViewById(R.id.text_for_image_my_posts);
+            TextView post_desc_for_photo = (TextView) mView.findViewById(R.id.text_for_image_users_posts);
 
             if (descForPhoto != null) {
                 layoutPhotoText.setVisibility(View.VISIBLE);
@@ -735,7 +736,7 @@ uid = MainPage.uid;
         }
 
         public void setDescVideo(String descVideo) {
-            TextView post_desc_for_video = (TextView) mView.findViewById(R.id.text_for_video_my_posts);
+            TextView post_desc_for_video = (TextView) mView.findViewById(R.id.text_for_video_users_posts);
 
             if (descVideo != null) {
                 layoutVideoText.setVisibility(View.VISIBLE);

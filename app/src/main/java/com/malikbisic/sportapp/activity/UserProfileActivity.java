@@ -93,6 +93,7 @@ CircleImageView genderImageUser;
     CircleImageView logoClub;
     String clubLogoFirebase;
     Intent myIntent;
+    TextView seeUserPosts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +111,16 @@ CircleImageView genderImageUser;
         birthday = (TextView) findViewById(R.id.user_dateUser);
         country = (TextView) findViewById(R.id.user_countryUser);
         club = (TextView) findViewById(R.id.user_clubUser);
+        seeUserPosts = (TextView) findViewById(R.id.see_user_posts);
         genderImageUser = (CircleImageView) findViewById(R.id.gender_imageUser);
-
+seeUserPosts.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(UserProfileActivity.this,SeeUsersPostsActivity.class);
+        intent.putExtra("userProfileUid",uid);
+        startActivity(intent);
+    }
+});
 
         logoClub = (CircleImageView) findViewById(R.id.club_logo_profileUser);
         usernameList = new ArrayList<>();

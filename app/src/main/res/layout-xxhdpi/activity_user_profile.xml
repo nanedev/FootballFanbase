@@ -16,8 +16,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
+        android:layout_alignParentStart="true"
+        android:background="@drawable/profile_shape">
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="see this user posts"
+    android:id="@+id/see_user_posts"
+  android:layout_margin="5dp"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:background="@drawable/rect_shape"
+    android:textColor="#000"
+    android:textStyle="bold"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/get_profile_image_idUser"
@@ -76,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/secondline"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:textColor="#000"
                 android:text="Country:" />
 
@@ -85,25 +96,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/country_tv"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="5dp">
 
                 <TextView
                     android:id="@+id/user_countryUser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:layout_below="@+id/user_countryFlagUser"
                     android:textStyle="bold"
                     android:textColor="#000" />
 
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/user_countryFlagUser"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginStart="50dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"
 
                     />
             </RelativeLayout>
@@ -113,7 +122,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_below="@+id/user_country_layout"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="2dp"
                 android:background="#000" />
 
             <TextView
@@ -122,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/thirdline"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:textColor="#000"
                 android:text="Club:" />
 
@@ -132,21 +141,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/club_tv"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="5dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/club_logo_profileUser"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginStart="50dp"  />
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"  />
 
                 <TextView
                     android:id="@+id/user_clubUser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:layout_below="@+id/club_logo_profileUser"
                     android:textColor="#000"
                     android:textStyle="bold" />
 
@@ -158,7 +166,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_below="@+id/club_layout"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="2dp"
                 android:background="#000"  />
 
             <TextView
@@ -167,7 +175,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fourthline"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:textColor="#000"
                 android:text="Gender:" />
 
@@ -177,14 +185,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/gender_tv"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="5dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/gender_imageUser"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginStart="50dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"
 
                     />
 
@@ -193,7 +200,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:layout_below="@+id/gender_imageUser"
                     android:textStyle="bold"
                     android:textColor="#000" />
 
@@ -205,7 +212,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_below="@+id/gender_layout"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="2dp"
                 android:background="#000" />
 
             <TextView
@@ -214,7 +221,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fifthline"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:textColor="#000"
                 android:text="Date of birth:" />
 
@@ -223,14 +230,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/date_birth_tv"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="5dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/date_imageUser"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginStart="50dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"
                     android:src="@drawable/birthday"
 
                     />
@@ -240,7 +246,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:layout_below="@+id/date_imageUser"
                     android:textStyle="bold"
                     android:textColor="#000" />
 
@@ -252,8 +258,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_below="@+id/date_layout"
-                android:layout_marginTop="10dp"
-                android:background="#9e9e9e" />
+                android:layout_marginTop="2dp"
+                android:background="#000"  />
 
 
         </RelativeLayout>
