@@ -265,36 +265,25 @@ public class NotificationFragment extends Fragment {
 
 
         if (item.getItemId() == R.id.notification_clear_id) {
-            notificationRef.addValueEventListener(new ValueEventListener() {
+
+            final String[] items = {"Delete all notification", "Cancel"};
+            android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getActivity());
+            dialog.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    final String[] items = {"Delete all notification", "Cancel"};
+                public void onClick(DialogInterface dialog, int which) {
 
+                    if (items[which].equals("Delete all notification")) {
 
-                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getActivity());
-                        dialog.setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                                notificationRef.removeValue();
 
-                                if (items[which].equals("Delete all notification")) {
-                                    notificationRef.removeValue();
+                    } else if (items[which].equals("Cancel")) {
 
-                                } else if (items[which].equals("Cancel")) {
-
-                                }
-                            }
-
-                        });
-                        dialog.create();
-                        dialog.show();
                     }
-
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
                 }
+
             });
+            dialog.create();
+            dialog.show();
 
 
         }
