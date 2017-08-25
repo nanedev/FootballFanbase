@@ -2,9 +2,11 @@ package com.malikbisic.sportapp.activity;
 
 import android.annotation.TargetApi;
 import android.app.*;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -85,6 +87,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
@@ -94,10 +97,13 @@ import java.util.concurrent.ExecutionException;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+import me.leolin.shortcutbadger.Badger;
+import me.leolin.shortcutbadger.ShortcutBadgeException;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class MainPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher, Badger {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -181,6 +187,7 @@ public class MainPage extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
         profileUsers = FirebaseDatabase.getInstance().getReference();
         notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
@@ -1634,7 +1641,7 @@ public class MainPage extends AppCompatActivity
 
 
 
-    private void initializeCountDrawer(){
+    public void initializeCountDrawer(){
         //Gravity property aligns the text
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -1652,6 +1659,7 @@ public class MainPage extends AppCompatActivity
         Query query = getNumberNotification.orderByChild("seen").equalTo(false);
 
         query.addValueEventListener(new ValueEventListener() {
+            @TargetApi(Build.VERSION_CODES.N_MR1)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -1659,8 +1667,10 @@ public class MainPage extends AppCompatActivity
 
                 if (number == 0){
                     notificationCounterNumber.setText("");
+
                 } else {
                     notificationCounterNumber.setText("" + number);
+                    ShortcutBadger.applyCount(MainPage.this, 4);
                 }
             }
 
@@ -1672,6 +1682,15 @@ public class MainPage extends AppCompatActivity
 
     }
 
+    @Override
+    public void executeBadge(Context context, ComponentName componentName, int badgeCount) throws ShortcutBadgeException {
+
+    }
+
+    @Override
+    public List<String> getSupportLaunchers() {
+        return null;
+    }
 
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {

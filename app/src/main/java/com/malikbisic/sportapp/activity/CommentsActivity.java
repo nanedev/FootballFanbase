@@ -71,12 +71,18 @@ FirebaseAuth auth;
         likesReference.keepSynced(true);
         dislikeReference.keepSynced(true);
 
+        if (key != null) {
+            keyNotif = key;
+        }
+
         if (!NotificationFragment.isNotificationClicked) {
 
             getCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(key);
+            keyNotif = key;
         }
         else {
             getCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(keyNotif);
+            key = keyNotif;
             NotificationFragment.isNotificationClicked = false;
         }
 
@@ -154,7 +160,7 @@ FirebaseAuth auth;
                                                 notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
                                                 notifSet.child("seen").setValue(false);
                                                 notifSet.child("whatIS").setValue("comment");
-                                                notifSet.child("post_key").setValue(post_key_comments);
+                                                notifSet.child("post_key").setValue(key);
 
                                             }
 
@@ -211,7 +217,7 @@ FirebaseAuth auth;
                                                         notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
                                                         notifSet.child("seen").setValue(false);
                                                         notifSet.child("whatIS").setValue("comment");
-                                                        notifSet.child("post_key").setValue(post_key_comments);
+                                                        notifSet.child("post_key").setValue(key);
 
                                                     }
 
