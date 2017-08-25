@@ -354,18 +354,23 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
                                             newPost.child("photoProfile").setValue(MainPage.profielImage);
                                             like_process = false;
 
-                                            DatabaseReference getIduserpost = postingReference;
+                                            Log.i("keyPost", key);
+
+                                            DatabaseReference getIduserpost = FirebaseDatabase.getInstance().getReference().child("Posting");
                                             getIduserpost.child(key).addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                                    String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+                                                    Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
+
+                                                    String userpostUID = String.valueOf(value.get("uid"));
+                                                    Log.i("keyUID", userpostUID);
 
                                                     DatabaseReference notifSet = notificationReference.child(userpostUID).push();
                                                     notifSet.child("action").setValue("like");
                                                     notifSet.child("uid").setValue(uid);
                                                     notifSet.child("seen").setValue(false);
                                                     notifSet.child("whatIS").setValue("post");
-                                                    notifSet.child("postKey").setValue(key);
+                                                    notifSet.child("post_key").setValue(key);
 
                                                 }
 
@@ -426,7 +431,7 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
 
                                             dislike_process = false;
 
-                                            DatabaseReference getIduserpost = postingReference;
+                                            DatabaseReference getIduserpost = FirebaseDatabase.getInstance().getReference().child("Posting");
                                             getIduserpost.child(key).addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -437,7 +442,7 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
                                                     notifSet.child("uid").setValue(uid);
                                                     notifSet.child("seen").setValue(false);
                                                     notifSet.child("whatIS").setValue("post");
-                                                    notifSet.child("postKey").setValue(key);
+                                                    notifSet.child("post_key").setValue(key);
 
 
                                                 }
