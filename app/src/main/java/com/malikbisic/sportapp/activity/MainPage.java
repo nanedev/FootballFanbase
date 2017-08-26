@@ -221,7 +221,6 @@ public class MainPage extends AppCompatActivity
         nowDate = new Date();
 
 
-
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         String action = intent.getAction();
@@ -376,7 +375,6 @@ public class MainPage extends AppCompatActivity
         };
 
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -396,7 +394,6 @@ public class MainPage extends AppCompatActivity
         backgroundHeader = (ImageView) header.findViewById(R.id.backgroundImgForHeader);
 
         notificationCounterNumber = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_notifications));
-
 
 
     }
@@ -449,7 +446,6 @@ public class MainPage extends AppCompatActivity
             return;
         }
         super.onBackPressed();
-
 
 
     }
@@ -525,23 +521,23 @@ public class MainPage extends AppCompatActivity
             isNotificationClicked = true;
 
 
-                final DatabaseReference setSeen = FirebaseDatabase.getInstance().getReference().child("Notification").child(uid);
+            final DatabaseReference setSeen = FirebaseDatabase.getInstance().getReference().child("Notification").child(uid);
 
 
-                setSeen.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            snapshot.child("seen").getRef().setValue(true);
-                            isNotificationClicked = false;
-                        }
+            setSeen.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        snapshot.child("seen").getRef().setValue(true);
+                        isNotificationClicked = false;
                     }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                }
+            });
 
         } else if (id == R.id.premium_account) {
 
@@ -562,12 +558,52 @@ public class MainPage extends AppCompatActivity
         return true;
     }
 
+    public void launcerCounter() {
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        final String myUserId = user.getUid();
+        DatabaseReference getNumberNotification = notificationReference.child(myUserId);
+
+        Query query = getNumberNotification.orderByChild("seen").equalTo(false);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @TargetApi(Build.VERSION_CODES.N_MR1)
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int number = (int) dataSnapshot.getChildrenCount();
+
+                if (number == 0){
+
+                    ShortcutBadger.removeCount(getApplicationContext());
+
+
+                } else {
+                    startService(
+                            new Intent(MainPage.this, BadgeServices.class).putExtra("badgeCount", number)
+                   );
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        Intent intent2 = new Intent(Intent.ACTION_MAIN);
+        intent2.addCategory(Intent.CATEGORY_HOME);
+        ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent2, PackageManager.MATCH_DEFAULT_ONLY);
+        String currentHomePackage = resolveInfo.activityInfo.packageName;
+    }
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthStateListener);
 
+
         initializeCountDrawer();
+        launcerCounter();
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
@@ -602,10 +638,7 @@ public class MainPage extends AppCompatActivity
     }
 
 
-
-
     public void premiumUsers() {
-
 
 
         FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder>(
@@ -806,8 +839,6 @@ public class MainPage extends AppCompatActivity
 
                                             }
                                         });
-
-
 
 
                                         like_process = false;
@@ -1642,8 +1673,7 @@ public class MainPage extends AppCompatActivity
     }
 
 
-
-    public void initializeCountDrawer(){
+    public void initializeCountDrawer() {
         //Gravity property aligns the text
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -1653,7 +1683,6 @@ public class MainPage extends AppCompatActivity
         notificationCounterNumber.setTextColor(getResources().getColor(R.color.redError));
 
         notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
-
 
 
         DatabaseReference getNumberNotification = notificationReference.child(myUserId);
@@ -1667,16 +1696,16 @@ public class MainPage extends AppCompatActivity
 
                 int number = (int) dataSnapshot.getChildrenCount();
 
-                if (number == 0){
+                if (number == 0) {
                     notificationCounterNumber.setText("");
-                    ShortcutBadger.removeCount(MainPage.this);
+//                    ShortcutBadger.removeCount(MainPage.this);
 
 
                 } else {
                     notificationCounterNumber.setText("" + number);
-                    startService(
-                            new Intent(MainPage.this, BadgeServices.class).putExtra("badgeCount", number)
-                    );
+//                    startService(
+//                            new Intent(MainPage.this, BadgeServices.class).putExtra("badgeCount", number)
+//                    );
                 }
             }
 
@@ -1686,14 +1715,13 @@ public class MainPage extends AppCompatActivity
             }
         });
 
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        String currentHomePackage = resolveInfo.activityInfo.packageName;
+//        Intent intent = new Intent(Intent.ACTION_MAIN);
+//        intent.addCategory(Intent.CATEGORY_HOME);
+//        ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+//        String currentHomePackage = resolveInfo.activityInfo.packageName;
 
 
     }
-
 
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {
@@ -1781,8 +1809,6 @@ public class MainPage extends AppCompatActivity
             numberComments = (TextView) mView.findViewById(R.id.number_comments);
             likeReference.keepSynced(true);
             dislikeReference.keepSynced(true);
-
-
 
 
         }
@@ -2028,9 +2054,9 @@ public class MainPage extends AppCompatActivity
                 Glide.with(ctx)
                         .load(photoPost)
                         .asBitmap()
-                        .override(720,640)
+                        .override(720, 640)
                         .centerCrop()
-                        .into(new SimpleTarget< Bitmap >() {
+                        .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 post_photo.setImageBitmap(resource);
