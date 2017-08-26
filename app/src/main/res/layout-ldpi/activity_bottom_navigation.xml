@@ -27,7 +27,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/tw__composer_red"
+        android:background="@color/white"
+        app:itemBackground="@color/white"
+        app:itemTextColor="@drawable/icon_shape"
+        app:itemIconTint="@drawable/icon_shape"
         app:menu="@menu/navigation" />
 
 </LinearLayout>
