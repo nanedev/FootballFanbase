@@ -100,9 +100,9 @@ public class FragmentMyClubNews extends Fragment {
 
     public static class MyClubNewsViewHolder extends RecyclerView.ViewHolder{
 
-        View view;
+        public View view;
         TextView title, desc;
-        ImageView image;
+        public ImageView image;
         public MyClubNewsViewHolder(View itemView) {
             super(itemView);
 
@@ -118,6 +118,7 @@ public class FragmentMyClubNews extends Fragment {
             desc.setText(myClubNews.getShortdesc());
 
             Picasso.with(ctx).load(myClubNews.getImgsrc()).into(image);
+            image.setTag(myClubNews.getUrl());
         }
     }
 }
