@@ -178,6 +178,7 @@ public class MainPage extends AppCompatActivity
 
     boolean isPremium;
     static boolean isNotificationClicked = false;
+    static  String myClubName;
 
     TextView notificationCounterNumber;
     DatabaseReference notificationReference;
@@ -297,6 +298,7 @@ public class MainPage extends AppCompatActivity
 
                                 country = String.valueOf(value.get("flag"));
                                 clubHeaderString = String.valueOf(value.get("favoriteClubLogo"));
+                                myClubName = String.valueOf(value.get("favoriteClub"));
                                 Picasso.with(getApplicationContext())
                                         .load(clubHeaderString)
                                         .into(clubHeader);

@@ -69,8 +69,8 @@ sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
 
     private void setUpViewPager(ViewPager viewPager){
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new FragmentAllNews(),"TAB1");
-        adapter.addFragment(new FragmentMyClubNews(),"TAB2");
+        adapter.addFragment(new FragmentAllNews(),"All news");
+        adapter.addFragment(new FragmentMyClubNews(),"My club");
         viewPager.setAdapter(adapter);
 
     }
