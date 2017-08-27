@@ -1,5 +1,8 @@
 package com.malikbisic.sportapp.activity;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,6 +31,25 @@ private static final String TAG = "News Activity";
     private ViewPager mViewPager;
     private SectionPageAdapter sectionPageAdapter;
 
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    Intent openMainPage = new Intent(NewsActivity.this, MainPage.class);
+                    startActivity(openMainPage);
+                    break;
+                case R.id.navigation_dashboard:
+                case R.id.navigation_notifications:
+
+                    return true;
+            }
+            return false;
+        }
+
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +59,12 @@ sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
         setUpViewPager(mViewPager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        Menu menu = navigation.getMenu();
+        MenuItem menuItem = menu.getItem(1);
+        menuItem.setChecked(true);
     }
 
     private void setUpViewPager(ViewPager viewPager){
