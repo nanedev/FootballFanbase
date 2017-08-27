@@ -159,7 +159,8 @@
         <activity
             android:name=".activity.NewsActivity"
             android:label="@string/title_activity_news"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.WebViewNewsActivity"></activity>
     </application>
 
 </manifest>
