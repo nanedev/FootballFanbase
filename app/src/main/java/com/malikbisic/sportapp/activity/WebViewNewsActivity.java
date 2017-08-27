@@ -22,8 +22,9 @@ WebView webView;
 
         webView.getSettings().setLoadsImagesAutomatically(true);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewController());
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         webView.loadUrl(url);
     }
-    //neki kom
+
 }
