@@ -9,7 +9,8 @@ import android.webkit.WebView;
 import com.malikbisic.sportapp.R;
 
 public class WebViewNewsActivity extends AppCompatActivity {
-WebView webView;
+
+    WebView webView;
     String url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
