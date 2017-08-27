@@ -5,9 +5,6 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="All news"
+        android:title="@string/action_settings"
         app:showAsAction="never" />
-    <item
-        android:orderInCategory="101"
-        android:title="My Club News" />
 </menu>
