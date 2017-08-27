@@ -8,14 +8,16 @@ public class AllNewsModel {
     private String title;
     private String shortDesc;
     private String imgsrc;
+    private String url;
 
     public AllNewsModel() {
     }
 
-    public AllNewsModel(String title, String shortDesc, String imgsrc) {
+    public AllNewsModel(String title, String shortDesc, String imgsrc,String url) {
         this.title = title;
         this.shortDesc = shortDesc;
         this.imgsrc = imgsrc;
+        this.url = url;
     }
 
     public String getTitle() {
@@ -40,5 +42,13 @@ public class AllNewsModel {
 
     public void setImgsrc(String imgsrc) {
         this.imgsrc = imgsrc;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

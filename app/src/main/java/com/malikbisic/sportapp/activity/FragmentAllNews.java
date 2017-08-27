@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -39,7 +40,7 @@ ArrayList<AllNewsModel> arrayList = new ArrayList<>();
     AllNewsAdapter adapter;
     final String ALL_NEWS_URL = "https://skysportsapi.herokuapp.com/sky/getnews/football/v1.0/";
 String url;
-
+    String urlJson;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,8 +65,9 @@ url = ALL_NEWS_URL;
                         String title = object.getString("title");
                         String shortdesc = object.getString("shortdesc");
                         String image = object.getString("imgsrc");
+                       String url = object.getString("link");
 
-                        AllNewsModel model = new AllNewsModel(title,shortdesc,image);
+                        AllNewsModel model = new AllNewsModel(title,shortdesc,image,url);
 
 
                         arrayList.add(model);
@@ -91,14 +93,21 @@ Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
         TextView titleTextView;
         ImageView allNewsImage;
         TextView descriptionTextview;
+String urlFromJson;
 
-
-        public AllNewsViewHolder(View itemView) {
+        public AllNewsViewHolder(final View itemView) {
             super(itemView);
             titleTextView = (TextView) itemView.findViewById(R.id.all_news_title);
             allNewsImage = (ImageView) itemView.findViewById(R.id.all_news_image);
             descriptionTextview = (TextView) itemView.findViewById(R.id.all_news_shrt_description);
-
+itemView.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(itemView.getContext(),WebViewNewsActivity.class);
+        intent.putExtra("url",urlFromJson);
+      itemView.getContext().startActivity(intent);
+    }
+});
 
 
         }
@@ -121,5 +130,11 @@ Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
 
             }
         }
+        public void setUrl(String url){
+            if (url != null)
+            urlFromJson = url;
+        }
+
+
     }
 }

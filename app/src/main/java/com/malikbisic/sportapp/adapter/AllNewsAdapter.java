@@ -38,6 +38,7 @@ public class AllNewsAdapter extends RecyclerView.Adapter<FragmentAllNews.AllNews
         holder.setTitle(allNewsModel.getTitle());
         holder.setImgsrc(context,allNewsModel.getImgsrc());
         holder.setShortDesc(allNewsModel.getShortDesc());
+holder.setUrl(allNewsModel.getUrl());
     }
 
     @Override
