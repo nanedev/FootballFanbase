@@ -23,10 +23,11 @@ public class BottomNavigationActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     Intent openMainPage = new Intent(BottomNavigationActivity.this, MainPage.class);
                     startActivity(openMainPage);
-                    return true;
+                    break;
                 case R.id.navigation_dashboard:
-
-                    return true;
+                    Intent openNews = new Intent(BottomNavigationActivity.this, NewsActivity.class);
+                    startActivity(openNews);
+                    break;
                 case R.id.navigation_notifications:
 
                     return true;

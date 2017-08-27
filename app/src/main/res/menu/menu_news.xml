@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.malikbisic.sportapp.activity.NewsActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="All news"
+        app:showAsAction="never" />
+    <item
+        android:orderInCategory="101"
+        android:title="My Club News" />
+</menu>

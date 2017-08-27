@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
@@ -371,6 +372,12 @@ public class MainPage extends AppCompatActivity
 
                 }
 
+                BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+                navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+                Menu menu = navigation.getMenu();
+                MenuItem menuItem = menu.getItem(0);
+                menuItem.setChecked(true);
+
             }
         };
 
@@ -397,6 +404,27 @@ public class MainPage extends AppCompatActivity
 
 
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    break;
+                case R.id.navigation_dashboard:
+                    Intent openNews = new Intent(MainPage.this, NewsActivity.class);
+                    startActivity(openNews);
+                    break;
+                case R.id.navigation_notifications:
+
+                    return true;
+            }
+            return false;
+        }
+
+    };
 
 
     @Override
