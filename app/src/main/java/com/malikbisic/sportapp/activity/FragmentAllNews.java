@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,48 +36,55 @@ import java.util.ArrayList;
  */
 
 public class FragmentAllNews extends Fragment {
-RecyclerView allNewsRecyclerView;
-ArrayList<AllNewsModel> arrayList = new ArrayList<>();
+    RecyclerView allNewsRecyclerView;
+    ArrayList<AllNewsModel> arrayList = new ArrayList<>();
     AllNewsAdapter adapter;
-    final String ALL_NEWS_URL = "https://skysportsapi.herokuapp.com/sky/getnews/football/v1.0/";
-String url;
+    final String ALL_NEWS_URL = "http://content.guardianapis.com/search?section=football&order-by=newest&show-fields=headline%2Cthumbnail%2CtrailText%2CbodyText&page-size=20&api-key=c04727e7-5abc-498d-ad70-d6b4e53730f2";
+    String url;
     String urlJson;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_all_news,container,false);
+        View view = inflater.inflate(R.layout.fragment_all_news, container, false);
 
-       allNewsRecyclerView = (RecyclerView) view.findViewById(R.id.all_news_recycler_view);
-        adapter = new AllNewsAdapter(arrayList,getContext());
+        allNewsRecyclerView = (RecyclerView) view.findViewById(R.id.all_news_recycler_view);
+        adapter = new AllNewsAdapter(arrayList, getContext());
 
         allNewsRecyclerView.setHasFixedSize(false);
         allNewsRecyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         allNewsRecyclerView.setLayoutManager(manager);
 
-url = ALL_NEWS_URL;
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+        url = ALL_NEWS_URL;
+
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
-                for (int i = 0; i < response.length(); i++){
+            public void onResponse(JSONObject response) {
 
-                    try {
-                        JSONObject object = response.getJSONObject(i);
-                        String title = object.getString("title");
-                        String shortdesc = object.getString("shortdesc");
-                        String image = object.getString("imgsrc");
-                       String url = object.getString("link");
+                try {
+                    JSONObject jsonObject = response.getJSONObject("response");
+                   JSONArray results = jsonObject.getJSONArray("results");
+                    for (int i = 0; i<results.length();i++){
+                        JSONObject object = results.getJSONObject(i);
+                        JSONObject fields = object.getJSONObject("fields");
+                        String headline = fields.getString("headline");
+                        String trailText = fields.getString("trailText");
+                        String thumbnail = fields.getString("thumbnail");
+                        String bodyText = fields.getString("bodyText");
 
-                        AllNewsModel model = new AllNewsModel(title,shortdesc,image,url);
-
-
+                        AllNewsModel model = new AllNewsModel(headline,trailText,thumbnail,bodyText);
                         arrayList.add(model);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    adapter.notifyDataSetChanged();
-                }
 
+
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.v("nestonijeured",e.getLocalizedMessage());
+                }
+adapter.notifyDataSetChanged();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -84,55 +92,63 @@ url = ALL_NEWS_URL;
 
             }
         });
-Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
+        Volley.newRequestQueue(getContext()).add(request);
+
         return view;
     }
 
 
-    public static class AllNewsViewHolder extends RecyclerView.ViewHolder{
+    public static class AllNewsViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         ImageView allNewsImage;
         TextView descriptionTextview;
-String urlFromJson;
+        String bodyTextString;
+        String imageString;
 
         public AllNewsViewHolder(final View itemView) {
             super(itemView);
             titleTextView = (TextView) itemView.findViewById(R.id.all_news_title);
             allNewsImage = (ImageView) itemView.findViewById(R.id.all_news_image);
             descriptionTextview = (TextView) itemView.findViewById(R.id.all_news_shrt_description);
-itemView.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(itemView.getContext(),WebViewNewsActivity.class);
-        intent.putExtra("url",urlFromJson);
-      itemView.getContext().startActivity(intent);
-    }
-});
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(itemView.getContext(), WebViewNewsActivity.class);
+                    intent.putExtra("bodyText", bodyTextString);
+                    intent.putExtra("image",imageString);
+                    itemView.getContext().startActivity(intent);
+                }
+            });
 
 
         }
 
-       public void setTitle(String title) {
-           if (title != null){
+        public void setHeadline(String headline) {
+            if (headline != null) {
 
-               titleTextView.setText(title);
-           }
-        }
-        public void setShortDesc(String shortDesc) {
-            if (shortDesc != null){
-
-                descriptionTextview.setText(shortDesc);
+                titleTextView.setText(headline);
             }
         }
-        public void setImgsrc(Context context,String imgsrc) {
-            if (imgsrc != null){
-                Picasso.with(context).load(imgsrc).into(allNewsImage);
+
+        public void setTrailText(String trailText) {
+            if (trailText != null) {
+
+                descriptionTextview.setText(trailText);
+            }
+        }
+
+        public void setThumbnail(Context context, String thumbnail) {
+            if (thumbnail != null) {
+                imageString = thumbnail;
+                Picasso.with(context).load(thumbnail).into(allNewsImage);
+
 
             }
         }
-        public void setUrl(String url){
-            if (url != null)
-            urlFromJson = url;
+
+        public void setBodyText(String bodyText) {
+            if (bodyText != null)
+                bodyTextString = bodyText;
         }
 
 

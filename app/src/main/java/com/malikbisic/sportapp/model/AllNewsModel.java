@@ -5,50 +5,50 @@ package com.malikbisic.sportapp.model;
  */
 
 public class AllNewsModel {
-    private String title;
-    private String shortDesc;
-    private String imgsrc;
-    private String url;
+    private String headline;
+    private String trailText;
+    private String thumbnail;
+    private String bodyText;
 
     public AllNewsModel() {
     }
 
-    public AllNewsModel(String title, String shortDesc, String imgsrc,String url) {
-        this.title = title;
-        this.shortDesc = shortDesc;
-        this.imgsrc = imgsrc;
-        this.url = url;
+    public AllNewsModel(String headline, String trailText, String thumbnail,String bodyText) {
+        this.headline = headline;
+        this.trailText = trailText;
+        this.thumbnail = thumbnail;
+        this.bodyText = bodyText;
     }
 
-    public String getTitle() {
-        return title;
+    public String getHeadline() {
+        return headline;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setHeadline(String headline) {
+        this.headline = headline;
     }
 
-    public String getShortDesc() {
-        return shortDesc;
+    public String getTrailText() {
+        return trailText;
     }
 
-    public void setShortDesc(String shortDesc) {
-        this.shortDesc = shortDesc;
+    public void setTrailText(String trailText) {
+        this.trailText = trailText;
     }
 
-    public String getImgsrc() {
-        return imgsrc;
+    public String getThumbnail() {
+        return thumbnail;
     }
 
-    public void setImgsrc(String imgsrc) {
-        this.imgsrc = imgsrc;
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
-    public String getUrl() {
-        return url;
+    public String getBodyText() {
+        return bodyText;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setBodyText(String bodyText) {
+        this.bodyText = bodyText;
     }
 }

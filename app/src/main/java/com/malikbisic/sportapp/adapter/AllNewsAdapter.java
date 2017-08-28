@@ -35,10 +35,10 @@ public class AllNewsAdapter extends RecyclerView.Adapter<FragmentAllNews.AllNews
     @Override
     public void onBindViewHolder(FragmentAllNews.AllNewsViewHolder holder, int position) {
     AllNewsModel allNewsModel = allNewsList.get(position);
-        holder.setTitle(allNewsModel.getTitle());
-        holder.setImgsrc(context,allNewsModel.getImgsrc());
-        holder.setShortDesc(allNewsModel.getShortDesc());
-holder.setUrl(allNewsModel.getUrl());
+       holder.setHeadline(allNewsModel.getHeadline());
+        holder.setThumbnail(context,allNewsModel.getThumbnail());
+        holder.setTrailText(allNewsModel.getTrailText());
+holder.setBodyText(allNewsModel.getBodyText());
     }
 
     @Override

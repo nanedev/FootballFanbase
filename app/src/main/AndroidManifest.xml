@@ -160,7 +160,9 @@
             android:name=".activity.NewsActivity"
             android:label="@string/title_activity_news"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.WebViewNewsActivity"></activity>
+        <activity android:name=".activity.WebViewNewsActivity"
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
