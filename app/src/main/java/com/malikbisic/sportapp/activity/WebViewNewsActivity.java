@@ -12,6 +12,10 @@ import android.widget.TextView;
 import com.malikbisic.sportapp.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class WebViewNewsActivity extends AppCompatActivity {
 
     WebView webView;
@@ -19,20 +23,35 @@ public class WebViewNewsActivity extends AppCompatActivity {
     ImageView allNewsImage;
     String bodyTextString;
     String imageString;
+    TextView titleTextview;
+    String titleGet;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view_news);
-        webView = (WebView)findViewById(R.id.webview);
-bodyTextbview = (TextView) findViewById(R.id.body_text_all_news);
+        webView = (WebView) findViewById(R.id.webview);
+        bodyTextbview = (TextView) findViewById(R.id.body_text_all_news);
         allNewsImage = (ImageView) findViewById(R.id.image_in_allnews);
-
+titleTextview = (TextView) findViewById(R.id.title_text);
         Intent intent = getIntent();
         bodyTextString = intent.getStringExtra("bodyText");
-        imageString = intent.getStringExtra("image");
+        String[] words = bodyTextString.split("\\.");
 
+        for (int i=0; i < words.length; i++){
+bodyTextbview.setText(Arrays.toString(words));
+
+        }
+
+
+
+
+        imageString = intent.getStringExtra("image");
+        titleGet = intent.getStringExtra("title");
         Picasso.with(this).load(imageString).into(allNewsImage);
-        bodyTextbview.setText(bodyTextString);
+
+        titleTextview.setText(titleGet);
 
 
 

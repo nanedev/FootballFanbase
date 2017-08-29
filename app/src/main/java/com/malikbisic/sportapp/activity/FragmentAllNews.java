@@ -104,6 +104,7 @@ adapter.notifyDataSetChanged();
         TextView descriptionTextview;
         String bodyTextString;
         String imageString;
+        String titlePass;
 
         public AllNewsViewHolder(final View itemView) {
             super(itemView);
@@ -116,6 +117,7 @@ adapter.notifyDataSetChanged();
                     Intent intent = new Intent(itemView.getContext(), WebViewNewsActivity.class);
                     intent.putExtra("bodyText", bodyTextString);
                     intent.putExtra("image",imageString);
+                    intent.putExtra("title",titlePass);
                     itemView.getContext().startActivity(intent);
                 }
             });
@@ -125,17 +127,11 @@ adapter.notifyDataSetChanged();
 
         public void setHeadline(String headline) {
             if (headline != null) {
-
+                titlePass = headline;
                 titleTextView.setText(headline);
             }
         }
 
-        public void setTrailText(String trailText) {
-            if (trailText != null) {
-
-                descriptionTextview.setText(trailText);
-            }
-        }
 
         public void setThumbnail(Context context, String thumbnail) {
             if (thumbnail != null) {
@@ -149,6 +145,7 @@ adapter.notifyDataSetChanged();
         public void setBodyText(String bodyText) {
             if (bodyText != null)
                 bodyTextString = bodyText;
+
         }
 
 

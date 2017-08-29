@@ -37,7 +37,6 @@ public class AllNewsAdapter extends RecyclerView.Adapter<FragmentAllNews.AllNews
     AllNewsModel allNewsModel = allNewsList.get(position);
        holder.setHeadline(allNewsModel.getHeadline());
         holder.setThumbnail(context,allNewsModel.getThumbnail());
-        holder.setTrailText(allNewsModel.getTrailText());
 holder.setBodyText(allNewsModel.getBodyText());
     }
 
