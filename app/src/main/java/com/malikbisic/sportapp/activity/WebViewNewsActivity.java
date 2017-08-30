@@ -31,20 +31,25 @@ public class WebViewNewsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view_news);
-        webView = (WebView) findViewById(R.id.webview);
+
         bodyTextbview = (TextView) findViewById(R.id.body_text_all_news);
         allNewsImage = (ImageView) findViewById(R.id.image_in_allnews);
 titleTextview = (TextView) findViewById(R.id.title_text);
         Intent intent = getIntent();
         bodyTextString = intent.getStringExtra("bodyText");
-        String[] words = bodyTextString.split("\\.");
+ String[] words = bodyTextString.split("\\.");
 
-        for (int i=0; i < words.length; i++){
-bodyTextbview.setText(Arrays.toString(words));
+        for (int i = 0; i < words.length;i++){
+            StringBuilder builder = new StringBuilder();
+            for (String s: words) {
+                builder.append(s);
+                builder.append(". ");
+                builder.append("\n");
+                builder.append("\n");
+            }
 
+            bodyTextbview.setText(builder.toString());
         }
-
-
 
 
         imageString = intent.getStringExtra("image");

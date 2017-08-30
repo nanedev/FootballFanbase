@@ -11,6 +11,9 @@
         <item android:title="News"
             android:id="@+id/nav_news"
             android:icon="@drawable/navnews"/>
+        <item android:title="Football"
+            android:id="@+id/nav_football"
+            android:icon="@drawable/football"/>
         <item
             android:id="@+id/nav_message"
             android:icon="@drawable/ic_message_black_24dp"

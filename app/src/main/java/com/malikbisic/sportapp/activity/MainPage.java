@@ -523,6 +523,10 @@ public class MainPage extends AppCompatActivity
 
         } else if (id == R.id.nav_message) {
 
+        }else if (id == R.id.nav_football){
+            Intent intent = new Intent(MainPage.this,FootballActivity.class);
+            startActivity(intent);
+
         } else if (id == R.id.nav_notifications) {
             NotificationFragment notificationFragment = new NotificationFragment();
 
