@@ -88,6 +88,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -183,6 +184,10 @@ public class MainPage extends AppCompatActivity
     TextView notificationCounterNumber;
     DatabaseReference notificationReference;
     NavigationView navigationView;
+
+    List<Post> itemSize = new ArrayList<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -374,11 +379,6 @@ public class MainPage extends AppCompatActivity
 
                 }
 
-                BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-                navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-                Menu menu = navigation.getMenu();
-                MenuItem menuItem = menu.getItem(0);
-                menuItem.setChecked(true);
 
             }
         };
@@ -407,26 +407,6 @@ public class MainPage extends AppCompatActivity
 
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    break;
-                case R.id.navigation_dashboard:
-                    Intent openNews = new Intent(MainPage.this, NewsActivity.class);
-                    startActivity(openNews);
-                    break;
-                case R.id.navigation_notifications:
-
-                    return true;
-            }
-            return false;
-        }
-
-    };
 
 
     @Override
@@ -536,6 +516,11 @@ public class MainPage extends AppCompatActivity
                     R.anim.push_left_out, R.anim.push_left_out).
                     replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null)
                     .commit();
+        } else if (id == R.id.nav_news){
+
+            Intent openNEWS = new Intent(MainPage.this, NewsActivity.class);
+            startActivity(openNEWS);
+
         } else if (id == R.id.nav_message) {
 
         } else if (id == R.id.nav_notifications) {
@@ -1177,8 +1162,11 @@ public class MainPage extends AppCompatActivity
             }
         };
 
+
+
         wallList.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.notifyDataSetChanged();
+
     }
 
     public void freeUser() {

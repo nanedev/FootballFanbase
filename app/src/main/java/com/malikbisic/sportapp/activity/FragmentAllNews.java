@@ -110,7 +110,7 @@ adapter.notifyDataSetChanged();
             super(itemView);
             titleTextView = (TextView) itemView.findViewById(R.id.all_news_title);
             allNewsImage = (ImageView) itemView.findViewById(R.id.all_news_image);
-            descriptionTextview = (TextView) itemView.findViewById(R.id.all_news_shrt_description);
+            //descriptionTextview = (TextView) itemView.findViewById(R.id.all_news_shrt_description);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
