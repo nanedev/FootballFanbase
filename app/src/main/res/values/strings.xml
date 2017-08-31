@@ -63,5 +63,6 @@
     <string name="title_activity_news">NewsActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_football">FootballActivity</string>
+    <string name="title_activity_chat">ChatActivity</string>
 
 </resources>
