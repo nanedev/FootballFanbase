@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.malikbisic.sportapp.R;
 
 /**
- * Created by Nane on 31.8.2017.
+ * Created by Nane on 3.9.2017.
  */
 
 public class FragmentChat extends Fragment {
@@ -19,7 +19,6 @@ public class FragmentChat extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat,container,false);
-
         return view;
     }
 }

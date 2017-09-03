@@ -148,6 +148,7 @@ public class MainPage extends AppCompatActivity
     public static String country;
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private static Bundle mBundleRecyclerViewState;
+    boolean online = false;
     Date nowDate;
     DateFormat nowDateFormat;
     DateFormat trialDateFormat;
