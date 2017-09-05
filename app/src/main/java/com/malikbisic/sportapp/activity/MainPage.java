@@ -180,7 +180,7 @@ public class MainPage extends AppCompatActivity
 
     boolean isPremium;
     static boolean isNotificationClicked = false;
-    static  String myClubName;
+    public static  String myClubName;
 
     TextView notificationCounterNumber;
     DatabaseReference notificationReference;
@@ -316,6 +316,10 @@ public class MainPage extends AppCompatActivity
                                 } catch (java.text.ParseException e) {
                                     e.printStackTrace();
                                 }
+
+                                DatabaseReference setOfline = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(myClubName).child(uid);
+                                setOfline.child("online").setValue(true);
+
 
                                 calendar.add(Calendar.DAY_OF_MONTH, 15);
                                 trialDate = calendar.getTime();
@@ -630,7 +634,6 @@ public class MainPage extends AppCompatActivity
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
-
 
         DatabaseReference checkPremiumUser = FirebaseDatabase.getInstance().getReference().child("Users").child(myUserId);
         checkPremiumUser.addValueEventListener(new ValueEventListener() {
@@ -2149,6 +2152,13 @@ public class MainPage extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        DatabaseReference setOfline = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(myClubName).child(uid);
+        setOfline.child("online").setValue(false);
+    }
 
     @Override
     protected void onResume() {
@@ -2174,6 +2184,8 @@ public class MainPage extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
+
+
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }

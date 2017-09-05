@@ -98,6 +98,22 @@ public class FragmentChatUsers extends Fragment {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        DatabaseReference setOfline = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(MainPage.myClubName).child(MainPage.uid);
+        setOfline.child("online").setValue(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        DatabaseReference setOfline = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(MainPage.myClubName).child(MainPage.uid);
+        setOfline.child("online").setValue(false);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

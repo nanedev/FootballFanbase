@@ -40,6 +40,7 @@
                 android:layout_toEndOf="@id/profileUsers"
                 android:layout_toRightOf="@+id/profileUsers" />
             <ImageView
+                android:id="@+id/onlineStatus"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_toRightOf="@+id/usernameUsers"

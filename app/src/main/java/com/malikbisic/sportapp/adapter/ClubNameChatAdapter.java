@@ -47,6 +47,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
         holder.setUsername(userChat.getUsername());
         holder.setFlag(ctx, userChat.getFlag());
         holder.setProfileImage(ctx, userChat.getProfileImage());
+        holder.setOnlineImage();
 
     }
 

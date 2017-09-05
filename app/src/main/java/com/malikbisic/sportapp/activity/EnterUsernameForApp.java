@@ -482,7 +482,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                 usersChat.child("username").setValue(username);
                 if (downloadUrl != null)
-                    mReference.child("profileImage").setValue(downloadUrl.toString());
+                    usersChat.child("profileImage").setValue(downloadUrl.toString());
                 usersChat.child("country").setValue(countryString);
                 usersChat.child("flag").setValue(imageOfCountry);
                 usersChat.child("favoriteClub").setValue(favoriteClubString);
@@ -589,7 +589,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                 usersChat.child("username").setValue(username);
                 if (downloadUrl != null)
-                    mReference.child("profileImage").setValue(downloadUrl.toString());
+                    usersChat.child("profileImage").setValue(downloadUrl.toString());
                 usersChat.child("country").setValue(countryString);
                 usersChat.child("flag").setValue(imageOfCountry);
                 usersChat.child("favoriteClub").setValue(favoriteClubString);
