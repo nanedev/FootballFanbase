@@ -38,6 +38,10 @@ public class FragmentChatUsers extends Fragment {
     String profileImage;
     String username;
     String flag;
+    String clubNameLogo;
+    boolean isOnline;
+    int numberOnline;
+    String online;
 
 
     public void getClubName() {
@@ -50,7 +54,7 @@ public class FragmentChatUsers extends Fragment {
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()){
 
 
-                    final String clubNameString = snapshot.getKey().toString();             Log.i("parentsChild", clubNameString);
+                    final String clubNameString = snapshot.getKey().toString();
 
                     DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
                     chatReference.addValueEventListener(new ValueEventListener() {
@@ -63,13 +67,20 @@ public class FragmentChatUsers extends Fragment {
                                 username = String.valueOf(snapshot1.child("username").getValue());
                                 profileImage = String.valueOf(snapshot1.child("profileImage").getValue());
                                 flag = String.valueOf(snapshot1.child("flag").getValue());
-                                //String clubNameS = String.valueOf(snapshot1.child("favoriteClub").getValue());
+                                clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
+                                isOnline = (boolean) snapshot1.child("online").getValue();
 
-                                Log.i("ref", username);
+                                if (isOnline){
+                                    numberOnline++;
+                                }
+
+                                online = String.valueOf(numberOnline);
+
+
 
                                 userChats.add(new UserChat(username, flag, profileImage));
                             }
-                                clubName.add(new UserChatGroup(clubNameString, userChats));
+                                clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo, online));
 
 
                             adapter = new ClubNameChatAdapter(clubName, getContext());

@@ -16,15 +16,33 @@
             android:id="@+id/clubs_chat_layout"
             android:padding="10dp">
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/parent_club_logo" />
+
             <TextView
                 android:id="@+id/clubName_Users"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/parent_club_logo"
+                android:layout_toEndOf="@+id/parent_club_logo"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:textSize="20sp"
+                android:layout_centerVertical="true"
 
                 />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/parent_online_text"
+                android:layout_toRightOf="@+id/clubName_Users"
+                android:layout_toEndOf="@+id/clubName_Users"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
