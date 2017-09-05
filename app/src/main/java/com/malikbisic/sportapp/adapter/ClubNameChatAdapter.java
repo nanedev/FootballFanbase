@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.UserChat;
+import com.malikbisic.sportapp.model.UserChatGroup;
 import com.malikbisic.sportapp.viewHolder.ClubNameViewHolder;
 import com.malikbisic.sportapp.viewHolder.UsersChatViewHolder;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
@@ -53,7 +54,6 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
 
     @Override
     public void onBindGroupViewHolder(ClubNameViewHolder holder, int flatPosition, ExpandableGroup group) {
-
-        holder.setClubName(group.getTitle());
+holder.setClubTitle(group);
     }
 }

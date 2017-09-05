@@ -11,8 +11,30 @@ import java.util.List;
  */
 
 public class UserChatGroup extends ExpandableGroup {
-
-    public UserChatGroup(String title, List items) {
+String clubLogo;
+    String online;
+    public UserChatGroup(String title, List items,String clubLogo,String online) {
         super(title, items);
+
+        this.clubLogo = clubLogo;
+        this.online = online;
     }
+
+    public String getClubLogo() {
+        return clubLogo;
+    }
+
+    public void setClubLogo(String clubLogo) {
+        this.clubLogo = clubLogo;
+    }
+
+    public String getOnline() {
+        return online;
+    }
+
+    public void setOnline(String online) {
+        this.online = online;
+    }
+
+
 }
