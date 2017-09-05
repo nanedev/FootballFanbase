@@ -478,6 +478,20 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("premium").setValue(true);
                 mReference.child("premiumDate").setValue(todayDateTime);
 
+                DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(favoriteClubString).child(uid);
+
+                usersChat.child("username").setValue(username);
+                if (downloadUrl != null)
+                    mReference.child("profileImage").setValue(downloadUrl.toString());
+                usersChat.child("country").setValue(countryString);
+                usersChat.child("flag").setValue(imageOfCountry);
+                usersChat.child("favoriteClub").setValue(favoriteClubString);
+                usersChat.child("favoriteClubLogo").setValue(clubLogo);
+                usersChat.child("userID").setValue(uid);
+                usersChat.child("online").setValue(true);
+
+
+
                 ParseObject object = new ParseObject("Usernames");
                 object.put("username", username);
                 object.saveInBackground();
@@ -570,6 +584,18 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("userID").setValue(uid);
                 mReference.child("premium").setValue(true);
                 mReference.child("premiumDate").setValue(todayDateTime);
+
+                DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(favoriteClubString).child(uid);
+
+                usersChat.child("username").setValue(username);
+                if (downloadUrl != null)
+                    mReference.child("profileImage").setValue(downloadUrl.toString());
+                usersChat.child("country").setValue(countryString);
+                usersChat.child("flag").setValue(imageOfCountry);
+                usersChat.child("favoriteClub").setValue(favoriteClubString);
+                usersChat.child("favoriteClubLogo").setValue(clubLogo);
+                usersChat.child("userID").setValue(uid);
+                usersChat.child("online").setValue(true);
 
                 ParseObject object = new ParseObject("Usernames");
                 object.put("username", username);
