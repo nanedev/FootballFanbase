@@ -35,6 +35,9 @@ public class FragmentChatUsers extends Fragment {
     ClubNameChatAdapter adapter;
     List<UserChatGroup> clubName;
     DatabaseReference userReference;
+    String profileImage;
+    String username;
+    String flag;
 
 
     public void getClubName() {
@@ -45,24 +48,34 @@ public class FragmentChatUsers extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 clubName = new ArrayList<UserChatGroup>();
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    final List<UserChat> userChats = new ArrayList<UserChat>();
 
-                    final String clubNameString = snapshot.getKey().toString(); //String.valueOf(snapshot.child("favoriteClub").getValue());
-                    Log.i("parentsChild", clubNameString);
+
+                    final String clubNameString = snapshot.getKey().toString();             Log.i("parentsChild", clubNameString);
 
                     DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
                     chatReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            final List<UserChat> userChats = new ArrayList<UserChat>();
 
-                            Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
-                                final String username = value.get("username").toString();
-                                String profileImage = value.get("profileImage").toString();
-                                String flag = value.get("flag").toString();
+                            for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+
+                                username = String.valueOf(snapshot1.child("username").getValue());
+                                profileImage = String.valueOf(snapshot1.child("profileImage").getValue());
+                                flag = String.valueOf(snapshot1.child("flag").getValue());
+                                //String clubNameS = String.valueOf(snapshot1.child("favoriteClub").getValue());
+
+                                Log.i("ref", username);
 
                                 userChats.add(new UserChat(username, flag, profileImage));
+                            }
                                 clubName.add(new UserChatGroup(clubNameString, userChats));
 
+
+                            adapter = new ClubNameChatAdapter(clubName, getContext());
+                            userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                            userRecylerView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
                         }
 
                         @Override
@@ -74,10 +87,7 @@ public class FragmentChatUsers extends Fragment {
 
 
                 }
-                adapter = new ClubNameChatAdapter(clubName, getContext());
-                userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                userRecylerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+
             }
 
 
