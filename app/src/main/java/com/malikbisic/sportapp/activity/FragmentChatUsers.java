@@ -23,6 +23,7 @@ import com.malikbisic.sportapp.model.UserChatGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Nane on 31.8.2017.
@@ -46,18 +47,22 @@ public class FragmentChatUsers extends Fragment {
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()){
                     final List<UserChat> userChats = new ArrayList<UserChat>();
 
-                    final String clubNameString = String.valueOf(snapshot.child("favoriteClub").getValue());
+                    final String clubNameString = snapshot.getKey().toString(); //String.valueOf(snapshot.child("favoriteClub").getValue());
+                    Log.i("parentsChild", clubNameString);
 
-                    Query query = userReference.orderByChild(clubNameString);
-                    query.addValueEventListener(new ValueEventListener() {
+                    DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
+                    chatReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            final String username = String.valueOf(snapshot.child("username").getValue());
-                            String profileImage = String.valueOf(snapshot.child("profileImage").getValue());
-                            String flag = String.valueOf(snapshot.child("flag").getValue());
 
-                            userChats.add(new UserChat(username, flag, profileImage));
-                            clubName.add(new UserChatGroup(clubNameString, userChats));
+                            Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
+                                final String username = value.get("username").toString();
+                                String profileImage = value.get("profileImage").toString();
+                                String flag = value.get("flag").toString();
+
+                                userChats.add(new UserChat(username, flag, profileImage));
+                                clubName.add(new UserChatGroup(clubNameString, userChats));
+
                         }
 
                         @Override
@@ -72,6 +77,7 @@ public class FragmentChatUsers extends Fragment {
                 adapter = new ClubNameChatAdapter(clubName, getContext());
                 userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 userRecylerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
 
 
