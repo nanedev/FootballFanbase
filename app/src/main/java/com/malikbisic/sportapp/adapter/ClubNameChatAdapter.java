@@ -1,10 +1,16 @@
 package com.malikbisic.sportapp.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.UserChat;
 import com.malikbisic.sportapp.model.UserChatGroup;
@@ -13,6 +19,7 @@ import com.malikbisic.sportapp.viewHolder.UsersChatViewHolder;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,13 +49,36 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
     }
 
     @Override
-    public void onBindChildViewHolder(UsersChatViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
+    public void onBindChildViewHolder(final UsersChatViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
 
         UserChat userChat = (UserChat) group.getItems().get(childIndex);
         holder.setUsername(userChat.getUsername());
         holder.setFlag(ctx, userChat.getFlag());
         holder.setProfileImage(ctx, userChat.getProfileImage());
-        holder.setOnlineImage();
+
+        final DatabaseReference onlineReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(group.getTitle()).child(userChat.getUserID());
+        onlineReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String usernameDatabase = String.valueOf(dataSnapshot.child("username").getValue());
+                String username = holder.usernameUser.getText().toString().trim();
+                boolean isOnline = (boolean) dataSnapshot.child("online").getValue();
+                Log.i("ref", String.valueOf(dataSnapshot.getRef()));
+
+                if (isOnline && username.equals(usernameDatabase)) {
+                    holder.onlineImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.online_shape));
+
+                } else {
+                    holder.onlineImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.offline_shape));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

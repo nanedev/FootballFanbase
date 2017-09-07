@@ -9,11 +9,13 @@ public class UserChat {
     String username;
     String flag;
     String profileImage;
+    String userID;
 
-    public UserChat(String username, String flag, String profileImage) {
+    public UserChat(String username, String flag, String profileImage, String userID) {
         this.username = username;
         this.flag = flag;
         this.profileImage = profileImage;
+        this.userID = userID;
     }
 
     public String getUsername() {
@@ -38,5 +40,13 @@ public class UserChat {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }

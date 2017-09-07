@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -39,7 +40,13 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
+        Intent backMainpAGE = new Intent(ChatActivity.this, MainPage.class);
+        startActivity(backMainpAGE);
+    }
 
     private void setUpViewPager(ViewPager viewPager){
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());

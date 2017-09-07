@@ -460,6 +460,7 @@ public class MainPage extends AppCompatActivity
         } else if (JCVideoPlayer.backPress()) {
             return;
         }
+        finish();
         super.onBackPressed();
 
 
@@ -519,7 +520,7 @@ public class MainPage extends AppCompatActivity
 
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
                     R.anim.push_left_out, R.anim.push_left_out).
-                    replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null)
+                    replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag())
                     .commit();
         } else if (id == R.id.nav_news){
 
@@ -542,7 +543,7 @@ public class MainPage extends AppCompatActivity
 
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
                     R.anim.push_left_out, R.anim.push_left_out).
-                    replace(R.id.mainpage_fragment, notificationFragment, notificationFragment.getTag()).addToBackStack(null)
+                    replace(R.id.mainpage_fragment, notificationFragment, notificationFragment.getTag())
                     .commit();
 
             isNotificationClicked = true;

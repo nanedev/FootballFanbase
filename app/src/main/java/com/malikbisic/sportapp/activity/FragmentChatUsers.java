@@ -39,6 +39,7 @@ public class FragmentChatUsers extends Fragment {
     String username;
     String flag;
     String clubNameLogo;
+    String userUID;
     boolean isOnline;
     int numberOnline;
     String online;
@@ -69,6 +70,8 @@ public class FragmentChatUsers extends Fragment {
                                 flag = String.valueOf(snapshot1.child("flag").getValue());
                                 clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
                                 isOnline = (boolean) snapshot1.child("online").getValue();
+                                userUID = String.valueOf(snapshot1.child("userID").getValue());
+
 
                                 if (isOnline){
                                     numberOnline++;
@@ -78,7 +81,7 @@ public class FragmentChatUsers extends Fragment {
 
 
 
-                                userChats.add(new UserChat(username, flag, profileImage));
+                                userChats.add(new UserChat(username, flag, profileImage, userUID));
                             }
                                 clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo, online));
 
@@ -108,6 +111,7 @@ public class FragmentChatUsers extends Fragment {
             }
         });
     }
+
 
     @Override
     public void onStart() {
