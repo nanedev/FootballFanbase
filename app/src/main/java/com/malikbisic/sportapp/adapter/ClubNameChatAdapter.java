@@ -54,6 +54,6 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
 
     @Override
     public void onBindGroupViewHolder(ClubNameViewHolder holder, int flatPosition, ExpandableGroup group) {
-holder.setClubTitle(group);
+        holder.setClubTitle(group);
     }
 }

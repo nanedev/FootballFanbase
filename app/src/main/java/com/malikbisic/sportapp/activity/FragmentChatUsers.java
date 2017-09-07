@@ -47,7 +47,7 @@ public class FragmentChatUsers extends Fragment {
     public void getClubName() {
         userReference = FirebaseDatabase.getInstance().getReference().child("UsersChat");
         
-        userReference.addValueEventListener(new ValueEventListener() {
+        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 clubName = new ArrayList<UserChatGroup>();
@@ -57,11 +57,11 @@ public class FragmentChatUsers extends Fragment {
                     final String clubNameString = snapshot.getKey().toString();
 
                     DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
-                    chatReference.addValueEventListener(new ValueEventListener() {
+                    chatReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             final List<UserChat> userChats = new ArrayList<UserChat>();
-
+                            numberOnline = 0;
                             for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
 
                                 username = String.valueOf(snapshot1.child("username").getValue());
