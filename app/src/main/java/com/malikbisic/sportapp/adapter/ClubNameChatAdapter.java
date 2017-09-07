@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.FragmentChatUsers;
 import com.malikbisic.sportapp.model.UserChat;
 import com.malikbisic.sportapp.model.UserChatGroup;
 import com.malikbisic.sportapp.viewHolder.ClubNameViewHolder;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameViewHolder, UsersChatViewHolder> {
     Context ctx;
-
+    int numberOnline = 0;
     public ClubNameChatAdapter(List<? extends ExpandableGroup> groups, Context ctx) {
         super(groups);
         this.ctx = ctx;
@@ -66,6 +67,10 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
                 boolean isOnline = (boolean) dataSnapshot.child("online").getValue();
                 Log.i("ref", String.valueOf(dataSnapshot.getRef()));
 
+                if (isOnline){
+                    numberOnline++;
+                }
+
                 if (isOnline && username.equals(usernameDatabase)) {
                     holder.onlineImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.online_shape));
 
@@ -85,5 +90,6 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
     @Override
     public void onBindGroupViewHolder(ClubNameViewHolder holder, int flatPosition, ExpandableGroup group) {
         holder.setClubTitle(group);
+        holder.setNumberOnline(group.getTitle());
     }
 }

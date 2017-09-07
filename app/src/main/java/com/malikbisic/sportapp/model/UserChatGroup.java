@@ -13,7 +13,7 @@ import java.util.List;
 public class UserChatGroup extends ExpandableGroup {
 String clubLogo;
     String online;
-    public UserChatGroup(String title, List items,String clubLogo,String online) {
+    public UserChatGroup(String title, List items,String clubLogo) {
         super(title, items);
 
         this.clubLogo = clubLogo;

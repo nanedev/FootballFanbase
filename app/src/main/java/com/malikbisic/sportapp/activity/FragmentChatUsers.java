@@ -41,23 +41,23 @@ public class FragmentChatUsers extends Fragment {
     String clubNameLogo;
     String userUID;
     boolean isOnline;
-    int numberOnline;
-    String online;
+    static int numberOnline;
+   public static String online;
 
 
     public void getClubName() {
         userReference = FirebaseDatabase.getInstance().getReference().child("UsersChat");
-        
+
         userReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 clubName = new ArrayList<UserChatGroup>();
-                for (final DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
 
                     final String clubNameString = snapshot.getKey().toString();
 
-                    DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
+                    final DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
                     chatReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -72,18 +72,30 @@ public class FragmentChatUsers extends Fragment {
                                 isOnline = (boolean) snapshot1.child("online").getValue();
                                 userUID = String.valueOf(snapshot1.child("userID").getValue());
 
+                                DatabaseReference onlineCheck = chatReference;
 
-                                if (isOnline){
-                                    numberOnline++;
-                                }
+                                onlineCheck.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (isOnline) {
+                                            numberOnline++;
+                                        }
 
-                                online = String.valueOf(numberOnline);
+                                        online = String.valueOf(FragmentChatUsers.numberOnline);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
 
 
 
                                 userChats.add(new UserChat(username, flag, profileImage, userUID));
                             }
-                                clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo, online));
+                            clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo));
 
 
                             adapter = new ClubNameChatAdapter(clubName, getContext());
@@ -97,7 +109,6 @@ public class FragmentChatUsers extends Fragment {
 
                         }
                     });
-
 
 
                 }
@@ -132,7 +143,7 @@ public class FragmentChatUsers extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat_users,container,false);
+        View view = inflater.inflate(R.layout.fragment_chat_users, container, false);
 
         userRecylerView = (RecyclerView) view.findViewById(R.id.chatUserRecView);
         getClubName();
