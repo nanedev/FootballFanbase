@@ -25,6 +25,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -37,6 +38,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.malikbisic.sportapp.R;
 
 
@@ -178,6 +180,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             gFirstName = acct.getGivenName();
                             gLastName = acct.getFamilyName();
                             gUserId = user.getUid();
+
+                            String current_userID = mAuth.getCurrentUser().getUid();
+                            String device_id = FirebaseInstanceId.getInstance().getToken();
+
+                            mReferenceUsers.child(current_userID).child("device_id").setValue(device_id);
+
                         }
 
                         if (!task.isSuccessful()) {
@@ -211,6 +219,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null)
                             userIdLogin = user.getUid();
+
+                        String current_userID = mAuth.getCurrentUser().getUid();
+                        String device_id = FirebaseInstanceId.getInstance().getToken();
+
+                        mReferenceUsers.child(current_userID).child("device_id").setValue(device_id);
                         checkUserExists();
 
                     } else {
@@ -308,10 +321,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user.isEmailVerified() && dataSnapshot.child(user_id).hasChild("username")) {
-                            Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
-                            startActivity(setupIntent);
-                            mDialog.dismiss();
-                            finish();
+                            String current_userID = mAuth.getCurrentUser().getUid();
+                            String device_id = FirebaseInstanceId.getInstance().getToken();
+
+                            mReferenceUsers.child(current_userID).child("device_id").setValue(device_id).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                                    startActivity(setupIntent);
+                                    mDialog.dismiss();
+                                    finish();
+                                }
+                            });
+
                         }
                     }
 
