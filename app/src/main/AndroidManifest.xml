@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <supports-screens
         android:anyDensity="true"
@@ -30,6 +31,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <service
+            android:name=".activity.BadgeServices">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
@@ -149,9 +158,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
 
-        <service
-            android:name=".activity.BadgeServices"
-            android:stopWithTask="false" />
+
 
         <activity
             android:name=".activity.BottomNavigationActivity"
