@@ -111,11 +111,21 @@
         <activity
             android:name=".activity.Username_Likes_Activity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark">
+
+            <intent-filter>
+            <action android:name="com.malikbisic.sportapp.activity_TARGET_NOTIFICATION"></action>
+            <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.Username_Dislikes_Activity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark">
+            <intent-filter>
+                <action android:name="com.malikbisic.sportapp.activity_TARGET_NOTIFICATIONdisliked"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter></activity>
         <activity
             android:name=".activity.FullScreenImage"
             android:screenOrientation="portrait"
@@ -124,7 +134,14 @@
         <activity
             android:name=".activity.CommentsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark" >
+
+            <intent-filter>
+                <action android:name="com.malikbisic.sportapp.activity_TARGET_NOTIFICATIONcomment"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".activity.SearchableCountry"
             android:screenOrientation="portrait"
@@ -148,7 +165,14 @@
         <activity
             android:name=".activity.SinglePostViewNotificationActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark">
+
+            <intent-filter>
+                <action android:name="com.malikbisic.sportapp.activity_TARGET_NOTIFICATIONsingle"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".activity.MyPostsActivity"
             android:screenOrientation="portrait"

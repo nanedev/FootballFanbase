@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,20 +54,40 @@ public class BadgeServices extends FirebaseMessagingService {
         DatabaseReference getNumberNotification = notificationReference.child(myUserId);
 
 
-                String notification_title = remoteMessage.getNotification().getTitle();
-                String notifification_body = remoteMessage.getNotification().getBody();
-                NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(BadgeServices.this)
-                                .setSmallIcon(R.mipmap.ic_launcher)
-                                .setContentTitle(notification_title)
-                                .setContentText(notifification_body);
+        String notification_title = remoteMessage.getNotification().getTitle();
+        String notifification_body = remoteMessage.getNotification().getBody();
+        String clickAction = remoteMessage.getNotification().getClickAction();
+        String from_user_id = remoteMessage.getData().get("from_user_id");
+        String postKey = remoteMessage.getData().get("from_user_id");
 
-                int mNotificationId = (int) System.currentTimeMillis();
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(BadgeServices.this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(notification_title)
+                        .setContentText(notifification_body);
 
-                NotificationManager mNotifyMgr =
-                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Intent resultIntent = new Intent(clickAction);
+        resultIntent.putExtra("post_key", postKey);
 
-                mNotifyMgr.notify(mNotificationId, mBuilder.build());
+// Because clicking the notification opens a new ("special") activity, there's
+// no need to create an artificial back stack.
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        int mNotificationId = (int) System.currentTimeMillis();
+
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
 
 
     }
