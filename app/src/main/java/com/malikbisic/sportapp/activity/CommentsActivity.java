@@ -46,6 +46,7 @@ FirebaseAuth auth;
     String keyNotif;
     String profileImage;
     String username;
+    String keyNotifPush;
     DatabaseReference profileUsers, postingDatabase, notificationReference;
     FirebaseAuth.AuthStateListener mAuthStateListener;
 
@@ -61,6 +62,7 @@ FirebaseAuth auth;
         key = myIntent.getStringExtra("keyComment");
         keyNotif = myIntent.getStringExtra("keyComment2");
         profileImage = myIntent.getStringExtra("profileComment");
+        keyNotifPush = myIntent.getStringExtra("post_key");
         username = myIntent.getStringExtra("username");
         profileUsers = FirebaseDatabase.getInstance().getReference();
         postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
@@ -71,7 +73,9 @@ FirebaseAuth auth;
         likesReference.keepSynced(true);
         dislikeReference.keepSynced(true);
 
-        if (key != null) {
+        if (key == null && keyNotifPush != null) {
+            key = keyNotifPush;
+        } else {
             keyNotif = key;
         }
 

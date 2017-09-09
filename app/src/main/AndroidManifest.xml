@@ -129,6 +129,11 @@
             android:name=".activity.CommentsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" >
+
+            <intent-filter>
+                <action android:name="com.malikbisic.sportapp.activity_TARGET_NOTIFICATION_comment"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
         </activity>
 
         <activity
@@ -150,7 +155,13 @@
         <activity
             android:name=".activity.CommentsInComments"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark" >
+
+            <intent-filter>
+                <action android:name="com.malikbisic.sportapp.activity_TARGET_NOTIFICATION_reply"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.SinglePostViewNotificationActivity"
             android:screenOrientation="portrait"

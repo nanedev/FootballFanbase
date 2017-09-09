@@ -43,6 +43,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
     String key;
     String keyNotif;
     String keyPost;
+    String keyNotifPush;
     String profileImage;
     String username;
     DatabaseReference profileUsers;
@@ -57,13 +58,18 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
         sendComment = (ImageButton) findViewById(R.id.sendCommentInComments);
         key = myIntent.getStringExtra("keyComment");
         keyNotif = myIntent.getStringExtra("keyComment3");
-
+        keyNotifPush = myIntent.getStringExtra("post_key");
         keyPost = myIntent.getStringExtra("keyPost");
         profileImage = myIntent.getStringExtra("profileComment");
         username = myIntent.getStringExtra("username");
+
+        if (key == null && keyNotifPush != null ){
+            key = keyNotifPush;
+        }
+
         if (!NotificationFragment.isNotificationClicked) {
             getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(key);
-        } else {
+        } else  {
             getCommentRef = FirebaseDatabase.getInstance().getReference().child("CommentsInComments").child(keyNotif);
             NotificationFragment.isNotificationClicked = false;
         }
