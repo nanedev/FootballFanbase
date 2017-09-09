@@ -58,7 +58,7 @@ public class BadgeServices extends FirebaseMessagingService {
         String notifification_body = remoteMessage.getNotification().getBody();
         String clickAction = remoteMessage.getNotification().getClickAction();
         String from_user_id = remoteMessage.getData().get("from_user_id");
-        String postKey = remoteMessage.getData().get("from_user_id");
+        String postKey = remoteMessage.getData().get("post_key");
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(BadgeServices.this)

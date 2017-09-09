@@ -46,6 +46,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
         String post_keyComments = myIntent.getStringExtra("post_keyComment");
         boolean isComment = myIntent.getBooleanExtra("isLikeComment", false);
 
+        Log.i("post", post_key);
         if (isComment){
             likesReferences = FirebaseDatabase.getInstance().getReference().child("LikesComments").child(post_keyComments);
         } else {

@@ -156,6 +156,7 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
         key = myIntent.getStringExtra("post_key");
         action = myIntent.getStringExtra("action");
         whatIS = myIntent.getStringExtra("whatIS");
+        Log.i("post", key);
         postingReference = FirebaseDatabase.getInstance().getReference().child("Posting").child(key);
         profileUsers = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
