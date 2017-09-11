@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.FragmentChatUsers;
+import com.malikbisic.sportapp.activity.MainPage;
 import com.malikbisic.sportapp.model.UserChat;
 import com.malikbisic.sportapp.model.UserChatGroup;
 import com.malikbisic.sportapp.viewHolder.ClubNameViewHolder;
@@ -52,12 +54,25 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
     @Override
     public void onBindChildViewHolder(final UsersChatViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
 
-        UserChat userChat = (UserChat) group.getItems().get(childIndex);
+        final UserChat userChat = (UserChat) group.getItems().get(childIndex);
         holder.setUsername(userChat.getUsername());
         holder.setFlag(ctx, userChat.getFlag());
         holder.setProfileImage(ctx, userChat.getProfileImage());
         holder.setDate(userChat.getDate());
 
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(ctx,MainPage.class);
+                intent.putExtra("userId",userChat.getUserID());
+                intent.putExtra("username",userChat.getUsername());
+                intent.putExtra("flag",userChat.getFlag());
+                intent.putExtra("date",userChat.getDate());
+                ctx.startActivity(intent);
+            }
+        });
 
 
         final DatabaseReference onlineReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(group.getTitle()).child(userChat.getUserID());

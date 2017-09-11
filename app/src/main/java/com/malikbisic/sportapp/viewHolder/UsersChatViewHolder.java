@@ -68,18 +68,7 @@ public class UsersChatViewHolder extends ChildViewHolder {
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference().child("UsersChat");
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chat = new UserChat();
-                Intent intent = new Intent(itemView.getContext(),MainPage.class);
-                intent.putExtra("userId",chat.getUserID());
-                intent.putExtra("username",chat.getUsername());
-                intent.putExtra("flag",chat.getFlag());
-                intent.putExtra("date",currentUserDate);
-                itemView.getContext().startActivity(intent);
-            }
-        });
+
     }
 
     public void setOnlineImage() {

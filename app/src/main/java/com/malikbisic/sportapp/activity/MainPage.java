@@ -409,6 +409,13 @@ public class MainPage extends AppCompatActivity
 
         notificationCounterNumber = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_notifications));
 
+        String useram = intent.getStringExtra("username");
+
+        if (useram != null) {
+            Log.i("chatUsername", intent.getStringExtra("username"));
+            Log.i("chatflag", intent.getStringExtra("flag"));
+            Log.i("chatdate", intent.getStringExtra("date"));
+        }
 
     }
 
