@@ -109,7 +109,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private static final int RESULT_COUNTRY = 5;
     private static final int RESULT_CLUB = 6;
     String uid;
-    Intent  getClubNameAndLogo;
+    Intent getClubNameAndLogo;
     CircleImageView countryImage;
     private StorageReference mFilePath;
     private FirebaseStorage mStorage;
@@ -165,8 +165,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         getApplicationContext().getApplicationContext().getResources().updateConfiguration(config, null);
 
 
-
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         dateFormat.setLenient(false);
         Date today = new Date();
         todayDateTime = dateFormat.format(today);
@@ -230,7 +229,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 }
             }
         });
-
 
 
         genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -469,17 +467,17 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("date").setValue(userDate);
                 mReference.child("gender").setValue(gender);
                 if (downloadUrl != null)
-                mReference.child("profileImage").setValue(downloadUrl.toString());
+                    mReference.child("profileImage").setValue(downloadUrl.toString());
                 mReference.child("country").setValue(countryString);
                 mReference.child("flag").setValue(imageOfCountry);
                 mReference.child("favoriteClub").setValue(favoriteClubString);
                 mReference.child("favoriteClubLogo").setValue(clubLogo);
                 mReference.child("userID").setValue(uid);
-                mReference.child("premium").setValue("true");
+                mReference.child("premium").setValue(true);
                 mReference.child("premiumDate").setValue(todayDateTime);
 
                 DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(favoriteClubString).child(uid);
-                 final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+                final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
                 usersChat.child("username").setValue(username);
                 if (downloadUrl != null)
                     usersChat.child("profileImage").setValue(downloadUrl.toString());
@@ -490,7 +488,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 usersChat.child("userID").setValue(uid);
                 usersChat.child("online").setValue("true");
                 usersChat.child("date").setValue(currentDate);
-
 
 
                 ParseObject object = new ParseObject("Usernames");
@@ -577,17 +574,17 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("date").setValue(userDate);
                 mReference.child("gender").setValue(gender);
                 if (downloadUrl != null)
-                mReference.child("profileImage").setValue(downloadUrl.toString());
+                    mReference.child("profileImage").setValue(downloadUrl.toString());
                 mReference.child("country").setValue(countryString);
                 mReference.child("flag").setValue(imageOfCountry);
                 mReference.child("favoriteClub").setValue(clubName);
                 mReference.child("favoriteClubLogo").setValue(clubLogo);
                 mReference.child("userID").setValue(uid);
-                mReference.child("premium").setValue("true");
+                mReference.child("premium").setValue(true);
                 mReference.child("premiumDate").setValue(todayDateTime);
 
                 DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(favoriteClubString).child(uid);
-final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+                final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
                 usersChat.child("username").setValue(username);
                 if (downloadUrl != null)
                     usersChat.child("profileImage").setValue(downloadUrl.toString());

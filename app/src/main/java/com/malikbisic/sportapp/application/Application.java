@@ -29,6 +29,8 @@ import com.squareup.picasso.Picasso;
 public class Application extends android.app.Application{
 
 
+    DatabaseReference mUsersReference;
+    FirebaseAuth mAuth;
 
     @Override
     public void onCreate() {
@@ -52,7 +54,6 @@ public class Application extends android.app.Application{
         built.setIndicatorsEnabled(true);
         built.setLoggingEnabled(true);
         Picasso.setSingletonInstance(built);
-
 
     }
 

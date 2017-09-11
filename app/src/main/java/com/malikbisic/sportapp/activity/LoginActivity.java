@@ -181,10 +181,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             gLastName = acct.getFamilyName();
                             gUserId = user.getUid();
 
-                            String current_userID = mAuth.getCurrentUser().getUid();
-                            String device_id = FirebaseInstanceId.getInstance().getToken();
 
-                            mReferenceUsers.child(current_userID).child("device_id").setValue(device_id);
+
+
 
                         }
 
@@ -219,11 +218,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null)
                             userIdLogin = user.getUid();
-
-                        String current_userID = mAuth.getCurrentUser().getUid();
-                        String device_id = FirebaseInstanceId.getInstance().getToken();
-
-                        mReferenceUsers.child(current_userID).child("device_id").setValue(device_id);
                         checkUserExists();
 
                     } else {
@@ -275,6 +269,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user.isEmailVerified() && dataSnapshot.child(user_id).hasChild("username")) {
+
+                            String current_userID = mAuth.getCurrentUser().getUid();
+                            String device_id = FirebaseInstanceId.getInstance().getToken();
+                            mReferenceUsers.child(current_userID).child("device_id").setValue(device_id);
                             Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                             startActivity(setupIntent);
                             mDialog.dismiss();
