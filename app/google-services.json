@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "428970709836-2l06ddn2eg7cui91cqn0o7o3qsf1eafv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.malikbisic.sportapp",
+            "certificate_hash": "2b456894c98c56d29c154a718b5a0a026b3be8c5"
+          }
+        },
+        {
           "client_id": "428970709836-iutae58391msgmo4v2c7g1krdli5va88.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

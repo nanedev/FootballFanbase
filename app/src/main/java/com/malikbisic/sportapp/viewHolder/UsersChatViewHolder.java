@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.viewHolder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,9 +50,13 @@ public class UsersChatViewHolder extends ChildViewHolder {
     CircleImageView flagUser;
     CircleImageView profileImageUser;
     public ImageView onlineImage;
+    FirebaseDatabase mDatabase;
+    DatabaseReference mRef;
     FirebaseAuth mAuth;
+    String currentUserDate;
+    UserChat chat;
 
-    public UsersChatViewHolder(View itemView) {
+    public UsersChatViewHolder(final View itemView) {
         super(itemView);
 
         view = itemView;
@@ -60,6 +65,21 @@ public class UsersChatViewHolder extends ChildViewHolder {
         profileImageUser = (CircleImageView) view.findViewById(R.id.profileUsers);
         onlineImage = (ImageView) view.findViewById(R.id.onlineStatus);
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
+        mRef = mDatabase.getReference().child("UsersChat");
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chat = new UserChat();
+                Intent intent = new Intent(itemView.getContext(),MainPage.class);
+                intent.putExtra("userId",chat.getUserID());
+                intent.putExtra("username",chat.getUsername());
+                intent.putExtra("flag",chat.getFlag());
+                intent.putExtra("date",currentUserDate);
+                itemView.getContext().startActivity(intent);
+            }
+        });
     }
 
     public void setOnlineImage() {
@@ -68,7 +88,11 @@ public class UsersChatViewHolder extends ChildViewHolder {
 
     }
 
+     public void setDate (String date){
+         if (date != null)
+         currentUserDate = date;
 
+     }
 
 
         public void setUsername(String username) {

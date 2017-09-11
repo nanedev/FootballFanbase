@@ -479,7 +479,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("premiumDate").setValue(todayDateTime);
 
                 DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(favoriteClubString).child(uid);
-
+                 final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
                 usersChat.child("username").setValue(username);
                 if (downloadUrl != null)
                     usersChat.child("profileImage").setValue(downloadUrl.toString());
@@ -489,6 +489,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 usersChat.child("favoriteClubLogo").setValue(clubLogo);
                 usersChat.child("userID").setValue(uid);
                 usersChat.child("online").setValue(true);
+                usersChat.child("date").setValue(currentDate);
 
 
 
@@ -586,7 +587,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("premiumDate").setValue(todayDateTime);
 
                 DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(favoriteClubString).child(uid);
-
+final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
                 usersChat.child("username").setValue(username);
                 if (downloadUrl != null)
                     usersChat.child("profileImage").setValue(downloadUrl.toString());
@@ -596,7 +597,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 usersChat.child("favoriteClubLogo").setValue(clubLogo);
                 usersChat.child("userID").setValue(uid);
                 usersChat.child("online").setValue(true);
-
+                usersChat.child("date").setValue(currentDate);
                 ParseObject object = new ParseObject("Usernames");
                 object.put("username", username);
                 object.saveInBackground();

@@ -56,6 +56,9 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
         holder.setUsername(userChat.getUsername());
         holder.setFlag(ctx, userChat.getFlag());
         holder.setProfileImage(ctx, userChat.getProfileImage());
+        holder.setDate(userChat.getDate());
+
+
 
         final DatabaseReference onlineReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(group.getTitle()).child(userChat.getUserID());
         onlineReference.addValueEventListener(new ValueEventListener() {

@@ -10,12 +10,26 @@ public class UserChat {
     String flag;
     String profileImage;
     String userID;
+    String date;
 
-    public UserChat(String username, String flag, String profileImage, String userID) {
+    public UserChat(String username, String flag, String profileImage, String userID,String date) {
         this.username = username;
         this.flag = flag;
         this.profileImage = profileImage;
         this.userID = userID;
+        this.date = date;
+    }
+
+    public UserChat() {
+    }
+
+    public String getDate() {
+
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getUsername() {

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,6 +21,9 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.ClubNameChatAdapter;
 import com.malikbisic.sportapp.model.UserChat;
 import com.malikbisic.sportapp.model.UserChatGroup;
+import com.thoughtbot.expandablerecyclerview.listeners.GroupExpandCollapseListener;
+import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
+import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,7 @@ public class FragmentChatUsers extends Fragment {
     String flag;
     String clubNameLogo;
     String userUID;
+    String date;
     boolean isOnline;
     static int numberOnline;
    public static String online;
@@ -71,7 +76,7 @@ public class FragmentChatUsers extends Fragment {
                                 clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
                                 isOnline = (boolean) snapshot1.child("online").getValue();
                                 userUID = String.valueOf(snapshot1.child("userID").getValue());
-
+                                date = String.valueOf(snapshot1.child("date").getValue());
                                 DatabaseReference onlineCheck = chatReference;
 
                                 onlineCheck.addValueEventListener(new ValueEventListener() {
@@ -93,7 +98,7 @@ public class FragmentChatUsers extends Fragment {
 
 
 
-                                userChats.add(new UserChat(username, flag, profileImage, userUID));
+                                userChats.add(new UserChat(username, flag, profileImage, userUID,date));
                             }
                             clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo));
 
@@ -101,7 +106,9 @@ public class FragmentChatUsers extends Fragment {
                             adapter = new ClubNameChatAdapter(clubName, getContext());
                             userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
                             userRecylerView.setAdapter(adapter);
+
                             adapter.notifyDataSetChanged();
+
                         }
 
                         @Override
@@ -121,6 +128,8 @@ public class FragmentChatUsers extends Fragment {
 
             }
         });
+
+
     }
 
 
