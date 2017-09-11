@@ -75,6 +75,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.model.*;
 import com.malikbisic.sportapp.R;
@@ -109,7 +110,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher {
 
-    private FirebaseAuth mAuth;
+
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     static String uid;
     private TextView username;
@@ -119,6 +120,8 @@ public class MainPage extends AppCompatActivity
     private ImageView profile;
     CircleImageView countryHeader;
     CircleImageView clubHeader;
+    DatabaseReference mUsersReference;
+    FirebaseAuth mAuth;
 
     Bitmap logoBitmap;
     public static String clubHeaderString;
@@ -177,7 +180,7 @@ public class MainPage extends AppCompatActivity
 
     DatabaseReference profileUsers;
     UsersModel model;
-
+    DatabaseReference mUsers;
     boolean isPremium;
     static boolean isNotificationClicked = false;
     public static  String myClubName;
@@ -227,6 +230,46 @@ public class MainPage extends AppCompatActivity
         nowDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         nowDate = new Date();
+
+        mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        mAuth = FirebaseAuth.getInstance();
+        mUsersReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot != null){
+
+                    String clubName = String.valueOf(dataSnapshot.child("favoriteClub").getValue());
+
+                    mUsers = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubName).child(mAuth.getCurrentUser().getUid());
+                    mUsers.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            mUsers.child("online").onDisconnect().setValue(ServerValue.TIMESTAMP);
+                            mUsers.child("online").setValue(true);
+
+
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
         Intent intent = getIntent();
@@ -582,6 +625,7 @@ public class MainPage extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
+            mUsers.child("online").setValue(ServerValue.TIMESTAMP);
             Intent goToLogin = new Intent(MainPage.this, LoginActivity.class);
             goToLogin.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(goToLogin);

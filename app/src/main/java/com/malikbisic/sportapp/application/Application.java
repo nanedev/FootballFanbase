@@ -29,8 +29,6 @@ import com.squareup.picasso.Picasso;
 public class Application extends android.app.Application{
 
 
-    DatabaseReference mUsersReference;
-    FirebaseAuth mAuth;
 
     @Override
     public void onCreate() {
@@ -54,46 +52,6 @@ public class Application extends android.app.Application{
         built.setIndicatorsEnabled(true);
         built.setLoggingEnabled(true);
         Picasso.setSingletonInstance(built);
-
-        mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
-
-        mAuth = FirebaseAuth.getInstance();
-        mUsersReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot != null){
-
-                    String clubName = String.valueOf(dataSnapshot.child("favoriteClub").getValue());
-
-                    final DatabaseReference mUsers = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubName).child(mAuth.getCurrentUser().getUid());
-                    mUsers.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            mUsers.child("online").onDisconnect().setValue(ServerValue.TIMESTAMP);
-                            mUsers.child("online").setValue(true);
-
-
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
 
     }

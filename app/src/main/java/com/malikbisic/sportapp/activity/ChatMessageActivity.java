@@ -55,9 +55,27 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.child("Users").child(mChatUser).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+             String favoriteClubChat = dataSnapshot.child("favoriteClub").getValue().toString();
 
-                String online = dataSnapshot.child("online").toString();
-                String image = dataSnapshot.child("profileImage").toString();
+                mRootRef.child("UsersChat").child(favoriteClubChat).child(mChatUser).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String online = dataSnapshot.child("online").getValue().toString();
+                        String image = dataSnapshot.child("profileImage").getValue().toString();
+
+                        if (online.equals("true")){
+                            mLastSeenView.setText("Online");
+                        }else {
+                            mLastSeenView.setText(online);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+          /*     */
             }
 
             @Override

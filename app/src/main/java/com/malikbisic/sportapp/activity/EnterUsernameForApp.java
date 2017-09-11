@@ -475,7 +475,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("favoriteClub").setValue(favoriteClubString);
                 mReference.child("favoriteClubLogo").setValue(clubLogo);
                 mReference.child("userID").setValue(uid);
-                mReference.child("premium").setValue(true);
+                mReference.child("premium").setValue("true");
                 mReference.child("premiumDate").setValue(todayDateTime);
 
                 DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(favoriteClubString).child(uid);
@@ -488,7 +488,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 usersChat.child("favoriteClub").setValue(favoriteClubString);
                 usersChat.child("favoriteClubLogo").setValue(clubLogo);
                 usersChat.child("userID").setValue(uid);
-                usersChat.child("online").setValue(true);
+                usersChat.child("online").setValue("true");
                 usersChat.child("date").setValue(currentDate);
 
 
@@ -583,7 +583,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.child("favoriteClub").setValue(clubName);
                 mReference.child("favoriteClubLogo").setValue(clubLogo);
                 mReference.child("userID").setValue(uid);
-                mReference.child("premium").setValue(true);
+                mReference.child("premium").setValue("true");
                 mReference.child("premiumDate").setValue(todayDateTime);
 
                 DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(favoriteClubString).child(uid);
@@ -596,7 +596,7 @@ final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
                 usersChat.child("favoriteClub").setValue(favoriteClubString);
                 usersChat.child("favoriteClubLogo").setValue(clubLogo);
                 usersChat.child("userID").setValue(uid);
-                usersChat.child("online").setValue(true);
+                usersChat.child("online").setValue("true");
                 usersChat.child("date").setValue(currentDate);
                 ParseObject object = new ParseObject("Usernames");
                 object.put("username", username);

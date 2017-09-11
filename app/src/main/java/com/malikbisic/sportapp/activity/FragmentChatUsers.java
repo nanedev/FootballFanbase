@@ -45,7 +45,7 @@ public class FragmentChatUsers extends Fragment {
     String clubNameLogo;
     String userUID;
     String date;
-    boolean isOnline;
+    String isOnline;
     static int numberOnline;
    public static String online;
 
@@ -74,7 +74,7 @@ public class FragmentChatUsers extends Fragment {
                                 profileImage = String.valueOf(snapshot1.child("profileImage").getValue());
                                 flag = String.valueOf(snapshot1.child("flag").getValue());
                                 clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
-                                isOnline = (boolean) snapshot1.child("online").getValue();
+                                isOnline = snapshot1.child("online").getValue().toString();
                                 userUID = String.valueOf(snapshot1.child("userID").getValue());
                                 date = String.valueOf(snapshot1.child("date").getValue());
                                 DatabaseReference onlineCheck = chatReference;
@@ -82,7 +82,7 @@ public class FragmentChatUsers extends Fragment {
                                 onlineCheck.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if (isOnline) {
+                                        if (isOnline.equals("true")) {
                                             numberOnline++;
                                         }
 

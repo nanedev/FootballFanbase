@@ -77,9 +77,9 @@ public class ClubNameViewHolder extends GroupViewHolder {
                             for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
 
 
-                                isOnline = (boolean) snapshot1.child("online").getValue();
+                              String  isOnline =  snapshot1.child("online").getValue().toString();
 
-                                if (isOnline) {
+                                if (isOnline.equals("true")) {
                                     numberOnline++;
                                 }
 
