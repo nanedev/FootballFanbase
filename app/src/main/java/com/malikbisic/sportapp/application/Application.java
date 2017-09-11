@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.malikbisic.sportapp.activity.MainPage;
 import com.parse.Parse;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
@@ -24,13 +25,16 @@ import com.squareup.picasso.Picasso;
  * Created by Nane on 16.3.2017.
  */
 
-public class Application extends android.app.Application implements android.app.Application.ActivityLifecycleCallbacks {
+public class Application extends android.app.Application{
 
 
+    DatabaseReference mUsersReference;
+    FirebaseAuth mAuth;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
 
 
         if (!FirebaseApp.getApps(this).isEmpty()) {
@@ -50,43 +54,43 @@ public class Application extends android.app.Application implements android.app.
         built.setLoggingEnabled(true);
         Picasso.setSingletonInstance(built);
 
+        mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        mAuth = FirebaseAuth.getInstance();
+        mUsersReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot != null){
+
+                    String clubName = String.valueOf(dataSnapshot.child("favoriteClub").getValue());
+
+                    final DatabaseReference mUsers = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubName).child(mAuth.getCurrentUser().getUid());
+                    mUsers.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            mUsers.child("online").onDisconnect().setValue(false);
+                            mUsers.child("online").setValue(true);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
     }
 
-
-    @Override
-    public void onActivityCreated(Activity activity, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-        Log.i("app closed", "upaljena");
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-
-        Log.i("app closed", "ugasena");
-    }
 }

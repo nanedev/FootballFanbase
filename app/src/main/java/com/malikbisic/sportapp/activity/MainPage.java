@@ -2153,13 +2153,6 @@ public class MainPage extends AppCompatActivity
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        DatabaseReference setOfline = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(myClubName).child(uid);
-        setOfline.child("online").setValue(false);
-    }
 
     @Override
     protected void onResume() {
