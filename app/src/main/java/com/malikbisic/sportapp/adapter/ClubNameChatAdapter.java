@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.ChatMessageActivity;
 import com.malikbisic.sportapp.activity.FragmentChatUsers;
 import com.malikbisic.sportapp.activity.MainPage;
 import com.malikbisic.sportapp.model.UserChat;
@@ -65,7 +66,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(ctx,MainPage.class);
+                Intent intent = new Intent(ctx,ChatMessageActivity.class);
                 intent.putExtra("userId",userChat.getUserID());
                 intent.putExtra("username",userChat.getUsername());
                 intent.putExtra("flag",userChat.getFlag());
