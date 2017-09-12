@@ -199,7 +199,8 @@
         <activity android:name=".activity.ChatMessageActivity"
             android:screenOrientation="portrait"
             android:parentActivityName=".activity.ChatActivity"
-          android:theme="@style/AppTheme.Dark">
+          android:theme="@style/AppTheme.Dark"
+            android:windowSoftInputMode="adjustResize">
 
         </activity>
     </application>

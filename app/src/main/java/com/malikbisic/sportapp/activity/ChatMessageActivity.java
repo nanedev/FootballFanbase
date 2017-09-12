@@ -83,11 +83,34 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
         mChatMessageView = (EditText) findViewById(R.id.chat_text);
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
         mLinearLayout = new LinearLayoutManager(this);
+        mLinearLayout.setStackFromEnd(true);
         mMessagesList.setHasFixedSize(true);
-        mMessagesList.setLayoutManager(mLinearLayout);
 
+
+
+        mMessagesList.setLayoutManager(mLinearLayout);
         mAdapter = new MessageAdapter(messagesList, getApplicationContext());
         mMessagesList.setAdapter(mAdapter);
+
+
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int friendlyMessageCount = mAdapter.getItemCount();
+                int lastVisiblePosition =
+                        mLinearLayout.findLastCompletelyVisibleItemPosition();
+                // If the recycler view is initially being loaded or the
+                // user is at the bottom of the list, scroll to the bottom
+                // of the list to show the newly added message.
+                if (lastVisiblePosition == -1 ||
+                        (positionStart >= (friendlyMessageCount - 1) &&
+                                lastVisiblePosition == (positionStart - 1))) {
+                    mMessagesList.scrollToPosition(positionStart);
+                }
+            }
+        });
+
 
         loadMessages();
 
@@ -118,7 +141,7 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
 
                     }
                 });
-          /*     */
+
             }
 
             @Override
@@ -176,6 +199,24 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             Messages message = dataSnapshot.getValue(Messages.class);
             messagesList.add(message);
+
+            mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    super.onItemRangeInserted(positionStart, itemCount);
+                    int friendlyMessageCount = mAdapter.getItemCount();
+                    int lastVisiblePosition =
+                            mLinearLayout.findLastCompletelyVisibleItemPosition();
+                    // If the recycler view is initially being loaded or the
+                    // user is at the bottom of the list, scroll to the bottom
+                    // of the list to show the newly added message.
+                    if (lastVisiblePosition == -1 ||
+                            (positionStart >= (friendlyMessageCount - 1) &&
+                                    lastVisiblePosition == (positionStart - 1))) {
+                        mMessagesList.scrollToPosition(positionStart);
+                    }
+                }
+            });
             mAdapter.notifyDataSetChanged();
         }
 
@@ -232,6 +273,8 @@ if (databaseError != null)
 
                 }
             });
+
+
 
 
         }

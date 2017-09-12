@@ -55,6 +55,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         Messages messages = mMessageList.get(position);
         String from_user = messages.getFrom();
+        if (from_user != null){
 
        if (from_user.equals(current_user_id)){
 
@@ -65,8 +66,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
            holder.profileImageImg.setVisibility(View.GONE);
 
         }else {
-            holder.messagetTextTexview.setBackgroundResource(R.drawable.message_text_background);
-            holder.messagetTextTexview.setTextColor(Color.WHITE);
+           holder.messagetTextTexview.setBackgroundResource(R.drawable.message_text_background);
+           holder.messagetTextTexview.setTextColor(Color.WHITE);
            holder.layout.setGravity(Gravity.LEFT);
            holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
            holder.profileImageImg.setVisibility(View.VISIBLE);
@@ -88,7 +89,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                }
            });
-
+       }
 
         }
 
