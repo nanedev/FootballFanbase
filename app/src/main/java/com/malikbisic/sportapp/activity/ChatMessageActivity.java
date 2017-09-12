@@ -86,7 +86,7 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
         mMessagesList.setHasFixedSize(true);
         mMessagesList.setLayoutManager(mLinearLayout);
 
-        mAdapter = new MessageAdapter(messagesList);
+        mAdapter = new MessageAdapter(messagesList, getApplicationContext());
         mMessagesList.setAdapter(mAdapter);
 
         loadMessages();

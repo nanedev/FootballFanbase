@@ -8,11 +8,18 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.Messages;
+import com.malikbisic.sportapp.model.UserChat;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -27,9 +34,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     private List<Messages> mMessageList;
     FirebaseAuth mAutH;
+    Context ctx;
 
-    public MessageAdapter(List<Messages> mMessageList) {
+    public MessageAdapter(List<Messages> mMessageList, Context ctx) {
         this.mMessageList = mMessageList;
+        this.ctx = ctx;
     }
 
     @Override
@@ -39,7 +48,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     @Override
-    public void onBindViewHolder(MessageViewHolder holder, int position) {
+    public void onBindViewHolder(final MessageViewHolder holder, int position) {
         mAutH = FirebaseAuth.getInstance();
 
             String current_user_id = mAutH.getCurrentUser().getUid();
@@ -51,13 +60,34 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             holder.messagetTextTexview.setBackgroundColor(Color.WHITE);
             holder.messagetTextTexview.setTextColor(R.color.black);
-           holder.messagetTextTexview.setGravity(Gravity.RIGHT);
+           holder.layout.setGravity(Gravity.RIGHT);
            holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+           holder.profileImageImg.setVisibility(View.GONE);
 
         }else {
             holder.messagetTextTexview.setBackgroundResource(R.drawable.message_text_background);
             holder.messagetTextTexview.setTextColor(Color.WHITE);
+           holder.layout.setGravity(Gravity.LEFT);
            holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+           holder.profileImageImg.setVisibility(View.VISIBLE);
+
+           DatabaseReference displayImage = FirebaseDatabase.getInstance().getReference();
+
+           displayImage.child("Users").child(from_user).addValueEventListener(new ValueEventListener() {
+               @Override
+               public void onDataChange(DataSnapshot dataSnapshot) {
+
+                   UserChat model2 = dataSnapshot.getValue(UserChat.class);
+                   String profileImage = model2.getProfileImage();
+
+                   holder.setProfileImageImg(ctx, profileImage);
+               }
+
+               @Override
+               public void onCancelled(DatabaseError databaseError) {
+
+               }
+           });
 
 
         }
@@ -74,13 +104,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         public TextView messagetTextTexview;
         public CircleImageView profileImageImg;
+        public RelativeLayout layout;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
 
             messagetTextTexview = (TextView) itemView.findViewById(R.id.message_text);
             profileImageImg = (CircleImageView) itemView.findViewById(R.id.message_image);
+            layout = (RelativeLayout) itemView.findViewById(R.id.message_single_layout);
 
+        }
+
+        public void setProfileImageImg(Context ctx, String profileImage){
+            Picasso.with(ctx).load(profileImage).into(profileImageImg);
         }
 
     }
