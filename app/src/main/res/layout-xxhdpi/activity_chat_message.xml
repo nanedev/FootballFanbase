@@ -10,7 +10,8 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:id="@+id/appBarLayout">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/chat_toolbar"
@@ -20,6 +21,14 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appBarLayout"
+        android:id="@+id/messageList"
+        android:layout_above="@+id/bottom_chat_layout">
+
+    </android.support.v7.widget.RecyclerView>
 
     <LinearLayout
         android:id="@+id/bottom_chat_layout"
@@ -28,6 +37,7 @@
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:orientation="horizontal"
+        android:padding="5dp"
         android:weightSum="10">
 
         <ImageButton
@@ -35,23 +45,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="10dp"
             android:src="@drawable/ic_plus" />
 
-        <TextView
+        <EditText
             android:id="@+id/chat_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginEnd="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_weight="8"
             android:paddingBottom="12dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="16dp"
-            android:text="Textview"
+            android:layout_weight="8"
+           android:hint="Enter message"
+            android:textCursorDrawable="@null"
             android:textColor="#000" />
 
         <ImageButton

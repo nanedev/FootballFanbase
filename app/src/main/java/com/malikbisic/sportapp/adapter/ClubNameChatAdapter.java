@@ -83,7 +83,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
 
                 String usernameDatabase = String.valueOf(dataSnapshot.child("username").getValue());
                 String username = holder.usernameUser.getText().toString().trim();
-                String isOnline =  dataSnapshot.child("online").getValue().toString();
+                String isOnline =  String.valueOf(dataSnapshot.child("online").getValue());
                 Log.i("ref", String.valueOf(dataSnapshot.getRef()));
 
                 if (isOnline.equals("true")){

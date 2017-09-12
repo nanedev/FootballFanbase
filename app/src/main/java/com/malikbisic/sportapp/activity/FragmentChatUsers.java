@@ -74,7 +74,7 @@ public class FragmentChatUsers extends Fragment {
                                 profileImage = String.valueOf(snapshot1.child("profileImage").getValue());
                                 flag = String.valueOf(snapshot1.child("flag").getValue());
                                 clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
-                                isOnline = snapshot1.child("online").getValue().toString();
+                                isOnline = String.valueOf(snapshot1.child("online").getValue());
                                 userUID = String.valueOf(snapshot1.child("userID").getValue());
                                 date = String.valueOf(snapshot1.child("date").getValue());
                                 DatabaseReference onlineCheck = chatReference;

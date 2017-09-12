@@ -120,6 +120,7 @@ public class MainPage extends AppCompatActivity
     private ImageView profile;
     CircleImageView countryHeader;
     CircleImageView clubHeader;
+    DatabaseReference mUsersReference;
     FirebaseAuth mAuth;
 
     Bitmap logoBitmap;
@@ -189,8 +190,6 @@ public class MainPage extends AppCompatActivity
     NavigationView navigationView;
 
     List<Post> itemSize = new ArrayList<>();
-
-    DatabaseReference mUsersReference;
 
 
 
@@ -361,6 +360,9 @@ public class MainPage extends AppCompatActivity
                                     e.printStackTrace();
                                 }
 
+                                DatabaseReference setOfline = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(myClubName).child(uid);
+                                setOfline.child("online").setValue(true);
+
 
                                 calendar.add(Calendar.DAY_OF_MONTH, 15);
                                 trialDate = calendar.getTime();
@@ -457,47 +459,9 @@ public class MainPage extends AppCompatActivity
             Log.i("chatflag", intent.getStringExtra("flag"));
             Log.i("chatdate", intent.getStringExtra("date"));
         }
-    }
-
-    public void onlineOffline(){
-        mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
-
-        mAuth = FirebaseAuth.getInstance();
-        mUsersReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot != null) {
-
-                    String clubName = String.valueOf(dataSnapshot.child("favoriteClub").getValue());
-
-                    final DatabaseReference mUsers = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubName).child(mAuth.getCurrentUser().getUid());
-                    mUsers.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            mUsers.child("online").onDisconnect().setValue(ServerValue.TIMESTAMP);
-                            if (dataSnapshot.child("online").exists()) {
-                                mUsers.child("online").setValue("true");
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
     }
+
 
 
     @Override
