@@ -192,6 +192,9 @@ public class MainPage extends AppCompatActivity
     List<Post> itemSize = new ArrayList<>();
 
 
+    private  static  final int TOTAL_ITEM_LOAD = 2;
+    private static int mCurrentPage = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -637,6 +640,15 @@ public class MainPage extends AppCompatActivity
         return true;
     }
 
+    private boolean isLastItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
+                return true;
+        }
+        return false;
+    }
+
     public void launcerCounter() {
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -719,11 +731,13 @@ public class MainPage extends AppCompatActivity
     public void premiumUsers() {
 
 
+        Query postingQuery = postingDatabase.limitToLast(mCurrentPage * TOTAL_ITEM_LOAD);
+
         FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder>(
                 Post.class,
                 R.layout.wall_row,
                 MainPage.PostViewHolder.class,
-                postingDatabase
+                postingQuery
         ) {
 
 

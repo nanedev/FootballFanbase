@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,6 +95,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
         holder.messagetTextTexview.setText(messages.getMessage());
+        String time = DateUtils.formatDateTime(ctx, messages.getTime(), DateUtils.FORMAT_SHOW_TIME);
+        holder.timeTextView.setText(time);
+
     }
 
     @Override
@@ -106,6 +110,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         public TextView messagetTextTexview;
         public CircleImageView profileImageImg;
         public RelativeLayout layout;
+        TextView timeTextView;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
@@ -113,6 +118,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             messagetTextTexview = (TextView) itemView.findViewById(R.id.message_text);
             profileImageImg = (CircleImageView) itemView.findViewById(R.id.message_image);
             layout = (RelativeLayout) itemView.findViewById(R.id.message_single_layout);
+            timeTextView = (TextView) itemView.findViewById(R.id.timeMessage);
 
         }
 

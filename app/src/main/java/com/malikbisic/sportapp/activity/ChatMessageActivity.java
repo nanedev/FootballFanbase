@@ -54,8 +54,8 @@ public class ChatMessageActivity extends AppCompatActivity {
     private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayout;
     MessageAdapter mAdapter;
-    private static final int TOTAL_ITEMS_TO_LOAD = 10;
-    private int mCurrentPage = 0;
+    private static final int TOTAL_ITEMS_TO_LOAD = 5;
+    private int mCurrentPage = 1;
 private SwipeRefreshLayout mRefreshLayout;
 
     @Override
@@ -132,7 +132,7 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
             }
         });
 
-        mRootRef.child("Chat").child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
+        mRootRef.child("Chat").child(mCurrentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -176,6 +176,11 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
             @Override
             public void onRefresh() {
 
+                mCurrentPage++;
+                messagesList.clear();
+                loadMessages();
+
+
             }
         });
 
@@ -183,7 +188,7 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
 
     private void loadMessages() {
         DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
-        Query messageQuery = messageRef.limitToLast(TOTAL_ITEMS_TO_LOAD);
+        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
 
     messageQuery.addChildEventListener(new ChildEventListener() {
         @Override
@@ -191,8 +196,9 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
             Messages message = dataSnapshot.getValue(Messages.class);
             messagesList.add(message);
 
-            mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+            mMessagesList.smoothScrollToPosition((int) dataSnapshot.getChildrenCount() - TOTAL_ITEMS_TO_LOAD);
             mAdapter.notifyDataSetChanged();
+            mRefreshLayout.setRefreshing(false);
         }
 
         @Override
