@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
@@ -52,7 +54,9 @@ public class ChatMessageActivity extends AppCompatActivity {
     private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayout;
     MessageAdapter mAdapter;
-
+    private static final int TOTAL_ITEMS_TO_LOAD = 10;
+    private int mCurrentPage = 0;
+private SwipeRefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +86,7 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
         mChatSendBtn = (ImageButton) findViewById(R.id.send_message);
         mChatMessageView = (EditText) findViewById(R.id.chat_text);
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
+        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_message_swipe_layout);
         mLinearLayout = new LinearLayoutManager(this);
         mLinearLayout.setStackFromEnd(true);
         mMessagesList.setHasFixedSize(true);
@@ -167,11 +172,20 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
             }
         });
 
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+        });
+
     }
 
     private void loadMessages() {
+        DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
+        Query messageQuery = messageRef.limitToLast(TOTAL_ITEMS_TO_LOAD);
 
-    mRootRef.child("messages").child(mCurrentUserId).child(mChatUser).addChildEventListener(new ChildEventListener() {
+    messageQuery.addChildEventListener(new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             Messages message = dataSnapshot.getValue(Messages.class);
