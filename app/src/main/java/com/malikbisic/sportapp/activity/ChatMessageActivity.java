@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -54,15 +55,16 @@ public class ChatMessageActivity extends AppCompatActivity {
     private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayout;
     MessageAdapter mAdapter;
-    private static final int TOTAL_ITEMS_TO_LOAD = 5;
+    private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int mCurrentPage = 1;
-private SwipeRefreshLayout mRefreshLayout;
+    private SwipeRefreshLayout mRefreshLayout;
+    boolean refreshing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_message);
-mRootRef = FirebaseDatabase.getInstance().getReference();
+        mRootRef = FirebaseDatabase.getInstance().getReference();
         mChatToolbar = (Toolbar) findViewById(R.id.chat_toolbar);
         setSupportActionBar(mChatToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -73,10 +75,10 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
 
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
-       // getSupportActionBar().setTitle(mChatUsername);
+        // getSupportActionBar().setTitle(mChatUsername);
 
-        LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View action_bar_view = inflater.inflate(R.layout.chat_custom_bar,null);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View action_bar_view = inflater.inflate(R.layout.chat_custom_bar, null);
         actionBar.setCustomView(action_bar_view);
 
         mTitleView = (TextView) findViewById(R.id.chat_username);
@@ -100,7 +102,7 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.child("Users").child(mChatUser).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-             String favoriteClubChat = dataSnapshot.child("favoriteClub").getValue().toString();
+                String favoriteClubChat = dataSnapshot.child("favoriteClub").getValue().toString();
 
                 mRootRef.child("UsersChat").child(favoriteClubChat).child(mChatUser).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -108,12 +110,12 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
                         String online = dataSnapshot.child("online").getValue().toString();
                         String image = dataSnapshot.child("profileImage").getValue().toString();
 
-                        if (online.equals("true")){
+                        if (online.equals("true")) {
                             mLastSeenView.setText("Online");
-                        }else {
-                          GetTimeAgo getTimeAgo = new GetTimeAgo();
+                        } else {
+                            GetTimeAgo getTimeAgo = new GetTimeAgo();
                             long lastTime = Long.parseLong(online);
-                            String lastStringTime = getTimeAgo.getTimeAgo(lastTime,getApplicationContext());
+                            String lastStringTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
                             mLastSeenView.setText(lastStringTime);
                         }
                     }
@@ -136,21 +138,21 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.hasChild(mChatUser)){
+                if (dataSnapshot.hasChild(mChatUser)) {
                     Map chatAddMap = new HashMap();
-                    chatAddMap.put("seen",false);
+                    chatAddMap.put("seen", false);
                     chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
 
                     Map chatUserMap = new HashMap();
-                    chatUserMap.put("Chat/" + mCurrentUserId + "/" + mChatUser,chatAddMap);
-                    chatUserMap.put("Chat/"+ mChatUser + "/" + mCurrentUserId,chatAddMap);
+                    chatUserMap.put("Chat/" + mCurrentUserId + "/" + mChatUser, chatAddMap);
+                    chatUserMap.put("Chat/" + mChatUser + "/" + mCurrentUserId, chatAddMap);
 
                     mRootRef.updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 
-                            if (databaseError != null){
-                                Log.d("CHAT_LOG",databaseError.getMessage().toString());
+                            if (databaseError != null) {
+                                Log.d("CHAT_LOG", databaseError.getMessage().toString());
                             }
 
                         }
@@ -175,58 +177,78 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                refreshing = true;
                 mCurrentPage++;
                 messagesList.clear();
                 loadMessages();
+                DatabaseReference limitRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
+                Query limitQuery = limitRef.limitToLast(TOTAL_ITEMS_TO_LOAD);
+                limitQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            mMessagesList.smoothScrollToPosition((int) snapshot.getChildrenCount() + 1);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+
+        });
+
+    }
+
+    private void loadMessages() {
+
+
+        final DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
+        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
+
+        messageQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    refreshing = false;
+                    Messages message = dataSnapshot.getValue(Messages.class);
+                    messagesList.add(message);
+                    mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                    mAdapter.notifyDataSetChanged();
+                    mRefreshLayout.setRefreshing(false);
+
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
     }
 
-    private void loadMessages() {
-        DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
-        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
-
-    messageQuery.addChildEventListener(new ChildEventListener() {
-        @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            Messages message = dataSnapshot.getValue(Messages.class);
-            messagesList.add(message);
-
-            mMessagesList.smoothScrollToPosition((int) dataSnapshot.getChildrenCount() - TOTAL_ITEMS_TO_LOAD);
-            mAdapter.notifyDataSetChanged();
-            mRefreshLayout.setRefreshing(false);
-        }
-
-        @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-        }
-
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-        }
-
-        @Override
-        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-    });
-
-    }
-
     private void sendMessage() {
         String message = mChatMessageView.getText().toString();
-        if (!TextUtils.isEmpty(message)){
+        if (!TextUtils.isEmpty(message)) {
             String current_user_ref = "messages/" + mCurrentUserId + "/" + mChatUser;
             String chat_user_ref = "messages/" + mChatUser + "/" + mCurrentUserId;
             DatabaseReference userMessagePush = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser).push();
@@ -234,28 +256,25 @@ mRootRef = FirebaseDatabase.getInstance().getReference();
             String push_id = userMessagePush.getKey();
 
             Map messageMap = new HashMap();
-            messageMap.put("message",message);
+            messageMap.put("message", message);
             messageMap.put("seen", false);
-            messageMap.put("type","text");
-            messageMap.put("time",ServerValue.TIMESTAMP);
-            messageMap.put("from",mCurrentUserId);
-
+            messageMap.put("type", "text");
+            messageMap.put("time", ServerValue.TIMESTAMP);
+            messageMap.put("from", mCurrentUserId);
 
 
             Map messageUserMap = new HashMap();
-            messageUserMap.put(current_user_ref + "/" + push_id,messageMap);
-            messageUserMap.put(chat_user_ref + "/" + push_id,messageMap);
+            messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
+            messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
             mChatMessageView.setText("");
             mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-if (databaseError != null)
-                    Log.d("CHAT_LOG",databaseError.getMessage().toString());
+                    if (databaseError != null)
+                        Log.d("CHAT_LOG", databaseError.getMessage().toString());
 
                 }
             });
-
-
 
 
         }
