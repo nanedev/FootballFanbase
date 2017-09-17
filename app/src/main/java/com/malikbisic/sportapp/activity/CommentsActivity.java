@@ -110,6 +110,15 @@ FirebaseAuth auth;
         comments.setLayoutManager(linearLayoutManager);
 
         sendComment.setOnClickListener(this);
+
+    }
+
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+
         FirebaseRecyclerAdapter<Comments, CommentsActivity.CommentsViewHolder> populateComment = new FirebaseRecyclerAdapter<Comments, CommentsActivity.CommentsViewHolder>(
                 Comments.class,
                 R.layout.comments_wall,
@@ -427,14 +436,7 @@ FirebaseAuth auth;
 
             }
         };
-    comments.setAdapter(populateComment);
-    }
-
-
-    @Override
-    protected void onStart() {
-
-        super.onStart();
+        comments.setAdapter(populateComment);
 
     }
 
@@ -522,6 +524,7 @@ TextView commentSomething;
             likeReference = database.getReference().child("LikesComments");
             dislikeReference = database.getReference().child("DislikesComments");
             numberCommentsReference = database.getReference().child("CommentsInComments");
+
         }
 
         public void setTextComment(String textComment) {

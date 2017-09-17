@@ -59,6 +59,7 @@ public class ChatMessageActivity extends AppCompatActivity {
     private int mCurrentPage = 1;
     private SwipeRefreshLayout mRefreshLayout;
     boolean refreshing;
+    String lastkey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,15 +181,21 @@ public class ChatMessageActivity extends AppCompatActivity {
                 refreshing = true;
                 mCurrentPage++;
                 messagesList.clear();
-                loadMessages();
+
+
                 DatabaseReference limitRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
-                Query limitQuery = limitRef.limitToLast(TOTAL_ITEMS_TO_LOAD);
+                Query limitQuery = limitRef.orderByKey().endAt(lastkey).limitToLast(TOTAL_ITEMS_TO_LOAD);
                 limitQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Messages message = snapshot.getValue(Messages.class);
+                            messagesList.add(message);
                             mMessagesList.smoothScrollToPosition((int) snapshot.getChildrenCount() + 1);
+                            lastkey = snapshot.getKey();
                             mAdapter.notifyDataSetChanged();
+                            mRefreshLayout.setRefreshing(false);
+
                         }
                     }
 
@@ -208,33 +215,24 @@ public class ChatMessageActivity extends AppCompatActivity {
 
 
         final DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
-        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
+        Query messageQuery = messageRef.limitToLast(TOTAL_ITEMS_TO_LOAD);
 
-        messageQuery.addChildEventListener(new ChildEventListener() {
+        messageQuery.addValueEventListener(new ValueEventListener() {
+
+
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     refreshing = false;
-                    Messages message = dataSnapshot.getValue(Messages.class);
+                    Messages message = snap.getValue(Messages.class);
                     messagesList.add(message);
+                    lastkey = snap.getKey();
+
                     mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
                     mAdapter.notifyDataSetChanged();
                     mRefreshLayout.setRefreshing(false);
-
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
 
             }
 
@@ -243,7 +241,6 @@ public class ChatMessageActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     private void sendMessage() {

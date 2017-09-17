@@ -57,6 +57,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     boolean valid;
 
     private String error;
+    static boolean registerPressed = false;
 
 
     @Override
@@ -154,9 +155,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onSignupSuccess() {
         mSignupButton.setEnabled(true);
         setResult(RESULT_OK, null);
-        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-        intent.putExtra("email",userEmail);
+        Intent intent = new Intent(RegisterActivity.this, EnterUsernameForApp.class);
+        intent.putExtra("firstName",userName);
+        intent.putExtra("secondName", userSurname);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        registerPressed = true;
+        LoginActivity.checkGoogleSignIn = false;
         startActivity(intent);
     }
 
@@ -272,7 +276,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(RegisterActivity.this, "Check your email!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(RegisterActivity.this, "Please verify your email!", Toast.LENGTH_LONG).show();
                                     }
                                 }
 
@@ -287,9 +291,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         if (task.isSuccessful()) {
 
                             user_id = mAuth.getCurrentUser().getUid();
-                            mReferenceUsers = mDatabase.getReference().child("Users").child(user_id);
-                            mReferenceUsers.child("name").setValue(userName);
-                            mReferenceUsers.child("surname").setValue(userSurname);
+//                            mReferenceUsers = mDatabase.getReference().child("Users").child(user_id);
+//                            mReferenceUsers.child("name").setValue(userName);
+//                            mReferenceUsers.child("surname").setValue(userSurname);
 
 
                         }
