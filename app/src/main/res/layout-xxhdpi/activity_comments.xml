@@ -5,25 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/commentLayout"
+
     tools:context="com.malikbisic.sportapp.activity.CommentsActivity">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#fff"
         android:id="@+id/containercommentslayout"
         android:layout_above="@+id/writeCommentlayout">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/recviewcommentslayout">
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rec_view_comments"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recviewcommentslayout">
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rec_view_comments"
 
-        >
+                >
 
-    </android.support.v7.widget.RecyclerView>
-</RelativeLayout>
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
 
     </RelativeLayout>
     <RelativeLayout

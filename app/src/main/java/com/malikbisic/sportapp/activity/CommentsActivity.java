@@ -128,7 +128,7 @@ FirebaseAuth auth;
                 viewHolder.setNumberDislikes(post_key_comments);
                 viewHolder.setNumberComments(post_key_comments);
 
-                viewHolder.likeCommentsImg.setOnClickListener(new View.OnClickListener() {
+                viewHolder.likeComments.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         like_process = true;
@@ -188,7 +188,7 @@ FirebaseAuth auth;
                             }
                         });
 
-                        viewHolder.dislikeCommentImg.setOnClickListener(new View.OnClickListener() {
+                        viewHolder.dislikeComment.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dislike_process = true;
@@ -262,6 +262,15 @@ FirebaseAuth auth;
                         startActivity(listUsername);
                     }
                 });
+                viewHolder.likeBtnImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent listUsername = new Intent(CommentsActivity.this, Username_Likes_Activity.class);
+                        listUsername.putExtra("post_keyComment", post_key_comments);
+                        listUsername.putExtra("isLikeComment", true);
+                        startActivity(listUsername);
+                    }
+                });
 
                 viewHolder.numberDislikes.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -273,6 +282,15 @@ FirebaseAuth auth;
                     }
                 });
 
+                viewHolder.dislikeBtnImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent listUsername = new Intent(CommentsActivity.this, Username_Dislikes_Activity.class);
+                        listUsername.putExtra("post_keyComment", post_key_comments);
+                        listUsername.putExtra("isDislikeComment", true);
+                        startActivity(listUsername);
+                    }
+                });
 
 
                 viewHolder.profileImageImg.setOnClickListener(new View.OnClickListener() {
@@ -393,17 +411,7 @@ FirebaseAuth auth;
                     }
                 });
 
-                viewHolder.commentsReply.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
-                        intent.putExtra("keyComment", post_key_comments);
-                        intent.putExtra("keyPost", key);
-                        intent.putExtra("profileComment", MainPage.profielImage);
-                        intent.putExtra("username", MainPage.usernameInfo);
-                        startActivity(intent);
-                    }
-                });
+
 
                 viewHolder.commentsReplyNumber.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -483,13 +491,15 @@ TextView commentSomething;
         ImageView downArrow;
         TextView usernameTxt;
         FirebaseDatabase database;
-        ImageView likeCommentsImg;
-        ImageView dislikeCommentImg;
+        TextView likeComments;
+        ImageView likeBtnImage;
+        TextView dislikeComment;
+        ImageView dislikeBtnImage;
         DatabaseReference likeReference, dislikeReference, numberCommentsReference;
         FirebaseAuth mAuth;
         TextView numberLikes;
         TextView numberDislikes;
-        TextView commentsReply;
+
         TextView commentsReplyNumber;
         public CommentsViewHolder(View itemView) {
             super(itemView);
@@ -499,14 +509,15 @@ TextView commentSomething;
             commentsText = (TextView) mView.findViewById(R.id.textComment);
             downArrow = (ImageView) mView.findViewById(R.id.down_arrow_comments);
             usernameTxt = (TextView) mView.findViewById(R.id.username_comment_profile);
-            likeCommentsImg = (ImageView)  mView.findViewById(R.id.likecommentsimage);
+            likeComments = (TextView)  mView.findViewById(R.id.like_comments_wall);
             database = FirebaseDatabase.getInstance();
-            dislikeCommentImg = (ImageView) mView.findViewById(R.id.dislikecommentsimage);
+            dislikeComment = (TextView) mView.findViewById(R.id.dislike_comments_wall);
+            likeBtnImage = (ImageView) mView.findViewById(R.id.likecommentsimage);
             numberLikes = (TextView) mView.findViewById(R.id.number_of_likes_comments);
             numberDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes_comments);
             commentSomething = (TextView) mView.findViewById(R.id.comment_something_comments);
-            commentsReply = (TextView) mView.findViewById(R.id.commentsInComments_textview);
             commentsReplyNumber = (TextView) mView.findViewById(R.id.number_commentsInComments);
+            dislikeBtnImage = (ImageView) mView.findViewById(R.id.dislikecommentsimage);
             mAuth = FirebaseAuth.getInstance();
             likeReference = database.getReference().child("LikesComments");
             dislikeReference = database.getReference().child("DislikesComments");
@@ -543,12 +554,12 @@ TextView commentSomething;
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-                        dislikeCommentImg.setClickable(false);
-                        likeCommentsImg.setActivated(true);
+                        dislikeComment.setClickable(false);
+                        likeComments.setActivated(true);
 
                     } else {
-                        dislikeCommentImg.setClickable(true);
-                        likeCommentsImg.setActivated(false);
+                        dislikeComment.setClickable(true);
+                        likeComments.setActivated(false);
                     }
 
                 }
@@ -565,13 +576,14 @@ TextView commentSomething;
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+                        likeComments.setClickable(false);
+                        dislikeComment.setActivated(true);
 
-                        dislikeCommentImg.setActivated(true);
-                        likeCommentsImg.setClickable(false);
 
                     } else {
-                        dislikeCommentImg.setActivated(false);
-                        likeCommentsImg.setClickable(true);
+                        likeComments.setClickable(true);
+                        dislikeComment.setActivated(false);
+
                     }
                 }
 
@@ -594,7 +606,10 @@ TextView commentSomething;
                     long numberLikesNumber = dataSnapshot.getChildrenCount();
                     if (numberLikesNumber == 0) {
                         numberLikes.setText("");
+                        likeBtnImage.setVisibility(View.GONE);
+
                     } else {
+                        likeBtnImage.setVisibility(View.VISIBLE);
                         numberLikes.setText(String.valueOf(numberLikesNumber));
                     }
 
@@ -617,8 +632,10 @@ TextView commentSomething;
                     long numberDislikesNumber = dataSnapshot.getChildrenCount();
                     if (numberDislikesNumber == 0) {
                         numberDislikes.setText("");
+                        dislikeBtnImage.setVisibility(View.GONE);
                     } else {
                         numberDislikes.setText(String.valueOf(numberDislikesNumber));
+                        dislikeBtnImage.setVisibility(View.VISIBLE);
                     }
 
                 }
@@ -640,14 +657,14 @@ TextView commentSomething;
 
                     if (numberOfComments == 0) {
 
-                        commentsReply.setVisibility(View.GONE);
+
                         commentsReplyNumber.setText("");
                     } else if (numberOfComments == 1){
 
-                        commentsReply.setText("Reply");
+
                         commentsReplyNumber.setText(String.valueOf(numberOfComments));
                     } else {
-                        commentsReply.setText("Replies");
+
                         commentsReplyNumber.setText(String.valueOf(numberOfComments));
                     }
 

@@ -5,10 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/commentLayout"
+
     tools:context="com.malikbisic.sportapp.activity.CommentsActivity">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#fff"
         android:id="@+id/containercommentslayout"
         android:layout_above="@+id/writeCommentlayout">
         <RelativeLayout
