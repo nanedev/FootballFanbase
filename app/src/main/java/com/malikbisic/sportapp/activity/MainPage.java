@@ -1984,10 +1984,12 @@ public class MainPage extends AppCompatActivity
                     if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
                         dislike_button.setClickable(false);
                         like_button.setActivated(true);
+                        Log.i("key like ima ", post_key );
 
                     } else {
                         dislike_button.setClickable(true);
                         like_button.setActivated(false);
+                        Log.i("key like nema ", post_key );
                     }
 
                 }
@@ -2031,10 +2033,12 @@ public class MainPage extends AppCompatActivity
 
                         dislike_button.setActivated(true);
                         like_button.setClickable(false);
+                        Log.i("key dislike ima ", post_key );
 
                     } else {
                         dislike_button.setActivated(false);
                         like_button.setClickable(true);
+                        Log.i("key dislike nema ", post_key );
                     }
                 }
 
