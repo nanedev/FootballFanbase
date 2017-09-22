@@ -471,12 +471,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     mDialog.setMessage("Creating Account...");
                     mDialog.show();
                     if (LoginActivity.checkGoogleSignIn) {
-                        //googleEnterDatabase();
+                        googleEnterDatabase();
 
                     }
                     if (RegisterActivity.registerPressed) {
 
-                        //loginEnterDatabase();
+                        loginEnterDatabase();
                     }
 
                     new CountDownTimer(4000, 1000) {
@@ -487,8 +487,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                         @Override
                         public void onFinish() {
-                            //onSignupSuccess();
-                            Toast.makeText(EnterUsernameForApp.this, "Successful", Toast.LENGTH_LONG).show();
+                            onSignupSuccess();
                         }
                     }.start();
 

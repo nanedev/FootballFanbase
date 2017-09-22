@@ -368,7 +368,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         if (v.getId() == R.id.btn_login) {
             checkGoogleSignIn = false;
-            checkLoginPressed = true;
+            RegisterActivity.registerPressed = true;
             checkLogin();
         } else if (v.getId() == R.id.link_signup) {
             Intent goToReg = new Intent(LoginActivity.this, RegisterActivity.class);
