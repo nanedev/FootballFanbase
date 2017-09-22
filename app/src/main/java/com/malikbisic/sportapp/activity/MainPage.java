@@ -117,22 +117,17 @@ public class MainPage extends AppCompatActivity
     private TextView username;
     private TextView email;
     TextView nameSurname;
-    String nameSurnameString;
     private ImageView profile;
     CircleImageView countryHeader;
     CircleImageView clubHeader;
     DatabaseReference mUsersReference;
     FirebaseAuth mAuth;
-
-    Bitmap logoBitmap;
     public static String clubHeaderString;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference, postingDatabase, likesReference, dislikeReference;
-
     private ImageView backgroundHeader;
     private ImageView userProfileImage;
     private TextView usernameuser;
-
     private ImageView galleryIcon;
     private TextView galleryText;
     private ImageView videoIcon;
@@ -147,38 +142,26 @@ public class MainPage extends AppCompatActivity
     public static String usernameInfo;
     public static String profielImage;
     RelativeLayout backgroundUserPost;
-
-    TextView numberofLikes;
     public static String country;
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private static Bundle mBundleRecyclerViewState;
-    boolean online = false;
     Date nowDate;
     DateFormat nowDateFormat;
     DateFormat trialDateFormat;
     String trialDateString;
     Date trialDate;
     DateFormat dateFormat;
-    String dateOfFirstLogin;
-    private boolean pauseAudioPressed = false;
-    private boolean audiofinished = false;
-    private int pausePosition;
     Calendar calendar;
     private static final int PHOTO_OPEN = 1;
     private static final int VIDEO_OPEN = 2;
     boolean pause_state;
     boolean play_state;
-    boolean stop_state;
 
     Date currentDateOfUserMainPage;
     String getDateFromDatabaseMainPage;
     boolean like_process = false;
     boolean dislike_process = false;
-
     LinearLayoutManager linearLayoutManager;
-
-    int positionRec;
-
     DatabaseReference profileUsers;
     UsersModel model;
     DatabaseReference mUsers;

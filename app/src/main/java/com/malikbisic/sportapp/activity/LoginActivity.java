@@ -308,10 +308,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void autoLogin() {
-        final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
-        dialog.setMessage("Please wait...");
-        dialog.setTitle("Login...");
-        dialog.show();
+
         if (mAuth.getCurrentUser() != null) {
             user_id = mAuth.getCurrentUser().getUid();
             mReferenceUsers = mDatabase.getReference("Users");
@@ -340,7 +337,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                                             startActivity(setupIntent);
                                             mDialog.dismiss();
-                                            dialog.dismiss();
+
                                             finish();
                                             mReferenceUsers.child(current_userID).child("device_id").setValue(device_id);
                                         }
@@ -348,8 +345,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         } else {
 
-                            mDialog.dismiss();;
-                            dialog.dismiss();
+                            mDialog.dismiss();
+
                         }
                     }
 

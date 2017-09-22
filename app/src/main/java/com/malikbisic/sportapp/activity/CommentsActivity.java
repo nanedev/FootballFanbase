@@ -197,66 +197,68 @@ FirebaseAuth auth;
                             }
                         });
 
-                        viewHolder.dislikeComment.setOnClickListener(new View.OnClickListener() {
+
+
+
+                    }
+                });
+
+                viewHolder.dislikeComment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dislike_process = true;
+                        dislikeReference.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onClick(View v) {
-                                dislike_process = true;
-                                dislikeReference.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                        if (dislike_process) {
-                                            if (dataSnapshot.child(post_key_comments).hasChild(auth.getCurrentUser().getUid())) {
+                                if (dislike_process) {
+                                    if (dataSnapshot.child(post_key_comments).hasChild(auth.getCurrentUser().getUid())) {
 
-                                                dislikeReference.child(post_key_comments).child(auth.getCurrentUser().getUid()).removeValue();
-                                                dislike_process = false;
+                                        dislikeReference.child(post_key_comments).child(auth.getCurrentUser().getUid()).removeValue();
+                                        dislike_process = false;
 
 
-                                            } else {
+                                    } else {
 
-                                                DatabaseReference newPost = dislikeReference.child(post_key_comments).child(auth.getCurrentUser().getUid());
+                                        DatabaseReference newPost = dislikeReference.child(post_key_comments).child(auth.getCurrentUser().getUid());
 
-                                                newPost.child("username").setValue(MainPage.usernameInfo);
-                                                newPost.child("photoProfile").setValue(MainPage.profielImage);
+                                        newPost.child("username").setValue(MainPage.usernameInfo);
+                                        newPost.child("photoProfile").setValue(MainPage.profielImage);
 
-                                                DatabaseReference getIduserpost = getCommentRef;
-                                                getIduserpost.child(post_key_comments).addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+                                        DatabaseReference getIduserpost = getCommentRef;
+                                        getIduserpost.child(post_key_comments).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
 
-                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
-                                                        notifSet.child("action").setValue("disliked");
-                                                        notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
-                                                        notifSet.child("seen").setValue(false);
-                                                        notifSet.child("whatIS").setValue("comment");
-                                                        notifSet.child("post_key").setValue(key);
-
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-
-                                                    }
-                                                });
-
-                                                dislike_process = false;
-
+                                                DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                                                notifSet.child("action").setValue("disliked");
+                                                notifSet.child("uid").setValue(auth.getCurrentUser().getUid());
+                                                notifSet.child("seen").setValue(false);
+                                                notifSet.child("whatIS").setValue("comment");
+                                                notifSet.child("post_key").setValue(key);
 
                                             }
-                                        }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+                                        dislike_process = false;
+
 
                                     }
+                                }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
+                            }
 
-                                    }
-                                });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
                             }
                         });
-
 
                     }
                 });
