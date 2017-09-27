@@ -12,24 +12,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="15dp"
-            android:gravity="center"
-            android:text="@string/pls_add_prof_img"
-            android:textSize="12sp"
-            android:textStyle="bold" />
 
         <RelativeLayout
             android:id="@+id/enter_username_image_layout"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_below="@id/textView3"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/fans">
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="15dp"
+                android:gravity="center"
+                android:text="@string/pls_add_prof_img"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/addImage"
@@ -37,7 +36,8 @@
                 android:layout_height="80dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/profilimage" />
+                android:src="@drawable/profilimage"
+                android:layout_below="@+id/textView3"/>
 
         </RelativeLayout>
         <RelativeLayout

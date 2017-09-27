@@ -16,6 +16,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,6 +55,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.adapter.ProfileFragmentAdapter;
 import com.malikbisic.sportapp.model.SvgDrawableTranscoder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -70,8 +74,6 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Map;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import static android.app.Activity.RESULT_OK;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 
@@ -82,7 +84,7 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 public class ProfileFragment extends Fragment {
 
     private ImageView profile;
-    private CircleImageView flag;
+    private ImageView flag;
     private TextView username;
     private TextView gender;
     private TextView birthday;
@@ -90,7 +92,7 @@ public class ProfileFragment extends Fragment {
     private TextView club;
     TextView addBackground;
     private TextView name_surname;
-    CircleImageView genderImage;
+    ImageView genderImage;
     TextView myPosts;
 
     private Calendar minAdultAge;
@@ -131,6 +133,10 @@ public class ProfileFragment extends Fragment {
     View premiumLinija;
     RelativeLayout premiumLayout;
 
+    RecyclerView rec;
+    ProfileFragmentAdapter adapter;
+    RecyclerView.LayoutManager layoutManager;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -145,6 +151,7 @@ public class ProfileFragment extends Fragment {
 
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         setHasOptionsMenu(true);
 
         mDatabase = FirebaseDatabase.getInstance();
@@ -152,7 +159,7 @@ public class ProfileFragment extends Fragment {
         mReference = mDatabase.getReference().child("Users").child(uid);
         profile = (ImageView) view.findViewById(R.id.get_profile_image_id);
         //  name_surname = (TextView) view.findViewById(R.id.name_surname);
-        flag = (CircleImageView) view.findViewById(R.id.user_countryFlag);
+        flag = (ImageView) view.findViewById(R.id.user_countryFlag);
         username = (TextView) view.findViewById(R.id.user_username);
         gender = (TextView) view.findViewById(R.id.user_gender);
         birthday = (TextView) view.findViewById(R.id.user_date);
@@ -171,7 +178,12 @@ public class ProfileFragment extends Fragment {
         premiumLinija = view.findViewById(R.id.sixthline);
         premiumLayout = (RelativeLayout) view.findViewById(R.id.premium_layout);
         premiumTextview = (TextView) view.findViewById(R.id.your_premium);
-        genderImage = (CircleImageView) view.findViewById(R.id.gender_image);
+        genderImage = (ImageView) view.findViewById(R.id.gender_image);
+        rec = (RecyclerView) view.findViewById(R.id.hhhhhh);
+        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        rec.setLayoutManager(layoutManager);
+      adapter = new ProfileFragmentAdapter();
+      rec.setAdapter(adapter);
 
 
         dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -198,13 +210,13 @@ public class ProfileFragment extends Fragment {
                 dialog.show();
             }
         });
-myPosts.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(getActivity(),MyPostsActivity.class);
-        startActivity(intent);
-    }
-});
+        myPosts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MyPostsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         loadProfile_image.getIndeterminateDrawable()
                 .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN);
@@ -238,10 +250,10 @@ myPosts.setOnClickListener(new View.OnClickListener() {
                 gender.setText(String.valueOf(value.get("gender")));
                 if (String.valueOf(value.get("gender")).equals("Male")) {
                     genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.male, null));
+                    genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
                 } else if (String.valueOf(value.get("gender")).equals("Female")) {
                     genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.female, null));
+                    genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
                 }
 
 
@@ -433,7 +445,6 @@ myPosts.setOnClickListener(new View.OnClickListener() {
         }
 
 
-
     }
 
 
@@ -457,8 +468,6 @@ myPosts.setOnClickListener(new View.OnClickListener() {
 
         //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
-
-
 
 
     }

@@ -1,66 +1,400 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profile_fragment_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary"
+    android:background="#e0e0e0"
     android:clickable="true"
     android:fitsSystemWindows="true"
-    tools:context="com.malikbisic.sportapp.activity.ProfileFragment">
+    android:focusable="true"
+    tools:context="com.malikbisic.sportapp.activity.ProfileFragment"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="81dp">
 
-
-    <RelativeLayout
-        android:id="@+id/profil_container"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/backgorund_profil_layout"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:background="@drawable/profile_shape">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="my posts"
-                android:background="@drawable/rect_shape"
-                android:textColor="#000"
-                android:textStyle="bold"
-                android:id="@+id/my_posts_id"
-                android:layout_toLeftOf="@+id/edit_profile_image"
-                android:layout_toStartOf="@+id/edit_profile_image"
-                android:layout_alignBottom="@+id/edit_profile_image"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="nesto"
-                android:background="@drawable/rect_shape"
-                android:textStyle="bold"
-                android:textColor="#000"
-                android:layout_toRightOf="@+id/edit_profile_image"
-                android:layout_toEndOf="@+id/edit_profile_image"
-                android:layout_alignBottom="@+id/edit_profile_image"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"/>
+            android:layout_height="wrap_content">
 
+
+            <ImageView
+                android:id="@+id/user_countryFlag"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/screen_background_light" />
+
+
+            <TextView
+                android:id="@+id/edit_profile_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/change_picture_shape"
+                android:text="change picture"
+                android:textColor="#000"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/get_profile_image_id"
+                app:layout_constraintEnd_toEndOf="@+id/get_profile_image_id"
+                app:layout_constraintHorizontal_bias="0.62"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/get_profile_image_id" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/get_profile_image_id"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/edit_profile_image"
-                android:layout_centerHorizontal="true"
-                />
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="150dp"
+
+                app:layout_constraintHorizontal_bias="0.04"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/com_facebook_profile_picture_blank_portrait" />
 
             <ProgressBar
                 android:id="@+id/loadingProfileImageProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/get_profile_image_id"
+                app:layout_constraintEnd_toEndOf="@+id/get_profile_image_id"
+                app:layout_constraintStart_toStartOf="@+id/get_profile_image_id"
+                app:layout_constraintTop_toTopOf="@+id/get_profile_image_id" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="82dp"
+                android:layout_height="80dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="160dp"
+                android:src="@drawable/pointsuser"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.945"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/get_profile_image_id"
+                app:layout_constraintTop_toTopOf="@+id/user_countryFlag" />
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/shape_for_point_user_profile"
+                android:text="POINTS"
+                android:textColor="#000"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toStartOf="@+id/imageView3"
+                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+            <TextView
+                android:id="@+id/user_points_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="0"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                app:layout_constraintEnd_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toStartOf="@+id/imageView3"
+                app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+
+            <TextView
+                android:id="@+id/user_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/shape_for_point_user_profile"
+                android:text="TextView"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/get_profile_image_id"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/get_profile_image_id" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView_forinfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="15dp"
+                android:padding="10dp"
+                app:cardBackgroundColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_username"
+                app:layout_constraintVertical_bias="0.0">
+
+                <RelativeLayout
+                    android:id="@+id/info_layout"
+                    android:layout_width="328dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="112dp">
+
+                    <TextView
+                        android:id="@+id/infotextview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        android:text="INFO"
+                        android:textColor="#000"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/fromimg"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/infotextview"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginTop="7dp"
+                        app:srcCompat="@drawable/ic_home_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/gender_image"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/fromimg"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/maleicon" />
+
+                    <ImageView
+                        android:id="@+id/date_image"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/gender_image"
+                        android:layout_marginBottom="7dp"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/birthdayicon"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/user_country"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/fromimg"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/fromimg"
+                        android:layout_toRightOf="@+id/fromimg"
+                        android:textColor="#000"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/user_gender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/gender_image"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/gender_image"
+                        android:layout_toRightOf="@+id/gender_image"
+                        android:textColor="#000"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/user_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/date_image"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/date_image"
+                        android:layout_toRightOf="@+id/date_image"
+                        android:textColor="#000"
+                        android:textStyle="bold" />
+
+
+                </RelativeLayout>
+
+
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView_club"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="15dp"
+                android:padding="10dp"
+                app:cardBackgroundColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardView_forinfo">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/textviewyoutrteam"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="YOUR TEAM:"
+                        android:textColor="#000"
+                        android:textStyle="bold" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textviewyoutrteam"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp">
+
+                        <TextView
+                            android:id="@+id/user_club"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:textColor="#000"
+                            android:textStyle="bold"
+
+                            />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/club_logo_profile"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_toEndOf="@+id/user_club"
+                            android:layout_toRightOf="@+id/user_club" />
+
+
+                    </RelativeLayout>
+
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.RecyclerView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:id="@+id/hhhhhh"
+                app:layout_constraintLeft_toRightOf="parent"
+                app:layout_constraintRight_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardView_club"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+            </android.support.v7.widget.RecyclerView>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+
+    </ScrollView>
+
+
+    <RelativeLayout
+        android:id="@+id/profil_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:id="@+id/backgorund_profil_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/profile_shape">
+
+            <TextView
+                android:id="@+id/my_posts_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/edit_profile_image"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/edit_profile_image"
+                android:layout_toStartOf="@+id/edit_profile_image"
+                android:background="@drawable/rect_shape"
+                android:text="my posts"
+                android:textColor="#000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/edit_profile_image"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/edit_profile_image"
+                android:layout_toRightOf="@+id/edit_profile_image"
+                android:background="@drawable/rect_shape"
+                android:text="nesto"
+                android:textColor="#000"
+                android:textStyle="bold" />
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/get_profile_i2mage_id"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_below="@+id/edit_profile_image"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp" />
+
+            <ProgressBar
+                android:id="@+id/loadingProfileImageProgr2essBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/edit_profile_image"
@@ -68,7 +402,7 @@
                 android:layout_marginTop="30dp" />
 
             <TextView
-                android:id="@+id/edit_profile_image"
+                android:id="@+id/edit_profile2_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -79,28 +413,30 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/user_username"
+                android:id="@+id/user_2username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/get_profile_image_id"
                 android:layout_centerHorizontal="true"
-                android:textSize="24sp"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <View
                 android:id="@+id/secondline"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:layout_marginTop="10dp"
                 android:layout_below="@id/user_username"
+                android:layout_marginTop="10dp"
                 android:background="#000" />
 
         </RelativeLayout>
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/backgorund_profil_layout">
+
             <RelativeLayout
                 android:id="@+id/user_info_layout"
                 android:layout_width="match_parent"
@@ -115,29 +451,28 @@
                     android:layout_below="@+id/secondline"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
-                    android:textColor="#000"
-                    android:text="Country:" />
+                    android:text="Country:"
+                    android:textColor="#000" />
 
                 <RelativeLayout
                     android:id="@+id/user_country_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/your_country_tv"
-                    android:layout_marginTop="5dp"
-                    >
+                    android:layout_marginTop="5dp">
 
                     <TextView
-                        android:id="@+id/user_country"
+                        android:id="@+id/user_coun2try"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/user_countryFlag"
                         android:layout_centerHorizontal="true"
-                        android:textStyle="bold"
-                        android:textColor="#000"/>
+                        android:textColor="#000"
+                        android:textStyle="bold" />
 
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/user_countryFlag"
+                        android:id="@+id/user_countr2Flag"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_centerHorizontal="true"
@@ -160,8 +495,8 @@
                     android:layout_below="@id/thirdline"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
-                    android:textColor="#000"
-                    android:text="Club:" />
+                    android:text="Club:"
+                    android:textColor="#000" />
 
 
                 <RelativeLayout
@@ -172,17 +507,17 @@
                     android:layout_marginTop="5dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/club_logo_profile"
+                        android:id="@+id/club_logo_profi2le"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_centerHorizontal="true" />
 
                     <TextView
-                        android:id="@+id/user_club"
+                        android:id="@+id/use2r_club"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@+id/club_logo_profile"
+                        android:layout_centerHorizontal="true"
                         android:textColor="#000"
                         android:textStyle="bold" />
 
@@ -204,8 +539,8 @@
                     android:layout_below="@+id/fourthline"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
-                    android:textColor="#000"
-                    android:text="Gender:" />
+                    android:text="Gender:"
+                    android:textColor="#000" />
 
 
                 <RelativeLayout
@@ -216,7 +551,7 @@
                     android:layout_marginTop="5dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/gender_image"
+                        android:id="@+id/gender_im2age"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_centerHorizontal="true"
@@ -224,13 +559,13 @@
                         />
 
                     <TextView
-                        android:id="@+id/user_gender"
+                        android:id="@+id/user_gen2der"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@+id/gender_image"
-                        android:textStyle="bold"
-                        android:textColor="#000"/>
+                        android:layout_centerHorizontal="true"
+                        android:textColor="#000"
+                        android:textStyle="bold" />
 
 
                 </RelativeLayout>
@@ -250,8 +585,8 @@
                     android:layout_below="@+id/fifthline"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
-                    android:textColor="#000"
-                    android:text="Date of birth:" />
+                    android:text="Date of birth:"
+                    android:textColor="#000" />
 
                 <RelativeLayout
                     android:id="@+id/date_layout"
@@ -261,7 +596,7 @@
                     android:layout_marginTop="5dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/date_image"
+                        android:id="@+id/date2_image"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_centerHorizontal="true"
@@ -270,13 +605,13 @@
                         />
 
                     <TextView
-                        android:id="@+id/user_date"
+                        android:id="@+id/use2_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@+id/date_image"
-                        android:textStyle="bold"
-                        android:textColor="#000"/>
+                        android:layout_centerHorizontal="true"
+                        android:textColor="#000"
+                        android:textStyle="bold" />
 
 
                 </RelativeLayout>
@@ -296,8 +631,8 @@
                     android:layout_below="@+id/sixthline"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
-                    android:textColor="#000"
-                    android:text="Your free trial premium will end on :" />
+                    android:text="Your free trial premium will end on :"
+                    android:textColor="#000" />
 
                 <RelativeLayout
                     android:id="@+id/premium_layout"
@@ -319,10 +654,10 @@
                         android:id="@+id/user_premium_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@+id/premium_image"
-                        android:textStyle="bold"
-                        android:textColor="#000"/>
+                        android:layout_centerHorizontal="true"
+                        android:textColor="#000"
+                        android:textStyle="bold" />
 
 
                 </RelativeLayout>
@@ -341,174 +676,7 @@
     </RelativeLayout>
 
 
-    <!-- <ScrollView
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-         android:fitsSystemWindows="true">
-         &lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;
-
-         <RelativeLayout
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+</android.support.constraint.ConstraintLayout>
 
 
 
-
-
-             <TextView
-                 android:id="@+id/name_surname"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_below="@+id/backgroundProfile"
-                 android:layout_centerHorizontal="true"
-                 android:layout_marginTop="10dp"
-                 android:text="Ime Prezime"
-                 android:textSize="24sp"
-                 android:textColor="#FFFFFF" />
-
-
-
-
-
-
-             <View
-                 android:layout_width="fill_parent"
-                 android:layout_height="2dip"
-                 android:background="#9e9e9e"
-                 android:layout_below="@+id/user_country"
-                 android:layout_marginTop="10dp"
-                 android:id="@+id/horizontal_line" />
-
-             <TextView
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:id="@+id/user_username_textview"
-                 android:text="Username:"
-                 android:layout_below="@id/horizontal_line"
-                 android:layout_marginTop="10dp"
-                 android:layout_marginLeft="10dp" />
-
-             <View
-                 android:layout_width="fill_parent"
-                 android:layout_height="2dip"
-                 android:background="#9e9e9e"
-                 android:layout_below="@+id/user_username_textview"
-                 android:layout_marginTop="10dp"
-                 android:id="@+id/horizontal_line2" />
-
-             <TextView
-                 android:id="@+id/user_username"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_alignTop="@+id/user_username_textview"
-                 android:layout_toEndOf="@+id/user_username_textview"
-                 android:layout_toRightOf="@+id/user_username_textview"
-                 android:layout_marginLeft="50dp"
-                 android:layout_marginStart="50dp"
-                 android:text="Username"
-                 android:textColor="#FFFFFF" />
-
-             <TextView
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="Gender:"
-                 android:layout_below="@id/horizontal_line2"
-                 android:layout_marginTop="10dp"
-                 android:layout_marginLeft="10dp"
-                 android:id="@+id/gender_textview" />
-
-             <TextView
-                 android:id="@+id/user_gender"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_alignLeft="@+id/user_username"
-                 android:layout_alignStart="@+id/user_username"
-                 android:layout_alignTop="@+id/gender_textview"
-                 android:text="Gender"
-                 android:textColor="#FFFFFF" />
-
-             <View
-                 android:layout_width="fill_parent"
-                 android:layout_height="2dip"
-                 android:background="#9e9e9e"
-                 android:layout_below="@+id/gender_textview"
-                 android:layout_marginTop="10dp"
-                 android:id="@+id/horizontal_line3" />
-
-             <TextView
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:id="@+id/date_textview"
-                 android:layout_below="@+id/horizontal_line3"
-                 android:text="Date of birth:"
-                 android:layout_marginTop="10dp"
-                 android:layout_marginLeft="10dp" />
-
-             <TextView
-                 android:id="@+id/user_date"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_alignLeft="@+id/user_username"
-                 android:layout_alignStart="@+id/user_username"
-                 android:layout_alignTop="@+id/date_textview"
-                 android:text="Date"
-                 android:textColor="#FFFFFF" />
-
-
-             <View
-                 android:layout_width="fill_parent"
-                 android:layout_height="2dip"
-                 android:background="#9e9e9e"
-                 android:layout_below="@+id/date_textview"
-                 android:layout_marginTop="10dp"
-                 android:id="@+id/horizontal_line4" />
-
-             <LinearLayout
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_below="@+id/horizontal_line4"
-                 android:orientation="horizontal"
-                 android:id="@+id/clubLinear">
-
-             <TextView
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:id="@+id/club_textview"
-                 android:text="Favourite club:" />
-                  <TextView
-                 android:id="@+id/user_club"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="Club"
-                 android:textColor="#FFFFFF"
-                 android:layout_marginLeft="5dp"/>
-
-             <de.hdodenhof.circleimageview.CircleImageView
-                 android:layout_width="30dp"
-                 android:layout_height="30dp"
-                 android:id="@+id/club_logo_profile"
-                 android:layout_marginLeft="20dp"/>
-
-             <TextView
-                 android:id="@+id/user_club"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="Club"
-                 android:textColor="#FFFFFF"
-                 android:layout_marginLeft="5dp"/>
-
-         </LinearLayout>
-
-             <View
-                 android:layout_width="fill_parent"
-                 android:layout_height="2dip"
-                 android:background="#9e9e9e"
-                 android:layout_below="@+id/clubLinear"
-                 android:layout_marginTop="10dp"
-                 android:id="@+id/horizontal_line5" />
-
-
-         </RelativeLayout>
-     </ScrollView>-->
-
-</RelativeLayout>

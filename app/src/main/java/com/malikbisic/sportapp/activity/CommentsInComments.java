@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.malikbisic.sportapp.model.Comments;
 import com.malikbisic.sportapp.model.CommentsInCommentsModel;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.UsersModel;
@@ -322,6 +323,12 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
 
         }
 
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(CommentsInComments.this, CommentsActivity.class);
+        startActivity(intent);
+        super.onBackPressed();
     }
 
 
