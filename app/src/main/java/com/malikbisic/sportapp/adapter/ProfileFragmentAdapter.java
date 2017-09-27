@@ -9,7 +9,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.MainPage;
+import com.malikbisic.sportapp.activity.ProfileFragment;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -20,8 +29,8 @@ import java.util.ArrayList;
 public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragmentAdapter.ViewHolder> {
 
 
-    private String[] titles = {"Posts", "Boost your team", "Football Fanbase club table", "Premium"};
-    private int[] images = {R.drawable.boost, R.drawable.boost, R.drawable.boost, R.drawable.boost};
+    private String[] titles = {"Posts", "Boost your team", "Fanbase club table", "Premium"};
+    private int[] images = {R.drawable.posts, R.drawable.boost, R.drawable.boost, R.drawable.premium};
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -56,11 +65,21 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
         ImageView itemImage;
         TextView itemTitle;
         TextView numberSomething;
+        FirebaseDatabase mDatabase;
+        DatabaseReference mReference;
+        String uid;
+        FirebaseAuth mAuth;
 
 
         public ViewHolder(View itemView) {
             super(itemView);
+            mDatabase = FirebaseDatabase.getInstance();
 
+            mAuth = FirebaseAuth.getInstance();
+            uid = mAuth.getCurrentUser().getUid();
+
+            mReference = mDatabase.getReference().child("Users").child(uid);
+            String clubLogo;
 
             itemImage = (ImageView) itemView.findViewById(R.id.card_image);
             itemTitle = (TextView) itemView.findViewById(R.id.card_text);
@@ -79,14 +98,29 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
 
         public void numberPost() {
             numberSomething.setText("3443");
+
+
         }
 
         public void numberPointsForYourTeam() {
             numberSomething.setText("23");
+
         }
 
         public void positionTeam() {
             numberSomething.setText("11.");
+            mReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String logoClub = (String) dataSnapshot.child("favoriteClubLogo").getValue();
+                    Picasso.with(itemView.getContext()).load(logoClub).into(itemImage);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 
