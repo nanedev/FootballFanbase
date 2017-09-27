@@ -39,7 +39,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     ImageButton sendComment;
     EditText writeComment;
     RecyclerView comments;
-FirebaseAuth auth;
+    FirebaseAuth auth;
     Intent myIntent;
 
     static String key;
@@ -53,6 +53,7 @@ FirebaseAuth auth;
     DatabaseReference likesReference, dislikeReference;
     boolean like_process = false;
     boolean dislike_process = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +84,7 @@ FirebaseAuth auth;
 
             getCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(key);
             keyNotif = key;
-        }
-        else {
+        } else {
             getCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(keyNotif);
             key = keyNotif;
             NotificationFragment.isNotificationClicked = false;
@@ -159,7 +159,6 @@ FirebaseAuth auth;
                                         DatabaseReference newPost = likesReference.child(post_key_comments).child(auth.getCurrentUser().getUid());
                                         newPost.child("username").setValue(MainPage.usernameInfo);
                                         newPost.child("photoProfile").setValue(MainPage.profielImage);
-
 
 
                                         DatabaseReference getIduserpost = getCommentRef;
@@ -270,6 +269,12 @@ FirebaseAuth auth;
                         Intent listUsername = new Intent(CommentsActivity.this, Username_Likes_Activity.class);
                         listUsername.putExtra("post_keyComment", post_key_comments);
                         listUsername.putExtra("isLikeComment", true);
+                        if (key != null) {
+                            listUsername.putExtra("keyPost", key);
+                        }else if (keyNotif != null){
+                            listUsername.putExtra("keyPost", keyNotif);
+                        }
+                        listUsername.putExtra("openActivityToBack", "commentsActivity");
                         startActivity(listUsername);
                     }
                 });
@@ -279,6 +284,12 @@ FirebaseAuth auth;
                         Intent listUsername = new Intent(CommentsActivity.this, Username_Likes_Activity.class);
                         listUsername.putExtra("post_keyComment", post_key_comments);
                         listUsername.putExtra("isLikeComment", true);
+                        if (key != null) {
+                            listUsername.putExtra("keyPost", key);
+                        }else if (keyNotif != null){
+                            listUsername.putExtra("keyPost", keyNotif);
+                        }
+                        listUsername.putExtra("openActivityToBack", "commentsActivity");
                         startActivity(listUsername);
                     }
                 });
@@ -289,6 +300,12 @@ FirebaseAuth auth;
                         Intent listUsername = new Intent(CommentsActivity.this, Username_Dislikes_Activity.class);
                         listUsername.putExtra("post_keyComment", post_key_comments);
                         listUsername.putExtra("isDislikeComment", true);
+                        if (key != null) {
+                            listUsername.putExtra("keyPost", key);
+                        }else if (keyNotif != null){
+                            listUsername.putExtra("keyPost", keyNotif);
+                        }
+                        listUsername.putExtra("openActivityToBack", "commentsActivity");
                         startActivity(listUsername);
                     }
                 });
@@ -299,6 +316,12 @@ FirebaseAuth auth;
                         Intent listUsername = new Intent(CommentsActivity.this, Username_Dislikes_Activity.class);
                         listUsername.putExtra("post_keyComment", post_key_comments);
                         listUsername.putExtra("isDislikeComment", true);
+                        if (key != null) {
+                            listUsername.putExtra("keyPost", key);
+                        }else if (keyNotif != null){
+                            listUsername.putExtra("keyPost", keyNotif);
+                        }
+                        listUsername.putExtra("openActivityToBack", "commentsActivity");
                         startActivity(listUsername);
                     }
                 });
@@ -413,9 +436,13 @@ FirebaseAuth auth;
                 viewHolder.commentSomething.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
+                        Intent intent = new Intent(CommentsActivity.this, CommentsInComments.class);
                         intent.putExtra("keyComment", post_key_comments);
-                        intent.putExtra("keyPost", key);
+                        if (key != null) {
+                            intent.putExtra("keyPost", key);
+                        }else if (keyNotif != null){
+                            intent.putExtra("keyPost", keyNotif);
+                        }
                         intent.putExtra("profileComment", MainPage.profielImage);
                         intent.putExtra("username", MainPage.usernameInfo);
                         startActivity(intent);
@@ -423,13 +450,16 @@ FirebaseAuth auth;
                 });
 
 
-
                 viewHolder.commentsReplyNumber.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(CommentsActivity.this,CommentsInComments.class);
+                        Intent intent = new Intent(CommentsActivity.this, CommentsInComments.class);
                         intent.putExtra("keyComment", post_key_comments);
-                        intent.putExtra("keyPost", key);
+                        if (key != null) {
+                            intent.putExtra("keyPost", key);
+                        }else if (keyNotif != null){
+                            intent.putExtra("keyPost", keyNotif);
+                        }
                         intent.putExtra("profileComment", MainPage.profielImage);
                         intent.putExtra("username", MainPage.usernameInfo);
                         startActivity(intent);
@@ -449,12 +479,13 @@ FirebaseAuth auth;
         inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);
     }
+
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.sendComment){
+        if (view.getId() == R.id.sendComment) {
             String textComment = writeComment.getText().toString().trim();
             setCommentRef = FirebaseDatabase.getInstance().getReference().child("Comments").child(key).push();
-           DatabaseReference post_comment = setCommentRef ;
+            DatabaseReference post_comment = setCommentRef;
             post_comment.child("textComment").setValue(textComment);
             post_comment.child("profileImage").setValue(profileImage);
             post_comment.child("username").setValue(username);
@@ -489,7 +520,7 @@ FirebaseAuth auth;
 
     public static class CommentsViewHolder extends RecyclerView.ViewHolder {
         View mView;
-TextView commentSomething;
+        TextView commentSomething;
         ImageView profileImageImg;
         TextView commentsText;
         ImageView downArrow;
@@ -505,6 +536,7 @@ TextView commentSomething;
         TextView numberDislikes;
 
         TextView commentsReplyNumber;
+
         public CommentsViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
@@ -513,7 +545,7 @@ TextView commentSomething;
             commentsText = (TextView) mView.findViewById(R.id.textComment);
             downArrow = (ImageView) mView.findViewById(R.id.down_arrow_comments);
             usernameTxt = (TextView) mView.findViewById(R.id.username_comment_profile);
-            likeComments = (TextView)  mView.findViewById(R.id.like_comments_wall);
+            likeComments = (TextView) mView.findViewById(R.id.like_comments_wall);
             database = FirebaseDatabase.getInstance();
             dislikeComment = (TextView) mView.findViewById(R.id.dislike_comments_wall);
             likeBtnImage = (ImageView) mView.findViewById(R.id.likecommentsimage);
@@ -530,20 +562,20 @@ TextView commentSomething;
         }
 
         public void setTextComment(String textComment) {
-                commentsText.setText(textComment);
+            commentsText.setText(textComment);
             commentsText.setTextColor(Color.parseColor("#000000"));
-                Log.i("comment", textComment);
+            Log.i("comment", textComment);
 
         }
 
         public void setProfileImage(Context ctx, String profileImage) {
 
-                Picasso.with(ctx).load(profileImage).into(profileImageImg);
-               // Log.i("prp", profileImage);
+            Picasso.with(ctx).load(profileImage).into(profileImageImg);
+            // Log.i("prp", profileImage);
 
         }
 
-        public void setUsername(String username){
+        public void setUsername(String username) {
 
             if (username != null) {
                 usernameTxt.setText(username);
@@ -664,7 +696,7 @@ TextView commentSomething;
 
 
                         commentsReplyNumber.setText("");
-                    } else if (numberOfComments == 1){
+                    } else if (numberOfComments == 1) {
 
 
                         commentsReplyNumber.setText(String.valueOf(numberOfComments));
@@ -681,7 +713,17 @@ TextView commentSomething;
 
                 }
             });
+
+
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Intent backMainPage = new Intent(CommentsActivity.this, MainPage.class);
+        startActivity(backMainPage);
+        finish();
+    }
 }

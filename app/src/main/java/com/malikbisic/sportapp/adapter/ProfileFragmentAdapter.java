@@ -20,15 +20,13 @@ import java.util.ArrayList;
 public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragmentAdapter.ViewHolder> {
 
 
-
-
-    private String[] titles = {"Posts","Boost your team","Football Fanbase club table","Premium"};
-    private int[] images = {R.drawable.boost,R.drawable.boost,R.drawable.boost,R.drawable.boost};
+    private String[] titles = {"Posts", "Boost your team", "Football Fanbase club table", "Premium"};
+    private int[] images = {R.drawable.boost, R.drawable.boost, R.drawable.boost, R.drawable.boost};
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v  = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout_in_fragment_profile,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout_in_fragment_profile, parent, false);
 
 
         return new ViewHolder(v);
@@ -36,12 +34,17 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-holder.itemTitle.setText(titles[position]);
-holder.itemImage.setImageResource(images[position]);
+        holder.itemTitle.setText(titles[position]);
+        holder.itemImage.setImageResource(images[position]);
 
 
-
-
+        if (position == 0){
+            holder.numberPost();
+        } else if (position == 1){
+            holder.numberPointsForYourTeam();
+        } else if (position == 2){
+            holder.positionTeam();
+        }
     }
 
     @Override
@@ -49,9 +52,10 @@ holder.itemImage.setImageResource(images[position]);
         return titles.length;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
         ImageView itemImage;
         TextView itemTitle;
+        TextView numberSomething;
 
 
         public ViewHolder(View itemView) {
@@ -60,17 +64,31 @@ holder.itemImage.setImageResource(images[position]);
 
             itemImage = (ImageView) itemView.findViewById(R.id.card_image);
             itemTitle = (TextView) itemView.findViewById(R.id.card_text);
+            numberSomething = (TextView) itemView.findViewById(R.id.number_of);
 
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int pos = getAdapterPosition();
-                    Snackbar.make(v,"Clicked" + pos,Snackbar.LENGTH_LONG)
-                            .setAction("Action",null).show();
+                    Snackbar.make(v, "Clicked" + pos, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             });
         }
 
+        public void numberPost() {
+            numberSomething.setText("3443");
+        }
+
+        public void numberPointsForYourTeam() {
+            numberSomething.setText("23");
+        }
+
+        public void positionTeam() {
+            numberSomething.setText("11.");
+        }
     }
+
+
 }

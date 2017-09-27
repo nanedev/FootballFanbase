@@ -3,15 +3,18 @@ package com.malikbisic.sportapp.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,14 +38,22 @@ public class Username_Likes_Activity extends AppCompatActivity {
     DatabaseReference profileUsers;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthStateListener;
-
+    Toolbar likeToolbar;
+    String openActivity = "";
+    String postKey = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_username__likes_);
         myIntent = getIntent();
+        likeToolbar = (Toolbar) findViewById(R.id.like_toolbar);
+        setSupportActionBar(likeToolbar);
+        getSupportActionBar().setTitle("People who liked");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String post_key = myIntent.getStringExtra("post_key");
+        openActivity = myIntent.getStringExtra("openActivityToBack");
+        postKey = myIntent.getStringExtra("keyPost");
         String post_keyComments = myIntent.getStringExtra("post_keyComment");
         boolean isComment = myIntent.getBooleanExtra("isLikeComment", false);
 
@@ -258,5 +269,25 @@ public class Username_Likes_Activity extends AppCompatActivity {
         returnIntent.putExtra("result","nesto");
         setResult(RESULT_OK,returnIntent);
         finish();
+    }
+
+    @Nullable
+    @Override
+    public Intent getParentActivityIntent() {
+
+
+        if (openActivity.equals("mainPage")){
+            Intent backMainPage = new Intent(Username_Likes_Activity.this, MainPage.class);
+            startActivity(backMainPage);
+            finish();
+        } else if (openActivity.equals("commentsActivity")){
+            Intent backComments = new Intent(Username_Likes_Activity.this, CommentsActivity.class);
+            backComments.putExtra("keyComment", postKey);
+            startActivity(backComments);
+            finish();
+        }
+
+        return super.getParentActivityIntent();
+
     }
 }

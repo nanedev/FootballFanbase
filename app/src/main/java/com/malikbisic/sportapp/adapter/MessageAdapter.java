@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -48,49 +49,50 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return new MessageViewHolder(v);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(final MessageViewHolder holder, int position) {
         mAutH = FirebaseAuth.getInstance();
 
-            String current_user_id = mAutH.getCurrentUser().getUid();
+        String current_user_id = mAutH.getCurrentUser().getUid();
 
         Messages messages = mMessageList.get(position);
         String from_user = messages.getFrom();
-        if (from_user != null){
+        if (from_user != null) {
 
-       if (from_user.equals(current_user_id)){
+            if (from_user.equals(current_user_id)) {
 
-            holder.messagetTextTexview.setBackgroundColor(Color.WHITE);
-            holder.messagetTextTexview.setTextColor(R.color.black);
-           holder.layout.setGravity(Gravity.RIGHT);
-           holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
-           holder.profileImageImg.setVisibility(View.GONE);
+                holder.messagetTextTexview.setBackgroundColor(Color.WHITE);
+                holder.messagetTextTexview.setTextColor(R.color.black);
+                holder.layout.setGravity(Gravity.RIGHT);
+                holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+                holder.profileImageImg.setVisibility(View.GONE);
 
-        }else {
-           holder.messagetTextTexview.setBackgroundResource(R.drawable.message_text_background);
-           holder.messagetTextTexview.setTextColor(Color.WHITE);
-           holder.layout.setGravity(Gravity.LEFT);
-           holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
-           holder.profileImageImg.setVisibility(View.VISIBLE);
+            } else {
+                holder.messagetTextTexview.setBackgroundResource(R.drawable.message_text_background);
+                holder.messagetTextTexview.setTextColor(Color.WHITE);
+                holder.layout.setGravity(Gravity.LEFT);
+                holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+                holder.profileImageImg.setVisibility(View.VISIBLE);
 
-           DatabaseReference displayImage = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference displayImage = FirebaseDatabase.getInstance().getReference();
 
-           displayImage.child("Users").child(from_user).addValueEventListener(new ValueEventListener() {
-               @Override
-               public void onDataChange(DataSnapshot dataSnapshot) {
+                displayImage.child("Users").child(from_user).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                   UserChat model2 = dataSnapshot.getValue(UserChat.class);
-                   String profileImage = model2.getProfileImage();
+                        UserChat model2 = dataSnapshot.getValue(UserChat.class);
+                        String profileImage = model2.getProfileImage();
 
-                   holder.setProfileImageImg(ctx, profileImage);
-               }
+                        holder.setProfileImageImg(ctx, profileImage);
+                    }
 
-               @Override
-               public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-               }
-           });
-       }
+                    }
+                });
+            }
 
         }
 
@@ -122,7 +124,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         }
 
-        public void setProfileImageImg(Context ctx, String profileImage){
+        public void setProfileImageImg(Context ctx, String profileImage) {
             Picasso.with(ctx).load(profileImage).into(profileImageImg);
         }
 

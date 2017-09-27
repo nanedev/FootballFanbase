@@ -323,13 +323,14 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
 
         }
 
+
     }
+
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(CommentsInComments.this, CommentsActivity.class);
-        startActivity(intent);
         super.onBackPressed();
+        Intent backToComments = new Intent(CommentsInComments.this, CommentsActivity.class);
+        backToComments.putExtra("keyComment", keyPost);
+        startActivity(backToComments);
     }
-
-
 }
