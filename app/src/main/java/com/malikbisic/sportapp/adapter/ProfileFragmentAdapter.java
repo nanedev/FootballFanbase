@@ -1,6 +1,8 @@
 package com.malikbisic.sportapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,10 +16,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.activity.MainPage;
-import com.malikbisic.sportapp.activity.ProfileFragment;
+import com.malikbisic.sportapp.activity.MyPostsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -28,9 +30,16 @@ import java.util.ArrayList;
 
 public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragmentAdapter.ViewHolder> {
 
-//comentar
-    private String[] titles = {"Posts", "Boost your team", "Fanbase club table", "Premium"};
+
+    private String[] titles = {"Posts", "Boost your team", "Football Fanbase club table", "Premium"};
     private int[] images = {R.drawable.posts, R.drawable.boost, R.drawable.boost, R.drawable.premium};
+
+    int number;
+    Activity activity;
+
+    public ProfileFragmentAdapter(Activity activity) {
+        this.activity = activity;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -46,6 +55,16 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
         holder.itemTitle.setText(titles[position]);
         holder.itemImage.setImageResource(images[position]);
 
+        if (position == 0){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(activity, MyPostsActivity.class);
+                    activity.startActivity(intent);
+                }
+            });
+
+        }
 
         if (position == 0){
             holder.numberPost();
@@ -73,6 +92,9 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
 
         public ViewHolder(View itemView) {
             super(itemView);
+
+
+
             mDatabase = FirebaseDatabase.getInstance();
 
             mAuth = FirebaseAuth.getInstance();
@@ -96,15 +118,28 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
             });
         }
 
-        public void numberPost() {
-            numberSomething.setText("3443");
 
 
-        }
+    public void numberPost() {
 
+        DatabaseReference numberPostRef = FirebaseDatabase.getInstance().getReference().child("Posting");
+        Query numberPostQuery = numberPostRef.orderByChild("uid").equalTo(uid);
+        numberPostQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                number  = (int) dataSnapshot.getChildrenCount();
+                numberSomething.setText(""+number);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
         public void numberPointsForYourTeam() {
             numberSomething.setText("23");
-
         }
 
         public void positionTeam() {
