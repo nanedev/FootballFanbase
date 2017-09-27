@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,13 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.MyPostsActivity;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Nane on 26.9.2017.
@@ -72,6 +79,8 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
             holder.numberPointsForYourTeam();
         } else if (position == 2){
             holder.positionTeam();
+        }else if (position == 3){
+            holder.premiumTrialDateText();
         }
     }
 
@@ -88,6 +97,16 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
         DatabaseReference mReference;
         String uid;
         FirebaseAuth mAuth;
+
+        DateFormat dateFormat;
+        Calendar calendar;
+        Date currentDateOfUser;
+        String getDateFromDatabase;
+        TextView premiumTrialDate;
+        Date trialDate;
+        String trialDateString;
+        Date dateRightNow;
+
 
 
         public ViewHolder(View itemView) {
@@ -106,8 +125,10 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
             itemImage = (ImageView) itemView.findViewById(R.id.card_image);
             itemTitle = (TextView) itemView.findViewById(R.id.card_text);
             numberSomething = (TextView) itemView.findViewById(R.id.number_of);
+            calendar = Calendar.getInstance();
 
-
+            dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            dateRightNow = new Date();
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -156,6 +177,46 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
 
                 }
             });
+        }
+
+        public void premiumTrialDateText(){
+
+            mReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    getDateFromDatabase = String.valueOf(dataSnapshot.child("premiumDate").getValue());
+                    try {
+                        currentDateOfUser = dateFormat.parse(getDateFromDatabase);
+                        calendar.setTime(currentDateOfUser);
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.add(Calendar.DAY_OF_MONTH, 15);
+                    trialDate = calendar.getTime();
+                    trialDateString = dateFormat.format(trialDate);
+                    mReference.child("trialPremiumDate").setValue(trialDateString);
+
+                    numberSomething.setText("Your premium trial will end on : " + trialDateString);
+
+
+                    if (dateRightNow.equals(trialDate) || dateRightNow.after(trialDate)) {
+
+                        numberSomething.setText("Your premium trial ended");
+                        mReference.child("premium").setValue(false);
+
+
+                        Log.i("proba", "isti su");
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
         }
     }
 

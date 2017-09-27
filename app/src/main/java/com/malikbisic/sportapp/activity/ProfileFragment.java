@@ -121,15 +121,7 @@ public class ProfileFragment extends Fragment {
     ImageView backgroundImage;
     ImageView logoClub;
     String clubLogoFirebase;
-    DateFormat dateFormat;
-    Calendar calendar;
-    Date currentDateOfUser;
-    String getDateFromDatabase;
-    TextView premiumTrialDate;
-    Date trialDate;
-    String trialDateString;
-    Date dateRightNow;
-    TextView premiumTextview;
+
     View premiumLinija;
     RelativeLayout premiumLayout;
 
@@ -165,29 +157,26 @@ public class ProfileFragment extends Fragment {
         birthday = (TextView) view.findViewById(R.id.user_date);
         country = (TextView) view.findViewById(R.id.user_country);
         club = (TextView) view.findViewById(R.id.user_club);
-        premiumTrialDate = (TextView) view.findViewById(R.id.user_premium_date);
+
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
         myPosts = (TextView) view.findViewById(R.id.my_posts_id);
 
         logoClub = (ImageView) view.findViewById(R.id.club_logo_profile);
-        calendar = Calendar.getInstance();
+
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
         dialog = new ProgressDialog(getContext());
         loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);
         premiumLinija = view.findViewById(R.id.sixthline);
         premiumLayout = (RelativeLayout) view.findViewById(R.id.premium_layout);
-        premiumTextview = (TextView) view.findViewById(R.id.your_premium);
         genderImage = (ImageView) view.findViewById(R.id.gender_image);
         rec = (RecyclerView) view.findViewById(R.id.hhhhhh);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rec.setLayoutManager(layoutManager);
-      adapter = new ProfileFragmentAdapter();
+      adapter = new ProfileFragmentAdapter(getActivity());
       rec.setAdapter(adapter);
 
 
-        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        dateRightNow = new Date();
 
         minAdultAge = new GregorianCalendar();
         editProfilePicture.setOnClickListener(new View.OnClickListener() {
@@ -210,13 +199,7 @@ public class ProfileFragment extends Fragment {
                 dialog.show();
             }
         });
-        myPosts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MyPostsActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
         loadProfile_image.getIndeterminateDrawable()
                 .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN);
@@ -260,30 +243,6 @@ public class ProfileFragment extends Fragment {
                 birthday.setText(String.valueOf(value.get("date")));
                 club.setText(String.valueOf(value.get("favoriteClub")));
 
-                getDateFromDatabase = String.valueOf(value.get("premiumDate"));
-                try {
-                    currentDateOfUser = dateFormat.parse(getDateFromDatabase);
-                    calendar.setTime(currentDateOfUser);
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                calendar.add(Calendar.DAY_OF_MONTH, 15);
-                trialDate = calendar.getTime();
-                trialDateString = dateFormat.format(trialDate);
-                mReference.child("trialPremiumDate").setValue(trialDateString);
-
-                premiumTrialDate.setText(trialDateString);
-
-
-                if (dateRightNow.equals(trialDate) || dateRightNow.after(trialDate)) {
-                    premiumTextview.setVisibility(View.GONE);
-                    premiumLayout.setVisibility(View.GONE);
-                    premiumLinija.setVisibility(View.GONE);
-                    mReference.child("premium").setValue(false);
-
-                    Log.i("proba", "isti su");
-                }
 
 
                 flagImageFirebase = String.valueOf(value.get("flag"));
