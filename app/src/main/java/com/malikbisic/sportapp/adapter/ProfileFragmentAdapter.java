@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragmentAdapter.ViewHolder> {
 
-
+//comentar
     private String[] titles = {"Posts", "Boost your team", "Fanbase club table", "Premium"};
     private int[] images = {R.drawable.posts, R.drawable.boost, R.drawable.boost, R.drawable.premium};
 
