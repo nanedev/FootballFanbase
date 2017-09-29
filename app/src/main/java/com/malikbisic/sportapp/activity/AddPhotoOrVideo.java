@@ -2,9 +2,12 @@ package com.malikbisic.sportapp.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,12 +23,21 @@ import android.widget.VideoView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import id.zelory.compressor.Compressor;
 
 public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickListener {
 
@@ -69,7 +81,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         if (MainPage.photoSelected){
             photoSelected.setVisibility(View.VISIBLE);
             photoSelected.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            Uri imageUri = Uri.parse(myIntent.getStringExtra("image-uri_selected"));
+            Uri imageUri = myIntent.getData();
             photoSelected.setImageURI(imageUri);
 
         } else if (!MainPage.photoSelected) {
@@ -117,7 +129,16 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         if (view.getId() == R.id.btn_post_photo_or_video){
 
             if (MainPage.photoSelected) {
-                Uri imageUri = Uri.parse(myIntent.getStringExtra("image-uri_selected"));
+                try {  Uri imageUri = myIntent.getData();
+                File imagePath = new File(getRealPathFromURI(imageUri));
+                Log.i("imagePath", imagePath.getPath());
+
+                    Bitmap imageCompressBitmap = new Compressor(this)
+                            .setMaxWidth(640)
+                            .setMaxHeight(480)
+                            .setQuality(75)
+                            .compressToBitmap(imagePath);
+
                 final String aboutPhotoText = saySomething.getText().toString().trim();
                 final String username = myIntent.getStringExtra("username");
                 final String profileImage = myIntent.getStringExtra("profileImage");
@@ -130,19 +151,35 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 postingDialog.setMessage("Posting");
                 postingDialog.show();
 
-                photoPost.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                imageCompressBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                final byte[] data = baos.toByteArray();
+
+                UploadTask uploadTask = photoPost.putBytes(data);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUri = taskSnapshot.getDownloadUrl();
 
+                        Map imageMap = new HashMap();
+                        imageMap.put("descForPhoto", aboutPhotoText);
+                        imageMap.put("username", username);
+                        imageMap.put("profileImage", profileImage);
+                        imageMap.put("photoPost", downloadUri.toString());
+                        imageMap.put("uid", mAuth.getCurrentUser().getUid());
+                        imageMap.put("country", country);
+                        imageMap.put("clubLogo", clubLogo);
+                        imageMap.put("favoritePostClub", MainPage.myClubName);
+
                         DatabaseReference newPost = postingDatabase.push();
-                        newPost.child("descForPhoto").setValue(aboutPhotoText);
-                        newPost.child("username").setValue(username);
-                        newPost.child("profileImage").setValue(profileImage);
-                        newPost.child("photoPost").setValue(downloadUri.toString());
-                        newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
-                        newPost.child("country").setValue(country);
-                        newPost.child("clubLogo").setValue(clubLogo);
+                        newPost.updateChildren(imageMap, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null){
+                                    Log.e("photoError", databaseError.getMessage().toString());
+                                }
+                            }
+                        });
                         postingDialog.dismiss();
                         Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
                         startActivity(goToMain);
@@ -155,6 +192,9 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         postingDialog.dismiss();
                     }
                 });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else if (!MainPage.photoSelected){
                 Uri videoUri = Uri.parse(myIntent.getStringExtra("video-uri_selected"));
                 final String aboutVideoText = saySomething.getText().toString().trim();
@@ -196,5 +236,19 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
         }
 
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
     }
 }

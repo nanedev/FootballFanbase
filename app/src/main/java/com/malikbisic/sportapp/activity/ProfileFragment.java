@@ -93,10 +93,13 @@ public class ProfileFragment extends Fragment {
     TextView addBackground;
     private TextView name_surname;
     ImageView genderImage;
+    TextView myPosts;
+
     private Calendar minAdultAge;
     private ProgressBar loadProfile_image;
     private String uid;
     private static final int GALLERY_REQUEST = 134;
+
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
     boolean hasSetProfileImage = false;
@@ -120,7 +123,7 @@ public class ProfileFragment extends Fragment {
     String clubLogoFirebase;
 
     View premiumLinija;
-
+    RelativeLayout premiumLayout;
 
     RecyclerView rec;
     ProfileFragmentAdapter adapter;
@@ -165,7 +168,6 @@ public class ProfileFragment extends Fragment {
         dialog = new ProgressDialog(getContext());
         loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);
         premiumLinija = view.findViewById(R.id.sixthline);
-
         genderImage = (ImageView) view.findViewById(R.id.gender_image);
         rec = (RecyclerView) view.findViewById(R.id.hhhhhh);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

@@ -144,7 +144,7 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
         rec = (RecyclerView) findViewById(R.id.hhhhhhUser);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rec.setLayoutManager(layoutManager);
-        adapter = new UserProfileAdapter(this);
+        adapter = new UserProfileAdapter(UserProfileActivity.this);
         rec.setAdapter(adapter);
 
 

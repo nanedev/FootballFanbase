@@ -31,7 +31,7 @@
             android:id="@+id/card_imageUser"
             android:layout_marginTop="5dp"
             android:contentDescription="@string/image_desc"
-            android:layout_below="@id/number_of" />
+            android:layout_below="@id/number_ofUser" />
 
 
         <TextView

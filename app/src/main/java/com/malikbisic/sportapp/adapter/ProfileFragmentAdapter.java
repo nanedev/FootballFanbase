@@ -38,7 +38,7 @@ import java.util.Locale;
 public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragmentAdapter.ViewHolder> {
 
 
-    private String[] titles = {"Posts", "Boost your team", "Football Fanbase club table", "Premium"};
+    private String[] titles = {"Posts", "Boost your team", "Fanbase club table", "Premium"};
     private int[] images = {R.drawable.posts, R.drawable.boost, R.drawable.boost, R.drawable.premium};
 
     int number;

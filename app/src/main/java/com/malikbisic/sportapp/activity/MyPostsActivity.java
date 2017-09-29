@@ -62,19 +62,21 @@ public class MyPostsActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     RecyclerView postRecyclerView;
     LinearLayoutManager linearLayoutManager;
-    private DatabaseReference mReference, postingDatabase, likesReference, dislikeReference,notificationReference;
+    private DatabaseReference mReference, postingDatabase, likesReference, dislikeReference, notificationReference;
     boolean pause_state;
     boolean play_state;
     boolean like_process = false;
     boolean dislike_process = false;
     private FirebaseDatabase mDatabase;
     String uid;
+    Intent myIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_posts);
         mAuth = FirebaseAuth.getInstance();
+        myIntent = getIntent();
         mDatabase = FirebaseDatabase.getInstance();
         postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
         postRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_my_posts);
@@ -93,11 +95,23 @@ public class MyPostsActivity extends AppCompatActivity {
         likesReference.keepSynced(true);
         dislikeReference.keepSynced(true);
         notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
-uid = MainPage.uid;
+        uid = MainPage.uid;
         DatabaseReference myPostsReference = FirebaseDatabase.getInstance().getReference().child("Posting");
-        final Query query = myPostsReference
-                .orderByChild("uid")
-                .equalTo(mAuth.getCurrentUser().getUid());
+        String userID = myIntent.getStringExtra("userID");
+        boolean isUserClicked = myIntent.getBooleanExtra("isClicked", false);
+        final Query query;
+
+        if (isUserClicked) {
+            query = myPostsReference
+                    .orderByChild("uid")
+                    .equalTo(userID);
+            isUserClicked = false;
+        }else {
+            query = myPostsReference
+                    .orderByChild("uid")
+                    .equalTo(mAuth.getCurrentUser().getUid());
+        }
+
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

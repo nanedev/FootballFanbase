@@ -35,11 +35,11 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     int number;
     Activity activity;
-    String uid;
 
-    public UserProfileAdapter(Activity activity,String uid) {
+
+    public UserProfileAdapter(Activity activity) {
         this.activity = activity;
-        this.uid = uid;
+
     }
 
 
@@ -60,7 +60,11 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Intent myIntent = activity.getIntent();
+                    String userUid = myIntent.getStringExtra("userID");
                     Intent intent = new Intent(activity, MyPostsActivity.class);
+                    intent.putExtra("userID", userUid);
+                    intent.putExtra("isClicked", true);
                     activity.startActivity(intent);
                 }
             });
@@ -112,13 +116,20 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         public UserProfileViewHodler(View itemView) {
             super(itemView);
 
-            mReference = mDatabase.getReference().child("Users").child(uid);
+            itemTitle = (TextView) itemView.findViewById(R.id.card_textUser);
+            numberSomething = (TextView) itemView.findViewById(R.id.number_ofUser);
+            itemImage = (ImageView) itemView.findViewById(R.id.card_imageUser);
+            mDatabase = FirebaseDatabase.getInstance();
+            Intent myIntent = activity.getIntent();
+            String userUid = myIntent.getStringExtra("userID");
+            mReference = mDatabase.getReference().child("Users").child(userUid);
         }
 
         public void numberPost() {
-
+            Intent myIntent = activity.getIntent();
+            String userUid = myIntent.getStringExtra("userID");
             DatabaseReference numberPostRef = FirebaseDatabase.getInstance().getReference().child("Posting");
-            Query numberPostQuery = numberPostRef.orderByChild("uid").equalTo(uid);
+            Query numberPostQuery = numberPostRef.orderByChild("uid").equalTo(userUid);
             numberPostQuery.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,6 +33,8 @@ import com.malikbisic.sportapp.R;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -222,19 +226,40 @@ public class RecordAudio extends AppCompatActivity {
         buttonPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String country = MainPage.country;
+                final String country = MainPage.country.toString();
                 final String clubLogo = MainPage.clubHeaderString;
                 String about = aboutAudio.getText().toString().trim();
                 mDialog.setMessage("Posting...");
                 mDialog.show();
                 DatabaseReference newPost = postAudio.push();
-                newPost.child("audioFile").setValue(uriAudio.toString());
+                String pushKey = newPost.getKey();
+                /*newPost.child("audioFile").setValue(uriAudio.toString());
                 newPost.child("username").setValue(MainPage.usernameInfo);
                 newPost.child("profileImage").setValue(MainPage.profielImage);
                 newPost.child("descForAudio").setValue(about);
                 newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
                 newPost.child("country").setValue(country);
-                newPost.child("clubLogo").setValue(clubLogo);
+                newPost.child("clubLogo").setValue(clubLogo);*/
+
+                Map audioMap = new HashMap();
+                audioMap.put("audioFile", uriAudio.toString());
+                audioMap.put("username", MainPage.usernameInfo);
+                audioMap.put("profileImage", MainPage.profielImage);
+                audioMap.put("descForAudio", about);
+                audioMap.put("uid", mAuth.getCurrentUser().getUid());
+                audioMap.put("country", country);
+                audioMap.put("clubLogo", clubLogo);
+                audioMap.put("favoritePostClub", MainPage.myClubName);
+
+                newPost.updateChildren(audioMap, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError != null){
+                            Log.e("audioError", databaseError.getMessage().toString());
+                        }
+                    }
+                });
+
                 mDialog.dismiss();
                 buttonStart.setEnabled(true);
                 buttonStopPlayingRecording.setEnabled(false);

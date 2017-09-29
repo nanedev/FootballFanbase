@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.*;
 import android.content.ComponentName;
@@ -451,6 +452,7 @@ public class MainPage extends AppCompatActivity
 
 
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
