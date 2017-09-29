@@ -715,7 +715,7 @@ public class MainPage extends AppCompatActivity
     public void premiumUsers() {
 
 
-        Query postingQuery = postingDatabase.limitToLast(mCurrentPage * TOTAL_ITEM_LOAD);
+        Query postingQuery = postingDatabase;
 
         FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder>(
                 Post.class,

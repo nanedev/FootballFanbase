@@ -13,6 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
@@ -35,6 +37,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.adapter.ProfileFragmentAdapter;
+import com.malikbisic.sportapp.adapter.UserProfileAdapter;
 import com.malikbisic.sportapp.model.SvgDrawableTranscoder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -66,12 +70,12 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView birthday;
     private TextView country;
     private TextView club;
-CircleImageView genderImageUser;
+ImageView genderImageUser;
 
     private Calendar minAdultAge;
     private BitmapDrawable obwer;
     private ProgressBar loadProfile_image;
-    private String uid;
+    static String uid;
     private static final int GALLERY_REQUEST = 134;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
@@ -94,6 +98,12 @@ CircleImageView genderImageUser;
     String clubLogoFirebase;
     Intent myIntent;
     TextView seeUserPosts;
+    ImageView backgroundFlagUsers;
+
+
+    RecyclerView rec;
+    UserProfileAdapter adapter;
+    RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +122,8 @@ CircleImageView genderImageUser;
         country = (TextView) findViewById(R.id.user_countryUser);
         club = (TextView) findViewById(R.id.user_clubUser);
         seeUserPosts = (TextView) findViewById(R.id.see_user_posts);
-        genderImageUser = (CircleImageView) findViewById(R.id.gender_imageUser);
+        genderImageUser = (ImageView) findViewById(R.id.gender_imageUser);
+        backgroundFlagUsers = (ImageView) findViewById(R.id.user_countryFlagUsersUsers);
 seeUserPosts.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
@@ -128,6 +139,15 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
         dialog = new ProgressDialog(this);
         loadProfile_image = (ProgressBar) findViewById(R.id.loadingProfileImageProgressBarUser);;
         minAdultAge = new GregorianCalendar();
+
+
+        rec = (RecyclerView) findViewById(R.id.hhhhhhUser);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rec.setLayoutManager(layoutManager);
+        adapter = new UserProfileAdapter(this);
+        rec.setAdapter(adapter);
+
+
 
 
         loadProfile_image.getIndeterminateDrawable()
@@ -158,14 +178,13 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
 
                 username.setText(String.valueOf(value.get("username")));
                 gender.setText(String.valueOf(value.get("gender")));
-                if (String.valueOf(value.get("gender")).equals("Male")){
-                    genderImageUser.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
-                    genderImageUser.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.male,null));
-                }else if (String.valueOf(value.get("gender")).equals("Female")){
-                    genderImageUser.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
-                    genderImageUser.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.female,null));
+                if (String.valueOf(value.get("gender")).equals("Male")) {
+                    genderImageUser.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    genderImageUser.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
+                } else if (String.valueOf(value.get("gender")).equals("Female")) {
+                    genderImageUser.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    genderImageUser.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
                 }
-
 
 
                 birthday.setText(String.valueOf(value.get("date")));
@@ -176,7 +195,7 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
 
                 clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
 
-                flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                backgroundFlagUsers.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
@@ -197,31 +216,12 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
                         // SVG cannot be serialized so it's not worth to cache it
                         .diskCacheStrategy(SOURCE)
                         .load(uri)
-                        .into(flag);
+                        .into(backgroundFlagUsers);
 
 
 
                 Picasso.with(UserProfileActivity.this).load(clubLogoFirebase).into(logoClub);
 
-                               /*Picasso.with(ProfileFragment.this.getActivity())
-                        .load(flagImageFirebase)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(flag, new Callback() {
-                            @Override
-                            public void onSuccess() {
-
-                            }
-
-                            @Override
-                            public void onError() {
-                            try {
-
-                            }catch (Exception e)
-                            {
-                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                            }
-                        });*/
 
                 country.setText(String.valueOf(value.get("country")));
 
@@ -362,8 +362,8 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
             if(drawable != null){
 
                 // Try using your library and adding this layer type before switching your SVG parsing
-                flag.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
-flag.setImageDrawable(drawable);
+                backgroundFlagUsers.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+backgroundFlagUsers.setImageDrawable(drawable);
 
 
             }
