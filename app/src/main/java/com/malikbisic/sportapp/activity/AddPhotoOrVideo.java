@@ -211,13 +211,25 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUri = taskSnapshot.getDownloadUrl();
                         DatabaseReference newPost = postingDatabase.push();
-                        newPost.child("descVideo").setValue(aboutVideoText);
-                        newPost.child("username").setValue(username);
-                        newPost.child("profileImage").setValue(profileImage);
-                        newPost.child("videoPost").setValue(downloadUri.toString());
-                        newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
-                        newPost.child("country").setValue(country);
-                        newPost.child("clubLogo").setValue(clubLogo);
+
+                        Map videoMap = new HashMap();
+                        videoMap.put("descVideo", aboutVideoText);
+                        videoMap.put("username", username);
+                        videoMap.put("profileImage", profileImage);
+                        videoMap.put("videoPost", downloadUri.toString());
+                        videoMap.put("uid", mAuth.getCurrentUser().getUid());
+                        videoMap.put("country", country);
+                        videoMap.put("clubLogo", clubLogo);
+                        videoMap.put("favoritePostClub", MainPage.myClubName);
+
+                        newPost.updateChildren(videoMap, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null) {
+                                    Log.e("VideoError", databaseError.getMessage().toString());
+                                }
+                            }
+                        });
                         postingDialog.dismiss();
                         Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
                         startActivity(goToMain);

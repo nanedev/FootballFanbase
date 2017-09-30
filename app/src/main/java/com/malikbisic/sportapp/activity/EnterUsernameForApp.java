@@ -704,12 +704,24 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         favoriteClubString = favoriteClub.getText().toString().trim();
         countryString = selectCountry.getText().toString().trim();
 
+        File thumb_filePath = new File(getRealPathFromURI(resultUri));
+        try {
+            Bitmap profileThumb = new Compressor(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(75)
+                    .compressToBitmap(thumb_filePath);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] thumb_byte = baos.toByteArray();
+
         profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
         mDialog.setMessage("Registering...");
         mDialog.show();
 
-
-        profileImageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            UploadTask task = profileImageRef.putBytes(thumb_byte);
+        task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
@@ -786,7 +798,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

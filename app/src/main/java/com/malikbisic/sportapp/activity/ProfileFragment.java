@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
@@ -49,6 +50,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -63,6 +65,9 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -71,8 +76,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import id.zelory.compressor.Compressor;
 
 import static android.app.Activity.RESULT_OK;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
@@ -362,7 +370,7 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             profile.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -380,28 +388,88 @@ public class ProfileFragment extends Fragment {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 resultUri = result.getUri();
-                Picasso.with(getActivity()).load(resultUri)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
-                        .into(profile);
-                profileImageUpdate = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-                profileImageUpdate.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadUri = taskSnapshot.getDownloadUrl();
 
-                        mReference = mDatabase.getReference().child("Users").child(uid);
-                        if (downloadUri != null)
-                            mReference.child("profileImage").setValue(downloadUri.toString());
-                    }
-                });
-                hasSetProfileImage = true;
+                try {
+                    File imagePath = new File(resultUri.getPath());
+                    Log.i("imagePath", imagePath.getPath());
+
+
+                    Bitmap imageCompressBitmap = new Compressor(getActivity())
+                            .setMaxWidth(640)
+                            .setMaxHeight(480)
+                            .setQuality(75)
+                            .compressToBitmap(imagePath);
+
+
+                    Picasso.with(getActivity()).load(String.valueOf(imageCompressBitmap))
+                            .networkPolicy(NetworkPolicy.OFFLINE)
+                            .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
+                            .into(profile);
+                    profileImageUpdate = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    imageCompressBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    final byte[] changeImageData = baos.toByteArray();
+
+                    UploadTask uploadTask = profileImageUpdate.putBytes(changeImageData);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            final Uri downloadUri = taskSnapshot.getDownloadUrl();
+
+                            mReference = mDatabase.getReference().child("Users").child(uid);
+                            if (downloadUri != null)
+                                mReference.child("profileImage").setValue(downloadUri.toString());
+
+                            final DatabaseReference postingImageUpdate = FirebaseDatabase.getInstance().getReference().child("Posting");
+                            Query query = postingImageUpdate.orderByChild("uid").equalTo(uid);
+                            query.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                        snapshot.getRef().child("profileImage").setValue(downloadUri.toString());
+                                    }
+
+                                       /* String path = dataSnapshot.child("profileImage").getRef().toString();
+                                        Map imageUpdate = new HashMap();
+                                        imageUpdate.put("profileImage", downloadUri.toString());
+                                        Map refMap = new HashMap();
+                                        refMap.put(path, imageUpdate);
+                                        postingImageUpdate.updateChildren(refMap, new DatabaseReference.CompletionListener() {
+                                            @Override
+                                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                                if (databaseError != null){
+                                                    Log.e("photoUpdateError", databaseError.getMessage().toString());
+                                                }
+                                            }
+                                        });*/
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+
+
+                    });
+                    hasSetProfileImage = true;
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 Log.i("errorCrop", String.valueOf(error));
             }
-        }
 
+        }
 
     }
 
