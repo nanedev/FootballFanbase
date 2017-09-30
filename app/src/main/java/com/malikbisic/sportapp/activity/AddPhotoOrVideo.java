@@ -239,7 +239,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("errorPosting", e.getMessage());
+                        Log.e("errorPosting", e.getLocalizedMessage());
                         postingDialog.dismiss();
                     }
                 });
