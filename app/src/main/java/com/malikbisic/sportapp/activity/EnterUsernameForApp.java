@@ -4,11 +4,13 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -569,7 +571,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         userDate = birthday.getText().toString().trim();
         favoriteClubString = favoriteClub.getText().toString().trim();
         countryString = selectCountry.getText().toString().trim();
-        File thumb_filePath = new File(resultUri.getLastPathSegment());
+        File thumb_filePath = new File(getRealPathFromURI(resultUri));
         try {
             Bitmap profileThumb = new Compressor(this)
                     .setMaxWidth(640)
@@ -665,7 +667,19 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
 
     }
-
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
 
     public void onSignupSuccess() {
         continueBtn.setEnabled(true);
