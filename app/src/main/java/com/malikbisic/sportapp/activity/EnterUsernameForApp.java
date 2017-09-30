@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -58,6 +59,9 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -71,6 +75,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
 
@@ -118,7 +123,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private static final int RESULT_COUNTRY = 5;
     private static final int RESULT_CLUB = 6;
     String uid;
-    Intent  getClubNameAndLogo;
+    Intent getClubNameAndLogo;
     CircleImageView countryImage;
     private StorageReference mFilePath;
     private FirebaseStorage mStorage;
@@ -180,8 +185,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         getApplicationContext().getApplicationContext().getResources().updateConfiguration(config, null);
 
 
-
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         dateFormat.setLenient(false);
         Date today = new Date();
         todayDateTime = dateFormat.format(today);
@@ -247,7 +251,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         });
 
 
-
         genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -294,7 +297,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             addImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            addImage.setAlpha(254);
+            addImage.setAlpha(0.9f);
 
 
             imageUri = data.getData();
@@ -312,6 +315,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 resultUri = result.getUri();
+
+
                 Picasso.with(getApplicationContext()).load(resultUri)
                         .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
                         .into(addImage);
@@ -411,26 +416,25 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     valid = true;
                 }
 
-                    if (dataSnapshot.getChildrenCount() > 0) {
-                        usernameErrorTxt.setText("Username already exists");
-                        usernameErrorTxt.setVisibility(View.VISIBLE);
-                        validUsername = false;
-                    } else if (enterUsername.getText().toString().isEmpty()) {
-                        usernameErrorTxt.setText("Field can not be blank");
-                        usernameErrorTxt.setVisibility(View.VISIBLE);
-                        validUsername = false;
-                    } else if (username.length() < 3 || username.length() > 8) {
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    usernameErrorTxt.setText("Username already exists");
+                    usernameErrorTxt.setVisibility(View.VISIBLE);
+                    validUsername = false;
+                } else if (enterUsername.getText().toString().isEmpty()) {
+                    usernameErrorTxt.setText("Field can not be blank");
+                    usernameErrorTxt.setVisibility(View.VISIBLE);
+                    validUsername = false;
+                } else if (username.length() < 3 || username.length() > 8) {
 
-                        usernameErrorTxt.setText("Username must be between 3 and 8 characters!");
-                        usernameErrorTxt.setVisibility(View.VISIBLE);
-                        validUsername = false;
-                    } else {
-                        usernameErrorTxt.setText("");
-                        usernameErrorTxt.setVisibility(View.GONE);
-                        validUsername = true;
+                    usernameErrorTxt.setText("Username must be between 3 and 8 characters!");
+                    usernameErrorTxt.setVisibility(View.VISIBLE);
+                    validUsername = false;
+                } else {
+                    usernameErrorTxt.setText("");
+                    usernameErrorTxt.setVisibility(View.GONE);
+                    validUsername = true;
 
-                    }
-
+                }
 
 
                 if (selectCountry.getText().toString().isEmpty()) {
@@ -464,7 +468,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     validClub = true;
                 }
 
-                if (valid && validUsername && validBirthday && validCountry && validClub){
+                if (valid && validUsername && validBirthday && validCountry && validClub) {
                     mDialog = new ProgressDialog(EnterUsernameForApp.this,
                             R.style.AppTheme_Dark_Dialog);
                     mDialog.setIndeterminate(true);
@@ -565,92 +569,102 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         userDate = birthday.getText().toString().trim();
         favoriteClubString = favoriteClub.getText().toString().trim();
         countryString = selectCountry.getText().toString().trim();
+        File thumb_filePath = new File(resultUri.getLastPathSegment());
+        try {
+            Bitmap profileThumb = new Compressor(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(75)
+                    .compressToBitmap(thumb_filePath);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] thumb_byte = baos.toByteArray();
+            profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+            mDialog.setMessage("Registering...");
+            mDialog.show();
+
+            UploadTask task = profileImageRef.putBytes(thumb_byte);
+            task.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    String downloadUrl = task.getResult().getDownloadUrl().toString();
+                    if (task.isSuccessful()) {
+                        mReference = FirebaseDatabase.getInstance().getReference();
+
+                        String userRef = "Users/" + uid;
+
+                        Map userInfoMap = new HashMap();
+                        userInfoMap.put("name", googleFirstName);
+                        userInfoMap.put("surname", googleLastName);
+                        userInfoMap.put("username", username);
+                        userInfoMap.put("date", userDate);
+                        userInfoMap.put("gender", gender);
+                        if (downloadUrl != null)
+                            userInfoMap.put("profileImage", downloadUrl.toString());
+                        userInfoMap.put("country", countryString);
+                        userInfoMap.put("flag", imageOfCountry);
+                        userInfoMap.put("favoriteClub", clubName);
+                        userInfoMap.put("favoriteClubLogo", clubLogo);
+                        userInfoMap.put("userID", uid);
+                        userInfoMap.put("premium", true);
+                        userInfoMap.put("premiumDate", todayDateTime);
+
+                        Map setUserDatabaseInfo = new HashMap();
+                        setUserDatabaseInfo.put(userRef, userInfoMap);
+
+                        mReference.updateChildren(setUserDatabaseInfo, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null) {
+                                    Log.e("errorUserSet", databaseError.getMessage().toString());
+                                }
+
+                            }
+                        });
+
+                        DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference();
+
+                        String usersChatRef = "UsersChat/" + favoriteClubString + "/" + uid;
+                        final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+
+                        Map userChatInfo = new HashMap();
+                        userChatInfo.put("username", username);
+                        userChatInfo.put("date", currentDate);
+                        if (downloadUrl != null)
+                            userChatInfo.put("profileImage", downloadUrl.toString());
+                        userChatInfo.put("country", countryString);
+                        userChatInfo.put("flag", imageOfCountry);
+                        userChatInfo.put("favoriteClub", clubName);
+                        userChatInfo.put("favoriteClubLogo", clubLogo);
+                        userChatInfo.put("userID", uid);
+                        userChatInfo.put("online", "true");
+
+                        Map updateUsersChat = new HashMap();
+                        updateUsersChat.put(usersChatRef, userChatInfo);
+
+                        usersChat.updateChildren(updateUsersChat, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null) {
+                                    Log.e("errorUserChatSet", databaseError.getMessage().toString());
+                                }
+                            }
+                        });
+                        mDialog.dismiss();
+                    }else   Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                }
+            });
 
 
-        profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-        mDialog.setMessage("Registering...");
-        mDialog.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-
-        profileImageRef.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                final Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                mReference = FirebaseDatabase.getInstance().getReference();
-
-                String userRef = "Users/" + uid;
-
-                Map userInfoMap = new HashMap();
-                userInfoMap.put("name", googleFirstName);
-                userInfoMap.put("surname", googleLastName);
-                userInfoMap.put("username", username);
-                userInfoMap.put("date", userDate);
-                userInfoMap.put("gender", gender);
-                if (downloadUrl != null)
-                    userInfoMap.put("profileImage", downloadUrl.toString());
-                userInfoMap.put("country", countryString);
-                userInfoMap.put("flag", imageOfCountry);
-                userInfoMap.put("favoriteClub", clubName);
-                userInfoMap.put("favoriteClubLogo", clubLogo);
-                userInfoMap.put("userID", uid);
-                userInfoMap.put("premium", true);
-                userInfoMap.put("premiumDate", todayDateTime);
-
-                Map setUserDatabaseInfo = new HashMap();
-                setUserDatabaseInfo.put(userRef, userInfoMap);
-
-                mReference.updateChildren(setUserDatabaseInfo, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null){
-                            Log.e("errorUserSet", databaseError.getMessage().toString());
-                        }
-
-                    }
-                });
-
-                DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference();
-
-                String usersChatRef = "UsersChat/" + favoriteClubString + "/" + uid;
-                final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
-
-                Map userChatInfo = new HashMap();
-                userChatInfo.put("username", username);
-                userChatInfo.put("date", currentDate);
-                if (downloadUrl != null)
-                    userChatInfo.put("profileImage", downloadUrl.toString());
-                userChatInfo.put("country", countryString);
-                userChatInfo.put("flag", imageOfCountry);
-                userChatInfo.put("favoriteClub", clubName);
-                userChatInfo.put("favoriteClubLogo", clubLogo);
-                userChatInfo.put("userID", uid);
-                userChatInfo.put("online", "true");
-
-                Map updateUsersChat = new HashMap();
-                updateUsersChat.put(usersChatRef, userChatInfo);
-
-                usersChat.updateChildren(updateUsersChat, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null){
-                            Log.e("errorUserChatSet", databaseError.getMessage().toString());
-                        }
-                    }
-                });
-                mDialog.dismiss();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
-
-            }
-        });
 
 
     }
-
 
 
     public void onSignupSuccess() {
@@ -712,7 +726,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 mReference.updateChildren(setUserDatabaseInfo, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null){
+                        if (databaseError != null) {
                             Log.e("errorUserSet", databaseError.getMessage().toString());
                         }
 
@@ -722,7 +736,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference();
 
                 String usersChatRef = "UsersChat/" + favoriteClubString + "/" + uid;
-               final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+                final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
 
                 Map userChatInfo = new HashMap();
                 userChatInfo.put("username", username);
@@ -742,7 +756,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 usersChat.updateChildren(updateUsersChat, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null){
+                        if (databaseError != null) {
                             Log.e("errorUserChatSet", databaseError.getMessage().toString());
                         }
                     }

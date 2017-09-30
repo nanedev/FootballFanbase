@@ -327,7 +327,8 @@ public class MainPage extends AppCompatActivity
                                 usernameuser.setText(String.valueOf(value.get("username")));
                                 usernameInfo = usernameuser.getText().toString().trim();
                                 nameSurname.setText(String.valueOf(value.get("name") + " " + String.valueOf(value.get("surname"))));
-
+                                userProfileImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                                userProfileImage.setAlpha(0.9f);
 
                                 Picasso.with(getApplicationContext())
                                         .load(profielImage)
