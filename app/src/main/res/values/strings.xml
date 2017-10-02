@@ -19,6 +19,7 @@
     <string name="error_reset_pass_email_doesnt_exists">There is no user record corresponding to this identifier. The user may have been deleted.</string>
     <string name="error_facebook_account_already_exists">An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.</string>
     <string name="title_activity_main_page">MainPage</string>
+    <string name="selectPicture">Select picture</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -12,6 +12,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,6 +40,8 @@ import com.malikbisic.sportapp.R;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +65,9 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
 
+    String videoSize;
+    RelativeLayout layout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +85,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         post.setOnClickListener(this);
         postingDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
+        layout = (RelativeLayout) findViewById(R.id.container);
 
 
         mFilePath = FirebaseStorage.getInstance().getReference();
@@ -96,6 +105,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
             pDialog.setCancelable(false);
             pDialog.show();
 
+
+
             try {
                 // Start the MediaController
                 MediaController mediacontroller = new MediaController(
@@ -106,6 +117,23 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 videoSelected.setMediaController(mediacontroller);
                 videoSelected.setVideoURI(video);
                 videoSelected.pause();
+
+                File file = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                    file = new File(video.getPath());
+                }
+                long lenght = file.length();
+                InputStream fileInputStream=this.getContentResolver().openInputStream(video);
+                float size = fileInputStream.available();
+
+                float fileSizeInKB = size / 1024;
+// Convert the KB to MegaBytes (1 MB = 1024 KBytes)
+                float fileSizeInMB = fileSizeInKB / 1024;
+
+                NumberFormat formatter = NumberFormat.getNumberInstance();
+                formatter.setMinimumFractionDigits(2);
+                formatter.setMaximumFractionDigits(2);
+                videoSize = formatter.format(fileSizeInMB);
 
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
@@ -201,55 +229,71 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                     e.printStackTrace();
                 }
             } else if (!MainPage.photoSelected) {
-                Uri videoUri = Uri.parse(myIntent.getStringExtra("video-uri_selected"));
+                final Uri videoUri = Uri.parse(myIntent.getStringExtra("video-uri_selected"));
                 final String aboutVideoText = saySomething.getText().toString().trim();
                 final String username = myIntent.getStringExtra("username");
                 final String profileImage = myIntent.getStringExtra("profileImage");
                 final String country = myIntent.getStringExtra("country");
                 final String clubLogo = myIntent.getStringExtra("clubheader");
                 postVideo = mFilePath.child("Post_Video").child(videoUri.getLastPathSegment());
-                postingDialog.setMessage("Posting");
-                postingDialog.show();
 
-                postVideo.putFile(videoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadUri = taskSnapshot.getDownloadUrl();
-                        DatabaseReference newPost = postingDatabase.push();
 
-                        Map videoMap = new HashMap();
-                        videoMap.put("descVideo", aboutVideoText);
-                        videoMap.put("username", username);
-                        videoMap.put("profileImage", profileImage);
-                        videoMap.put("videoPost", downloadUri.toString());
-                        videoMap.put("uid", mAuth.getCurrentUser().getUid());
-                        videoMap.put("country", country);
-                        videoMap.put("clubLogo", clubLogo);
-                        videoMap.put("favoritePostClub", MainPage.myClubName);
+                float videoLenght = Float.parseFloat(videoSize);
+                if (videoLenght > 5) {
+                    Snackbar.make(layout, "Your video is bigger than 5 mb", Snackbar.LENGTH_LONG)
+                            .setAction("CLOSE", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
 
-                        newPost.updateChildren(videoMap, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                if (databaseError != null) {
-                                    Log.e("VideoError", databaseError.getMessage().toString());
                                 }
-                            }
-                        });
-                        postingDialog.dismiss();
-                        Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
-                        startActivity(goToMain);
-                        finish();
+                            })
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                            .show();
+                } else {
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("errorPosting", e.getLocalizedMessage());
-                        postingDialog.dismiss();
-                    }
-                });
+                    postingDialog.setMessage("Posting");
+                    postingDialog.show();
+
+                    postVideo.putFile(videoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Uri downloadUri = taskSnapshot.getDownloadUrl();
+                            DatabaseReference newPost = postingDatabase.push();
+
+                            Map videoMap = new HashMap();
+                            videoMap.put("descVideo", aboutVideoText);
+                            videoMap.put("username", username);
+                            videoMap.put("profileImage", profileImage);
+                            videoMap.put("videoPost", downloadUri.toString());
+                            videoMap.put("uid", mAuth.getCurrentUser().getUid());
+                            videoMap.put("country", country);
+                            videoMap.put("clubLogo", clubLogo);
+                            videoMap.put("favoritePostClub", MainPage.myClubName);
+
+
+                            newPost.updateChildren(videoMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Log.e("VideoError", databaseError.getMessage().toString());
+                                    }
+                                }
+                            });
+                            postingDialog.dismiss();
+                            Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
+                            startActivity(goToMain);
+                            finish();
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("errorPosting", e.getLocalizedMessage());
+                            postingDialog.dismiss();
+                        }
+                    });
+                }
             }
-
 
         }
 
