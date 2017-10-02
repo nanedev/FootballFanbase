@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.application;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
@@ -56,4 +57,9 @@ public class Application extends android.app.Application{
 
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 }

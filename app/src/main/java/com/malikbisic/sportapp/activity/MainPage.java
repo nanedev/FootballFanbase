@@ -154,6 +154,7 @@ public class MainPage extends AppCompatActivity
     DateFormat dateFormat;
     Calendar calendar;
     private static final int PHOTO_OPEN = 1;
+    private static final int PHOTO_OPEN_ON_OLDER_PHONES = 3;
     private static final int VIDEO_OPEN = 2;
     boolean pause_state;
     boolean play_state;
@@ -168,7 +169,7 @@ public class MainPage extends AppCompatActivity
     DatabaseReference mUsers;
     boolean isPremium;
     static boolean isNotificationClicked = false;
-    public static  String myClubName;
+    public static String myClubName;
 
     TextView notificationCounterNumber;
     DatabaseReference notificationReference;
@@ -177,7 +178,7 @@ public class MainPage extends AppCompatActivity
     List<Post> itemSize = new ArrayList<>();
 
 
-    private  static  final int TOTAL_ITEM_LOAD = 2;
+    private static final int TOTAL_ITEM_LOAD = 2;
     private static int mCurrentPage = 1;
 
 
@@ -226,7 +227,7 @@ public class MainPage extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot != null){
+                if (dataSnapshot != null) {
 
                     String clubName = String.valueOf(dataSnapshot.child("favoriteClub").getValue());
 
@@ -236,8 +237,6 @@ public class MainPage extends AppCompatActivity
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             mUsers.child("online").onDisconnect().setValue(ServerValue.TIMESTAMP);
                             mUsers.child("online").setValue("true");
-
-
 
 
                         }
@@ -327,7 +326,7 @@ public class MainPage extends AppCompatActivity
                                 usernameuser.setText(String.valueOf(value.get("username")));
                                 usernameInfo = usernameuser.getText().toString().trim();
                                 nameSurname.setText(String.valueOf(value.get("name") + " " + String.valueOf(value.get("surname"))));
-                                userProfileImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+                                userProfileImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                                 userProfileImage.setAlpha(0.9f);
 
                                 Picasso.with(getApplicationContext())
@@ -452,14 +451,13 @@ public class MainPage extends AppCompatActivity
     }
 
 
-
     @SuppressLint("RestrictedApi")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (data != null) {
-            if (requestCode == PHOTO_OPEN && resultCode == RESULT_OK) {
+            if (requestCode == PHOTO_OPEN || requestCode == PHOTO_OPEN_ON_OLDER_PHONES && resultCode == RESULT_OK) {
 
                 Uri imageUri = data.getData();
                 Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
@@ -562,18 +560,18 @@ public class MainPage extends AppCompatActivity
                     R.anim.push_left_out, R.anim.push_left_out).
                     replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag())
                     .commit();
-        } else if (id == R.id.nav_news){
+        } else if (id == R.id.nav_news) {
 
             Intent openNEWS = new Intent(MainPage.this, NewsActivity.class);
             startActivity(openNEWS);
 
         } else if (id == R.id.nav_message) {
 
-            Intent intent = new Intent(MainPage.this,ChatActivity.class);
+            Intent intent = new Intent(MainPage.this, ChatActivity.class);
             startActivity(intent);
 
-        }else if (id == R.id.nav_football){
-            Intent intent = new Intent(MainPage.this,FootballActivity.class);
+        } else if (id == R.id.nav_football) {
+            Intent intent = new Intent(MainPage.this, FootballActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_notifications) {
@@ -651,7 +649,7 @@ public class MainPage extends AppCompatActivity
 
                 int number = (int) dataSnapshot.getChildrenCount();
 
-                if (number == 0){
+                if (number == 0) {
 
                     ShortcutBadger.removeCount(getApplicationContext());
 
@@ -659,7 +657,7 @@ public class MainPage extends AppCompatActivity
                 } else {
                     startService(
                             new Intent(MainPage.this, BadgeServices.class).putExtra("badgeCount", number)
-                   );
+                    );
                 }
             }
 
@@ -674,6 +672,7 @@ public class MainPage extends AppCompatActivity
         ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent2, PackageManager.MATCH_DEFAULT_ONLY);
         String currentHomePackage = resolveInfo.activityInfo.packageName;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -1225,7 +1224,6 @@ public class MainPage extends AppCompatActivity
 
             }
         };
-
 
 
         wallList.setAdapter(firebaseRecyclerAdapter);
@@ -1970,12 +1968,12 @@ public class MainPage extends AppCompatActivity
                     if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
                         dislike_button.setClickable(false);
                         like_button.setActivated(true);
-                        Log.i("key like ima ", post_key );
+                        Log.i("key like ima ", post_key);
 
                     } else {
                         dislike_button.setClickable(true);
                         like_button.setActivated(false);
-                        Log.i("key like nema ", post_key );
+                        Log.i("key like nema ", post_key);
                     }
 
                 }
@@ -2019,12 +2017,12 @@ public class MainPage extends AppCompatActivity
 
                         dislike_button.setActivated(true);
                         like_button.setClickable(false);
-                        Log.i("key dislike ima ", post_key );
+                        Log.i("key dislike ima ", post_key);
 
                     } else {
                         dislike_button.setActivated(false);
                         like_button.setClickable(true);
-                        Log.i("key dislike nema ", post_key );
+                        Log.i("key dislike nema ", post_key);
                     }
                 }
 
@@ -2249,11 +2247,22 @@ public class MainPage extends AppCompatActivity
     @Override
     public void onClick(View view) {
 
+
         if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText) {
-            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
-            photoSelected = true;
-            openGallery.setType("image/*");
-            startActivityForResult(openGallery, PHOTO_OPEN);
+            if (Build.VERSION.SDK_INT < 19) {
+                Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+                photoSelected = true;
+                openGallery.setType("image/*");
+                startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
+            } else {
+                photoSelected = true;
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("image/*");
+                startActivityForResult(intent,PHOTO_OPEN );
+
+            }
+
         } else if (view.getId() == R.id.vide_icon_content_main || view.getId() == R.id.videoText) {
             Intent intent = new Intent();
             photoSelected = false;

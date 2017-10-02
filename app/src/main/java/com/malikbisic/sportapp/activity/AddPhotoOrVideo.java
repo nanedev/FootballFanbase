@@ -7,8 +7,11 @@ import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 
 import android.net.Uri;
+import android.os.Build;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -78,7 +81,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
         mFilePath = FirebaseStorage.getInstance().getReference();
 
-        if (MainPage.photoSelected){
+        if (MainPage.photoSelected) {
             photoSelected.setVisibility(View.VISIBLE);
             photoSelected.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             Uri imageUri = myIntent.getData();
@@ -123,15 +126,17 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onClick(View view) {
 
-        if (view.getId() == R.id.btn_post_photo_or_video){
+        if (view.getId() == R.id.btn_post_photo_or_video) {
 
             if (MainPage.photoSelected) {
-                try {  Uri imageUri = myIntent.getData();
-                File imagePath = new File(getRealPathFromURI(imageUri));
-                Log.i("imagePath", imagePath.getPath());
+                try {
+                    Uri imageUri = myIntent.getData();
+                    File imagePath = new File(getRealPathFromURI(imageUri));
+                    Log.i("imagePath", imagePath.getPath());
 
                     Bitmap imageCompressBitmap = new Compressor(this)
                             .setMaxWidth(640)
@@ -139,63 +144,63 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                             .setQuality(75)
                             .compressToBitmap(imagePath);
 
-                final String aboutPhotoText = saySomething.getText().toString().trim();
-                final String username = myIntent.getStringExtra("username");
-                final String profileImage = myIntent.getStringExtra("profileImage");
-                final String country = myIntent.getStringExtra("country");
-                final String clubLogo = myIntent.getStringExtra("clubheader");
+                    final String aboutPhotoText = saySomething.getText().toString().trim();
+                    final String username = myIntent.getStringExtra("username");
+                    final String profileImage = myIntent.getStringExtra("profileImage");
+                    final String country = myIntent.getStringExtra("country");
+                    final String clubLogo = myIntent.getStringExtra("clubheader");
 
-                Log.i("name", username);
+                    Log.i("name", username);
 
-                photoPost = mFilePath.child("Post_Photo").child(imageUri.getLastPathSegment());
-                postingDialog.setMessage("Posting");
-                postingDialog.show();
+                    photoPost = mFilePath.child("Post_Photo").child(imageUri.getLastPathSegment());
+                    postingDialog.setMessage("Posting");
+                    postingDialog.show();
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                imageCompressBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                final byte[] data = baos.toByteArray();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    imageCompressBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    final byte[] data = baos.toByteArray();
 
-                UploadTask uploadTask = photoPost.putBytes(data);
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadUri = taskSnapshot.getDownloadUrl();
+                    UploadTask uploadTask = photoPost.putBytes(data);
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Uri downloadUri = taskSnapshot.getDownloadUrl();
 
-                        Map imageMap = new HashMap();
-                        imageMap.put("descForPhoto", aboutPhotoText);
-                        imageMap.put("username", username);
-                        imageMap.put("profileImage", profileImage);
-                        imageMap.put("photoPost", downloadUri.toString());
-                        imageMap.put("uid", mAuth.getCurrentUser().getUid());
-                        imageMap.put("country", country);
-                        imageMap.put("clubLogo", clubLogo);
-                        imageMap.put("favoritePostClub", MainPage.myClubName);
+                            Map imageMap = new HashMap();
+                            imageMap.put("descForPhoto", aboutPhotoText);
+                            imageMap.put("username", username);
+                            imageMap.put("profileImage", profileImage);
+                            imageMap.put("photoPost", downloadUri.toString());
+                            imageMap.put("uid", mAuth.getCurrentUser().getUid());
+                            imageMap.put("country", country);
+                            imageMap.put("clubLogo", clubLogo);
+                            imageMap.put("favoritePostClub", MainPage.myClubName);
 
-                        DatabaseReference newPost = postingDatabase.push();
-                        newPost.updateChildren(imageMap, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                if (databaseError != null){
-                                    Log.e("photoError", databaseError.getMessage().toString());
+                            DatabaseReference newPost = postingDatabase.push();
+                            newPost.updateChildren(imageMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Log.e("photoError", databaseError.getMessage().toString());
+                                    }
                                 }
-                            }
-                        });
-                        postingDialog.dismiss();
-                        Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
-                        startActivity(goToMain);
-                        finish();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("errorPosting", e.getMessage());
-                        postingDialog.dismiss();
-                    }
-                });
+                            });
+                            postingDialog.dismiss();
+                            Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
+                            startActivity(goToMain);
+                            finish();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("errorPosting", e.getMessage());
+                            postingDialog.dismiss();
+                        }
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else if (!MainPage.photoSelected){
+            } else if (!MainPage.photoSelected) {
                 Uri videoUri = Uri.parse(myIntent.getStringExtra("video-uri_selected"));
                 final String aboutVideoText = saySomething.getText().toString().trim();
                 final String username = myIntent.getStringExtra("username");
@@ -250,17 +255,32 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
+        String wholeID = DocumentsContract.getDocumentId(contentURI);
+
+// Split at colon, use second item in the array
+        String id = wholeID.split(":")[1];
+
+        String[] column = {MediaStore.Images.Media.DATA};
+
+// where id is equal to
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = getContentResolver().
+                query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        column, sel, new String[]{id}, null);
+
+        String filePath = "";
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
         }
-        return result;
+
+        cursor.close();
+        return filePath;
     }
+
 }
