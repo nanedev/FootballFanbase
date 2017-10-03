@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.MediaPlayer;
 
 import android.net.Uri;
 import android.os.Build;
@@ -21,10 +20,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,13 +41,14 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.jzvd.JZVideoPlayerStandard;
 import id.zelory.compressor.Compressor;
 
 public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickListener {
 
     private Intent myIntent;
     private ImageView photoSelected;
-    private VideoView videoSelected;
+    private JZVideoPlayerStandard videoSelected;
     private EditText saySomething;
     private Button post;
     ProgressDialog pDialog;
@@ -79,7 +76,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         mDatabase = FirebaseDatabase.getInstance();
         postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
         photoSelected = (ImageView) findViewById(R.id.post_image);
-        videoSelected = (VideoView) findViewById(R.id.post_video);
+        videoSelected = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.post_video);
         saySomething = (EditText) findViewById(R.id.tell_something_about_video_image);
         post = (Button) findViewById(R.id.btn_post_photo_or_video);
         post.setOnClickListener(this);
@@ -98,7 +95,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
         } else if (!MainPage.photoSelected) {
             photoSelected.setVisibility(View.GONE);
-            videoSelected.setVisibility(View.VISIBLE);
+
             pDialog = new ProgressDialog(this);
             pDialog.setMessage("Buffering");
             pDialog.setIndeterminate(false);
@@ -108,15 +105,14 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
 
             try {
-                // Start the MediaController
-                MediaController mediacontroller = new MediaController(
-                        AddPhotoOrVideo.this);
-                mediacontroller.setAnchorView(videoSelected);
-                // Get the URL from String VideoURL
+                pDialog.dismiss();
+                videoSelected.setVisibility(View.VISIBLE);
                 Uri video = Uri.parse(myIntent.getStringExtra("video-uri_selected"));
-                videoSelected.setMediaController(mediacontroller);
-                videoSelected.setVideoURI(video);
-                videoSelected.pause();
+                videoSelected.setUp(String.valueOf(video), cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, null);
+                videoSelected.requestFocus();
+
+
+
 
                 File file = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -135,19 +131,29 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 formatter.setMaximumFractionDigits(2);
                 videoSize = formatter.format(fileSizeInMB);
 
+                float videoLenght = Float.parseFloat(videoSize);
+                if (videoLenght > 10) {
+
+videoSelected.setVisibility(View.GONE);
+                    Snackbar.make(layout, "Your video is bigger than 10 mb", Snackbar.LENGTH_LONG)
+                            .setAction("CLOSE", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                }
+                            })
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                            .show();
+                }
+pDialog.dismiss();
+
+
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
 
             videoSelected.requestFocus();
-            videoSelected.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                // Close the progress bar and play the video
-                public void onPrepared(MediaPlayer mp) {
-                    pDialog.dismiss();
-                    //videoSelected.start();
-                }
-            });
 
         }
 
@@ -239,8 +245,9 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
 
                 float videoLenght = Float.parseFloat(videoSize);
-                if (videoLenght > 5) {
-                    Snackbar.make(layout, "Your video is bigger than 5 mb", Snackbar.LENGTH_LONG)
+                if (videoLenght > 10) {
+
+                    Snackbar.make(layout, "Your video is bigger than 10 mb", Snackbar.LENGTH_LONG)
                             .setAction("CLOSE", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -279,6 +286,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                                     }
                                 }
                             });
+
                             postingDialog.dismiss();
                             Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
                             startActivity(goToMain);
@@ -297,6 +305,21 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
         }
 
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (cn.jzvd.JZVideoPlayerStandard.backPress()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cn.jzvd.JZVideoPlayerStandard.releaseAllVideos();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

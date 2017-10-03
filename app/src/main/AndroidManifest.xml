@@ -101,6 +101,7 @@
         <activity
             android:name=".activity.AddPhotoOrVideo"
             android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".activity.RecordAudio"

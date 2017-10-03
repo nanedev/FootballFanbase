@@ -67,7 +67,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+
 
 /**
  * Created by korisnik on 26/09/2017.
@@ -651,7 +651,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         View mView;
         public Button play_button;
         public MediaPlayer mPlayer;
-        JCVideoPlayerStandard videoView;
+        cn.jzvd.JZVideoPlayerStandard videoView;
         ImageView post_photo;
         MediaController mediaController;
         RelativeLayout audioLayout;
@@ -698,7 +698,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
             mediaController = new MediaController(mView.getContext());
 
-            videoView = (JCVideoPlayerStandard) mView.findViewById(R.id.posted_video);
+            videoView = (cn.jzvd.JZVideoPlayerStandard) mView.findViewById(R.id.posted_video);
             post_photo = (ImageView) mView.findViewById(R.id.posted_image);
             audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
             mPlayer = new MediaPlayer();
@@ -1018,7 +1018,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                 try {
 
                     layoutVideo.setVisibility(View.VISIBLE);
-                    videoView.setUp(videoPost, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
+                    videoView.setUp(videoPost, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
                     videoView.requestFocus();
                 } catch (Exception e) {
                     e.getMessage();

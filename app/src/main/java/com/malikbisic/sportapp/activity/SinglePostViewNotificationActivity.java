@@ -53,7 +53,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+
 
 import static com.malikbisic.sportapp.activity.MainPage.uid;
 
@@ -62,7 +62,7 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
 
     public Button play_button;
     public MediaPlayer mPlayer;
-    JCVideoPlayerStandard videoView;
+    cn.jzvd.JZVideoPlayerStandard videoView;
     ImageView post_photo;
     MediaController mediaController;
     RelativeLayout audioLayout;
@@ -127,7 +127,7 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
 
         mediaController = new MediaController(this);
 
-        videoView = (JCVideoPlayerStandard) findViewById(R.id.posted_videoSinglePost);
+        videoView = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.posted_videoSinglePost);
         post_photo = (ImageView) findViewById(R.id.posted_imageSinglePost);
         audioLayout = (RelativeLayout) findViewById(R.id.layout_for_audio_playerSinglePost);
         mPlayer = new MediaPlayer();
@@ -958,7 +958,7 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
                 try {
 
                     layoutVideo.setVisibility(View.VISIBLE);
-                    videoView.setUp(videoPost, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
+                    videoView.setUp(videoPost, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
                     videoView.requestFocus();
                 } catch (Exception e) {
                     e.getMessage();

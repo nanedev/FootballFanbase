@@ -21,8 +21,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
 import com.squareup.picasso.Picasso;
 
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
 public class SinglePostViewActivity extends AppCompatActivity{
     private String post_key = null;
@@ -32,7 +30,7 @@ public class SinglePostViewActivity extends AppCompatActivity{
     private ImageView post_image;
     private ImageView profile_image;
     private TextView username;
-    private JCVideoPlayerStandard post_video;
+    private cn.jzvd.JZVideoPlayerStandard post_video;
     private EditText post_text_video;
     private EditText post_text_image;
     private EditText post_text_audio;
@@ -51,7 +49,7 @@ public class SinglePostViewActivity extends AppCompatActivity{
         profile_image = (ImageView) findViewById(R.id.profile_image_wall);
         username = (TextView) findViewById(R.id.username_wall);
         post_image = (ImageView) findViewById(R.id.posted_image);
-        post_video = (JCVideoPlayerStandard) findViewById(R.id.posted_video);
+        post_video = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.posted_video);
         post_text_image = (EditText) findViewById(R.id.text_for_image);
         post_text_video = (EditText) findViewById(R.id.text_for_video);
         post_text_audio = (EditText) findViewById(R.id.audio_textview);
@@ -110,7 +108,7 @@ public class SinglePostViewActivity extends AppCompatActivity{
                     post_text_audio.setVisibility(View.GONE);
                     post_text_image.setVisibility(View.GONE);
                     post_only_text.setVisibility(View.GONE);
-                    post_video.setUp(postVideo, JCVideoPlayer.SCREEN_LAYOUT_NORMAL, "proba");
+                    post_video.setUp(postVideo, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
                 } else {
                     post_video.setVisibility(View.GONE);
                 }

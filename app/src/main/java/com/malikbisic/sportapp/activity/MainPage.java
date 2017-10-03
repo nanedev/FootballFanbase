@@ -102,10 +102,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
-import me.leolin.shortcutbadger.Badger;
-import me.leolin.shortcutbadger.ShortcutBadgeException;
+
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 
@@ -495,7 +492,7 @@ public class MainPage extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (JCVideoPlayer.backPress()) {
+        } else if (cn.jzvd.JZVideoPlayerStandard.backPress()) {
             return;
         }
         finish();
@@ -1808,7 +1805,7 @@ public class MainPage extends AppCompatActivity
         View mView;
         public Button play_button;
         public MediaPlayer mPlayer;
-        JCVideoPlayerStandard videoView;
+        cn.jzvd.JZVideoPlayerStandard videoView;
         ImageView post_photo;
         MediaController mediaController;
         RelativeLayout audioLayout;
@@ -1855,7 +1852,7 @@ public class MainPage extends AppCompatActivity
 
             mediaController = new MediaController(mView.getContext());
 
-            videoView = (JCVideoPlayerStandard) mView.findViewById(R.id.posted_video);
+            videoView = (cn.jzvd.JZVideoPlayerStandard) mView.findViewById(R.id.posted_video);
             post_photo = (ImageView) mView.findViewById(R.id.posted_image);
             audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
             mPlayer = new MediaPlayer();
@@ -2175,7 +2172,7 @@ public class MainPage extends AppCompatActivity
                 try {
 
                     layoutVideo.setVisibility(View.VISIBLE);
-                    videoView.setUp(videoPost, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
+                    videoView.setUp(videoPost, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
                     videoView.requestFocus();
                 } catch (Exception e) {
                     e.getMessage();
@@ -2220,7 +2217,7 @@ public class MainPage extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
-        JCVideoPlayer.releaseAllVideos();
+        cn.jzvd.JZVideoPlayerStandard.releaseAllVideos();
         mBundleRecyclerViewState = new Bundle();
         Parcelable listState = linearLayoutManager.onSaveInstanceState();
         mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
