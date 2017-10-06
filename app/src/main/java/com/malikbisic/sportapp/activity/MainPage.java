@@ -469,6 +469,7 @@ public class MainPage extends AppCompatActivity
             } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
                 Uri videoUri = data.getData();
                 Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
+                goToAddPhotoOrVideo.setData(videoUri);
                 goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
                 goToAddPhotoOrVideo.putExtra("username", usernameInfo);
                 goToAddPhotoOrVideo.putExtra("profileImage", profielImage);
