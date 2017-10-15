@@ -180,9 +180,12 @@ public class MainPage extends AppCompatActivity
 
 
 
-    private static final int TOTAL_ITEM_LOAD = 2;
-    private static int mCurrentPage = 1;
-
+    private static final int TOTAL_ITEM_LOAD = 5;
+    int itemPosPremium = 0;
+    int itemPosFree = 0;
+    String lastkeyPremium = "";
+    String lastkeyFree = "";
+    int br = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -728,6 +731,16 @@ public class MainPage extends AppCompatActivity
                     freeUser();
                 }
 
+                wallList.setOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                    @Override
+                    public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                        if (isPremium){
+                            itemPosPremium = 0;
+                            premiumUsersLoadMore();
+                        }
+                    }
+                });
+
             }
 
             @Override
@@ -743,12 +756,18 @@ public class MainPage extends AppCompatActivity
     public void premiumUsers() {
 
 
-        Query postingQuery = postingDatabase.limitToLast(5);
+        Query postingQuery = postingDatabase.limitToLast(TOTAL_ITEM_LOAD);
 
         postingQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post model = dataSnapshot.getValue(Post.class);
+                itemPosPremium++;
+                if (itemPosPremium == 1){
+                    String getLastKey = dataSnapshot.getKey();
+                    lastkeyPremium = getLastKey;
+                    Log.e("lastKey", lastkeyPremium);
+                }
                 itemSize.add(model);
 
                 adapter.notifyDataSetChanged();
@@ -1839,6 +1858,52 @@ public class MainPage extends AppCompatActivity
         }); */
     }
 
+    public void premiumUsersLoadMore(){
+
+
+        Query queryMorePremiumPost = postingDatabase.orderByKey().endAt(lastkeyPremium).limitToLast(TOTAL_ITEM_LOAD);
+        queryMorePremiumPost.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Post model = dataSnapshot.getValue(Post.class);
+                itemSize.add(itemPosPremium++, model);
+
+                br = br +5;
+                Log.e("br postova", String.valueOf(br));
+
+
+                if (itemPosPremium == 1){
+                    String getLastKey = dataSnapshot.getKey();
+                    lastkeyPremium = getLastKey;
+                    Log.e("lastKey", lastkeyPremium);
+                }
+
+
+                adapter.notifyDataSetChanged();
+                linearLayoutManager.scrollToPositionWithOffset(10, 0);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     public void initializeCountDrawer() {
         //Gravity property aligns the text
