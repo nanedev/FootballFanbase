@@ -185,7 +185,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
-
+                            DatabaseReference newPost = postingDatabase.push();
+                            String key = newPost.getKey();
                             Map imageMap = new HashMap();
                             imageMap.put("descForPhoto", aboutPhotoText);
                             imageMap.put("username", username);
@@ -195,8 +196,9 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                             imageMap.put("country", country);
                             imageMap.put("clubLogo", clubLogo);
                             imageMap.put("favoritePostClub", MainPage.myClubName);
+                            imageMap.put("key", key);
 
-                            DatabaseReference newPost = postingDatabase.push();
+
                             newPost.updateChildren(imageMap, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -230,7 +232,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 postVideo = mFilePath.child("Post_Video").child(videoUri.getLastPathSegment());
 
 
-                float videoLenght = Float.parseFloat(videoSize);
+                final float videoLenght = Float.parseFloat(videoSize);
                 if (videoLenght > 10) {
 
                     Snackbar.make(layout, "Your video is bigger than 10 mb", Snackbar.LENGTH_LONG)
@@ -252,6 +254,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
                             DatabaseReference newPost = postingDatabase.push();
+                            String key = newPost.getKey();
 
                             Map videoMap = new HashMap();
                             videoMap.put("descVideo", aboutVideoText);
@@ -262,6 +265,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                             videoMap.put("country", country);
                             videoMap.put("clubLogo", clubLogo);
                             videoMap.put("favoritePostClub", MainPage.myClubName);
+                            videoMap.put("key", key);
 
 
                             newPost.updateChildren(videoMap, new DatabaseReference.CompletionListener() {

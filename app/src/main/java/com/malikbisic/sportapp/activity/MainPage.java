@@ -79,6 +79,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.malikbisic.sportapp.adapter.MainPageAdapter;
 import com.malikbisic.sportapp.model.*;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.Notification;
@@ -94,6 +95,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -173,6 +175,9 @@ public class MainPage extends AppCompatActivity
     NavigationView navigationView;
 
     List<Post> itemSize = new ArrayList<>();
+    MainPageAdapter adapter;
+    public static String postKey;
+
 
 
     private static final int TOTAL_ITEM_LOAD = 2;
@@ -217,6 +222,8 @@ public class MainPage extends AppCompatActivity
         dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         nowDate = new Date();
 
+        adapter = new MainPageAdapter(itemSize , getApplicationContext(), this);
+        wallList.setAdapter(adapter);
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
@@ -526,14 +533,35 @@ public class MainPage extends AppCompatActivity
             postingDialog.setMessage("Posting...");
             postingDialog.show();
             DatabaseReference newPost = postingDatabase.push();
-            newPost.child("desc").setValue(textPost);
+            String key = newPost.getKey();
+            /*newPost.child("desc").setValue(textPost);
             newPost.child("username").setValue(MainPage.usernameInfo);
             newPost.child("profileImage").setValue(MainPage.profielImage);
             newPost.child("uid").setValue(mAuth.getCurrentUser().getUid());
             newPost.child("country").setValue(country);
             newPost.child("clubLogo").setValue(clubLogo);
-            postingDialog.dismiss();
-            postText.setText("");
+            newPost.child("key").setValue(key);*/
+            Map textMap = new HashMap();
+            textMap.put("desc", textPost);
+            textMap.put("username", MainPage.usernameInfo);
+            textMap.put("profileImag", MainPage.profielImage);
+            textMap.put("uid", mAuth.getCurrentUser().getUid());
+            textMap.put("country", country);
+            textMap.put("clubLogo", clubLogo);
+            textMap.put("favoritePostClub", MainPage.myClubName);
+            textMap.put("key", key);
+            newPost.updateChildren(textMap, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    if (databaseError != null) {
+                        Log.e("textError", databaseError.getMessage().toString());
+                    } else {
+                        postingDialog.dismiss();
+                        postText.setText("");
+                    }
+                }
+            });
+
             return true;
         }
 
@@ -715,9 +743,39 @@ public class MainPage extends AppCompatActivity
     public void premiumUsers() {
 
 
-        Query postingQuery = postingDatabase;
+        Query postingQuery = postingDatabase.limitToLast(5);
 
-        FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder>(
+        postingQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Post model = dataSnapshot.getValue(Post.class);
+                itemSize.add(model);
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        /*FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, MainPage.PostViewHolder>(
                 Post.class,
                 R.layout.wall_row,
                 MainPage.PostViewHolder.class,
@@ -852,7 +910,7 @@ public class MainPage extends AppCompatActivity
                 }); */
 
 
-                viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
+                /*viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent listUsername = new Intent(MainPage.this, Username_Likes_Activity.class);
@@ -1225,7 +1283,7 @@ public class MainPage extends AppCompatActivity
 
 
         wallList.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.notifyDataSetChanged();
+        firebaseRecyclerAdapter.notifyDataSetChanged();*/
 
     }
 
@@ -1237,6 +1295,37 @@ public class MainPage extends AppCompatActivity
                 .limitToFirst(10)
                 .orderByChild("favoritePostClub")
                 .startAt(myClub);
+
+        query.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Post model = dataSnapshot.getValue(Post.class);
+                itemSize.add(model);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        /*
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1374,7 +1463,7 @@ public class MainPage extends AppCompatActivity
                     }
                 }); */
 
-                        viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
+                        /*viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent listUsername = new Intent(MainPage.this, Username_Likes_Activity.class);
@@ -1747,7 +1836,7 @@ public class MainPage extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        }); */
     }
 
 

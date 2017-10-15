@@ -17,6 +17,7 @@ public class Post {
     private String uid;
     private String country;
     String clubLogo;
+    private String key;
 
 
 
@@ -25,7 +26,7 @@ public class Post {
 
 
 
-    public Post(String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo) {
+    public Post(String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key) {
         this.username = username;
         this.profileImage = profileImage;
         this.descForAudio = descForAudio;
@@ -38,10 +39,17 @@ public class Post {
         this.uid = uid;
         this.country = country;
         this.clubLogo = clubLogo;
+        this.key = key;
 
     }
 
+    public String getKey() {
+        return key;
+    }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getUid() {
         return uid;

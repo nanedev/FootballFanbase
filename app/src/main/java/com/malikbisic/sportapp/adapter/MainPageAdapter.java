@@ -127,30 +127,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         likesReference.keepSynced(true);
         dislikeReference.keepSynced(true);
 
-        final ArrayList<String> postKeys = new ArrayList<>();
-
-        postingDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    postKeys.add(snapshot.getKey());
-                }
-
-                post_key = postKeys.get(position - 1);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-
-
+        final String post_key = postingDatabase.child(model.getKey()).getRef().getKey();
         viewHolder.setDescForAudio(model.getDescForAudio());
         viewHolder.setDescForPhoto(model.getDescForPhoto());
         viewHolder.setDescVideo(model.getDescVideo());
@@ -159,7 +136,12 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         viewHolder.setPhotoPost(ctx, model.getPhotoPost());
         viewHolder.setVideoPost(ctx, model.getVideoPost());
         viewHolder.setAudioFile(ctx, model.getAudioFile());
-
+        viewHolder.setLikeBtn(post_key);
+        viewHolder.setNumberLikes(post_key);
+        viewHolder.setDesc(model.getDesc());
+        viewHolder.setDislikeBtn(post_key);
+        viewHolder.setNumberComments(post_key);
+        viewHolder.setNumberDislikes(post_key);
         viewHolder.setClubLogo(ctx, model.getClubLogo());
         viewHolder.setCountry(ctx, model.getCountry());
 
@@ -599,7 +581,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
                                     ProfileFragment profileFragment = new ProfileFragment();
 
-                                    FragmentTransaction manager = ((FragmentActivity)ctx).getSupportFragmentManager().beginTransaction();
+                                    FragmentTransaction manager = ((FragmentActivity)activity).getSupportFragmentManager().beginTransaction();
 
                                     manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
                                             R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
@@ -617,7 +599,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                             Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
                                             openUserProfile.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                                             openUserProfile.putExtra("userID", uid);
-                                            ctx.startActivity(openUserProfile);
+                                            activity.startActivity(openUserProfile);
                                         }
 
                                         @Override
