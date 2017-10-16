@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -55,6 +56,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -157,6 +159,7 @@ public class MainPage extends AppCompatActivity
     private static final int VIDEO_OPEN = 2;
     boolean pause_state;
     boolean play_state;
+    TextView loadMorePress;
 
     Date currentDateOfUserMainPage;
     String getDateFromDatabaseMainPage;
@@ -179,13 +182,16 @@ public class MainPage extends AppCompatActivity
     public static String postKey;
 
 
-
     private static final int TOTAL_ITEM_LOAD = 5;
     int itemPosPremium = 0;
     int itemPosFree = 0;
     String lastkeyPremium = "";
     String lastkeyFree = "";
     int br = 0;
+    private int loaditem;
+    private String firstKey = "";
+    protected Handler handler;
+    private int countItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,8 +220,8 @@ public class MainPage extends AppCompatActivity
         wallList.setHasFixedSize(false);
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        linearLayoutManager.setStackFromEnd(true);
-        linearLayoutManager.setReverseLayout(true);
+        //linearLayoutManager.setStackFromEnd(true);
+        //linearLayoutManager.setReverseLayout(true);
         wallList.setLayoutManager(linearLayoutManager);
         wallList.setItemViewCacheSize(20);
         wallList.setDrawingCacheEnabled(true);
@@ -224,8 +230,8 @@ public class MainPage extends AppCompatActivity
         nowDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         nowDate = new Date();
-
-        adapter = new MainPageAdapter(itemSize , getApplicationContext(), this);
+        handler = new Handler();
+        adapter = new MainPageAdapter(itemSize, getApplicationContext(), this, wallList);
         wallList.setAdapter(adapter);
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -268,7 +274,7 @@ public class MainPage extends AppCompatActivity
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        String action = intent.getAction();
+        final String action = intent.getAction();
 
         if (Intent.ACTION_SEND.equals(action)) {
             if (extras.containsKey(Intent.EXTRA_STREAM)) {
@@ -454,6 +460,59 @@ public class MainPage extends AppCompatActivity
             Log.i("chatflag", intent.getStringExtra("flag"));
             Log.i("chatdate", intent.getStringExtra("date"));
         }
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        final String myUserId = user.getUid();
+
+        adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                //add null , so the adapter will check view_type and show progress bar at bottom
+                itemSize.add(null);
+                adapter.notifyItemInserted(itemSize.size() - 1);
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //   remove progress item
+                        itemSize.remove(itemSize.size() - 1);
+                        adapter.notifyItemRemoved(itemSize.size());
+                        //add items one by one
+                        int start = itemSize.size();
+                        int end = start + 20;
+
+                        itemPosPremium = 0;
+                        premiumUsersLoadMore();
+
+                        adapter.setLoaded();
+                        //or you can add all at once but do not forget to call mAdapter.notifyDataSetChanged();
+                    }
+                }, 2000);
+
+            }
+        });
+
+        DatabaseReference checkPremiumUser = FirebaseDatabase.getInstance().getReference().child("Users").child(myUserId);
+        checkPremiumUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                model = dataSnapshot.getValue(UsersModel.class);
+
+                isPremium = model.isPremium();
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
     }
 
@@ -702,6 +761,7 @@ public class MainPage extends AppCompatActivity
         String currentHomePackage = resolveInfo.activityInfo.packageName;
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -715,7 +775,7 @@ public class MainPage extends AppCompatActivity
         final String myUserId = user.getUid();
 
         DatabaseReference checkPremiumUser = FirebaseDatabase.getInstance().getReference().child("Users").child(myUserId);
-        checkPremiumUser.addValueEventListener(new ValueEventListener() {
+        checkPremiumUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -727,19 +787,10 @@ public class MainPage extends AppCompatActivity
 
                 if (isPremium) {
                     premiumUsers();
+                    checkAllLoaded();
                 } else {
                     freeUser();
                 }
-
-                wallList.setOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-                    @Override
-                    public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                        if (isPremium){
-                            itemPosPremium = 0;
-                            premiumUsersLoadMore();
-                        }
-                    }
-                });
 
             }
 
@@ -758,34 +809,21 @@ public class MainPage extends AppCompatActivity
 
         Query postingQuery = postingDatabase.limitToLast(TOTAL_ITEM_LOAD);
 
-        postingQuery.addChildEventListener(new ChildEventListener() {
+        postingQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Post model = dataSnapshot.getValue(Post.class);
-                itemPosPremium++;
-                if (itemPosPremium == 1){
-                    String getLastKey = dataSnapshot.getKey();
-                    lastkeyPremium = getLastKey;
-                    Log.e("lastKey", lastkeyPremium);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Post model = snapshot.getValue(Post.class);
+                    itemPosPremium++;
+                    if (itemPosPremium == 1) {
+                        String getLastKey = snapshot.getKey();
+                        lastkeyPremium = getLastKey;
+                        Log.e("lastKey", lastkeyPremium);
+                    }
+                    itemSize.add(model);
+
+                    adapter.notifyDataSetChanged();
                 }
-                itemSize.add(model);
-
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
             }
 
             @Override
@@ -1858,29 +1896,18 @@ public class MainPage extends AppCompatActivity
         }); */
     }
 
-    public void premiumUsersLoadMore(){
+    private void checkAllLoaded() {
 
-
-        Query queryMorePremiumPost = postingDatabase.orderByKey().endAt(lastkeyPremium).limitToLast(TOTAL_ITEM_LOAD);
-        queryMorePremiumPost.addChildEventListener(new ChildEventListener() {
+        postingDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Post model = dataSnapshot.getValue(Post.class);
-                itemSize.add(itemPosPremium++, model);
-
-                br = br +5;
-                Log.e("br postova", String.valueOf(br));
-
-
-                if (itemPosPremium == 1){
-                    String getLastKey = dataSnapshot.getKey();
-                    lastkeyPremium = getLastKey;
-                    Log.e("lastKey", lastkeyPremium);
+                countItem = (int) dataSnapshot.getChildrenCount();
+                loaditem++;
+                if (loaditem == 1) {
+                    firstKey = dataSnapshot.getKey();
                 }
 
 
-                adapter.notifyDataSetChanged();
-                linearLayoutManager.scrollToPositionWithOffset(10, 0);
             }
 
             @Override
@@ -1903,6 +1930,62 @@ public class MainPage extends AppCompatActivity
 
             }
         });
+
+    }
+
+
+    public void premiumUsersLoadMore() {
+
+
+        DatabaseReference newPostlload = FirebaseDatabase.getInstance().getReference().child("Posting");
+        Query queryMorePremiumPost = newPostlload.orderByKey().endAt(lastkeyPremium).limitToLast(TOTAL_ITEM_LOAD);
+                queryMorePremiumPost.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if (!lastkeyPremium.equals(firstKey)) {
+
+
+                                Post model = dataSnapshot.getValue(Post.class);
+                                itemSize.add(itemPosPremium++, model);
+
+                                br = (int) dataSnapshot.getChildrenCount();
+                                Log.e("br postova", String.valueOf(br));
+
+
+                                if (itemPosPremium == 1) {
+                                    String getLastKey = dataSnapshot.getKey();
+                                    lastkeyPremium = getLastKey;
+                                    Log.e("lastKey MORE METHOD", lastkeyPremium);
+                                }
+
+
+                                adapter.notifyDataSetChanged();
+
+                            } else {
+                            Toast.makeText(getApplicationContext(), "No more posts", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     public void initializeCountDrawer() {
@@ -2411,7 +2494,7 @@ public class MainPage extends AppCompatActivity
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*");
-                startActivityForResult(intent,PHOTO_OPEN );
+                startActivityForResult(intent, PHOTO_OPEN);
 
             }
 
