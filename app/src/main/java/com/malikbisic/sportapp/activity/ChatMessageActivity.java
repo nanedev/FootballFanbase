@@ -181,6 +181,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
                 refreshing = true;
                 mCurrentPage++;
 

@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.FanbaseFanClubTable;
 import com.malikbisic.sportapp.activity.MyPostsActivity;
 import com.squareup.picasso.Picasso;
 
@@ -71,6 +72,34 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
                 }
             });
 
+        } else if (position == 2){
+            final String uid;
+            FirebaseAuth mAuth;
+
+            mAuth = FirebaseAuth.getInstance();
+            uid = mAuth.getCurrentUser().getUid();
+
+            holder.numberSomething.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(activity, FanbaseFanClubTable.class);
+                    intent.putExtra("activityToBack", "myProfile");
+                    intent.putExtra("uid", uid);
+                    activity.startActivity(intent);
+                    activity.finish();
+                }
+            });
+
+            holder.itemImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(activity, FanbaseFanClubTable.class);
+                    intent.putExtra("activityToBack", "myProfile");
+                    intent.putExtra("uid", uid);
+                    activity.startActivity(intent);
+                    activity.finish();
+                }
+            });
         }
 
         if (position == 0){

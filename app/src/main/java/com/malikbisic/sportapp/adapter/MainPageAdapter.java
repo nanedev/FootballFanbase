@@ -167,8 +167,10 @@ public class MainPageAdapter extends RecyclerView.Adapter{
         return vh;
     }
 
+
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+
 
         if (holder instanceof MainPageAdapter.PostViewHolder) {
             Post model = postList.get(position);

@@ -102,6 +102,7 @@ public class ProfileFragment extends Fragment {
     private TextView name_surname;
     ImageView genderImage;
     TextView myPosts;
+    Intent myIntent;
 
     private Calendar minAdultAge;
     private ProgressBar loadProfile_image;
@@ -137,6 +138,9 @@ public class ProfileFragment extends Fragment {
     ProfileFragmentAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
 
+    String myUid;
+    boolean checkOpenActivity;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -156,7 +160,17 @@ public class ProfileFragment extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance();
         uid = MainPage.uid;
-        mReference = mDatabase.getReference().child("Users").child(uid);
+
+        if (this.getArguments() != null) {
+            myUid = this.getArguments().getString("myUid");
+            checkOpenActivity = this.getArguments().getBoolean("openFromFanBaseTable", false);
+        }
+
+        if (checkOpenActivity) {
+            mReference = mDatabase.getReference().child("Users").child(myUid);
+        }else {
+            mReference = mDatabase.getReference().child("Users").child(uid);
+        }
         profile = (ImageView) view.findViewById(R.id.get_profile_image_id);
         //  name_surname = (TextView) view.findViewById(R.id.name_surname);
         flag = (ImageView) view.findViewById(R.id.user_countryFlag);
