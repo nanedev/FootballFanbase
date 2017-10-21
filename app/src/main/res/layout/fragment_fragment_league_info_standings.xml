@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.malikbisic.sportapp.activity.FragmentLeagueInfoStandings">
+
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/name_of_league"
+    android:text="Liga name"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:layout_margin="5dp"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    android:textColor="#000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/points"
+        android:text="Pts."
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="5dp"
+        android:textColor="#000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/goal_difference"
+        android:text="GD"
+        android:layout_toLeftOf="@+id/points"
+        android:layout_toStartOf="@+id/points"
+        android:layout_alignBaseline="@+id/points"
+        android:textColor="#000"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"/>
+
+
+    <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/goals"
+    android:text="Goals"
+    android:layout_toLeftOf="@+id/goal_difference"
+    android:layout_toStartOf="@+id/goal_difference"
+    android:layout_alignBaseline="@+id/goal_difference"
+    android:textColor="#000"
+    android:layout_marginRight="10dp"
+    android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/played"
+        android:text="Played"
+        android:layout_toLeftOf="@+id/goals"
+        android:layout_toStartOf="@+id/goals"
+        android:layout_alignBaseline="@+id/goals"
+        android:textColor="#000"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/view_league_info"
+        android:layout_below="@+id/name_of_league"
+        android:layout_marginTop="1dp"
+        android:background="#000"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/league_info_recycler_view"
+        android:layout_below="@+id/view_league_info">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+
+
+</RelativeLayout>

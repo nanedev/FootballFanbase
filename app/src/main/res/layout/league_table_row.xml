@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/position_number"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="1"
+            android:layout_centerVertical="true"
+            android:textColor="#000"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/club_logo_league_info"
+            android:layout_toRightOf="@+id/position_number"
+            android:layout_toEndOf="@+id/position_number"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_alignBaseline="@+id/position_number"
+            android:layout_centerVertical="true"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/club_name_league_info"
+            android:layout_toRightOf="@+id/club_logo_league_info"
+            android:layout_toEndOf="@+id/club_logo_league_info"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:text="dsadas"
+            android:layout_centerVertical="true"
+            android:textColor="#000"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/points_row"
+            android:text="Pts."
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="5dp"
+            android:textColor="#000"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/goal_difference_row"
+            android:text="GD"
+            android:layout_toLeftOf="@+id/points_row"
+            android:layout_toStartOf="@+id/points_row"
+            android:layout_alignBaseline="@+id/points_row"
+            android:textColor="#000"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/goals_row"
+            android:text="Goals"
+            android:layout_toLeftOf="@+id/goal_difference_row"
+            android:layout_toStartOf="@+id/goal_difference_row"
+            android:layout_alignBaseline="@+id/goal_difference_row"
+            android:textColor="#000"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/played_row"
+            android:text="Played"
+            android:layout_toLeftOf="@+id/goals_row"
+            android:layout_toStartOf="@+id/goals_row"
+            android:layout_alignBaseline="@+id/goals_row"
+            android:textColor="#000"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"/>
+
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

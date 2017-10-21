@@ -194,14 +194,18 @@
             android:name=".activity.ChatActivity"
             android:label="@string/title_activity_chat"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".activity.ChatMessageActivity"
             android:parentActivityName=".activity.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
-            android:windowSoftInputMode="adjustResize"></activity>
-        <activity android:name=".activity.FanbaseFanClubTable"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.FanbaseFanClubTable"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.LeagueInfoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"></activity>
     </application>
