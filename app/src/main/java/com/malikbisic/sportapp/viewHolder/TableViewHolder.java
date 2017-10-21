@@ -16,6 +16,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TableViewHolder extends RecyclerView.ViewHolder {
     TextView positionTextview;
     CircleImageView logoClubImage;
+    TextView teamNameTextview;
     TextView playedTextview;
     TextView goalDifTextview;
     TextView pointsTextview;
@@ -28,10 +29,12 @@ public class TableViewHolder extends RecyclerView.ViewHolder {
         playedTextview = (TextView) itemView.findViewById(R.id.played_row);
         goalDifTextview = (TextView) itemView.findViewById(R.id.goal_difference_row);
         pointsTextview = (TextView) itemView.findViewById(R.id.points_row);
+        teamNameTextview = (TextView) itemView.findViewById(R.id.club_name_league_info);
     }
 
     public void updateUI (TableModel table){
         positionTextview.setText(String.valueOf(table.getPosition()));
+        teamNameTextview.setText(table.getTeamName());
         playedTextview.setText(String.valueOf(table.getPlayed()));
         goalDifTextview.setText(String.valueOf(table.getGoalDif()));
         pointsTextview.setText(String.valueOf(table.getPoints()));

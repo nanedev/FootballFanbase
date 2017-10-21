@@ -97,9 +97,10 @@ public class FragmentLeagueInfoStandings extends Fragment {
                             played = overall.getInt("games_played");
                             wins = overall.getInt("won");
                             draws = overall.getInt("draw");
-                            goalScored = overall.getInt("goal_scored");
-                            goalConcided = overall.getInt("goal_against");
                             lost = overall.getInt("lost");
+                            goalScored = overall.getInt("goals_scored");
+                            goalConcided = overall.getInt("goals_against");
+
                             JSONObject total = getData.getJSONObject("total");
                             goalDif = total.getString("goal_difference");
                             points = total.getInt("points");
@@ -110,10 +111,11 @@ public class FragmentLeagueInfoStandings extends Fragment {
                             Log.i("played", String.valueOf(played));
                             Log.i("draws", String.valueOf(draws));
                             Log.i("goaldif", String.valueOf(goalDif));
-
+                            TableModel model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points);
+                            tableListStandings.add(model);
                         }
-                        TableModel model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points);
-                        tableListStandings.add(model);
+
+                        adapter.notifyDataSetChanged();
                     }
 
                 } catch (JSONException e) {
@@ -129,7 +131,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
             }
         });
 
-        adapter.notifyDataSetChanged();
+
         Volley.newRequestQueue(getActivity()).add(standingsRequest);
 
         return view;
