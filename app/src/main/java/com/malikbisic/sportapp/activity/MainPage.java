@@ -391,7 +391,6 @@ public class MainPage extends AppCompatActivity
                                 backgroundImage();
 
 
-
                             }
                         }
 
@@ -440,9 +439,79 @@ public class MainPage extends AppCompatActivity
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
 
+        Boolean isFirstTime = getSharedPreferences("check first time", MODE_PRIVATE).getBoolean("isFirstTime", true);
+
+        if (isFirstTime){
+        setNumberClubFans();
+            getSharedPreferences("check first time", MODE_PRIVATE).edit().putBoolean("isFirstTime", false).commit();
+        }
 
 
+    }
 
+    public void setNumberClubFans() {
+
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final UsersModel model = dataSnapshot.getValue(UsersModel.class);
+
+                final String myClub = model.getFavoriteClub();
+
+                Log.e("MY CLUB", myClub);
+                final DatabaseReference clubReference = FirebaseDatabase.getInstance().getReference().child("ClubTable").child(myClub);
+                clubReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.child(myClub).exists()) {
+                            Log.e("numbersFan root", String.valueOf(dataSnapshot.getRef()));
+                            ClubTable modelclub = dataSnapshot.getValue(ClubTable.class);
+                            int numbersFans = modelclub.getNumbersFans();
+                            int addNewFan = numbersFans + 1;
+
+                            Map setClubNumbers = new HashMap();
+                            setClubNumbers.put("clubName", model.getFavoriteClub());
+                            setClubNumbers.put("clubLogo", model.getFavoriteClubLogo());
+                            setClubNumbers.put("numbersFans", addNewFan);
+                            clubReference.updateChildren(setClubNumbers, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Log.e("numbersFan Error", databaseError.getMessage());
+                                    }
+                                }
+                            });
+                            Log.i("numbersFans", String.valueOf(numbersFans));
+                        } else {
+                            Map setClubNumbers = new HashMap();
+                            setClubNumbers.put("clubName", model.getFavoriteClub());
+                            setClubNumbers.put("clubLogo", model.getFavoriteClubLogo());
+                            setClubNumbers.put("numbersFans", 1);
+                            clubReference.updateChildren(setClubNumbers, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Log.e("numbersFan Error", databaseError.getMessage());
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -777,7 +846,7 @@ public class MainPage extends AppCompatActivity
                     br = (int) dataSnapshot.getChildrenCount();
                     Log.e("br postova", String.valueOf(br));
 
-                    if (!mPreviousKeyPremium.equals(getLastKey)){
+                    if (!mPreviousKeyPremium.equals(getLastKey)) {
                         itemSize.add(itemPosPremium++, model);
                     } else {
                         mPreviousKeyPremium = getLastKey;
@@ -868,9 +937,6 @@ public class MainPage extends AppCompatActivity
 
 
     }
-
-
-
 
 
     @Override
