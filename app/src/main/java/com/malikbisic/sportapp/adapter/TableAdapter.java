@@ -1,11 +1,15 @@
 package com.malikbisic.sportapp.adapter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.AboutFootballClub;
 import com.malikbisic.sportapp.model.TableModel;
 import com.malikbisic.sportapp.viewHolder.TableViewHolder;
 
@@ -16,11 +20,14 @@ import java.util.ArrayList;
  */
 
 public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
-
+Context context;
     private ArrayList<TableModel> tableList;
+    Activity activity;
 
-    public TableAdapter(ArrayList<TableModel> tableList) {
+    public TableAdapter(ArrayList<TableModel> tableList,Context context,Activity activity) {
         this.tableList = tableList;
+        this.context = context;
+        this.activity = activity;
     }
 
 
@@ -34,8 +41,21 @@ public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     @Override
     public void onBindViewHolder(TableViewHolder holder, int position) {
-TableModel model = tableList.get(position);
-holder.updateUI(model);
+final TableModel model = tableList.get(position);
+holder.updateUI(model,context);
+
+
+holder.itemView.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+
+        Intent intent = new Intent(context, AboutFootballClub.class);
+        intent.putExtra("teamId",model.getTeamId());
+        activity.startActivity(intent);
+
+
+    }
+});
     }
 
     @Override

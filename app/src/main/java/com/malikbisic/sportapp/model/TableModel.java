@@ -16,12 +16,13 @@ public class TableModel {
     private int goalConcided;
     private String goalDif;
     private int points;
+    String clubLogo;
 
 
     public TableModel() {
     }
 
-    public TableModel(int position, int teamId, String teamName, int played, int wins, int draws, int loses, int goalScored, int goalConcided, String goalDif, int points) {
+    public TableModel(int position, int teamId, String teamName, int played, int wins, int draws, int loses, int goalScored, int goalConcided, String goalDif, int points,String clubLogo) {
         this.position = position;
         this.teamId = teamId;
         this.teamName = teamName;
@@ -33,11 +34,16 @@ public class TableModel {
         this.goalConcided = goalConcided;
         this.goalDif = goalDif;
         this.points = points;
-
+        this.clubLogo = clubLogo;
     }
 
+    public String getClubLogo() {
+        return clubLogo;
+    }
 
-
+    public void setClubLogo(String clubLogo) {
+        this.clubLogo = clubLogo;
+    }
 
     public int getPosition() {
         return position;

@@ -205,7 +205,11 @@
             android:name=".activity.FanbaseFanClubTable"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.LeagueInfoActivity"
+        <activity
+            android:name=".activity.LeagueInfoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.AboutFootballClub"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"></activity>
     </application>

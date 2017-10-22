@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -40,6 +41,8 @@ public class FragmentLeagueInfoStandings extends Fragment {
     TableAdapter adapter;
     ArrayList<TableModel> tableListStandings = new ArrayList<>();
     final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    private String INCLUDE_IN_URL = "&include=standings.team";
+    TextView leagueNameTextview;
 
     public FragmentLeagueInfoStandings() {
         // Required empty public constructor
@@ -52,9 +55,10 @@ public class FragmentLeagueInfoStandings extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_fragment_league_info_standings, container, false);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        leagueNameTextview = (TextView) view.findViewById(R.id.name_of_league);
         tableRecyclerview = (RecyclerView) view.findViewById(R.id.league_info_recycler_view);
         tableRecyclerview.setLayoutManager(layoutManager);
-        adapter = new TableAdapter(tableListStandings);
+        adapter = new TableAdapter(tableListStandings, getActivity().getApplicationContext(),getActivity());
 
 
         tableRecyclerview.setAdapter(adapter);
@@ -63,13 +67,14 @@ public class FragmentLeagueInfoStandings extends Fragment {
         intent = getActivity().getIntent();
         currentSeasonId = intent.getStringExtra("leagueID");
         leagueName = intent.getStringExtra("leagueName");
-        finalUrl = URL_STANDINGS + currentSeasonId + URL_APIKEY;
+        leagueNameTextview.setText(leagueName);
+        finalUrl = URL_STANDINGS + currentSeasonId + URL_APIKEY + INCLUDE_IN_URL;
 
         JsonObjectRequest standingsRequest = new JsonObjectRequest(Request.Method.GET, finalUrl, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-               int position = 0;
-                 int teamId = 0;
+                int position = 0;
+                int teamId = 0;
                 String teamName = "";
                 int played = 0;
                 int wins = 0;
@@ -77,6 +82,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
                 int goalScored = 0;
                 int goalConcided = 0;
                 int lost = 0;
+                String logo = "";
                 String goalDif = "";
                 int points = 0;
                 try {
@@ -105,13 +111,18 @@ public class FragmentLeagueInfoStandings extends Fragment {
                             goalDif = total.getString("goal_difference");
                             points = total.getInt("points");
 
+                            JSONObject team = getData.getJSONObject("team");
+                            JSONObject getTeamJsonObj = team.getJSONObject("data");
+                            logo = getTeamJsonObj.getString("logo_path");
+
+
                             Log.i("pozicija", String.valueOf(position));
                             Log.i("poena", String.valueOf(points));
 
                             Log.i("played", String.valueOf(played));
                             Log.i("draws", String.valueOf(draws));
                             Log.i("goaldif", String.valueOf(goalDif));
-                            TableModel model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points);
+                            TableModel model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points, logo);
                             tableListStandings.add(model);
                         }
 
