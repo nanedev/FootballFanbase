@@ -29,7 +29,7 @@ setSupportActionBar(toolbar);
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(AboutFootballClub.this,FragmentLeagueInfoStandings.class);
+        Intent intent = new Intent(AboutFootballClub.this,MainPage.class);
         startActivity(intent);
         super.onBackPressed();
 

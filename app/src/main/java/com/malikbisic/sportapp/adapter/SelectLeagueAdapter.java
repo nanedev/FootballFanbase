@@ -50,7 +50,7 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter<FragmentAllMatches
                 Intent openClub = new Intent(ctx, LeagueInfoActivity.class);
                 openClub.putExtra("leagueID", leagueModel.getCurrent_season_id());
                 openClub.putExtra("leagueName",leagueModel.getName());
-                ctx.startActivity(openClub);
+                activity.startActivity(openClub);
 
             }
         });
