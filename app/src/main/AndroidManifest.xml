@@ -209,9 +209,12 @@
             android:name=".activity.LeagueInfoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.AboutFootballClub"
+        <activity
+            android:name=".activity.AboutFootballClub"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.DateActivity"
+            android:theme="@style/Theme.AppCompat.PopUpActivity"></activity>
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity;
 
+import android.content.Intent;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -47,11 +48,15 @@ public class FootballActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(0);
         menuItem.setChecked(true);
         }
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
     private void setUpViewPager(ViewPager viewPager){
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new FragmentAllMatches(),"All matches");
         adapter.addFragment(new FragmentMyClubMatches(),"My club matches");
+        adapter.addFragment(new FragmentAllFixtures(), "All fixtures");
         viewPager.setAdapter(adapter);
 
     }

@@ -40,6 +40,8 @@ public class FragmentMyClubMatches extends Fragment {
     LivescoreAdapter adapter;
     ArrayList<LivescoreModel> listScore;
     RecyclerView livescore_recview;
+    String currentLeagueName;
+    String prevLeagueName;
 
     public FragmentMyClubMatches() {
         // Required empty public constructor
@@ -69,6 +71,7 @@ public class FragmentMyClubMatches extends Fragment {
                 String score;
                 String status;
                 String timeStart;
+                String leagueName;
 
                 try {
                     JSONArray dataArray = response.getJSONArray("data");
@@ -99,10 +102,23 @@ public class FragmentMyClubMatches extends Fragment {
                         JSONObject startTime = timeObject.getJSONObject("starting_at");
                         timeStart = startTime.getString("time");
 
-                        LivescoreModel model = new LivescoreModel(localTeamName, localTeamLogo, visitorTeamName, visitorTeamLogo, score, status, timeStart);
+                        JSONObject leagueMain = objectArray.getJSONObject("league");
+                        JSONObject dataLeague = leagueMain.getJSONObject("data");
+
+                        currentLeagueName = dataLeague.getString("name");
+
+                        if (currentLeagueName.equals(prevLeagueName)) {
+                            leagueName = "";
+                        } else {
+                            leagueName = currentLeagueName;
+                        }
+
+                        LivescoreModel model = new LivescoreModel(localTeamName, localTeamLogo, visitorTeamName, visitorTeamLogo, score, status, timeStart, leagueName);
                         listScore.add(model);
+                        prevLeagueName = currentLeagueName;
                     }
                     adapter.notifyDataSetChanged();
+
 
                 } catch (JSONException e) {
                     Log.e("JSONERRO LIVESCORE", e.getLocalizedMessage());

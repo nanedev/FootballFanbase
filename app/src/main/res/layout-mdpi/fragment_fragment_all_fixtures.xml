@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.malikbisic.sportapp.activity.FragmentAllFixtures">
+
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:id="@+id/toolbarAllFixtures"
+        app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:elevation="2dp"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Some Fancy Title"
+            android:gravity = "center"
+            android:textColor="@color/white"
+            android:id="@+id/toolbar_title" />
+    </android.support.v7.widget.Toolbar>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/allFixtures_recView"
+        android:layout_below="@id/toolbarAllFixtures">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/emptyMathes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Today don't playing any match."
+        android:textSize="24sp"
+        android:visibility="gone" />
+
+</RelativeLayout>
