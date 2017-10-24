@@ -24,6 +24,7 @@ public class TableViewHolder extends RecyclerView.ViewHolder {
     TextView playedTextview;
     TextView goalDifTextview;
     TextView pointsTextview;
+    String teamId;
 View view;
     public TableViewHolder(final View itemView) {
         super(itemView);
@@ -44,6 +45,6 @@ View view;
         goalDifTextview.setText(String.valueOf(table.getGoalDif()));
         pointsTextview.setText(String.valueOf(table.getPoints()));
         Picasso.with(context).load(table.getClubLogo()).into(logoClubImage);
-        
+        teamId = String.valueOf(table.getTeamId());
     }
 }

@@ -20,11 +20,11 @@ import java.util.ArrayList;
  */
 
 public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
-Context context;
+    Context context;
     private ArrayList<TableModel> tableList;
     Activity activity;
 
-    public TableAdapter(ArrayList<TableModel> tableList,Context context,Activity activity) {
+    public TableAdapter(ArrayList<TableModel> tableList, Context context, Activity activity) {
         this.tableList = tableList;
         this.context = context;
         this.activity = activity;
@@ -33,7 +33,7 @@ Context context;
 
     @Override
     public TableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View table_card = LayoutInflater.from(parent.getContext()).inflate(R.layout.league_table_row,parent,false);
+        View table_card = LayoutInflater.from(parent.getContext()).inflate(R.layout.league_table_row, parent, false);
 
 
         return new TableViewHolder(table_card);
@@ -41,21 +41,25 @@ Context context;
 
     @Override
     public void onBindViewHolder(TableViewHolder holder, int position) {
-final TableModel model = tableList.get(position);
-holder.updateUI(model,context);
+        final TableModel model = tableList.get(position);
+        holder.updateUI(model, context);
 
 
-holder.itemView.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        Intent intent = new Intent(context, AboutFootballClub.class);
-        intent.putExtra("teamId",model.getTeamId());
-        activity.startActivity(intent);
+                Intent intent = new Intent(context, AboutFootballClub.class);
+                intent.putExtra("teamId", String.valueOf(model.getTeamId()));
+                intent.putExtra("teamLogo", model.getClubLogo());
+                intent.putExtra("teamName", model.getTeamName());
+                intent.putExtra("countryId", model.getCountryId());
+
+                activity.startActivity(intent);
 
 
-    }
-});
+            }
+        });
     }
 
     @Override

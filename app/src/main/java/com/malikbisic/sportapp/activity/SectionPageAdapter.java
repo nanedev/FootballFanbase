@@ -40,4 +40,5 @@ mFragmentList.add(fragment);
     public int getCount() {
         return mFragmentList.size();
     }
+
 }

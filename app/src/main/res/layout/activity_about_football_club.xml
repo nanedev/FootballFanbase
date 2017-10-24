@@ -18,26 +18,61 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:id="@+id/about_football_rel_lay"
         android:background="#424242"
     android:layout_below="@+id/toolbarAboutFootball">
+<de.hdodenhof.circleimageview.CircleImageView
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:id="@+id/clu_logo_about_football"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/club_name_about_football"
+            android:layout_below="@+id/clu_logo_about_football"
+            android:layout_centerHorizontal="true"
+            android:text="club name"/>
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/flag_about_football"
+            android:layout_toRightOf="@+id/club_name_about_football"
+            android:layout_toEndOf="@+id/club_name_about_football"
+            android:layout_alignBaseline="@+id/club_name_about_football"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"/>
 
 
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/about_football_rel_lay">
 
 
-        <android.support.constraint.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
 
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabsAboutFootball"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/aboutFootballViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
-
-        </android.support.constraint.ConstraintLayout>
+        </RelativeLayout>
 
 
     </ScrollView>
