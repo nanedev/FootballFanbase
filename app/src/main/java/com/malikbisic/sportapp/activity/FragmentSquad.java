@@ -35,6 +35,7 @@ public class FragmentSquad extends Fragment {
 
     ArrayList<TeamModel> teamModelArrayList = new ArrayList<>();
     TeamAdapter adapter;
+    ArrayList<String> positions;
 
     private final String API_KEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
     private final String URL = "https://soccer.sportmonks.com/api/v2.0/teams/";
@@ -66,6 +67,8 @@ public class FragmentSquad extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
+
+
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, finalUrl, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -83,12 +86,11 @@ public class FragmentSquad extends Fragment {
                 String height = "";
                 String weight = "";
                 String playerImage = "";
-
-
+                String coachName = "";
+                String positionName = "";
                 try {
                     JSONObject getData = response.getJSONObject("data");
                     JSONObject getSquadObj = getData.getJSONObject("squad");
-
                     JSONArray getDataArray = getSquadObj.getJSONArray("data");
 
                     for (int i = 0; i < getDataArray.length(); i++) {
@@ -97,7 +99,7 @@ public class FragmentSquad extends Fragment {
                         JSONObject getDataFromPlayer = getPlayerData.getJSONObject("data");
                         JSONObject getPositionOfPlayer = getDataFromPlayer.getJSONObject("position");
                         JSONObject getPositionName = getPositionOfPlayer.getJSONObject("data");
-                        String positionName = getPositionName.getString("name");
+                         positionName = getPositionName.getString("name");
 
                         playerId = object.getInt("player_id");
                         positionId = object.getInt("position_id");
@@ -115,21 +117,20 @@ public class FragmentSquad extends Fragment {
                         height = getDataFromPlayer.getString("height");
                         weight = getDataFromPlayer.getString("weight");
                         playerImage = getDataFromPlayer.getString("image_path");
-
-
                         TeamModel model = new TeamModel(playerId, positionId, numberId, countryId, commonName, fullName, firstName, lastName, nationality, birthDate, birthPlace, height, weight, playerImage, positionName);
                         teamModelArrayList.add(model);
-                        positionNameTextview.setText(positionName);
+
 
 
                     }
-                    adapter.notifyDataSetChanged();
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
 
+                adapter.notifyDataSetChanged();
             }
         }, new Response.ErrorListener() {
             @Override

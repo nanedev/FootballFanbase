@@ -4,11 +4,27 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/teamcontainer">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/position_layout">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/team_position"
+            android:textStyle="bold" />
+</RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="10dp"
+android:layout_below="@+id/position_layout"
+        >
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/player_image"
@@ -48,5 +64,5 @@
             android:layout_toRightOf="@+id/from_country" />
     </RelativeLayout>
 
-
+</RelativeLayout>
 </android.support.v7.widget.CardView>

@@ -23,6 +23,7 @@ private String playerImage;
 private String positionName;
 
 
+
     public TeamModel() {
     }
 
@@ -42,6 +43,7 @@ private String positionName;
         this.playerImage = playerImage;
         this.positionName = positionName;
         this.firstName = firstName;
+
     }
 
     public String getFirstName() {

@@ -21,6 +21,7 @@ public class TeamSquadViewHolder  extends RecyclerView.ViewHolder{
  TextView playerNameTextview;
  TextView playerFromTextview;
  TextView shirtNumberPlayer;
+ TextView positionNameTextview;
 
 
 
@@ -28,7 +29,7 @@ public class TeamSquadViewHolder  extends RecyclerView.ViewHolder{
     public TeamSquadViewHolder(View itemView) {
         super(itemView);
 
-
+positionNameTextview = (TextView) itemView.findViewById(R.id.team_position);
 playerImage = (CircleImageView) itemView.findViewById(R.id.player_image);
 playerNameTextview = (TextView) itemView.findViewById(R.id.player_name);
 playerFromTextview = (TextView) itemView.findViewById(R.id.from_country);
@@ -38,13 +39,13 @@ shirtNumberPlayer = (TextView) itemView.findViewById(R.id.shirt_number);
     }
 
 
-    public void updateUI (TeamModel team, Context context){
+    public void updateUI (TeamModel team, Context context) {
 
 
         Picasso.with(context).load(team.getPlayerImage()).into(playerImage);
         playerNameTextview.setText(team.getCommonName());
         playerFromTextview.setText(team.getNationality());
         shirtNumberPlayer.setText(String.valueOf(team.getNumberId()));
-
+        positionNameTextview.setText(team.getPositionName());
     }
 }

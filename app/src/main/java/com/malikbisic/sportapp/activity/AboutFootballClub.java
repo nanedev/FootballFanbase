@@ -65,7 +65,6 @@ public class AboutFootballClub extends AppCompatActivity implements View.OnTouch
         setUpViewPager(mViewPager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabsAboutFootball);
         tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setCurrentItem(mViewPager.getCurrentItem());
 
         toolbar = (Toolbar) findViewById(R.id.toolbarAboutFootball);
         logo_image_club = (CircleImageView) findViewById(R.id.clu_logo_about_football);
