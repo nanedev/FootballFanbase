@@ -1,16 +1,100 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.malikbisic.sportapp.activity.AboutFootballClub">
+    tools:context="com.malikbisic.sportapp.activity.AboutFootballClub"
+    android:orientation="vertical">
 
-   <android.support.v7.widget.RecyclerView
+   <LinearLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
+       android:orientation="vertical">
+
+   <TextView
+       android:id="@+id/attacker"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:gravity="center_horizontal"
+       android:text="Attacker" />
+
+   <android.support.v7.widget.RecyclerView
        android:id="@+id/team_recyclerview"
-       android:layout_below="@+id/team_position"
-       android:layout_marginTop="5dp">
+       android:layout_width="match_parent"
+       android:layout_height="200dp"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentStart="true"
+       android:layout_below="@+id/attacker"
+       android:layout_marginTop="11dp">
 
    </android.support.v7.widget.RecyclerView>
 
-</RelativeLayout>
+      <TextView
+          android:id="@+id/midfielder"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true"
+          android:layout_alignParentTop="true"
+          android:layout_below="@id/team_recyclerview"
+          android:layout_marginTop="10dp"
+          android:gravity="center_horizontal"
+          android:text="Midfielder" />
+
+   <android.support.v7.widget.RecyclerView
+       android:id="@+id/teamMid_recyclerview"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentStart="true"
+       android:layout_below="@+id/midfielder"
+       android:layout_marginTop="11dp">
+
+   </android.support.v7.widget.RecyclerView>
+
+      <TextView
+          android:id="@+id/defender"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true"
+          android:layout_alignParentTop="true"
+          android:layout_below="@id/team_recyclerview"
+          android:layout_marginTop="10dp"
+          android:gravity="center_horizontal"
+          android:text="Defender" />
+
+   <android.support.v7.widget.RecyclerView
+       android:id="@+id/teamDef_recyclerview"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentStart="true"
+       android:layout_below="@+id/defender"
+       android:layout_marginTop="11dp">
+
+   </android.support.v7.widget.RecyclerView>
+
+      <TextView
+          android:id="@+id/goalkeeper"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true"
+          android:layout_alignParentTop="true"
+          android:layout_below="@id/team_recyclerview"
+          android:layout_marginTop="10dp"
+          android:gravity="center_horizontal"
+          android:text="Goalkeeper" />
+
+   <android.support.v7.widget.RecyclerView
+       android:id="@+id/teamGK_recyclerview"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentStart="true"
+       android:layout_below="@+id/goalkeeper"
+       android:layout_marginTop="11dp">
+
+   </android.support.v7.widget.RecyclerView>
+   </LinearLayout>
+</ScrollView>

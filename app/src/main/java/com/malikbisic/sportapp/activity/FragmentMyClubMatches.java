@@ -34,7 +34,7 @@ public class FragmentMyClubMatches extends Fragment {
 
     String URL_LIVESCORE = "https://soccer.sportmonks.com/api/v2.0/livescores";
     String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
-    String URL_INCLUDES = "&include=localTeam,visitorTeam,league";
+    String URL_INCLUDES = "&include=localTeam,visitorTeam,league,odds,lineup,stats";
     String url;
 
     LivescoreAdapter adapter;
@@ -56,7 +56,7 @@ public class FragmentMyClubMatches extends Fragment {
         url = URL_LIVESCORE + URL_API + URL_INCLUDES;
         listScore = new ArrayList<>();
         livescore_recview = (RecyclerView) view.findViewById(R.id.livescoreMatches);
-        adapter = new LivescoreAdapter(listScore);
+        adapter = new LivescoreAdapter(listScore, getActivity());
         livescore_recview.setLayoutManager(new LinearLayoutManager(getActivity()));
         livescore_recview.setAdapter(adapter);
 

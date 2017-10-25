@@ -19,6 +19,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.TeamAdapter;
+import com.malikbisic.sportapp.adapter.TeamAdapterDef;
+import com.malikbisic.sportapp.adapter.TeamAdapterGK;
+import com.malikbisic.sportapp.adapter.TeamAdapterMid;
 import com.malikbisic.sportapp.model.TeamModel;
 
 import org.json.JSONArray;
@@ -32,10 +35,19 @@ public class FragmentSquad extends Fragment {
     Intent intent;
     TextView positionNameTextview;
     RecyclerView recyclerView;
+    RecyclerView recyclerViewMid;
+    RecyclerView recyclerViewDef;
+    RecyclerView recyclerViewGK;
 
     ArrayList<TeamModel> teamModelArrayList = new ArrayList<>();
     TeamAdapter adapter;
-    ArrayList<String> positions;
+    TeamAdapterMid adapterMid;
+    TeamAdapterDef adapterDef;
+    TeamAdapterGK adapterGK;
+    ArrayList<TeamModel> midfielderPosArray;
+    ArrayList<TeamModel> defenderPosArray;
+    ArrayList<TeamModel> goalkeeperPosArray;
+
 
     private final String API_KEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
     private final String URL = "https://soccer.sportmonks.com/api/v2.0/teams/";
@@ -54,19 +66,36 @@ public class FragmentSquad extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_squad, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.team_recyclerview);
+        recyclerViewMid = (RecyclerView) view.findViewById(R.id.teamMid_recyclerview);
+        recyclerViewDef = (RecyclerView) view.findViewById(R.id.teamDef_recyclerview);
+        recyclerViewGK = (RecyclerView) view.findViewById(R.id.teamGK_recyclerview);
+        midfielderPosArray = new ArrayList<>();
+        defenderPosArray = new ArrayList<>();
+        goalkeeperPosArray = new ArrayList<>();
 
         intent = getActivity().getIntent();
         String teamIdfromAct = intent.getStringExtra("teamId");
         finalUrl = URL + teamIdfromAct + API_KEY + INCLUDES;
         positionNameTextview = (TextView) view.findViewById(R.id.team_position);
        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager layoutManager3 = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager layoutManager4 = new LinearLayoutManager(view.getContext());
 
         recyclerView.setLayoutManager(layoutManager);
+        recyclerViewMid.setLayoutManager(layoutManager2);
+        recyclerViewDef.setLayoutManager(layoutManager3);
+        recyclerViewGK.setLayoutManager(layoutManager4);
         adapter = new TeamAdapter(getActivity().getApplicationContext(),getActivity(),teamModelArrayList);
+        adapterMid = new TeamAdapterMid(getActivity().getApplicationContext(), getActivity(), midfielderPosArray);
+        adapterDef = new TeamAdapterDef(getActivity().getApplicationContext(), getActivity(), defenderPosArray);
+        adapterGK = new TeamAdapterGK(getActivity().getApplicationContext(), getActivity(), goalkeeperPosArray);
 
 
         recyclerView.setAdapter(adapter);
-
+        recyclerViewMid.setAdapter(adapterMid);
+        recyclerViewDef.setAdapter(adapterDef);
+        recyclerViewGK.setAdapter(adapterGK);
 
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, finalUrl, null, new Response.Listener<JSONObject>() {
@@ -118,7 +147,16 @@ public class FragmentSquad extends Fragment {
                         weight = getDataFromPlayer.getString("weight");
                         playerImage = getDataFromPlayer.getString("image_path");
                         TeamModel model = new TeamModel(playerId, positionId, numberId, countryId, commonName, fullName, firstName, lastName, nationality, birthDate, birthPlace, height, weight, playerImage, positionName);
-                        teamModelArrayList.add(model);
+
+                        if (positionName.equals("Attacker")) {
+                            teamModelArrayList.add(model);
+                        } else if (positionName.equals("Midfielder")){
+                            midfielderPosArray.add(model);
+                        } else if (positionName.equals("Defender")){
+                            defenderPosArray.add(model);
+                        } else if (positionName.equals("Goalkeeper")){
+                            goalkeeperPosArray.add(model);
+                        }
 
 
 
@@ -131,6 +169,9 @@ public class FragmentSquad extends Fragment {
 
 
                 adapter.notifyDataSetChanged();
+                adapterMid.notifyDataSetChanged();
+                adapterDef.notifyDataSetChanged();
+                adapterGK.notifyDataSetChanged();
             }
         }, new Response.ErrorListener() {
             @Override

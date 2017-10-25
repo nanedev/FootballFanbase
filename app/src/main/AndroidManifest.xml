@@ -213,8 +213,12 @@
             android:name=".activity.AboutFootballClub"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.DateActivity"
-            android:theme="@style/Theme.AppCompat.PopUpActivity"></activity>
+        <activity
+            android:name=".activity.DateActivity"
+            android:theme="@style/Theme.AppCompat.PopUpActivity" />
+        <activity android:name=".activity.LivescoreMatchInfo"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark"></activity>
     </application>
 
 </manifest>

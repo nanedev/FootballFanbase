@@ -39,7 +39,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 
-public class AboutFootballClub extends AppCompatActivity implements View.OnTouchListener {
+public class AboutFootballClub extends AppCompatActivity  {
     Toolbar toolbar;
     Intent intent;
     String clubLogo;
@@ -158,9 +158,4 @@ public class AboutFootballClub extends AppCompatActivity implements View.OnTouch
 
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-
-        return true;
-    }
 }
