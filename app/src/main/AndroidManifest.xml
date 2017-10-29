@@ -216,9 +216,15 @@
         <activity
             android:name=".activity.DateActivity"
             android:theme="@style/Theme.AppCompat.PopUpActivity" />
-        <activity android:name=".activity.LivescoreMatchInfo"
+        <activity
+            android:name=".activity.LivescoreMatchInfo"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.PlayerInfoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>

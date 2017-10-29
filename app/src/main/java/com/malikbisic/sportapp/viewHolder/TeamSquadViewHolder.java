@@ -1,11 +1,14 @@
 package com.malikbisic.sportapp.viewHolder;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.PlayerInfoActivity;
 import com.malikbisic.sportapp.model.TeamModel;
 import com.squareup.picasso.Picasso;
 
@@ -22,6 +25,8 @@ public class TeamSquadViewHolder  extends RecyclerView.ViewHolder{
  TextView playerFromTextview;
  TextView shirtNumberPlayer;
  TextView positionNameTextview;
+ Context context;
+
 
 
 
@@ -34,6 +39,9 @@ playerImage = (CircleImageView) itemView.findViewById(R.id.player_image);
 playerNameTextview = (TextView) itemView.findViewById(R.id.player_name);
 playerFromTextview = (TextView) itemView.findViewById(R.id.from_country);
 shirtNumberPlayer = (TextView) itemView.findViewById(R.id.shirt_number);
+context = itemView.getContext();
+
+
 
 
     }

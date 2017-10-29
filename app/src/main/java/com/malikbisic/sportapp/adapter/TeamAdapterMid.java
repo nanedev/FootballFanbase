@@ -2,12 +2,14 @@ package com.malikbisic.sportapp.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.PlayerInfoActivity;
 import com.malikbisic.sportapp.model.TeamModel;
 import com.malikbisic.sportapp.viewHolder.TeamSquadViewHolder;
 
@@ -41,8 +43,16 @@ public class TeamAdapterMid extends RecyclerView.Adapter<TeamSquadViewHolder> {
 
     @Override
     public void onBindViewHolder(TeamSquadViewHolder holder, int position) {
-        TeamModel model = teamList.get(position);
-
+        final TeamModel model = teamList.get(position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, PlayerInfoActivity.class);
+                intent.putExtra("playerName",model.getFullName());
+                intent.putExtra("playerImage",model.getPlayerImage());
+                activity.startActivity(intent);
+            }
+        });
         holder.updateUI(model,context);
 
     }
