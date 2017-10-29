@@ -70,6 +70,7 @@ public class FragmentAllFixtures extends Fragment {
     String leagueName;
     String mstartTime;
     String datum;
+    String idFixtures;
 
     Button prevBtn;
     Button nextBtn;
@@ -94,7 +95,7 @@ public class FragmentAllFixtures extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_fragment_all_fixtures, container, false);
         setHasOptionsMenu(true);
-        adapter = new AllFixturesAdapter(listFixtures);
+        adapter = new AllFixturesAdapter(listFixtures, getActivity());
         fixturesRec = (RecyclerView) view.findViewById(R.id.allFixtures_recView);
         titleToolbar = (TextView) view.findViewById(R.id.toolbar_title);
         fixturesRec.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -151,6 +152,7 @@ public class FragmentAllFixtures extends Fragment {
                         dontPlay.setVisibility(View.GONE);
                         for (int i = 0; i < dataArray.length(); i++) {
                             JSONObject objectMain = dataArray.getJSONObject(i);
+                            idFixtures = objectMain.getString("id");
 
                             JSONObject locTeam = objectMain.getJSONObject("localTeam");
                             JSONObject visTeam = objectMain.getJSONObject("visitorTeam");
@@ -187,7 +189,7 @@ public class FragmentAllFixtures extends Fragment {
 
                             ftScore = localScore + " - " + visitScore;
 
-                            AllFixturesModel model = new AllFixturesModel(homeTeamName, homeTeamLogo, awayTeamName, awayTeamLogo, mstartTime, leagueName, datum, statusS, ftScore);
+                            AllFixturesModel model = new AllFixturesModel(homeTeamName, homeTeamLogo, awayTeamName, awayTeamLogo, mstartTime, leagueName, datum, statusS, ftScore, idFixtures);
                             listFixtures.add(model);
                             adapter.notifyDataSetChanged();
                             prevLeagueName = currentLeagueName;

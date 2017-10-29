@@ -55,6 +55,7 @@ public class Application extends android.app.Application{
         Picasso.setSingletonInstance(built);
 
 
+
     }
 
     @Override

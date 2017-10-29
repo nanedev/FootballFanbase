@@ -15,11 +15,12 @@ public class AllFixturesModel {
     String date;
     String status;
     String score;
+    String idFixtures;
 
     public AllFixturesModel() {
     }
 
-    public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String leagueName, String date, String status, String score) {
+    public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String leagueName, String date, String status, String score, String idFixtures) {
         this.localTeamName = localTeamName;
         this.localTeamLogo = localTeamLogo;
         this.visitorTeamName = visitorTeamName;
@@ -29,6 +30,15 @@ public class AllFixturesModel {
         this.status = status;
         this.score = score;
         this.date = date;
+        this.idFixtures = idFixtures;
+    }
+
+    public String getIdFixtures() {
+        return idFixtures;
+    }
+
+    public void setIdFixtures(String idFixtures) {
+        this.idFixtures = idFixtures;
     }
 
     public String getStatus() {
