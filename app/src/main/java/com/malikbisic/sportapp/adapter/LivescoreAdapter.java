@@ -52,6 +52,9 @@ public class LivescoreAdapter extends RecyclerView.Adapter<LivescoreViewHolder> 
                 openMatchInfo.putExtra("visitorTeamLogo", model.getVisitorTeamLogo());
                 openMatchInfo.putExtra("leagueName", model.getLeagueName());
                 openMatchInfo.putExtra("startTime", model.getTimeStart());
+                openMatchInfo.putExtra("score", model.getScore());
+                openMatchInfo.putExtra("status", model.getStatus());
+                openMatchInfo.putExtra("idFixtures", model.getIdLivescore());
                 activity.startActivity(openMatchInfo);
             }
         });

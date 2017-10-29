@@ -42,6 +42,7 @@ public class FragmentMyClubMatches extends Fragment {
     RecyclerView livescore_recview;
     String currentLeagueName;
     String prevLeagueName;
+    String idLivescoreMatch;
 
     public FragmentMyClubMatches() {
         // Required empty public constructor
@@ -83,6 +84,7 @@ public class FragmentMyClubMatches extends Fragment {
                         JSONObject visitorTeamobject = objectArray.getJSONObject("visitorTeam");
                         JSONObject timeObject = objectArray.getJSONObject("time");
                         JSONObject scoreObejct = objectArray.getJSONObject("scores");
+                        idLivescoreMatch = objectArray.getString("id");
 
                         JSONObject locTeam = localTeamobject.getJSONObject("data");
                         JSONObject visTeam = visitorTeamobject.getJSONObject("data");
@@ -113,7 +115,7 @@ public class FragmentMyClubMatches extends Fragment {
                             leagueName = currentLeagueName;
                         }
 
-                        LivescoreModel model = new LivescoreModel(localTeamName, localTeamLogo, visitorTeamName, visitorTeamLogo, score, status, timeStart, leagueName);
+                        LivescoreModel model = new LivescoreModel(localTeamName, localTeamLogo, visitorTeamName, visitorTeamLogo, score, status, timeStart, leagueName, idLivescoreMatch);
                         listScore.add(model);
                         prevLeagueName = currentLeagueName;
                     }

@@ -14,11 +14,12 @@ public class LivescoreModel {
     String status;
     String timeStart;
     String leagueName;
+    String idLivescore;
 
     public LivescoreModel() {
     }
 
-    public LivescoreModel(String localTeam, String localTeamLogo, String visitorTeam, String visitorTeamLogo, String score, String status, String timeStart, String leagueName) {
+    public LivescoreModel(String localTeam, String localTeamLogo, String visitorTeam, String visitorTeamLogo, String score, String status, String timeStart, String leagueName, String idLivescore) {
         this.localTeam = localTeam;
         this.localTeamLogo = localTeamLogo;
         this.visitorTeam = visitorTeam;
@@ -27,6 +28,15 @@ public class LivescoreModel {
         this.status = status;
         this.timeStart = timeStart;
         this.leagueName = leagueName;
+        this.idLivescore = idLivescore;
+    }
+
+    public String getIdLivescore() {
+        return idLivescore;
+    }
+
+    public void setIdLivescore(String idLivescore) {
+        this.idLivescore = idLivescore;
     }
 
     public String getLeagueName() {
