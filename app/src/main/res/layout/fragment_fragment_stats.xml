@@ -2,31 +2,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.malikbisic.sportapp.activity.FragmentStats">
+    tools:context="com.malikbisic.sportapp.activity.FragmentStats"
+    android:background="@color/white">
 
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/statsnotAvailable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:text="Stats is not available"
+        android:textColor="@color/black"
+        android:textSize="30dp"
+        android:visibility="invisible" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/layoutStats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
 
                 <TextView
                     android:id="@+id/homeShots"
+                    android:layout_width="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="left"
+                    android:text="12"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/shotsHomeProgress"
+                    style="@style/CustomProgressBarHomeTeam"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="8" />
+                    android:layout_weight="2"
+                    android:layoutDirection="rtl"
+                    android:progress="55" />
 
                 <TextView
                     android:id="@+id/shotName"
@@ -34,15 +63,26 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="Shots" />
+                    android:text="Shots"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/shotAwayProgress"
+                    style="@style/CustomProgressBarAwayTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layoutDirection="ltr"
+                    android:progress="33" />
 
                 <TextView
                     android:id="@+id/awayShots"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.5"
                     android:gravity="right"
-                    android:text="5" />
+                    android:text="5"
+                    android:textColor="@color/black" />
 
             </LinearLayout>
 
@@ -50,15 +90,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
 
                 <TextView
                     android:id="@+id/homeOnGoalShots"
+                    android:layout_width="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="left"
+                    android:text="8"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/ongoalHomeProgress"
+                    style="@style/CustomProgressBarHomeTeam"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="8" />
+                    android:layout_weight="2"
+                    android:layoutDirection="rtl"
+                    android:progress="55" />
 
                 <TextView
                     android:id="@+id/shotOnGoalName"
@@ -66,15 +119,26 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="Ongoal" />
+                    android:text="Ongoal"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/ongoalAwayProgress"
+                    style="@style/CustomProgressBarAwayTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layoutDirection="ltr"
+                    android:progress="43" />
 
                 <TextView
                     android:id="@+id/awayOnGoalShots"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.5"
                     android:gravity="right"
-                    android:text="5" />
+                    android:text="5"
+                    android:textColor="@color/black" />
 
             </LinearLayout>
 
@@ -82,16 +146,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_marginTop="15dp"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
 
                 <TextView
                     android:id="@+id/homeOffGoalShots"
+                    android:layout_width="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="left"
+                    android:text="8"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/offgoalHomeProgress"
+                    style="@style/CustomProgressBarHomeTeam"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="8" />
+                    android:layout_weight="2"
+                    android:layoutDirection="rtl"
+                    android:progress="55" />
 
                 <TextView
                     android:id="@+id/shotOffGoalName"
@@ -99,15 +176,26 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="Offgoal" />
+                    android:text="Offgoal"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/offgoalAwayProgress"
+                    style="@style/CustomProgressBarAwayTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layoutDirection="ltr"
+                    android:progress="43" />
 
                 <TextView
                     android:id="@+id/awayOffGoalShots"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.5"
                     android:gravity="right"
-                    android:text="5" />
+                    android:text="5"
+                    android:textColor="@color/black" />
 
             </LinearLayout>
 
@@ -116,33 +204,244 @@
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:gravity="center_vertical|fill_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
 
                 <TextView
                     android:id="@+id/homePossession"
+                    android:layout_width="15dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="left"
+                    android:text="55%"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/homePossessionProgress"
+                    style="@style/CustomProgressBarHomeTeam"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="8" />
+                    android:layout_weight="2"
+                    android:layoutDirection="rtl"
+                    android:progress="55" />
 
                 <TextView
                     android:id="@+id/possessionName"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="Possession" />
+                    android:text="Possession"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/awayPossessionProgress"
+                    style="@style/CustomProgressBarAwayTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layoutDirection="ltr"
+                    android:progress="43" />
 
                 <TextView
                     android:id="@+id/awayPossession"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.5"
                     android:gravity="right"
-                    android:text="5" />
+                    android:text="55"
+                    android:textColor="@color/black" />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="2"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:id="@+id/homeFauls"
+                    android:layout_width="3dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="left"
+                    android:text="8"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/homeFaulsProgress"
+                    style="@style/CustomProgressBarHomeTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layoutDirection="rtl"
+                    android:progress="55" />
+
+                <TextView
+                    android:id="@+id/faulsName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="Fauls"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/awayFaulsProgress"
+                    style="@style/CustomProgressBarAwayTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layoutDirection="ltr"
+                    android:progress="43" />
+
+                <TextView
+                    android:id="@+id/awayFauls"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="right"
+                    android:text="54"
+                    android:textColor="@color/black" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="2"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:id="@+id/homeYellow"
+                    android:layout_width="3dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="left"
+                    android:text="8"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/homeYellowProgress"
+                    style="@style/CustomProgressBarHomeTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layoutDirection="rtl"
+                    android:progress="55" />
+
+                <TextView
+                    android:id="@+id/yelowName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="Yellow"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/awayYellowProgress"
+                    style="@style/CustomProgressBarAwayTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layoutDirection="ltr"
+                    android:progress="43" />
+
+                <TextView
+                    android:id="@+id/awayYellow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="right"
+                    android:text="54"
+                    android:textColor="@color/black" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="2"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:id="@+id/homeRed"
+                    android:layout_width="3dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="left"
+                    android:text="8"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/homeRedProgress"
+                    style="@style/CustomProgressBarHomeTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layoutDirection="rtl"
+                    android:progress="55" />
+
+                <TextView
+                    android:id="@+id/redName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="Red"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/awayRedProgress"
+                    style="@style/CustomProgressBarAwayTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layoutDirection="ltr"
+                    android:progress="43" />
+
+                <TextView
+                    android:id="@+id/awayRed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="right"
+                    android:text="54"
+                    android:textColor="@color/black" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_weight="0.5"
+                android:text="Legend"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NO - No information "
+                android:textColor="@color/black" />
         </LinearLayout>
-    </RelativeLayout>
+
+    </ScrollView>
 </RelativeLayout>
