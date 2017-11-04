@@ -47,7 +47,8 @@ public class FragmentSquad extends Fragment {
     ArrayList<TeamModel> midfielderPosArray;
     ArrayList<TeamModel> defenderPosArray;
     ArrayList<TeamModel> goalkeeperPosArray;
-
+String clubLogo;
+String clubName;
 
     private final String API_KEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
     private final String URL = "https://soccer.sportmonks.com/api/v2.0/teams/";
@@ -75,6 +76,8 @@ public class FragmentSquad extends Fragment {
 
         intent = getActivity().getIntent();
         String teamIdfromAct = intent.getStringExtra("teamId");
+        clubLogo = intent.getStringExtra("teamLogo");
+        clubName = intent.getStringExtra("teamName");
         finalUrl = URL + teamIdfromAct + API_KEY + INCLUDES;
         positionNameTextview = (TextView) view.findViewById(R.id.team_position);
        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());

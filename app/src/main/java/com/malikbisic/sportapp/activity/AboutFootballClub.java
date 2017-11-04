@@ -42,8 +42,8 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 public class AboutFootballClub extends AppCompatActivity  {
     Toolbar toolbar;
     Intent intent;
-    String clubLogo;
-    String clubName;
+   static String clubLogo;
+  static  String clubName;
     String countryId;
     CircleImageView logo_image_club;
     TextView club_name_textview;

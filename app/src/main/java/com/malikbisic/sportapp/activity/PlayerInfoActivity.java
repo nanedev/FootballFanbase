@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.media.Image;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
     Intent myIntentm;
     ImageView player_image;
     TextView player_name;
+    NestedScrollView nestedScrollView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,8 @@ public class PlayerInfoActivity extends AppCompatActivity {
         setUpViewPager(mViewPager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabsPlayerInfo);
         tabLayout.setupWithViewPager(mViewPager);
+        nestedScrollView = (NestedScrollView) findViewById(R.id.nestedscrollview);
+        nestedScrollView.setFillViewport(true);
 
         toolbar = (Toolbar) findViewById(R.id.playerinfotoolbar);
         setSupportActionBar(toolbar);
@@ -44,6 +49,8 @@ public class PlayerInfoActivity extends AppCompatActivity {
 myIntentm = getIntent();
         String playerName = myIntentm.getStringExtra("playerName");
         String playerImage = myIntentm.getStringExtra("playerImage");
+
+
         Picasso.with(this).load(playerImage).into(player_image);
         player_name.setText(playerName);
 

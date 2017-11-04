@@ -50,6 +50,17 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamSquadViewHolder> {
                 Intent intent = new Intent(context, PlayerInfoActivity.class);
                 intent.putExtra("playerName",model.getFullName());
                 intent.putExtra("playerImage",model.getPlayerImage());
+                intent.putExtra("playerBirthDate",model.getBirthDate());
+                intent.putExtra("playerBirthPlace",model.getBirthPlace());
+                intent.putExtra("commonName",model.getCommonName());
+                intent.putExtra("firstName",model.getFirstName());
+                intent.putExtra("lastName",model.getLastName());
+                intent.putExtra("fullName",model.getFullName());
+                intent.putExtra("playerPosition",model.getPositionName());
+                intent.putExtra("playerHeight",model.getHeight());
+                intent.putExtra("playerWeight",model.getWeight());
+                intent.putExtra("shirtNumber",String.valueOf(model.getNumberId()));
+
                 activity.startActivity(intent);
             }
         });
