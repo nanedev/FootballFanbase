@@ -60,6 +60,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamSquadViewHolder> {
                 intent.putExtra("playerHeight",model.getHeight());
                 intent.putExtra("playerWeight",model.getWeight());
                 intent.putExtra("shirtNumber",String.valueOf(model.getNumberId()));
+                intent.putExtra("nationality",model.getNationality());
 
                 activity.startActivity(intent);
             }

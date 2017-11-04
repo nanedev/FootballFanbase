@@ -13,6 +13,13 @@ import android.widget.TextView;
 import com.malikbisic.sportapp.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -30,6 +37,7 @@ TextView shirt_number_textview;
 TextView player_height_textview;
 TextView player_weight_textview;
 Intent getIntent;
+TextView place_of_birth_textview;
 
 
     public InfoPlayerFragment() {
@@ -55,6 +63,7 @@ Intent getIntent;
         shirt_number_textview = (TextView) v.findViewById(R.id.player_shirt_number);
         player_height_textview = (TextView) v.findViewById(R.id.player_height);
         player_weight_textview = (TextView) v.findViewById(R.id.player_weight);
+        place_of_birth_textview = (TextView) v.findViewById(R.id.place_of_birth);
 getIntent = getActivity().getIntent();
 String playerDateOfBirth = getIntent.getStringExtra("playerBirthDate");
 String playerBirthPlace = getIntent.getStringExtra("playerBirthPlace");
@@ -62,15 +71,48 @@ String playerPosition = getIntent.getStringExtra("playerPosition");
 String playerHeight = getIntent.getStringExtra("playerHeight");
 String playerWeight = getIntent.getStringExtra("playerWeight");
 String shirtNumber = getIntent.getStringExtra("shirtNumber");
+String countryName = getIntent.getStringExtra("nationality");
 
 player_birth_textview.setText(playerDateOfBirth);
 position_player_textview.setText(playerPosition);
 shirt_number_textview.setText(shirtNumber);
 player_height_textview.setText(playerHeight);
 player_weight_textview.setText(playerWeight);
+country_name_textview.setText(countryName);
+
+
+           Calendar calendar = Calendar.getInstance();
+           SimpleDateFormat format = new SimpleDateFormat("dd/mm/yyyy",Locale.getDefault());
+        try {
+            calendar.setTime(format.parse(playerDateOfBirth));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        player_age_textview.setText( getAge(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH)) );
+place_of_birth_textview.setText(playerBirthPlace);
+
 
 
         return v;
+    }
+
+    private String getAge(int year, int month, int day){
+        Calendar dob = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+
+        dob.set(year, month, day);
+
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+            age--;
+        }
+
+        Integer ageInt = new Integer(age);
+        String ageS = ageInt.toString();
+
+        return ageS;
     }
 
 }
