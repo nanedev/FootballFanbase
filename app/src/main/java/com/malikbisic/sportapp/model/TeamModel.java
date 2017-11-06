@@ -6,28 +6,37 @@ package com.malikbisic.sportapp.model;
 
 public class TeamModel {
 
-private int playerId;
-private int positionId;
-private int numberId;
-private int countryId;
-private String commonName;
-private String fullName;
-private String firstName;
-private String lastName;
-private String nationality;
-private String birthDate;
-private String birthPlace;
-private String height;
-private String weight;
-private String playerImage;
-private String positionName;
-
+    private int playerId;
+    private int positionId;
+    private int numberId;
+    private int countryId;
+    private String commonName;
+    private String fullName;
+    private String firstName;
+    private String lastName;
+    private String nationality;
+    private String birthDate;
+    private String birthPlace;
+    private String height;
+    private String weight;
+    private String playerImage;
+    private String positionName;
+    int minutes;
+    int appearances;
+    int lineups;
+    int goals;
+    int assists;
+    int yellowCards;
+    int redCards;
+    boolean injured;
+    int substituteIn;
 
 
     public TeamModel() {
     }
 
-    public TeamModel(int playerId, int positionId, int numberId, int countryId, String commonName, String fullName, String firstName,String lastName, String nationality, String birthDate, String birthPlace, String height, String weight, String playerImage, String positionName) {
+
+    public TeamModel(int playerId, int positionId, int numberId, int countryId, String commonName, String fullName, String firstName, String lastName, String nationality, String birthDate, String birthPlace, String height, String weight, String playerImage, String positionName, int minutes, int goals, int appearances, int assists, int lineups, int yellowCards, int redCards, boolean injured,int substituteIn) {
         this.playerId = playerId;
         this.positionId = positionId;
         this.numberId = numberId;
@@ -43,7 +52,89 @@ private String positionName;
         this.playerImage = playerImage;
         this.positionName = positionName;
         this.firstName = firstName;
+        this.appearances = appearances;
+        this.lineups = lineups;
+        this.goals = goals;
+        this.assists = assists;
+        this.yellowCards = yellowCards;
+        this.redCards = redCards;
+        this.injured = injured;
+        this.minutes = minutes;
+        this.substituteIn = substituteIn;
 
+
+    }
+
+    public int getSubstituteIn() {
+        return substituteIn;
+    }
+
+    public void setSubstituteIn(int substituteIn) {
+        this.substituteIn = substituteIn;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
+    }
+
+    public int getAppearances() {
+        return appearances;
+    }
+
+    public void setAppearances(int appearances) {
+        this.appearances = appearances;
+    }
+
+    public int getLineups() {
+        return lineups;
+    }
+
+    public void setLineups(int lineups) {
+        this.lineups = lineups;
+    }
+
+    public int getGoals() {
+        return goals;
+    }
+
+    public void setGoals(int goals) {
+        this.goals = goals;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+
+    public void setAssists(int assists) {
+        this.assists = assists;
+    }
+
+    public int getYellowCards() {
+        return yellowCards;
+    }
+
+    public void setYellowCards(int yellowCards) {
+        this.yellowCards = yellowCards;
+    }
+
+    public int getRedCards() {
+        return redCards;
+    }
+
+    public void setRedCards(int redCards) {
+        this.redCards = redCards;
+    }
+
+    public boolean isInjured() {
+        return injured;
+    }
+
+    public void setInjured(boolean injured) {
+        this.injured = injured;
     }
 
     public String getFirstName() {

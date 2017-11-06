@@ -127,6 +127,18 @@ String clubName;
 
                     for (int i = 0; i < getDataArray.length(); i++) {
                         JSONObject object = getDataArray.getJSONObject(i);
+                        int minutes = object.getInt("minutes");
+                        int appearances = object.getInt("appearences");
+                        int lineups = object.getInt("lineups");
+                        int goals = object.getInt("goals");
+                        int assists = object.getInt("assists");
+                        int yellowCards = object.getInt("yellowcards");
+                        int redCards = object.getInt("redcards");
+                        boolean injured = object.getBoolean("injured");
+                        int substituteIn = object.getInt("substitute_in");
+
+
+
                         JSONObject getPlayerData = object.getJSONObject("player");
                         JSONObject getDataFromPlayer = getPlayerData.getJSONObject("data");
                         JSONObject getPositionOfPlayer = getDataFromPlayer.getJSONObject("position");
@@ -149,7 +161,7 @@ String clubName;
                         height = getDataFromPlayer.getString("height");
                         weight = getDataFromPlayer.getString("weight");
                         playerImage = getDataFromPlayer.getString("image_path");
-                        TeamModel model = new TeamModel(playerId, positionId, numberId, countryId, commonName, fullName, firstName, lastName, nationality, birthDate, birthPlace, height, weight, playerImage, positionName);
+                        TeamModel model = new TeamModel(playerId, positionId, numberId, countryId, commonName, fullName, firstName, lastName, nationality, birthDate, birthPlace, height, weight, playerImage, positionName,minutes, goals,appearances, assists, lineups, yellowCards, redCards, injured,substituteIn);
 
                         if (positionName.equals("Attacker")) {
                             teamModelArrayList.add(model);
