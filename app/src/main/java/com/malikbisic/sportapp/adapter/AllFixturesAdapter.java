@@ -57,6 +57,8 @@ public class AllFixturesAdapter extends RecyclerView.Adapter<AllFixturesViewHold
                 openMatchInfo.putExtra("score", model.getScore());
                 openMatchInfo.putExtra("status", model.getStatus());
                 openMatchInfo.putExtra("idFixtures", model.getIdFixtures());
+                openMatchInfo.putExtra("localTeamId", model.getLocalTeamId());
+                openMatchInfo.putExtra("visitorTeamId", model.getVisitorTeamId());
 
                 Log.i("id", model.getIdFixtures());
                 activity.startActivity(openMatchInfo);

@@ -74,6 +74,11 @@ public class FragmentStats extends Fragment {
     LinearLayout statsLayout;
     TextView noStats;
 
+    int homeTeamId;
+    int awayTeamId;
+
+    int firstTeamStatsArray, secondTeamStatsArray;
+
     @SuppressLint("ResourceAsColor")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +87,11 @@ public class FragmentStats extends Fragment {
         View v = inflater.inflate(R.layout.fragment_fragment_stats, container, false);
 
         fixturesID = getActivity().getIntent().getStringExtra("idFixtures");
+        homeTeamId = getActivity().getIntent().getIntExtra("localTeamId", 0);
+        awayTeamId = getActivity().getIntent().getIntExtra("visitorTeamId", 0);
+
+        Log.i("ThomeId", String.valueOf(homeTeamId));
+        Log.i("TAwayid", String.valueOf(awayTeamId));
 
         shotHomeProgress = (ProgressBar) v.findViewById(R.id.shotsHomeProgress);
         shotAwayProgress = (ProgressBar) v.findViewById(R.id.shotAwayProgress);
@@ -147,9 +157,17 @@ public class FragmentStats extends Fragment {
                         noStats.setVisibility(View.VISIBLE);
                     } else {
 
+                        if (homeTeamId < awayTeamId){
+                            firstTeamStatsArray = 0;
+                            secondTeamStatsArray = 1;
+                        } else if (homeTeamId > awayTeamId){
+                            firstTeamStatsArray = 1;
+                            secondTeamStatsArray = 0;
+                        }
+
 
                         //home team information stats
-                        JSONObject homeTeamobject = dataArray.getJSONObject(0);
+                        JSONObject homeTeamobject = dataArray.getJSONObject(firstTeamStatsArray);
 
                         JSONObject shotHomeObject = homeTeamobject.getJSONObject("shots");
                         if (!shotHomeObject.isNull("total")) {
@@ -198,7 +216,7 @@ public class FragmentStats extends Fragment {
                         }
 
                         //away team information stats
-                        JSONObject awayTeamobject = dataArray.getJSONObject(1);
+                        JSONObject awayTeamobject = dataArray.getJSONObject(secondTeamStatsArray);
 
                         JSONObject shotAwayObject = awayTeamobject.getJSONObject("shots");
                         if (!shotAwayObject.isNull("total")) {
@@ -317,10 +335,11 @@ public class FragmentStats extends Fragment {
                             offGoalHomeTextView.setText(Integer.toString(offGoalHome));
                         }
 
-                        if (onGoalAwayInfo.equals(noInformation)) {
-                            onGoalAwayTextView.setText("NO");
+                        if (offGoalAwayInfo.equals(noInformation)) {
+                            offGoalAwayTextView.setText("NO");
                         } else {
-                            onGoalAwayTextView.setText(Integer.toString(offGoalAway));
+                            offGoalAwayTextView.setText(Integer.toString(offGoalAway));
+                            Log.i("away of goal", String.valueOf(offGoalAway));
                         }
 
                         if (possessionHomeInfo.equals(noInformation)) {

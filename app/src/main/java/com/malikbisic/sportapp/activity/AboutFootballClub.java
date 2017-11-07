@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import com.android.volley.toolbox.Volley;
@@ -34,9 +35,11 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGExternalFileResolver;
 import com.caverock.androidsvg.SVGParser;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.classes.SvgDecoder;
+import com.malikbisic.sportapp.model.CountryModel;
 import com.malikbisic.sportapp.model.SvgDrawableTranscoder;
 import com.squareup.picasso.Picasso;
 
@@ -70,6 +73,7 @@ public class AboutFootballClub extends AppCompatActivity  {
     private final String countryUrl = "https://soccer.sportmonks.com/api/v2.0/countries/";
     private final String apiKey = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
 
+    String nameCounry;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,30 +116,63 @@ public class AboutFootballClub extends AppCompatActivity  {
                     JSONObject getExtra = getData.getJSONObject("extra");
                     flag = getExtra.getString("flag");
 
+                    nameCounry = getData.getString("name");
+
+                    String countryURL = "https://restcountries.eu/rest/v2/name/" + nameCounry;
+
+                    JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            Log.i("json", response.toString());
+                            try {
+                                for (int i = 0; i < response.length(); i++) {
+
+                                    JSONObject object = response.getJSONObject(i);
+                                    String countryName = object.getString("name");
+                                    String countryImage = object.getString("flag");
+
+                                    GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+                                    requestBuilder = Glide
+                                            .with(getApplicationContext())
+                                            .using(Glide.buildStreamModelLoader(Uri.class, getApplicationContext()), InputStream.class)
+                                            .from(Uri.class)
+                                            .as(SVG.class)
+                                            .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                                            .sourceEncoder(new StreamEncoder())
+                                            .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                                            .decoder(new SearchableCountry.SvgDecoder())
+                                            .animate(android.R.anim.fade_in);
+
+
+                                    Uri uri = Uri.parse(countryImage);
+
+                                    requestBuilder
+                                            // SVG cannot be serialized so it's not worth to cache it
+                                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                            .load(uri)
+                                            .into(flagImageView);
+
+                                }
+
+
+                            } catch (JSONException e) {
+                                Log.v("json", e.getLocalizedMessage());
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //Log.v("json", error.getLocalizedMessage());
+                        }
+                    });
+                    Volley.newRequestQueue(AboutFootballClub.this).add(request);
+
+
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                 }
 
-                GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
-
-                requestBuilder = Glide
-                        .with(AboutFootballClub.this)
-                        .using(Glide.buildStreamModelLoader(Uri.class, AboutFootballClub.this), InputStream.class)
-                        .from(Uri.class)
-                        .as(SVG.class)
-                        .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-                        .sourceEncoder(new StreamEncoder())
-                        .cacheDecoder(new FileToStreamDecoder<SVG>(new SvgDecoder()))
-                        .decoder(new SvgDecoder())
-                        .animate(android.R.anim.fade_in);
-
-
-                Uri uri = Uri.parse("http://www.w3.org/2000/svg");
-                requestBuilder
-                        // SVG cannot be serialized so it's not worth to cache it
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .load(uri)
-                        .into(flagImageView);
 
 
             }
@@ -147,6 +184,8 @@ public class AboutFootballClub extends AppCompatActivity  {
         });
 
         Volley.newRequestQueue(this).add(countryReq);
+
+
 
 
     }

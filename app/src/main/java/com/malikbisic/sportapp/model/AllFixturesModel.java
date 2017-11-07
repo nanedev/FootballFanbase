@@ -16,11 +16,13 @@ public class AllFixturesModel {
     String status;
     String score;
     String idFixtures;
+    int localTeamId;
+    int visitorTeamId;
 
     public AllFixturesModel() {
     }
 
-    public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String leagueName, String date, String status, String score, String idFixtures) {
+    public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String leagueName, String date, String status, String score, String idFixtures, int localTeamId, int visitorTeamId) {
         this.localTeamName = localTeamName;
         this.localTeamLogo = localTeamLogo;
         this.visitorTeamName = visitorTeamName;
@@ -31,6 +33,24 @@ public class AllFixturesModel {
         this.score = score;
         this.date = date;
         this.idFixtures = idFixtures;
+        this.localTeamId = localTeamId;
+        this.visitorTeamId = visitorTeamId;
+    }
+
+    public int getLocalTeamId() {
+        return localTeamId;
+    }
+
+    public void setLocalTeamId(int localTeamId) {
+        this.localTeamId = localTeamId;
+    }
+
+    public int getVisitorTeamId() {
+        return visitorTeamId;
+    }
+
+    public void setVisitorTeamId(int visitorTeamId) {
+        this.visitorTeamId = visitorTeamId;
     }
 
     public String getIdFixtures() {

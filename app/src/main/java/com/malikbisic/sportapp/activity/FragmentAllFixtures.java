@@ -71,6 +71,8 @@ public class FragmentAllFixtures extends Fragment {
     String mstartTime;
     String datum;
     String idFixtures;
+    int localTeamId;
+    int visitorTeamId;
 
     Button prevBtn;
     Button nextBtn;
@@ -161,8 +163,10 @@ public class FragmentAllFixtures extends Fragment {
 
                             homeTeamName = localTeamObj.getString("name");
                             homeTeamLogo = localTeamObj.getString("logo_path");
+                            localTeamId = localTeamObj.getInt("id");
                             awayTeamName = visitorTeamObj.getString("name");
                             awayTeamLogo = visitorTeamObj.getString("logo_path");
+                            visitorTeamId = visitorTeamObj.getInt("id");
 
                             JSONObject timeMain = objectMain.getJSONObject("time");
                             JSONObject starting_at = timeMain.getJSONObject("starting_at");
@@ -189,7 +193,7 @@ public class FragmentAllFixtures extends Fragment {
 
                             ftScore = localScore + " - " + visitScore;
 
-                            AllFixturesModel model = new AllFixturesModel(homeTeamName, homeTeamLogo, awayTeamName, awayTeamLogo, mstartTime, leagueName, datum, statusS, ftScore, idFixtures);
+                            AllFixturesModel model = new AllFixturesModel(homeTeamName, homeTeamLogo, awayTeamName, awayTeamLogo, mstartTime, leagueName, datum, statusS, ftScore, idFixtures, localTeamId, visitorTeamId);
                             listFixtures.add(model);
                             adapter.notifyDataSetChanged();
                             prevLeagueName = currentLeagueName;

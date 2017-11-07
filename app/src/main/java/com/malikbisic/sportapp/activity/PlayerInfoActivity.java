@@ -23,6 +23,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
     ImageView player_image;
     TextView player_name;
     NestedScrollView nestedScrollView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,16 +40,18 @@ public class PlayerInfoActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.playerinfotoolbar);
         setSupportActionBar(toolbar);
 
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("SportApp");
         }
 
         player_image = (ImageView) findViewById(R.id.player_info_image);
-        player_name =(TextView) findViewById(R.id.player_info_name);
-myIntentm = getIntent();
+        player_name = (TextView) findViewById(R.id.player_info_name);
+        myIntentm = getIntent();
         String playerName = myIntentm.getStringExtra("playerName");
         String playerImage = myIntentm.getStringExtra("playerImage");
+        int playerID = myIntentm.getIntExtra("playerID", 0);
+        boolean fromMatch = myIntentm.getBooleanExtra("openMatchInfo", false);
 
 
         Picasso.with(this).load(playerImage).into(player_image);

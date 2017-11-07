@@ -1,30 +1,20 @@
 package com.malikbisic.sportapp.activity;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.malikbisic.sportapp.R;
 import com.squareup.picasso.Picasso;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 public class LivescoreMatchInfo extends AppCompatActivity {
@@ -40,6 +30,8 @@ public class LivescoreMatchInfo extends AppCompatActivity {
     TextView scoreText;
 
     String fixturesID;
+    int localTeamId;
+    int visitorTeamId;
 
     Intent myIntent;
     Bundle bundle;
@@ -49,7 +41,7 @@ public class LivescoreMatchInfo extends AppCompatActivity {
         setContentView(R.layout.activity_livescore_match_info);
 
         sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.aboutFootballViewPager);
+        mViewPager = (ViewPager) findViewById(R.id.livescoreMatchViewPager);
         setUpViewPager(mViewPager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabsAboutFootball);
         tabLayout.setupWithViewPager(mViewPager);
@@ -64,15 +56,17 @@ public class LivescoreMatchInfo extends AppCompatActivity {
         startTime = (TextView) findViewById(R.id.timeStartMatchInfo);
         scoreText = (TextView) findViewById(R.id.score);
 
-        String homeTeam = myIntent.getStringExtra("localTeamName");
-        String homeTeamLogo = myIntent.getStringExtra("localTeamLogo");
-        String awayTeam = myIntent.getStringExtra("visitorTeamName");
-        String awayTeamLogo = myIntent.getStringExtra("visitorTeamLogo");
+        final String homeTeam = myIntent.getStringExtra("localTeamName");
+        final String homeTeamLogo = myIntent.getStringExtra("localTeamLogo");
+        final String awayTeam = myIntent.getStringExtra("visitorTeamName");
+        final String awayTeamLogo = myIntent.getStringExtra("visitorTeamLogo");
         String league = myIntent.getStringExtra("leagueName");
         String startTimeS = myIntent.getStringExtra("startTime");
         String score = myIntent.getStringExtra("score");
         String status = myIntent.getStringExtra("status");
         fixturesID = myIntent.getStringExtra("idFixtures");
+        localTeamId = myIntent.getIntExtra("localTeamId", 0);
+        visitorTeamId = myIntent.getIntExtra("visitorTeamId", 0);
         bundle = new Bundle();
         bundle.putString("fixturesID", fixturesID);
 
@@ -80,6 +74,48 @@ public class LivescoreMatchInfo extends AppCompatActivity {
         visitorTeam.setText(awayTeam);
         leagueName.setText(league);
 
+        localTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent aboutCLub = new Intent(LivescoreMatchInfo.this, AboutFootballClub.class);
+                aboutCLub.putExtra("teamLogo", homeTeamLogo);
+                aboutCLub.putExtra("teamName", homeTeam);
+                aboutCLub.putExtra("teamId", String.valueOf(localTeamId));
+                startActivity(aboutCLub);
+            }
+        });
+
+        localTeamLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent aboutCLub = new Intent(LivescoreMatchInfo.this, AboutFootballClub.class);
+                aboutCLub.putExtra("teamLogo", homeTeamLogo);
+                aboutCLub.putExtra("teamName", homeTeam);
+                aboutCLub.putExtra("teamId", String.valueOf(localTeamId));
+                startActivity(aboutCLub);
+            }
+        });
+
+        visitorTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent aboutCLub = new Intent(LivescoreMatchInfo.this, AboutFootballClub.class);
+                aboutCLub.putExtra("teamLogo", awayTeamLogo);
+                aboutCLub.putExtra("teamName", awayTeam);
+                aboutCLub.putExtra("teamId", String.valueOf(visitorTeamId));
+                startActivity(aboutCLub);
+            }
+        });
+        visitorTeamLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent aboutCLub = new Intent(LivescoreMatchInfo.this, AboutFootballClub.class);
+                aboutCLub.putExtra("teamLogo", awayTeamLogo);
+                aboutCLub.putExtra("teamName", awayTeam);
+                aboutCLub.putExtra("teamId", String.valueOf(visitorTeamId));
+                startActivity(aboutCLub);
+            }
+        });
         Picasso.with(this).load(homeTeamLogo).into(localTeamLogo);
         Picasso.with(this).load(awayTeamLogo).into(visitorTeamLogo);
 

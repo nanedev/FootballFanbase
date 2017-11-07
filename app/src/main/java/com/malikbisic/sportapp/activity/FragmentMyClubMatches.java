@@ -73,6 +73,8 @@ public class FragmentMyClubMatches extends Fragment {
                 String status;
                 String timeStart;
                 String leagueName;
+                int localTeamid = 0;
+                int visitorTeamid= 0;
 
                 try {
                     JSONArray dataArray = response.getJSONArray("data");
@@ -91,8 +93,10 @@ public class FragmentMyClubMatches extends Fragment {
 
                         localTeamName = locTeam.getString("name");
                         localTeamLogo = locTeam.getString("logo_path");
+                        localTeamid = locTeam.getInt("id");
                         visitorTeamName = visTeam.getString("name");
                         visitorTeamLogo = visTeam.getString("logo_path");
+                        visitorTeamid = visTeam.getInt("id");
 
 
                         String localTeamScore = String.valueOf(scoreObejct.getInt("localteam_score"));
@@ -115,7 +119,7 @@ public class FragmentMyClubMatches extends Fragment {
                             leagueName = currentLeagueName;
                         }
 
-                        LivescoreModel model = new LivescoreModel(localTeamName, localTeamLogo, visitorTeamName, visitorTeamLogo, score, status, timeStart, leagueName, idLivescoreMatch);
+                        LivescoreModel model = new LivescoreModel(localTeamName, localTeamLogo, visitorTeamName, visitorTeamLogo, score, status, timeStart, leagueName, idLivescoreMatch, localTeamid, visitorTeamid);
                         listScore.add(model);
                         prevLeagueName = currentLeagueName;
                     }
