@@ -69,6 +69,7 @@ public class TeamAdapterGK extends RecyclerView.Adapter<TeamSquadViewHolder> {
                 intent.putExtra("playerInjured",String.valueOf(model.isInjured()));
                 intent.putExtra("lineups",String.valueOf(model.getLineups()));
                 intent.putExtra("substituteIn",String.valueOf(model.getSubstituteIn()));
+                intent.putExtra("playerId",String.valueOf(model.getPlayerId()));
                 activity.startActivity(intent);
             }
         });

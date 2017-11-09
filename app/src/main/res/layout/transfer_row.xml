@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/transferstext"
+            android:text="Transfers"
+            android:layout_centerHorizontal="true"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/from_team"
+            android:layout_below="@+id/transferstext"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/strelica"
+            android:text="-->"
+            android:layout_toRightOf="@+id/from_team"
+            android:layout_toEndOf="@+id/from_team"
+            android:layout_below="@+id/transferstext"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/to_team"
+            android:layout_below="@+id/transferstext"
+
+            android:layout_toEndOf="@+id/strelica"
+            android:layout_toRightOf="@+id/strelica"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/date_transfer"
+            android:layout_toRightOf="@+id/to_team"
+            android:layout_toEndOf="@+id/to_team"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_below="@+id/transferstext"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/amount"
+            android:layout_below="@+id/transferstext"
+            android:layout_toRightOf="@+id/date_transfer"
+            android:layout_toEndOf="@+id/date_transfer"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"/>
+
+
+
+
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

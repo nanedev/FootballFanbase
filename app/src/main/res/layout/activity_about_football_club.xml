@@ -36,15 +36,15 @@
             android:layout_centerHorizontal="true"
             android:text="club name"/>
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:id="@+id/flag_about_football"
-            android:layout_toRightOf="@+id/club_name_about_football"
-            android:layout_toEndOf="@+id/club_name_about_football"
-            android:layout_alignBaseline="@+id/club_name_about_football"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"/>
+            android:layout_margin="5dp"
+            />
 
 
     </RelativeLayout>
