@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.TransfersAdapter;
 import com.malikbisic.sportapp.model.Transfers;
@@ -54,7 +55,7 @@ public class InfoPlayerFragment extends Fragment {
     Intent getIntent;
     TextView place_of_birth_textview;
     RecyclerView transferRecyclerview;
-    ArrayList<Transfers> transfers;
+  //  ArrayList<Transfers> transfers;
     TransfersAdapter adapter;
 
 
@@ -62,6 +63,7 @@ public class InfoPlayerFragment extends Fragment {
     String playerID;
     String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
     String URL_INCLUDES="&include=transfers,trophies.seasons";
+    String URL_TEAM = "https://soccer.sportmonks.com/api/v2.0/teams/";
     boolean fromMatch;
 
 
@@ -95,13 +97,13 @@ public class InfoPlayerFragment extends Fragment {
 
         transferRecyclerview = (RecyclerView) v.findViewById(R.id.transfer_recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        adapter = new TransfersAdapter(transfers,getActivity(),getContext());
+    //    adapter = new TransfersAdapter(transfers,getActivity(),getContext());
 
 
         transferRecyclerview.setLayoutManager(linearLayoutManager);
         transferRecyclerview.setAdapter(adapter);
 
-        transfers = new ArrayList<>();
+     //   transfers = new ArrayList<>();
 
 
 
@@ -131,8 +133,27 @@ public class InfoPlayerFragment extends Fragment {
                             String toTeam = String.valueOf(object.getInt("to_team_id"));
                             String seasonId = String.valueOf(object.getInt("season_id"));
                             String transferDate = object.getString("date");
-                            String transferAmount = String.valueOf(object.getInt("amount"));
+                          if (!object.isNull("amount")){
+                             String amount = String.valueOf(object.getInt("amount"));
+                          }
+                          String fromTeamString = URL_TEAM + fromTeam + URL_API;
+                          JsonObjectRequest teamRequest = new JsonObjectRequest(Request.Method.GET, fromTeamString, null, new Response.Listener<JSONObject>() {
+                              @Override
+                              public void onResponse(JSONObject response) {
+                                  try {
+                                      JSONObject getObj = response.getJSONObject("data");
+                                      String name = getObj.getString("name");
+                                  } catch (JSONException e) {
+                                      e.printStackTrace();
+                                  }
+                              }
+                          }, new Response.ErrorListener() {
+                              @Override
+                              public void onErrorResponse(VolleyError error) {
 
+                              }
+                          });
+Volley.newRequestQueue(getActivity()).add(teamRequest);
                            Log.d("tag",String.valueOf(fromTeam));
                            Log.d("tag",toTeam);
 

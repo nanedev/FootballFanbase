@@ -19,12 +19,12 @@ import java.util.ArrayList;
  */
 
 public class TransfersAdapter extends RecyclerView.Adapter<TransfersViewHolder> {
-    ArrayList<Transfers> transfersList;
+   ArrayList<Transfers> transfersList;
     Activity activity;
     Context context;
 
     public TransfersAdapter(ArrayList<Transfers> transfersList, Activity activity, Context context) {
-        this.transfersList = transfersList;
+       this.transfersList = transfersList;
         this.activity = activity;
         this.context = context;
     }
@@ -46,6 +46,6 @@ public class TransfersAdapter extends RecyclerView.Adapter<TransfersViewHolder> 
 
     @Override
     public int getItemCount() {
-        return transfersList.size();
+       return transfersList.size();
     }
 }
