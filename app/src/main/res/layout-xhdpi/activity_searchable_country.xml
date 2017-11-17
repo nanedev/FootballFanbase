@@ -4,40 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff"
     tools:context="com.malikbisic.sportapp.activity.SearchableCountry">
 
-    <android.support.v7.widget.SearchView
-        android:id="@+id/search_id"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarSearchCountry"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
-        android:background="#212121"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-        android:queryHint="Search country " />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#ffffff"
-        android:layout_below="@+id/search_id"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        />
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:id="@+id/rec_view_for_search_countries"
-        android:layout_below="@+id/search_id">
+        android:layout_below="@+id/toolbarSearchCountry">
 
     </android.support.v7.widget.RecyclerView>
 </RelativeLayout>
