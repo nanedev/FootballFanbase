@@ -64,7 +64,7 @@ public class AboutFootballClub extends AppCompatActivity  {
     String countryId;
     CircleImageView logo_image_club;
     TextView club_name_textview;
-    ImageView flagImageView;
+    CircleImageView flagImageView;
     String teamId;
     Bundle bundle;
     private ViewPager mViewPager;
@@ -87,7 +87,7 @@ public class AboutFootballClub extends AppCompatActivity  {
         toolbar = (Toolbar) findViewById(R.id.toolbarAboutFootball);
         logo_image_club = (CircleImageView) findViewById(R.id.clu_logo_about_football);
         club_name_textview = (TextView) findViewById(R.id.club_name_about_football);
-        flagImageView = (ImageView) findViewById(R.id.flag_about_football);
+        flagImageView = (CircleImageView) findViewById(R.id.flag_about_football);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -118,6 +118,7 @@ public class AboutFootballClub extends AppCompatActivity  {
 
                     nameCounry = getData.getString("name");
 
+                    System.out.println("country name" + nameCounry);
                     String countryURL = "https://restcountries.eu/rest/v2/name/" + nameCounry;
 
                     JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
@@ -131,6 +132,7 @@ public class AboutFootballClub extends AppCompatActivity  {
                                     String countryName = object.getString("name");
                                     String countryImage = object.getString("flag");
 
+                                    System.out.println("country flag" + countryImage);
                                     GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
                                     requestBuilder = Glide
@@ -208,6 +210,7 @@ public class AboutFootballClub extends AppCompatActivity  {
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new FragmentSquad(), "Squad");
         adapter.addFragment(new FragmentClubInfo(), "Neki fragment info");
+        adapter.addFragment(new FixturesClubFragment(), "Fixtures");
         viewPager.setAdapter(adapter);
 
     }

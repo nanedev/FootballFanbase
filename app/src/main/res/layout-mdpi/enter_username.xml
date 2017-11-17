@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/primary"
+    android:fitsSystemWindows="true"
     tools:context="com.malikbisic.sportapp.activity.EnterUsernameForApp">
 
     <RelativeLayout
@@ -17,9 +17,10 @@
         <RelativeLayout
             android:id="@+id/enter_username_image_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-          >
+            android:layout_height="wrap_content"
+
+            android:padding="10dp">
+
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
@@ -27,51 +28,49 @@
                 android:layout_centerHorizontal="true"
                 android:layout_margin="15dp"
                 android:gravity="center"
-                android:text="@string/pls_add_prof_img"
-                android:textSize="12sp"
+                android:text="@string/app_name"
+                android:textSize="40dp"
                 android:textStyle="bold" />
-
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/addImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="150dp"
+                android:layout_height="100dp"
                 android:layout_below="@+id/textView3"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/profilimage" />
 
         </RelativeLayout>
+
         <RelativeLayout
+            android:id="@+id/username_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/username_layout"
             android:layout_below="@+id/enter_username_image_layout"
-            android:layout_marginTop="10dp">
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_enterusername"
+            android:gravity="center_vertical"
+            android:padding="5dp">
 
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/username_enter"
-                android:textStyle="bold"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="5dp"
-                android:layout_alignBottom="@+id/usernameSetUp"/>
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/maleprofile" />
 
             <EditText
                 android:id="@+id/usernameSetUp"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                />
-
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/shape_enterusername"
+                android:hint="Username"
+                android:paddingLeft="5dp" />
 
             <TextView
                 android:id="@+id/input_usernameError"
@@ -87,40 +86,42 @@
                 android:textSize="12sp"
                 />
 
+
+
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/date_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/date_layout"
             android:layout_below="@+id/username_layout"
-            android:layout_marginTop="5dp">
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/date_enter"
-                android:textStyle="bold"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_alignBottom="@+id/dateSetUp"
-                android:layout_marginBottom="5dp"
-                />
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/shape_enterusername"
+            android:gravity="center_vertical"
+            android:padding="5dp">
 
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/date" />
 
             <EditText
                 android:id="@+id/dateSetUp"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="22dp"
+                android:layout_marginStart="22dp"
+                android:layout_toEndOf="@+id/imageView2"
+                android:layout_toRightOf="@+id/imageView2"
                 android:focusable="false"
-                />
-
+                android:hint="Birthday"
+                android:paddingLeft="5dp" />
 
             <TextView
                 android:id="@+id/input_BirthdayError"
@@ -136,27 +137,30 @@
                 android:textSize="12sp"
                 />
 
+
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/gender_layout"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
             android:layout_below="@+id/date_layout"
-            android:layout_marginTop="5dp">
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:text="@string/gender_enter"
-                android:textStyle="bold"
-                android:layout_alignBottom="@+id/genderSetUp"
-                />
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/shape_enterusername"
+            android:paddingEnd="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingStart="5dp">
 
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/maleprofile" />
 
             <Spinner
                 android:id="@+id/genderSetUp"
@@ -164,181 +168,205 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
                 android:layout_marginEnd="10dp"
-                android:popupBackground="@color/primary"/>
-            <View
-                android:layout_width="200dp"
-                android:layout_height="1dp"
-                android:background="@color/accent"
+                android:layout_marginRight="10dp"
+                android:popupBackground="@color/primary"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/maleGender"
+                android:layout_width="120dp"
+                android:layout_height="70dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="0dp"
+                android:layout_toEndOf="@+id/imageView5"
+                android:layout_toRightOf="@+id/imageView5"
+                android:background="@color/checkGender"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="Male" />
+
+            <TextView
+                android:id="@+id/femaleGender"
+                android:layout_width="100dp"
+                android:layout_height="70dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_below="@+id/genderSetUp"
-                />
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/maleGender"
+                android:layout_toRightOf="@+id/maleGender"
+                android:gravity="center_vertical|center"
+                android:text="Female" />
+
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/country_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/gender_layout"
-            android:layout_marginTop="20dp">
-            <TextView
-                android:id="@+id/textView15"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/shape_enterusername"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/country" />
+
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:text="@string/country_enter"
-                android:textStyle="bold"
-                android:layout_alignBottom="@+id/countrySelect"
-                />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:paddingBottom="1dp"
-                android:id="@+id/country_image_get"
-                android:layout_toLeftOf="@+id/countrySelect"
-                android:layout_toStartOf="@+id/countrySelect"
-                android:layout_alignBottom="@+id/countrySelect"
-
-
-                />
-
-
-            <TextView
-                android:id="@+id/countrySelect"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/tap_enter"
-                android:paddingBottom="1dp"
-                android:textStyle="bold"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="20dp"
-
-                />
-
-            <View
-                android:layout_width="200dp"
-                android:layout_height="1dp"
-                android:layout_below="@+id/countrySelect"
-                android:id="@+id/line_country"
-                android:background="@color/accent"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="13dp"
+                android:layout_marginStart="13dp"
+                android:layout_toEndOf="@+id/imageView6"
+                android:layout_toRightOf="@+id/imageView6">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/country_image_get"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
 
 
-                />
+                    android:layout_above="@+id/line_country"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingBottom="1dp" />
 
 
-            <TextView
-                android:id="@+id/input_counryError"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/countrySelect"
-                android:layout_alignStart="@+id/countrySelect"
-                android:layout_below="@id/line_country"
-                android:layout_marginTop="1dp"
-                android:textColor="@color/redError"
-                android:textSize="12sp"
+                <TextView
+                    android:id="@+id/countrySelect"
+                    android:layout_width="250dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@id/country_image_get"
+                    android:gravity="bottom"
+                    android:hint="@string/tap_enter"
 
-                />
+                    android:paddingBottom="1dp"
+                    android:textStyle="bold" />
 
+                <View
+                    android:id="@+id/line_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentLeft="true"
+
+
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/countrySelect"
+                    android:background="@color/accent" />
+
+
+                <TextView
+                    android:id="@+id/input_counryError"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/countrySelect"
+                    android:layout_alignStart="@+id/countrySelect"
+                    android:layout_below="@id/line_country"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/redError"
+                    android:textSize="12sp"
+
+                    />
+            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/club_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/club_layout"
             android:layout_below="@+id/country_layout"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:id="@+id/textView16"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/shape_enterusername"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/club" />
+
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:text="@string/club_enter"
-                android:textStyle="bold"
-                android:layout_alignBottom="@+id/favoriteClubEnterId"/>
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/clubLogo"
-                android:paddingBottom="1dp"
-                android:layout_toLeftOf="@+id/favoriteClubEnterId"
-                android:layout_toStartOf="@+id/favoriteClubEnterId"
-                android:layout_alignBottom="@+id/favoriteClubEnterId"
-                />
-
-            <TextView
-                android:id="@+id/favoriteClubEnterId"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="10dp"
-                android:hint="@string/fav_club_enter"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:textStyle="bold"
-                android:paddingBottom="1dp"
-                android:layout_marginTop="20dp"
-
-
-
-                />
-
-            <View
-                android:layout_width="200dp"
-                android:layout_height="1dp"
-                android:layout_below="@+id/favoriteClubEnterId"
-                android:background="@color/accent"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                />
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/imageView7"
+                android:layout_toRightOf="@+id/imageView7">
 
-            <TextView
-                android:id="@+id/input_cluberror"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/favoriteClubEnterId"
-                android:layout_alignStart="@+id/favoriteClubEnterId"
-                android:layout_below="@id/favoriteClubEnterId"
-                android:layout_marginTop="1dp"
-                android:textColor="@color/redError"
-                />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/clubLogo"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignBottom="@+id/view5"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingBottom="1dp" />
 
+                <TextView
+                    android:id="@+id/favoriteClubEnterId"
+                    android:layout_width="250dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toEndOf="@+id/clubLogo"
+                    android:layout_toRightOf="@+id/clubLogo"
+                    android:gravity="bottom"
+                    android:hint="@string/fav_club_enter"
+                    android:paddingBottom="1dp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/view5"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/favoriteClubEnterId"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/accent" />
+
+                <TextView
+                    android:id="@+id/input_cluberror"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/favoriteClubEnterId"
+                    android:layout_alignStart="@+id/favoriteClubEnterId"
+                    android:layout_below="@id/view5"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/redError" />
+            </RelativeLayout>
         </RelativeLayout>
+
         <Button
             android:id="@+id/continueToMainPage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/club_layout"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="@string/continue_btn"
-            android:layout_marginRight="50dp"
             android:layout_marginEnd="50dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginStart="50dp"/>
+            android:layout_marginRight="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/continue_btn" />
 
 
     </RelativeLayout>

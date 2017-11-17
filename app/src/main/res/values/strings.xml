@@ -54,7 +54,7 @@
     <string name="gender_enter">Gender:</string>
     <string name="country_enter">Country:</string>
     <string name="club_enter">Club:</string>
-    <string name="tap_enter">TAP</string>
+    <string name="tap_enter">Country</string>
     <string name="fav_club_enter">Favorite Club</string>
     <string name="continue_btn">Continue</string>
     <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
