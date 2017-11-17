@@ -2,12 +2,16 @@ package com.malikbisic.sportapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.WindowManager;
-import android.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.support.v7.widget.SearchView;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -42,50 +46,19 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_league);
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearchLeague);
+        setSupportActionBar(toolbar);
+      getSupportActionBar().setTitle("");
 
         leagueListView = (RecyclerView) findViewById(R.id.league_list);
         arrayListLeague = new ArrayList<>();
         adapterLeague = new LeagueAdapter(arrayListLeague, this, this);
         leagueListView.setAdapter(adapterLeague);
         leagueListView.setLayoutManager(new LinearLayoutManager(this));
-        mSearchView = (SearchView) findViewById(R.id.search_league);
 
 
-        setupSearchView();
-
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
 
 
-                newText = newText.toLowerCase();
-                ArrayList<LeagueModel> newList = new ArrayList<>();
-                for (LeagueModel leagueModel : arrayListLeague) {
-                    String name = leagueModel.getName().toLowerCase();
-                    if (name.contains(newText)) {
-
-                        newList.add(leagueModel);
-
-
-                    }
-                }
-                leagueListView.setLayoutManager(new LinearLayoutManager(SelectLeagueActivity.this));
-                adapterLeague = new LeagueAdapter(newList, SelectLeagueActivity.this, SelectLeagueActivity.this);
-                leagueListView.setAdapter(adapterLeague);
-                adapterLeague.notifyDataSetChanged();
-
-
-                return true;
-
-
-            }
-        });
 
         final String url = URL_BASE + URL_APIKEY;
 
@@ -175,13 +148,56 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         }
     }
 
-    private void setupSearchView() {
-        mSearchView.setIconifiedByDefault(false);
-        mSearchView.setOnQueryTextListener(this);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        mSearchView.clearFocus();
-        mSearchView.setQueryHint("Search league");
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search_club, menu);
+
+        MenuItem search = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+        search(searchView);
+
+        return super.onCreateOptionsMenu(menu);
     }
+    private void search(SearchView searchView) {
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                newText = newText.toLowerCase();
+                ArrayList<LeagueModel> newList = new ArrayList<>();
+                for (LeagueModel leagueModel : arrayListLeague) {
+                    String name = leagueModel.getName().toLowerCase();
+                    if (name.contains(newText)) {
+
+                        newList.add(leagueModel);
+
+
+                    }
+                }
+                leagueListView.setLayoutManager(new LinearLayoutManager(SelectLeagueActivity.this));
+                adapterLeague = new LeagueAdapter(newList, SelectLeagueActivity.this, SelectLeagueActivity.this);
+                leagueListView.setAdapter(adapterLeague);
+                adapterLeague.notifyDataSetChanged();
+
+
+                return true;
+
+            }
+        });
+    }
+
+
+
+
 
     public static class LeagueViewHolder extends RecyclerView.ViewHolder{
 

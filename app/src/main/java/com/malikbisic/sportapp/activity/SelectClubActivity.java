@@ -2,14 +2,18 @@ package com.malikbisic.sportapp.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -47,50 +51,23 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_club);
         myIntent = getIntent();
+
+
         adapter = new ClubAdapter(club, this, this);
         clubRecView = (RecyclerView) findViewById(R.id.rec_view_favoriteClub);
         clubRecView.setAdapter(adapter);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         clubRecView.setLayoutManager(layoutManager);
-        searchViewClub = (SearchView) findViewById(R.id.search_club);
-        searchViewClub.setOnQueryTextListener(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearchClub);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
 
 
         String leagueID = URL_LEAGUEID + myIntent.getStringExtra("leagueID");
 
         final String url = URL_BASE + leagueID + URL_APIKEY;
 
-        searchViewClub.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-
-                newText = newText.toLowerCase();
-                ArrayList<ClubModel> newList = new ArrayList<>();
-                for (ClubModel clubModel : club) {
-                    String name = clubModel.getName().toLowerCase();
-                    if (name.contains(newText)) {
-
-                        newList.add(clubModel);
-
-
-                    }
-                }
-                clubRecView.setLayoutManager(new LinearLayoutManager(SelectClubActivity.this));
-                adapter = new ClubAdapter(newList, SelectClubActivity.this, SelectClubActivity.this);
-                clubRecView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-
-
-                return true;
-            }
-
-        });
 
 
 
@@ -134,6 +111,53 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search_club, menu);
+
+        MenuItem search = menu.findItem(R.id.search);
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(search);
+        search(searchView);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    private void search(SearchView searchView) {
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                newText = newText.toLowerCase();
+                ArrayList<ClubModel> newList = new ArrayList<>();
+                for (ClubModel clubModel : club) {
+                    String name = clubModel.getName().toLowerCase();
+                    if (name.contains(newText)) {
+
+                        newList.add(clubModel);
+
+
+                    }
+                }
+                clubRecView.setLayoutManager(new LinearLayoutManager(SelectClubActivity.this));
+                adapter = new ClubAdapter(newList, SelectClubActivity.this, SelectClubActivity.this);
+                clubRecView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
+
+                return true;
+
+            }
+        });
+    }
+
+    @Override
     public boolean onQueryTextSubmit(String s) {
         return false;
     }
@@ -166,4 +190,5 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
             Picasso.with(ctx).load(model.getLogo_path()).into(clubLogo);
         }
     }
+
 }

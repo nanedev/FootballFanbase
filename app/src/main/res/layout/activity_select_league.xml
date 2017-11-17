@@ -7,36 +7,26 @@
     tools:context="com.malikbisic.sportapp.activity.SelectLeagueActivity">
 
 
-    <SearchView
-        android:id="@+id/search_league"
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarSearchLeague"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
-        android:background="#212121"
-        android:queryHint="Search league"
-       />
-
-    <View android:background="#ffffff"
-        android:layout_width = "match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@id/search_league"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/league_list"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay"/>
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/search_league"
-        android:layout_marginTop="10dp"/>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbarSearchLeague"
+        android:background="#bdbdbd">
 
+
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/league_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </RelativeLayout>
 </RelativeLayout>

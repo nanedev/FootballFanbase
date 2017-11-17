@@ -7,15 +7,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -67,41 +70,12 @@ SearchView searchView;
         recyclerView.setHasFixedSize(true);
         adapter = new CountryRecyclerAdapter(countryList,this,SearchableCountry.this);
         recyclerView.setAdapter(adapter);
-        searchView = (SearchView) findViewById(R.id.search_id);
-        searchView.setQueryHint("Search country");
-        searchView.setOnQueryTextListener(this);
         url = "https://restcountries.eu/rest/v2/all";
-searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearchCountry);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Search country");
 
 
-        newText = newText.toLowerCase();
-        ArrayList<CountryModel> newList = new ArrayList<>();
-        for (CountryModel countryModel : countryList){
-            String name = countryModel.getCountryName().toLowerCase();
-            if (name.contains(newText)){
-
-                newList.add(countryModel);
-
-
-            }
-        }
-        recyclerView.setLayoutManager(new LinearLayoutManager(SearchableCountry.this));
-        adapter = new CountryRecyclerAdapter(newList,SearchableCountry.this,SearchableCountry.this);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-
-        return true;
-    }
-
-});
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -141,8 +115,55 @@ searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        return false;
+    }
 
-        return true;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search_club, menu);
+
+        MenuItem search = menu.findItem(R.id.search);
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(search);
+        search(searchView);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    private void search(SearchView searchView) {
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                newText = newText.toLowerCase();
+                ArrayList<CountryModel> newList = new ArrayList<>();
+                for (CountryModel countryModel : countryList){
+                    String name = countryModel.getCountryName().toLowerCase();
+                    if (name.contains(newText)){
+
+                        newList.add(countryModel);
+
+
+                    }
+                }
+                recyclerView.setLayoutManager(new LinearLayoutManager(SearchableCountry.this));
+                adapter = new CountryRecyclerAdapter(newList,SearchableCountry.this,SearchableCountry.this);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
+
+                return true;
+
+            }
+        });
     }
 
 
