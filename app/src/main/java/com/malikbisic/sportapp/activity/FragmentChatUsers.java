@@ -59,8 +59,8 @@ public class FragmentChatUsers extends Fragment {
                 clubName = new ArrayList<UserChatGroup>();
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-
-                    final String clubNameString = snapshot.getKey().toString();
+if (!snapshot.getKey().toString().equals("null")) {
+    final String clubNameString = snapshot.getKey().toString();
 
                     final DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
                     chatReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -70,13 +70,14 @@ public class FragmentChatUsers extends Fragment {
                             numberOnline = 0;
                             for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
 
-                                username = String.valueOf(snapshot1.child("username").getValue());
-                                profileImage = String.valueOf(snapshot1.child("profileImage").getValue());
-                                flag = String.valueOf(snapshot1.child("flag").getValue());
-                                clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
-                                isOnline = String.valueOf(snapshot1.child("online").getValue());
-                                userUID = String.valueOf(snapshot1.child("userID").getValue());
-                                date = String.valueOf(snapshot1.child("date").getValue());
+    username = String.valueOf(snapshot1.child("username").getValue());
+    profileImage = String.valueOf(snapshot1.child("profileImage").getValue());
+    flag = String.valueOf(snapshot1.child("flag").getValue());
+    clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
+    isOnline = String.valueOf(snapshot1.child("online").getValue());
+    userUID = String.valueOf(snapshot1.child("userID").getValue());
+    date = String.valueOf(snapshot1.child("date").getValue());
+
                                 DatabaseReference onlineCheck = chatReference;
 
                                 onlineCheck.addValueEventListener(new ValueEventListener() {
@@ -96,9 +97,10 @@ public class FragmentChatUsers extends Fragment {
                                 });
 
 
+if (snapshot1.hasChild("username") && snapshot1.hasChild("userID") && snapshot1.hasChild("profileImage")) {
 
-
-                                userChats.add(new UserChat(username, flag, profileImage, userUID,date));
+    userChats.add(new UserChat(username, flag, profileImage, userUID, date));
+}
                             }
                             clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo));
 
@@ -119,7 +121,7 @@ public class FragmentChatUsers extends Fragment {
 
 
                 }
-
+                }
             }
 
 

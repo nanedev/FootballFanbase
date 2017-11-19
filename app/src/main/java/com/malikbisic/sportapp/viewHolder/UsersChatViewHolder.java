@@ -77,44 +77,49 @@ public class UsersChatViewHolder extends ChildViewHolder {
 
     }
 
-     public void setDate (String date){
-         if (date != null)
-         currentUserDate = date;
+    public void setDate(String date) {
+        if (date != null)
+            currentUserDate = date;
 
-     }
-
-
-        public void setUsername(String username) {
-                usernameUser.setText(username);
-            }
-
-            public void setFlag(Context ctx, String flag) {
-
-                GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
-
-                requestBuilder = Glide
-                        .with(ctx)
-                        .using(Glide.buildStreamModelLoader(Uri.class, ctx), InputStream.class)
-                        .from(Uri.class)
-                        .as(SVG.class)
-                        .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-                        .sourceEncoder(new StreamEncoder())
-                        .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
-                        .decoder(new SearchableCountry.SvgDecoder())
-                        .animate(android.R.anim.fade_in);
+    }
 
 
-                Uri uri = Uri.parse(flag);
-                requestBuilder
-                        // SVG cannot be serialized so it's not worth to cache it
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .load(uri)
-                        .into(flagUser);
+    public void setUsername(String username) {
+        if (username != null) {
+            usernameUser.setText(username);
+        }
+    }
 
-            }
+    public void setFlag(Context ctx, String flag) {
+        if (flag != null) {
 
-            public void setProfileImage(Context ctx, String proifleImage) {
-                Picasso.with(ctx).load(proifleImage).into(profileImageUser);
-            }
+            GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+            requestBuilder = Glide
+                    .with(ctx)
+                    .using(Glide.buildStreamModelLoader(Uri.class, ctx), InputStream.class)
+                    .from(Uri.class)
+                    .as(SVG.class)
+                    .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                    .sourceEncoder(new StreamEncoder())
+                    .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                    .decoder(new SearchableCountry.SvgDecoder())
+                    .animate(android.R.anim.fade_in);
+
+
+            Uri uri = Uri.parse(flag);
+            requestBuilder
+                    // SVG cannot be serialized so it's not worth to cache it
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .load(uri)
+                    .into(flagUser);
+        }
+    }
+
+    public void setProfileImage(Context ctx, String proifleImage) {
+        if (proifleImage != null) {
+            Picasso.with(ctx).load(proifleImage).into(profileImageUser);
+        }
+    }
 }
 

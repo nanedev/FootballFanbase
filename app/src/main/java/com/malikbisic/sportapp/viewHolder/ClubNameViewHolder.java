@@ -48,13 +48,14 @@ public class ClubNameViewHolder extends GroupViewHolder {
     }
 
     public void setClubTitle(ExpandableGroup club) {
-        if (club instanceof UserChatGroup) {
-            clubName2.setText(club.getTitle());
+        if (club.getTitle() != null) {
+            if (club instanceof UserChatGroup) {
+                clubName2.setText(club.getTitle());
 
-            Picasso.with(itemView.getContext()).load(((UserChatGroup) club).getClubLogo()).into(clubLogoImg);
-           // onlineTexview.setText(((UserChatGroup) club).getOnline());
+                Picasso.with(itemView.getContext()).load(((UserChatGroup) club).getClubLogo()).into(clubLogoImg);
+                // onlineTexview.setText(((UserChatGroup) club).getOnline());
+            }
         }
-
     }
 
     public void setNumberOnline(final String title){
@@ -74,10 +75,11 @@ public class ClubNameViewHolder extends GroupViewHolder {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             final List<UserChat> userChats = new ArrayList<UserChat>();
                             numberOnline = 0;
+                            String  isOnline = "";
                             for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                if (snapshot1.child("online").exists())
 
-
-                              String  isOnline =  snapshot1.child("online").getValue().toString();
+                        isOnline     =  snapshot1.child("online").getValue().toString();
 
                                 if (isOnline.equals("true")) {
                                     numberOnline++;

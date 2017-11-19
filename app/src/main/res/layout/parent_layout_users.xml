@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    app:cardBackgroundColor="@color/primary">
+    app:cardBackgroundColor="@color/primary"
+  >
 
     <RelativeLayout
         android:layout_width="match_parent"
