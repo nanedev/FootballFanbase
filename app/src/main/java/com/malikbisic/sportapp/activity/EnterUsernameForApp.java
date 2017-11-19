@@ -178,6 +178,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         lastNameLogin = getClubNameAndLogo.getStringExtra("secondName");
 
         favoriteClub.setText(clubName);
+        clubLogoImage.setVisibility(View.VISIBLE);
         Picasso.with(this).load(clubLogo).into(clubLogoImage);
 
         Locale locale = Locale.ENGLISH;
@@ -348,6 +349,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     .decoder(new SearchableCountry.SvgDecoder())
                     .animate(android.R.anim.fade_in);
             if (imageOfCountry != null) {
+                countryImage.setVisibility(View.VISIBLE);
 
                 Uri uri = Uri.parse(imageOfCountry);
 

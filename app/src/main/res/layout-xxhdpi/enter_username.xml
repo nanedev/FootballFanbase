@@ -51,7 +51,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Username"
-                    android:paddingLeft="5dp" />
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:paddingRight="5dp"/>
 
                 <TextView
                     android:id="@+id/input_usernameError"
@@ -76,7 +79,10 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:hint="Birthday"
-                    android:paddingLeft="5dp" />
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingEnd="5dp"/>
 
                 <TextView
                     android:id="@+id/input_BirthdayError"
@@ -91,15 +97,18 @@
             <!--  Email Label -->
             <Spinner
                 android:id="@+id/genderSetUp"
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:popupBackground="@color/primary"
                 android:visibility="visible" />
-
+            <View
+                android:id="@+id/view4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="6dp"
+                android:background="@color/accent" />
 
             <!-- mobile number -->
 
@@ -133,11 +142,10 @@
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/country_image_get"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:paddingBottom="1dp" />
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:paddingBottom="1dp"
+                            android:visibility="gone"/>
 
                         <EditText
                             android:id="@+id/countrySelect"
@@ -148,7 +156,8 @@
                             android:focusable="false"
                             android:hint="@string/tap_enter"
                             android:paddingBottom="1dp"
-                            android:textStyle="bold" />
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"/>
 
 
                     </LinearLayout>
@@ -160,8 +169,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_alignParentLeft="true"
-
-
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/countryInput"
                     android:background="@color/accent" />
@@ -201,21 +208,25 @@
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/clubLogo"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_alignBottom="@+id/view5"
-                            android:paddingBottom="1dp" />
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:paddingBottom="1dp"
+                            android:visibility="gone"/>
 
                         <EditText
                             android:id="@+id/favoriteClubEnterId"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
                             android:layout_gravity="bottom"
                             android:background="@android:color/transparent"
                             android:focusable="false"
                             android:hint="@string/fav_club_enter"
-                            android:paddingLeft="5dp" />
+                            android:paddingLeft="5dp"
+                            android:paddingStart="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingEnd="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"/>
 
                     </LinearLayout>
                 </android.support.design.widget.TextInputLayout>
