@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (requestCode == RC_SIGN_IN) {
             mDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
             mDialog.setIndeterminate(true);
-            mDialog.setMessage("Starting sign in...");
+            mDialog.setMessage("Authentication...");
             mDialog.show();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             GoogleSignInAccount acct = result.getSignInAccount();

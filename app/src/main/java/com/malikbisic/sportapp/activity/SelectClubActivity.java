@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.MenuItemCompat;
@@ -43,6 +44,7 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
     RecyclerView clubRecView;
     SearchView searchViewClub;
     Intent myIntent;
+    ProgressDialog mDialog;
 
     //nesto
 
@@ -60,7 +62,12 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
         clubRecView.setLayoutManager(layoutManager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearchClub);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        getSupportActionBar().setTitle("Search club");
+
+        mDialog = new ProgressDialog(SelectClubActivity.this, R.style.AppTheme_Dark_Dialog);
+        mDialog.setIndeterminate(true);
+        mDialog.setMessage("Loading...");
+        mDialog.show();
 
 
         String leagueID = URL_LEAGUEID + myIntent.getStringExtra("leagueID");
@@ -96,6 +103,7 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
 
 
                 adapter.notifyDataSetChanged();
+                mDialog.dismiss();
             }
 
 

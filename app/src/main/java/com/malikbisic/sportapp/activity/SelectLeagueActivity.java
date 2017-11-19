@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
 
     LeagueAdapter adapterLeague;
     SearchView mSearchView;
+    ProgressDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         setContentView(R.layout.activity_select_league);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearchLeague);
         setSupportActionBar(toolbar);
-      getSupportActionBar().setTitle("");
+      getSupportActionBar().setTitle("Search league");
 
         leagueListView = (RecyclerView) findViewById(R.id.league_list);
         arrayListLeague = new ArrayList<>();
@@ -56,7 +58,10 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         leagueListView.setAdapter(adapterLeague);
         leagueListView.setLayoutManager(new LinearLayoutManager(this));
 
-
+        mDialog = new ProgressDialog(SelectLeagueActivity.this, R.style.AppTheme_Dark_Dialog);
+        mDialog.setIndeterminate(true);
+        mDialog.setMessage("Loading...");
+        mDialog.show();
 
 
 
@@ -92,6 +97,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
                                         LeagueModel model = new LeagueModel(leagueName, leagueID, countryName);
                                         arrayListLeague.add(model);
                                         adapterLeague.notifyDataSetChanged();
+                                        mDialog.dismiss();
 
 
                                 } catch (JSONException e) {

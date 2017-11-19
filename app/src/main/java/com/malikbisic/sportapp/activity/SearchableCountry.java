@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -59,6 +60,7 @@ public class SearchableCountry extends AppCompatActivity implements SearchView.O
     ArrayList<CountryModel> countryList = new ArrayList<>();
 SearchView searchView;
     String url;
+    ProgressDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,12 @@ SearchView searchView;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearchCountry);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Search country");
+
+        mDialog = new ProgressDialog(SearchableCountry.this, R.style.AppTheme_Dark_Dialog);
+        mDialog.setIndeterminate(true);
+        mDialog.setMessage("Loading...");
+        mDialog.show();
+
 
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -98,6 +106,7 @@ SearchView searchView;
                     Log.v("json", e.getLocalizedMessage());
                 }
                 adapter.notifyDataSetChanged();
+                mDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
