@@ -18,150 +18,77 @@
             android:id="@+id/enter_username_image_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:padding="10dp">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="15dp"
-                android:gravity="center"
-                android:text="@string/app_name"
-                android:textSize="40dp"
-                android:textStyle="bold" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/addImage"
                 android:layout_width="150dp"
-                android:layout_height="100dp"
-                android:layout_below="@+id/textView3"
+                android:layout_height="125dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/profilimage" />
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/username_layout"
+        <LinearLayout
+            android:id="@+id/enterusername_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/enter_username_image_layout"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/shape_enterusername"
-            android:gravity="center_vertical"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/maleprofile" />
-
-            <EditText
-                android:id="@+id/usernameSetUp"
-                android:layout_width="250dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/shape_enterusername"
-                android:hint="Username"
-                android:paddingLeft="5dp" />
-
-            <TextView
-                android:id="@+id/input_usernameError"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/usernameSetUp"
-                android:layout_alignStart="@+id/usernameSetUp"
-                android:layout_below="@+id/usernameSetUp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="1dp"
-                android:textColor="@color/redError"
-                android:textSize="12sp"
-                />
-
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/date_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/username_layout"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/shape_enterusername"
-            android:gravity="center_vertical"
+            android:layout_below="@id/enter_username_image_layout"
+            android:orientation="vertical"
             android:padding="5dp">
 
 
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/date" />
-
-            <EditText
-                android:id="@+id/dateSetUp"
-                android:layout_width="250dp"
-                android:layout_height="40dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="22dp"
-                android:layout_marginStart="22dp"
-                android:layout_toEndOf="@+id/imageView2"
-                android:layout_toRightOf="@+id/imageView2"
-                android:focusable="false"
-                android:hint="Birthday"
-                android:paddingLeft="5dp" />
-
-            <TextView
-                android:id="@+id/input_BirthdayError"
-                android:layout_width="wrap_content"
+            <!-- Name Label -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/dateSetUp"
-                android:layout_alignStart="@+id/dateSetUp"
-                android:layout_below="@id/dateSetUp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="1dp"
-                android:textColor="@color/redError"
-                android:textSize="12sp"
-                />
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/usernameSetUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Username"
+                    android:paddingLeft="5dp" />
+
+                <TextView
+                    android:id="@+id/input_usernameError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/redError"
+                    android:textSize="12sp" />
 
 
-        </RelativeLayout>
+            </android.support.design.widget.TextInputLayout>
 
-        <RelativeLayout
-            android:id="@+id/gender_layout"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_below="@+id/date_layout"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/shape_enterusername"
-            android:paddingEnd="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingStart="5dp">
+            <!-- Address Label -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/dateSetUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:hint="Birthday"
+                    android:paddingLeft="5dp" />
+
+                <TextView
+                    android:id="@+id/input_BirthdayError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/redError"
+                    android:textSize="12sp" />
+
+            </android.support.design.widget.TextInputLayout>
 
 
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_centerVertical="true"
-                app:srcCompat="@drawable/maleprofile" />
-
+            <!--  Email Label -->
             <Spinner
                 android:id="@+id/genderSetUp"
                 android:layout_width="200dp"
@@ -171,89 +98,62 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:popupBackground="@color/primary"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
-            <TextView
-                android:id="@+id/maleGender"
-                android:layout_width="120dp"
-                android:layout_height="70dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="12dp"
-                android:layout_marginTop="0dp"
-                android:layout_toEndOf="@+id/imageView5"
-                android:layout_toRightOf="@+id/imageView5"
-                android:background="@color/checkGender"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="Male" />
 
-            <TextView
-                android:id="@+id/femaleGender"
-                android:layout_width="100dp"
-                android:layout_height="70dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/maleGender"
-                android:layout_toRightOf="@+id/maleGender"
-                android:gravity="center_vertical|center"
-                android:text="Female" />
+            <!-- mobile number -->
 
-        </RelativeLayout>
+            <!-- mobile number -->
 
-        <RelativeLayout
-            android:id="@+id/country_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/gender_layout"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/shape_enterusername"
-            android:padding="5dp">
+            <!-- mobile number -->
 
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_centerVertical="true"
-                app:srcCompat="@drawable/country" />
+            <!-- Password Label -->
+
 
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="13dp"
-                android:layout_marginStart="13dp"
-                android:layout_toEndOf="@+id/imageView6"
-                android:layout_toRightOf="@+id/imageView6">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/country_image_get"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                android:layout_marginTop="20dp">
 
 
-                    android:layout_above="@+id/line_country"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingBottom="1dp" />
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/countryInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@+id/country_image_get"
+                    android:layout_toRightOf="@+id/country_image_get">
 
 
-                <TextView
-                    android:id="@+id/countrySelect"
-                    android:layout_width="250dp"
-                    android:layout_height="25dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_toRightOf="@id/country_image_get"
-                    android:gravity="bottom"
-                    android:hint="@string/tap_enter"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                    android:paddingBottom="1dp"
-                    android:textStyle="bold" />
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/country_image_get"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:paddingBottom="1dp" />
+
+                        <EditText
+                            android:id="@+id/countrySelect"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:background="@android:color/transparent"
+                            android:focusable="false"
+                            android:hint="@string/tap_enter"
+                            android:paddingBottom="1dp"
+                            android:textStyle="bold" />
+
+
+                    </LinearLayout>
+                </android.support.design.widget.TextInputLayout>
+
 
                 <View
                     android:id="@+id/line_country"
@@ -263,13 +163,13 @@
 
 
                     android:layout_alignParentStart="true"
-                    android:layout_below="@+id/countrySelect"
+                    android:layout_below="@+id/countryInput"
                     android:background="@color/accent" />
 
 
                 <TextView
                     android:id="@+id/input_counryError"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/countrySelect"
                     android:layout_alignStart="@+id/countrySelect"
@@ -280,86 +180,73 @@
 
                     />
             </RelativeLayout>
-        </RelativeLayout>
+            <!-- Password Re-enter Label -->
 
-        <RelativeLayout
-            android:id="@+id/club_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/country_layout"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/shape_enterusername"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/imageView7"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_centerVertical="true"
-                app:srcCompat="@drawable/club" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_toEndOf="@+id/imageView7"
-                android:layout_toRightOf="@+id/imageView7">
+                android:layout_height="wrap_content">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/clubLogo"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignBottom="@+id/view5"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingBottom="1dp" />
 
-                <TextView
-                    android:id="@+id/favoriteClubEnterId"
-                    android:layout_width="250dp"
-                    android:layout_height="30dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_toEndOf="@+id/clubLogo"
-                    android:layout_toRightOf="@+id/clubLogo"
-                    android:gravity="bottom"
-                    android:hint="@string/fav_club_enter"
-                    android:paddingBottom="1dp"
-                    android:textStyle="bold" />
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/inputClub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="bottom">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/clubLogo"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignBottom="@+id/view5"
+                            android:paddingBottom="1dp" />
+
+                        <EditText
+                            android:id="@+id/favoriteClubEnterId"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="bottom"
+                            android:background="@android:color/transparent"
+                            android:focusable="false"
+                            android:hint="@string/fav_club_enter"
+                            android:paddingLeft="5dp" />
+
+                    </LinearLayout>
+                </android.support.design.widget.TextInputLayout>
 
                 <View
                     android:id="@+id/view5"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@+id/favoriteClubEnterId"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/inputClub"
+                    android:layout_marginTop="6dp"
                     android:background="@color/accent" />
 
                 <TextView
                     android:id="@+id/input_cluberror"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/favoriteClubEnterId"
-                    android:layout_alignStart="@+id/favoriteClubEnterId"
                     android:layout_below="@id/view5"
                     android:layout_marginTop="1dp"
                     android:textColor="@color/redError" />
             </RelativeLayout>
-        </RelativeLayout>
+
+            <!-- Signup Button -->
+
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/continueToMainPage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/club_layout"
+            android:layout_below="@+id/enterusername_layout"
             android:layout_centerHorizontal="true"
             android:layout_marginEnd="50dp"
             android:layout_marginLeft="50dp"

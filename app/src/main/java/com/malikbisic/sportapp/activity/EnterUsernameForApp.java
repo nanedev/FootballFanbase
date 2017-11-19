@@ -144,9 +144,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     String lastNameLogin;
     boolean validUsername = true, validBirthday = true, validCountry = true, validClub = true;
 
-    TextView maleGender;
-    TextView femaleGender;
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +152,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         enterUsername = (EditText) findViewById(R.id.usernameSetUp);
         birthday = (EditText) findViewById(R.id.dateSetUp);
+        genderItems = (Spinner) findViewById(R.id.genderSetUp);
         usernameErrorTxt = (TextView) findViewById(R.id.input_usernameError);
         birthdayErrorTxt = (TextView) findViewById(R.id.input_BirthdayError);
         favoriteClub = (TextView) findViewById(R.id.favoriteClubEnterId);
@@ -172,8 +170,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         mStorage = FirebaseStorage.getInstance();
         countryImage = (CircleImageView) findViewById(R.id.country_image_get);
         favoriteClub.setOnClickListener(this);
-        maleGender = (TextView) findViewById(R.id.maleGender);
-        femaleGender = (TextView) findViewById(R.id.femaleGender);
 
         getClubNameAndLogo = getIntent();
         clubName = getClubNameAndLogo.getStringExtra("clubName");
@@ -225,6 +221,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         spinnerArray.add("Male");
         spinnerArray.add("Female");
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderItems.setAdapter(adapter);
         continueBtn.setOnClickListener(this);
         birthday.setOnClickListener(this);
         minAdultAge = new GregorianCalendar();
@@ -255,24 +253,17 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         });
 
 
-        maleGender.setOnClickListener(new View.OnClickListener() {
+        genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                gender = String.valueOf(maleGender.getText()).toLowerCase();
-                maleGender.setBackgroundColor(getResources().getColor(R.color.checkGender));
-                femaleGender.setBackgroundColor(getResources().getColor(R.color.primary_dark));
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                gender = String.valueOf(adapterView.getItemAtPosition(i));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
-
-        femaleGender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gender = String.valueOf(femaleGender.getText()).toLowerCase();
-                maleGender.setBackgroundColor(getResources().getColor(R.color.primary_dark));
-                femaleGender.setBackgroundColor(getResources().getColor(R.color.checkGender));
-            }
-        });
-
     }
 
     Calendar myCalendar = Calendar.getInstance();
