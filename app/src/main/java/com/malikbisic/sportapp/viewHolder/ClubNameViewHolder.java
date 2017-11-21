@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.viewHolder;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,7 +34,7 @@ public class ClubNameViewHolder extends GroupViewHolder {
     View view;
     TextView clubName2;
     CircleImageView clubLogoImg;
-    TextView onlineTexview;
+    public TextView onlineTexview;
     FirebaseDatabase mDatabase;
     int numberOnline;
     String online;
@@ -54,6 +55,11 @@ public class ClubNameViewHolder extends GroupViewHolder {
 
                 Picasso.with(itemView.getContext()).load(((UserChatGroup) club).getClubLogo()).into(clubLogoImg);
                 // onlineTexview.setText(((UserChatGroup) club).getOnline());
+
+                Log.i(club.getTitle(), String.valueOf(((UserChatGroup) club).getNumberOnline()));
+
+
+
             }
         }
     }
@@ -89,6 +95,12 @@ public class ClubNameViewHolder extends GroupViewHolder {
                             }
                                 onlineTexview.setText(online);
 
+
+                            if (numberOnline == 0){
+                                view.setVisibility(View.GONE);
+                            } else {
+                                view.setVisibility(View.VISIBLE);
+                            }
 
 
                         }

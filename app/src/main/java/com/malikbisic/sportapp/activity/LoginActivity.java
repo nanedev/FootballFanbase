@@ -285,7 +285,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             mDialog.dismiss();
                             finish();
 
-                        } else {
+                        } else if (!user.isEmailVerified()){
                             mDialog.dismiss();
                             Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
                         }
@@ -294,6 +294,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(goToSetUp);
                         finish();
+
 
                     }
 

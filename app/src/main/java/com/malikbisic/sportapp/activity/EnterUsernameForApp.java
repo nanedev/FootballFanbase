@@ -728,27 +728,26 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                mReference = FirebaseDatabase.getInstance().getReference();
+                mReference = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
 
                 String userRef = "Users/" + uid;
 
                 Map userInfoMap = new HashMap();
-                userInfoMap.put("name", firstNameLogin);
-                userInfoMap.put("surname", lastNameLogin);
-                userInfoMap.put("username", username);
-                userInfoMap.put("date", userDate);
-                userInfoMap.put("gender", gender);
-                if (downloadUrl != null)
-                    userInfoMap.put("profileImage", downloadUrl.toString());
-                userInfoMap.put("country", countryString);
-                userInfoMap.put("flag", imageOfCountry);
-                userInfoMap.put("favoriteClub", clubName);
-                userInfoMap.put("favoriteClubLogo", clubLogo);
-                userInfoMap.put("userID", uid);
-                userInfoMap.put("premium", true);
-                userInfoMap.put("premiumDate", todayDateTime);
 
-                Map setUserDatabaseInfo = new HashMap();
+                mReference.child("username").setValue(username);
+                mReference.child("date").setValue(userDate);
+                mReference.child("gender").setValue(gender);
+                if (downloadUrl != null)
+                    mReference.child("profileImage").setValue(downloadUrl.toString());
+                mReference.child("country").setValue(countryString);
+                mReference.child("flag").setValue(imageOfCountry);
+                mReference.child("favoriteClub").setValue(clubName);
+                mReference.child("favoriteClubLogo").setValue(clubLogo);
+                mReference.child("userID").setValue(uid);
+                mReference.child("premium").setValue(true);
+                mReference.child("premiumDate").setValue(todayDateTime);
+
+                /*Map setUserDatabaseInfo = new HashMap();
                 setUserDatabaseInfo.put(userRef, userInfoMap);
 
                 mReference.updateChildren(setUserDatabaseInfo, new DatabaseReference.CompletionListener() {
@@ -759,7 +758,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         }
 
                     }
-                });
+                });*/
 
                 DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference();
 

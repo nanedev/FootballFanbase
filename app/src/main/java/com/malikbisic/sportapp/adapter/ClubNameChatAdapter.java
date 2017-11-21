@@ -76,6 +76,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
         });
 
 
+
         final DatabaseReference onlineReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(group.getTitle()).child(userChat.getUserID());
         onlineReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -110,5 +111,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
     public void onBindGroupViewHolder(ClubNameViewHolder holder, int flatPosition, ExpandableGroup group) {
         holder.setClubTitle(group);
         holder.setNumberOnline(group.getTitle());
+
+
     }
 }

@@ -11,16 +11,26 @@ public class UserChat {
     String profileImage;
     String userID;
     String date;
+    boolean isonline;
 
-    public UserChat(String username, String flag, String profileImage, String userID,String date) {
+    public UserChat(String username, String flag, String profileImage, String userID,String date, boolean isonline) {
         this.username = username;
         this.flag = flag;
         this.profileImage = profileImage;
         this.userID = userID;
         this.date = date;
+        this.isonline = isonline;
     }
 
     public UserChat() {
+    }
+
+    public boolean isIsonline() {
+        return isonline;
+    }
+
+    public void setIsonline(boolean isonline) {
+        this.isonline = isonline;
     }
 
     public String getDate() {

@@ -26,6 +26,9 @@ import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,15 +42,15 @@ public class FragmentChatUsers extends Fragment {
     ClubNameChatAdapter adapter;
     List<UserChatGroup> clubName;
     DatabaseReference userReference;
-    String profileImage;
-    String username;
-    String flag;
+    static String profileImage;
+    static String username;
+    static String flag;
     String clubNameLogo;
-    String userUID;
-    String date;
-    String isOnline;
+    static String userUID;
+    static String date;
+    boolean isOnline;
     static int numberOnline;
-   public static String online;
+    public static String online;
 
 
     public void getClubName() {
@@ -59,68 +62,79 @@ public class FragmentChatUsers extends Fragment {
                 clubName = new ArrayList<UserChatGroup>();
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-if (!snapshot.getKey().toString().equals("null")) {
-    final String clubNameString = snapshot.getKey().toString();
+                    if (!snapshot.getKey().toString().equals("null")) {
+                        final String clubNameString = snapshot.getKey().toString();
 
-                    final DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
-                    chatReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            final List<UserChat> userChats = new ArrayList<UserChat>();
-                            numberOnline = 0;
-                            for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                        final DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
+                        chatReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                final List<UserChat> userChats = new ArrayList<UserChat>();
+                                numberOnline = 0;
+                                for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
 
-    username = String.valueOf(snapshot1.child("username").getValue());
-    profileImage = String.valueOf(snapshot1.child("profileImage").getValue());
-    flag = String.valueOf(snapshot1.child("flag").getValue());
-    clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
-    isOnline = String.valueOf(snapshot1.child("online").getValue());
-    userUID = String.valueOf(snapshot1.child("userID").getValue());
-    date = String.valueOf(snapshot1.child("date").getValue());
+                                    clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
+                                    isOnline = Boolean.parseBoolean(String.valueOf(snapshot1.child("online").getValue()));
+                                    userUID = String.valueOf(snapshot1.child("userID").getValue());
+                                    date = String.valueOf(snapshot1.child("date").getValue());
 
-                                DatabaseReference onlineCheck = chatReference;
+                                    DatabaseReference userInfo = FirebaseDatabase.getInstance().getReference().child("Users").child(userUID);
+                                    userInfo.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            username = String.valueOf(dataSnapshot.child("username").getValue());
+                                            profileImage = String.valueOf(dataSnapshot.child("profileImage").getValue());
+                                            flag = String.valueOf(dataSnapshot.child("flag").getValue());
 
-                                onlineCheck.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if (isOnline.equals("true")) {
-                                            numberOnline++;
+                                            userChats.add(new UserChat(username, flag, profileImage, userUID, date, isOnline));
+                                            Collections.sort(userChats, new CheckOnline());
+
+                                    }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
                                         }
-
-                                        online = String.valueOf(FragmentChatUsers.numberOnline);
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
+                                    });
 
 
-if (snapshot1.hasChild("username") && snapshot1.hasChild("userID") && snapshot1.hasChild("profileImage")) {
+                                            if (isOnline) {
+                                                numberOnline++;
+                                            }
 
-    userChats.add(new UserChat(username, flag, profileImage, userUID, date));
-}
+                                            online = String.valueOf(FragmentChatUsers.numberOnline);
+
+
+
+
+
+
+                                    //  userChats.add(new UserChat(FragmentChatUsers.username, FragmentChatUsers.flag, FragmentChatUsers.profileImage, FragmentChatUsers.userUID, FragmentChatUsers.date));
+
+                                }
+
+                                clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo, numberOnline));
+
+
+                                Collections.sort(clubName, new OnlineNumber());
+
+
+                                adapter = new ClubNameChatAdapter(clubName, getContext());
+                                userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                userRecylerView.setAdapter(adapter);
+
+                                adapter.notifyDataSetChanged();
+
                             }
-                            clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo));
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
 
 
-                            adapter = new ClubNameChatAdapter(clubName, getContext());
-                            userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                            userRecylerView.setAdapter(adapter);
-
-                            adapter.notifyDataSetChanged();
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-                }
+                    }
                 }
             }
 
@@ -135,7 +149,6 @@ if (snapshot1.hasChild("username") && snapshot1.hasChild("userID") && snapshot1.
     }
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -145,5 +158,29 @@ if (snapshot1.hasChild("username") && snapshot1.hasChild("userID") && snapshot1.
         getClubName();
 
         return view;
+    }
+
+    class OnlineNumber implements Comparator<UserChatGroup>{
+
+        @Override
+        public int compare(UserChatGroup e1, UserChatGroup e2) {
+            if(e1.getNumberOnline() < e2.getNumberOnline()){
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    }
+
+    class CheckOnline implements Comparator<UserChat>{
+
+        @Override
+        public int compare(UserChat e1, UserChat e2) {
+            if(e1.isIsonline()){
+                return 1;
+            } else {
+                return -1;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -11,15 +12,25 @@ import java.util.List;
  */
 
 public class UserChatGroup extends ExpandableGroup {
-String clubLogo;
+    String clubLogo;
     String online;
-    public UserChatGroup(String title, List items,String clubLogo) {
+    int numberOnline;
+
+    public UserChatGroup(String title, List items, String clubLogo, int numberOnline) {
         super(title, items);
 
         this.clubLogo = clubLogo;
         this.online = online;
+        this.numberOnline = numberOnline;
     }
 
+
+    public static final Comparator<UserChatGroup> DESCENDING_COMPARATOR = new Comparator<UserChatGroup>() {
+        // Overriding the compare method to sort the age
+        public int compare(UserChatGroup d, UserChatGroup d1) {
+            return d.numberOnline - d1.numberOnline;
+        }
+    };
     public String getClubLogo() {
         return clubLogo;
     }
@@ -36,5 +47,11 @@ String clubLogo;
         this.online = online;
     }
 
+    public int getNumberOnline() {
+        return numberOnline;
+    }
 
+    public void setNumberOnline(int numberOnline) {
+        this.numberOnline = numberOnline;
+    }
 }

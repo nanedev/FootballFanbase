@@ -21,9 +21,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.malikbisic.sportapp.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
@@ -155,9 +159,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onSignupSuccess() {
         mSignupButton.setEnabled(true);
         setResult(RESULT_OK, null);
-        Intent intent = new Intent(RegisterActivity.this, EnterUsernameForApp.class);
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         intent.putExtra("firstName",userName);
         intent.putExtra("secondName", userSurname);
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
+        Map userMAP = new HashMap();
+        userMAP.put("name", userName);
+        userMAP.put("surname", userSurname);
+        usersRef.updateChildren(userMAP, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null){
+                    Log.e("registeruser", databaseError.getMessage());
+                }
+            }
+        });
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         registerPressed = true;
         LoginActivity.checkGoogleSignIn = false;
