@@ -1035,7 +1035,7 @@ public class MainPage extends AppCompatActivity
     }
 
 
-    private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
+    private  class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
 
         @Override

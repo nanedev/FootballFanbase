@@ -17,6 +17,7 @@ import android.widget.*;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +25,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.malikbisic.sportapp.R;
 
 import java.util.HashMap;
@@ -50,9 +53,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     static String surname;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference mReferenceUsers;
+     FirebaseDatabase mDatabase;
+  DatabaseReference mReferenceUsers;
     static boolean checkLoginPressed = false;
+    FirebaseFirestore db;
 
     LinearLayout layout;
 
@@ -99,6 +103,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         progressDialog = new ProgressDialog(this);
         mDatabase = FirebaseDatabase.getInstance();
+        db = FirebaseFirestore.getInstance();
         mSignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,7 +167,27 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         intent.putExtra("firstName",userName);
         intent.putExtra("secondName", userSurname);
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
+
+
+        Map<String, Object> user = new HashMap<>();
+        user.put("name",userName);
+        user.put("surname",userSurname);
+     db.collection("Users").document(user_id)
+             .set(user)
+             .addOnSuccessListener(new OnSuccessListener<Void>() {
+                 @Override
+                 public void onSuccess(Void aVoid) {
+
+                 }
+             }).addOnFailureListener(new OnFailureListener() {
+         @Override
+         public void onFailure(@NonNull Exception e) {
+
+         }
+     });
+
+
+      /*  DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
         Map userMAP = new HashMap();
         userMAP.put("name", userName);
         userMAP.put("surname", userSurname);
@@ -173,7 +198,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     Log.e("registeruser", databaseError.getMessage());
                 }
             }
-        });
+        });*/
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         registerPressed = true;
         LoginActivity.checkGoogleSignIn = false;
