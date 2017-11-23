@@ -35,8 +35,7 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGExternalFileResolver;
 import com.caverock.androidsvg.SVGParser;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.classes.SvgDecoder;
 import com.malikbisic.sportapp.model.CountryModel;

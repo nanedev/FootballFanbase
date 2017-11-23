@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import retrofit2.http.GET;
+
 
 /**
  * A simple {@link Fragment} subclass.

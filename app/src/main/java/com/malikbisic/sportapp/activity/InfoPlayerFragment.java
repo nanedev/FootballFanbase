@@ -18,7 +18,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonObject;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.TransfersAdapter;
 import com.malikbisic.sportapp.model.Transfers;

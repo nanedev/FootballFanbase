@@ -26,7 +26,7 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_below="@id/oddsLayout"
-                android:background="@color/tw__composer_white" />
+                android:background="@color/white" />
 
             <TextView
                 android:id="@+id/value1"
@@ -40,7 +40,7 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_below="@id/oddsLayout"
-                android:background="@color/tw__composer_white" />
+                android:background="@color/white" />
 
             <TextView
                 android:id="@+id/xValue"
@@ -54,7 +54,7 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_below="@id/oddsLayout"
-                android:background="@color/tw__composer_white" />
+                android:background="@color/white" />
 
             <TextView
                 android:id="@+id/value2"
@@ -71,13 +71,13 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_above="@id/oddsLayout"
-            android:background="@color/tw__composer_white" />
+            android:background="@color/white" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/oddsLayout"
-            android:background="@color/tw__composer_white" />
+            android:background="@color/white" />
     </RelativeLayout>
 
 

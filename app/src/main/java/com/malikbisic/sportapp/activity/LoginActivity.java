@@ -39,8 +39,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.malikbisic.sportapp.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -50,7 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private DatabaseReference mReferenceUsers;
+    private FirebaseFirestore mReferenceUsers;
     private EditText mEmailText;
     private EditText mPasswordText;
     private Button mLoginButton;
@@ -98,8 +109,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mForgotPassword.setOnClickListener(this);
         googleSignIn.setOnClickListener(this);
         mDialog = new ProgressDialog(this);
-        mReferenceUsers = mDatabase.getReference("Users");
-        mReferenceUsers.keepSynced(true);
+        mReferenceUsers = FirebaseFirestore.getInstance();
+        mReferenceUsers.collection("Users");
+        //mReferenceUsers.keepSynced(true);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -260,10 +272,63 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (mAuth.getCurrentUser() != null) {
 
             user_id = mAuth.getCurrentUser().getUid();
-            mReferenceUsers = mDatabase.getReference("Users");
+           DocumentReference usersRef =  mReferenceUsers.collection("Users").document(user_id);
+           usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+               @Override
+               public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                   if (task.isSuccessful()){
+
+                        DocumentSnapshot document = task.getResult();
+                       if (document.exists()){
+                           FirebaseUser user = mAuth.getCurrentUser();
+
+                           if (user.isEmailVerified() && document.contains("username")) {
+                               String current_userID = mAuth.getCurrentUser().getUid();
+                               String device_id = FirebaseInstanceId.getInstance().getToken();
+
+                               Map<String, Object> user2 = new HashMap<>();
+                               user2.put("device_id",device_id);
+
+                               mReferenceUsers.collection("Users").document(current_userID)
+                                       .update(user2)
+                                       .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                           @Override
+                                           public void onSuccess(Void aVoid) {
+
+                                           }
+                                       }).addOnFailureListener(new OnFailureListener() {
+                                   @Override
+                                   public void onFailure(@NonNull Exception e) {
+                                        Log.e("error update", e.getLocalizedMessage());
+                                   }
+                               });
+                               Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                               startActivity(setupIntent);
+                               mDialog.dismiss();
+                               finish();
+                           } else if (user.isEmailVerified() && !document.contains("username")) {
+                               Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                               startActivity(intent);
+                               mDialog.dismiss();
+                               finish();
+
+                           } else if (!user.isEmailVerified()){
+                               mDialog.dismiss();
+                               Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
+                           } else {
+
+                           }
+                       }
 
 
-            mReferenceUsers.addValueEventListener(new ValueEventListener() {
+                   } else {
+                       Log.e("error", String.valueOf(task.getException()));
+                   }
+               }
+           });
+
+
+          /*  mReferenceUsers.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(user_id)) {
@@ -304,13 +369,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            }); */
         }
     }
 
     private void autoLogin() {
 
-        if (mAuth.getCurrentUser() != null) {
+       /* if (mAuth.getCurrentUser() != null) {
             user_id = mAuth.getCurrentUser().getUid();
             mReferenceUsers = mDatabase.getReference("Users");
 
@@ -357,8 +422,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
-        }
+            }); */
+
     }
 
 
