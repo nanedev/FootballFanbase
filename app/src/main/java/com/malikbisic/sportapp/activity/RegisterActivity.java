@@ -297,6 +297,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void registerUser() {
+
+        //nesto
         userName = mNameText.getText().toString().trim();
         userSurname = mSurnameText.getText().toString().trim();
         userEmail = mEmailText.getText().toString().trim();
