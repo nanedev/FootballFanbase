@@ -81,6 +81,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.malikbisic.sportapp.adapter.MainPageAdapter;
 import com.malikbisic.sportapp.classes.FreeUser;
 import com.malikbisic.sportapp.classes.PremiumUsers;
@@ -329,8 +334,71 @@ public class MainPage extends AppCompatActivity
 
                     Log.i("proba", uid);
 
-                    mReference = mDatabase.getReference().child("Users").child(uid);
-                    mReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                  FirebaseFirestore  mReferenceInfo = FirebaseFirestore.getInstance();
+                  mReferenceInfo.collection("Users").document(uid)
+                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                            if (documentSnapshot.exists()) {
+                                Map<String, Object> value = (Map<String, Object>) documentSnapshot.getData();
+
+
+                                profielImage = String.valueOf(value.get("profileImage"));
+                                Picasso.with(getApplicationContext())
+                                        .load(profielImage)
+                                        .into(profile);
+                                username.setText(String.valueOf(value.get("username")));
+                                usernameuser.setText(String.valueOf(value.get("username")));
+                                usernameInfo = usernameuser.getText().toString().trim();
+                                nameSurname.setText(String.valueOf(value.get("name") + " " + String.valueOf(value.get("surname"))));
+                                userProfileImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                                userProfileImage.setAlpha(0.9f);
+
+                                Picasso.with(getApplicationContext())
+                                        .load(profielImage)
+                                        .into(userProfileImage);
+
+                                country = String.valueOf(value.get("flag"));
+                                clubHeaderString = String.valueOf(value.get("favoriteClubLogo"));
+                                myClubName = String.valueOf(value.get("favoriteClub"));
+                                Picasso.with(getApplicationContext())
+                                        .load(clubHeaderString)
+                                        .into(clubHeader);
+                                getDateFromDatabaseMainPage = String.valueOf(value.get("premiumDate"));
+                                try {
+                                    currentDateOfUserMainPage = dateFormat.parse(getDateFromDatabaseMainPage);
+                                    calendar.setTime(currentDateOfUserMainPage);
+
+                                } catch (java.text.ParseException ee) {
+                                    ee.printStackTrace();
+                                }
+
+                               /* FirebaseFirestore setOfline = FirebaseFirestore.getInstance();
+                                setOfline.collection("UsersChat").document(myClubName).collection(uid).getId();
+                                setOfline.document("online").set(true);*/
+
+
+                                calendar.add(Calendar.DAY_OF_MONTH, 15);
+                                trialDate = calendar.getTime();
+                                trialDateString = dateFormat.format(trialDate);
+                                //mReference.child("trialPremiumDate").setValue(trialDateString);
+
+
+                               /* if (nowDate.equals(trialDate) || nowDate.after(trialDate)) {
+                                    mReference.child("premium").setValue(false);
+                                }*/
+
+                                Log.i("country", country);
+
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if (user != null)
+                                    email.setText(user.getEmail());
+                                backgroundImage();
+
+
+                            }
+                        }
+/*
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -397,7 +465,7 @@ public class MainPage extends AppCompatActivity
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
 
-                        }
+                        } */
                     });
 
 
@@ -760,13 +828,12 @@ public class MainPage extends AppCompatActivity
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
 
-        DatabaseReference checkPremiumUser = FirebaseDatabase.getInstance().getReference().child("Users").child(myUserId);
-        checkPremiumUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.M)
+        FirebaseFirestore checkPremiumUser = FirebaseFirestore.getInstance();
+        checkPremiumUser.collection("Users").document(myUserId)
+        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                model = dataSnapshot.getValue(UsersModel.class);
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                model = documentSnapshot.toObject(UsersModel.class);
 
                 isPremium = model.isPremium();
 
@@ -778,13 +845,10 @@ public class MainPage extends AppCompatActivity
                     freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
                 }
 
-
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
-            }
+
         });
 
         firstTimeOpened = false;
