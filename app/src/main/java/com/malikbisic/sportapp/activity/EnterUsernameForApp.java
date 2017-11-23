@@ -47,6 +47,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -86,7 +88,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
+    private FirebaseFirestore mReference;
     private boolean valid = true;
     private Spinner genderItems;
     private List<String> spinnerArray;
@@ -595,7 +597,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                     String downloadUrl = task.getResult().getDownloadUrl().toString();
                     if (task.isSuccessful()) {
-                        mReference = FirebaseDatabase.getInstance().getReference();
+                        mReference = FirebaseFirestore.getInstance();
 
                         String userRef = "Users/" + uid;
 
@@ -618,17 +620,19 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         Map setUserDatabaseInfo = new HashMap();
                         setUserDatabaseInfo.put(userRef, userInfoMap);
 
-                        mReference.updateChildren(setUserDatabaseInfo, new DatabaseReference.CompletionListener() {
+                        mReference.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener() {
                             @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                if (databaseError != null) {
-                                    Log.e("errorUserSet", databaseError.getMessage().toString());
-                                }
+                            public void onComplete(@NonNull Task task) {
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
 
                             }
                         });
 
-                        DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference();
+                        FirebaseFirestore usersChat = FirebaseFirestore.getInstance();
 
                         String usersChatRef = "UsersChat/" + favoriteClubString + "/" + uid;
                         final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
@@ -645,17 +649,19 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         userChatInfo.put("userID", uid);
                         userChatInfo.put("online", "true");
 
-                        Map updateUsersChat = new HashMap();
-                        updateUsersChat.put(usersChatRef, userChatInfo);
 
-                        usersChat.updateChildren(updateUsersChat, new DatabaseReference.CompletionListener() {
+                        usersChat.collection("UsersChat").document(favoriteClubString).collection(uid).add(userChatInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                if (databaseError != null) {
-                                    Log.e("errorUserChatSet", databaseError.getMessage().toString());
-                                }
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
                             }
                         });
+
                         mDialog.dismiss();
                     }else   Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
@@ -728,13 +734,39 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                mReference = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                mReference = FirebaseFirestore.getInstance();
+
 
                 String userRef = "Users/" + uid;
 
                 Map userInfoMap = new HashMap();
+                userInfoMap.put("username", username);
+                userInfoMap.put("date", userDate);
+                userInfoMap.put("gender", gender);
+                if (downloadUrl != null)
+                    userInfoMap.put("profileImage", downloadUrl.toString());
+                userInfoMap.put("country", countryString);
+                userInfoMap.put("flag", imageOfCountry);
+                userInfoMap.put("favoriteClub", clubName);
+                userInfoMap.put("favoriteClubLogo", clubLogo);
+                userInfoMap.put("userID", uid);
+                userInfoMap.put("premium", true);
+                userInfoMap.put("premiumDate", todayDateTime);
 
-                mReference.child("username").setValue(username);
+                mReference.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("error custom reg", e.getLocalizedMessage());
+                    }
+                });
+
+
+                /*mReference.child("username").setValue(username);
                 mReference.child("date").setValue(userDate);
                 mReference.child("gender").setValue(gender);
                 if (downloadUrl != null)
@@ -760,7 +792,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     }
                 });*/
 
-                DatabaseReference usersChat = FirebaseDatabase.getInstance().getReference();
+                FirebaseFirestore usersChat = FirebaseFirestore.getInstance();
 
                 String usersChatRef = "UsersChat/" + favoriteClubString + "/" + uid;
                 final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
@@ -777,17 +809,20 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 userChatInfo.put("userID", uid);
                 userChatInfo.put("online", "true");
 
-                Map updateUsersChat = new HashMap();
-                updateUsersChat.put(usersChatRef, userChatInfo);
-
-                usersChat.updateChildren(updateUsersChat, new DatabaseReference.CompletionListener() {
+                usersChat.collection("UsersChat").document(favoriteClubString).collection(uid).add(userChatInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Log.e("errorUserChatSet", databaseError.getMessage().toString());
-                        }
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("error Creg userschat", e.getLocalizedMessage());
                     }
                 });
+
+
+
 
 
                 mDialog.dismiss();

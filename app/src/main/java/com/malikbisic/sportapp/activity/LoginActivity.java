@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         Intent intent = getIntent();
         getUserEmail = intent.getStringExtra("email");
-        mEmailText.setText(getUserEmail,TextView.BufferType.EDITABLE);
+        mEmailText.setText(getUserEmail, TextView.BufferType.EDITABLE);
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
@@ -123,10 +123,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
 
-
                 if (user != null) {
                     autoLogin();
                     Log.i("user", user.getEmail());
+
                 }
             }
         };
@@ -272,60 +272,63 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (mAuth.getCurrentUser() != null) {
 
             user_id = mAuth.getCurrentUser().getUid();
-           DocumentReference usersRef =  mReferenceUsers.collection("Users").document(user_id);
-           usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-               @Override
-               public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                   if (task.isSuccessful()){
+            DocumentReference usersRef = mReferenceUsers.collection("Users").document(user_id);
+            usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
 
                         DocumentSnapshot document = task.getResult();
-                       if (document.exists()){
-                           FirebaseUser user = mAuth.getCurrentUser();
+                        if (document.exists()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
 
-                           if (user.isEmailVerified() && document.contains("username")) {
-                               String current_userID = mAuth.getCurrentUser().getUid();
-                               String device_id = FirebaseInstanceId.getInstance().getToken();
+                            if (user.isEmailVerified() && document.contains("username")) {
+                                String current_userID = mAuth.getCurrentUser().getUid();
+                                String device_id = FirebaseInstanceId.getInstance().getToken();
 
-                               Map<String, Object> user2 = new HashMap<>();
-                               user2.put("device_id",device_id);
+                                Map<String, Object> user2 = new HashMap<>();
+                                user2.put("device_id", device_id);
 
-                               mReferenceUsers.collection("Users").document(current_userID)
-                                       .update(user2)
-                                       .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                           @Override
-                                           public void onSuccess(Void aVoid) {
+                                mReferenceUsers.collection("Users").document(current_userID)
+                                        .update(user2)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
 
-                                           }
-                                       }).addOnFailureListener(new OnFailureListener() {
-                                   @Override
-                                   public void onFailure(@NonNull Exception e) {
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
                                         Log.e("error update", e.getLocalizedMessage());
-                                   }
-                               });
-                               Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
-                               startActivity(setupIntent);
-                               mDialog.dismiss();
-                               finish();
-                           } else if (user.isEmailVerified() && !document.contains("username")) {
-                               Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
-                               startActivity(intent);
-                               mDialog.dismiss();
-                               finish();
+                                    }
+                                });
+                                Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                                startActivity(setupIntent);
+                                mDialog.dismiss();
+                                finish();
+                            } else if (user.isEmailVerified() && !document.contains("username")) {
+                                Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                                startActivity(intent);
+                                mDialog.dismiss();
+                                finish();
 
-                           } else if (!user.isEmailVerified()){
-                               mDialog.dismiss();
-                               Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
-                           } else {
+                            } else if (!user.isEmailVerified()) {
+                                mDialog.dismiss();
+                                Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
+                            } else {
 
-                           }
-                       }
+                            }
+                        } else {
+                            Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                            goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(goToSetUp);
+                            finish();
 
 
-                   } else {
-                       Log.e("error", String.valueOf(task.getException()));
-                   }
-               }
-           });
+                        }
+                    }
+                }
+            });
 
 
           /*  mReferenceUsers.addValueEventListener(new ValueEventListener() {
@@ -374,6 +377,68 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void autoLogin() {
+
+        if (mAuth.getCurrentUser() != null) {
+            user_id = mAuth.getCurrentUser().getUid();
+            DocumentReference usersRef = mReferenceUsers.collection("Users").document(user_id);
+            usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot snapshot = task.getResult();
+                        if (snapshot.exists()) {
+                            if (snapshot.contains(user_id)) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+
+                                if (user.isEmailVerified() && snapshot.contains("username")) {
+                                    final String current_userID = mAuth.getCurrentUser().getUid();
+                                    final String device_id = FirebaseInstanceId.getInstance().getToken();
+
+
+                                    CountDownTimer timer = new CountDownTimer(3000, 1000) {
+                                        @Override
+                                        public void onTick(long l) {
+
+                                        }
+
+                                        @Override
+                                        public void onFinish() {
+                                            Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                                            startActivity(setupIntent);
+                                            mDialog.dismiss();
+
+                                            Map<String, Object> updateDevideId = new HashMap<>();
+                                            updateDevideId.put("device_id", device_id);
+                                            finish();
+                                            mReferenceUsers.collection("Users").document(current_userID)
+                                                    .update(updateDevideId)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.e("error update auto login", e.getLocalizedMessage());
+                                                }
+                                            });
+                                        }
+                                    }.start();
+
+                                } else {
+
+                                    mDialog.dismiss();
+
+                                }
+                            }
+                        } else {
+                            Log.e("error auto login", String.valueOf(task.getException()));
+                        }
+                    }
+                }
+            });
+        }
 
        /* if (mAuth.getCurrentUser() != null) {
             user_id = mAuth.getCurrentUser().getUid();
