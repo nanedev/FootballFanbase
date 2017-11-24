@@ -463,7 +463,7 @@ public class MainPage extends AppCompatActivity
 
     public void setNumberClubFans() {
 
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        /*DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -523,7 +523,7 @@ public class MainPage extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        }); */
     }
 
 
