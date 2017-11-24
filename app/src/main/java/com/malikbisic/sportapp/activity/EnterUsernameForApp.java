@@ -48,7 +48,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -419,106 +423,103 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     public void valid() {
         valid = true;
         final String username = enterUsername.getText().toString().trim();
-        Query query = FirebaseDatabase.getInstance().getReference().child("Users").orderByChild("username").equalTo(username);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("Users").whereEqualTo("username", username);
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!hasSetProfileImage) {
-                    Toast.makeText(EnterUsernameForApp.this, "You need to set profile image", Toast.LENGTH_LONG).show();
-                    valid = false;
-                } else {
-                    valid = true;
-                }
+            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                if (dataSnapshot.getChildrenCount() > 0) {
-                    usernameErrorTxt.setText("Username already exists");
-                    usernameErrorTxt.setVisibility(View.VISIBLE);
-                    validUsername = false;
-                } else if (enterUsername.getText().toString().isEmpty()) {
-                    usernameErrorTxt.setText("Field can not be blank");
-                    usernameErrorTxt.setVisibility(View.VISIBLE);
-                    validUsername = false;
-                } else if (username.length() < 3 || username.length() > 8) {
-
-                    usernameErrorTxt.setText("Username must be between 3 and 8 characters!");
-                    usernameErrorTxt.setVisibility(View.VISIBLE);
-                    validUsername = false;
-                } else {
-                    usernameErrorTxt.setText("");
-                    usernameErrorTxt.setVisibility(View.GONE);
-                    validUsername = true;
-
-                }
-
-
-                if (selectCountry.getText().toString().isEmpty()) {
-                    countryError.setText("Field can not be empty");
-                    countryError.setVisibility(View.VISIBLE);
-                    validCountry = false;
-                } else {
-                    countryError.setText("");
-                    countryError.setVisibility(View.GONE);
-                    validCountry = true;
-                }
-
-                if (realYear < 13) {
-
-                    birthdayErrorTxt.setText("You must be older than 13!");
-                    birthdayErrorTxt.setVisibility(View.VISIBLE);
-                    validBirthday = false;
-                } else {
-                    birthdayErrorTxt.setText("");
-                    birthdayErrorTxt.setVisibility(View.GONE);
-                    validBirthday = true;
-                }
-
-                if (favoriteClub.getText().toString().isEmpty()) {
-                    clubError.setText("Field can not be blank");
-                    clubError.setVisibility(View.VISIBLE);
-                    validClub = false;
-                } else {
-                    clubError.setText("");
-                    clubError.setVisibility(View.GONE);
-                    validClub = true;
-                }
-
-                if (valid && validUsername && validBirthday && validCountry && validClub) {
-                    mDialog = new ProgressDialog(EnterUsernameForApp.this,
-                            R.style.AppTheme_Dark_Dialog);
-                    mDialog.setIndeterminate(true);
-                    mDialog.setMessage("Creating Account...");
-                    mDialog.show();
-                    if (LoginActivity.checkGoogleSignIn) {
-                        googleEnterDatabase();
-
-                    }
-                    if (RegisterActivity.registerPressed) {
-
-                        loginEnterDatabase();
+                    if (!hasSetProfileImage) {
+                        Toast.makeText(EnterUsernameForApp.this, "You need to set profile image", Toast.LENGTH_LONG).show();
+                        valid = false;
+                    } else {
+                        valid = true;
                     }
 
-                    new CountDownTimer(4000, 1000) {
-                        @Override
-                        public void onTick(long l) {
+                    if (dataSnapshot.getDocuments().size()  > 0) {
+                        usernameErrorTxt.setText("Username already exists");
+                        usernameErrorTxt.setVisibility(View.VISIBLE);
+                        validUsername = false;
+                    } else if (enterUsername.getText().toString().isEmpty()) {
+                        usernameErrorTxt.setText("Field can not be blank");
+                        usernameErrorTxt.setVisibility(View.VISIBLE);
+                        validUsername = false;
+                    } else if (username.length() < 3 || username.length() > 8) {
+
+                        usernameErrorTxt.setText("Username must be between 3 and 8 characters!");
+                        usernameErrorTxt.setVisibility(View.VISIBLE);
+                        validUsername = false;
+                    } else {
+                        usernameErrorTxt.setText("");
+                        usernameErrorTxt.setVisibility(View.GONE);
+                        validUsername = true;
+
+                    }
+
+
+                    if (selectCountry.getText().toString().isEmpty()) {
+                        countryError.setText("Field can not be empty");
+                        countryError.setVisibility(View.VISIBLE);
+                        validCountry = false;
+                    } else {
+                        countryError.setText("");
+                        countryError.setVisibility(View.GONE);
+                        validCountry = true;
+                    }
+
+                    if (realYear < 13) {
+
+                        birthdayErrorTxt.setText("You must be older than 13!");
+                        birthdayErrorTxt.setVisibility(View.VISIBLE);
+                        validBirthday = false;
+                    } else {
+                        birthdayErrorTxt.setText("");
+                        birthdayErrorTxt.setVisibility(View.GONE);
+                        validBirthday = true;
+                    }
+
+                    if (favoriteClub.getText().toString().isEmpty()) {
+                        clubError.setText("Field can not be blank");
+                        clubError.setVisibility(View.VISIBLE);
+                        validClub = false;
+                    } else {
+                        clubError.setText("");
+                        clubError.setVisibility(View.GONE);
+                        validClub = true;
+                    }
+
+                    if (valid && validUsername && validBirthday && validCountry && validClub) {
+                        mDialog = new ProgressDialog(EnterUsernameForApp.this,
+                                R.style.AppTheme_Dark_Dialog);
+                        mDialog.setIndeterminate(true);
+                        mDialog.setMessage("Creating Account...");
+                        mDialog.show();
+                        if (LoginActivity.checkGoogleSignIn) {
+                            googleEnterDatabase();
 
                         }
+                        if (RegisterActivity.registerPressed) {
 
-                        @Override
-                        public void onFinish() {
-                            onSignupSuccess();
+                            loginEnterDatabase();
                         }
-                    }.start();
 
-                } else {
-                    mDialog.dismiss();
+                        new CountDownTimer(4000, 1000) {
+                            @Override
+                            public void onTick(long l) {
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                onSignupSuccess();
+                            }
+                        }.start();
+
+                    } else {
+                        mDialog.dismiss();
+                    }
+
                 }
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
 
     }
@@ -576,7 +577,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         googleCollection.collection("Users").document(uid).set(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Log.i("Successfully written",task.getResult().toString());
+                                //Log.i("Successfully written",task.getResult().toString());
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {

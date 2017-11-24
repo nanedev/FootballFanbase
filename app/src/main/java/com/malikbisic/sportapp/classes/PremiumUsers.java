@@ -8,6 +8,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,7 +69,8 @@ public class PremiumUsers {
 
 
     public void premiumUser(RecyclerView wallList, final Context ctx, final Activity activity) {
-         com.google.firebase.firestore.Query query = postingDatabase.collection("Posting");
+        com.google.firebase.firestore.Query query = postingDatabase.collection("Posting");
+        query.orderBy("dd0v0YjiXc6n3LJb8OIk");
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         notificationReference = FirebaseFirestore.getInstance();//.getReference().child("Notification");
@@ -679,21 +681,30 @@ public class PremiumUsers {
                 });
 
 
-    }
+            }
+
+            @Override
+            public void onError(FirebaseFirestoreException e) {
+                Log.e("wall listError", e.getLocalizedMessage());
+            }
 
             @Override
             public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.wall_row, parent);
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.wall_row, parent, false);
                 return new PostViewHolder(v);
             }
         };
 
 
+        wallList.setAdapter(firebaseRecyclerAdapter);
+        wallList.setLayoutManager(new LinearLayoutManager(ctx));
+        firebaseRecyclerAdapter.notifyDataSetChanged();
+
         /*FirestoreR<Post, PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
                 Post.class,
                 R.layout.wall_row,
                 PostViewHolder.class,
-                postingDatabase
+                postingDatabasec
         ) {
 
 
@@ -1293,8 +1304,5 @@ public class PremiumUsers {
                 });
             }}; */
 
-
-                wallList.setAdapter(firebaseRecyclerAdapter);
-                firebaseRecyclerAdapter.notifyDataSetChanged();
-            }
-        }
+    }
+}
