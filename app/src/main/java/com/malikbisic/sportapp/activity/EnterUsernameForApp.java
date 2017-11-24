@@ -146,6 +146,11 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     String lastNameLogin;
     boolean validUsername = true, validBirthday = true, validCountry = true, validClub = true;
 
+    FirebaseFirestore googleCollection;
+    FirebaseFirestore usersChat;
+
+    FirebaseFirestore loginViaEmailCollection;
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,6 +187,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         favoriteClub.setText(clubName);
         clubLogoImage.setVisibility(View.VISIBLE);
         Picasso.with(this).load(clubLogo).into(clubLogoImage);
+        googleCollection = FirebaseFirestore.getInstance();
+        usersChat = FirebaseFirestore.getInstance();
+        loginViaEmailCollection = FirebaseFirestore.getInstance();
 
         Locale locale = Locale.ENGLISH;
         Locale.setDefault(locale);
@@ -512,59 +520,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
             }
         });
-//        if (!hasSetProfileImage) {
-//            Toast.makeText(EnterUsernameForApp.this, "You need to set profile image", Toast.LENGTH_LONG).show();
-//            valid = false;
-//        } else {
-//            valid = true;
-//        }
-//
-//
-//        if (TextUtils.isEmpty(enterUsername.getText().toString())) {
-//            usernameErrorTxt.setText("Field can not be blank");
-//            usernameErrorTxt.setVisibility(View.VISIBLE);
-//            valid = false;
-//        } else if (usernameList.contains(username)) {
-//            usernameErrorTxt.setText("Username already exists");
-//            usernameErrorTxt.setVisibility(View.VISIBLE);
-//            valid = false;
-//        } else if (username.length() < 3 || username.length() > 8) {
-//
-//            usernameErrorTxt.setText("Username must be between 3 and 8 characters!");
-//            usernameErrorTxt.setVisibility(View.VISIBLE);
-//        } else {
-//            usernameErrorTxt.setText("");
-//            usernameErrorTxt.setVisibility(View.GONE);
-//
-//        }
-//
-//        if (selectCountry.getText().toString().isEmpty()) {
-//            countryError.setText("Field can not be empty");
-//            countryError.setVisibility(View.VISIBLE);
-//            valid = false;
-//        } else {
-//            countryError.setText("");
-//            countryError.setVisibility(View.GONE);
-//        }
-//
-//        if (realYear < 13) {
-//
-//            birthdayErrorTxt.setText("You must be older than 13!");
-//            birthdayErrorTxt.setVisibility(View.VISIBLE);
-//            valid = false;
-//        } else {
-//            usernameErrorTxt.setText("");
-//            birthdayErrorTxt.setVisibility(View.GONE);
-//        }
-//
-//        if (favoriteClub.getText().toString().isEmpty()) {
-//            clubError.setText("Field can not be blank");
-//            clubError.setVisibility(View.VISIBLE);
-//            valid = false;
-//        } else {
-//            clubError.setText("");
-//            clubError.setVisibility(View.GONE);
-//        }
 
     }
 
@@ -599,9 +554,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     if (task.isSuccessful()) {
                         mReference = FirebaseFirestore.getInstance();
 
-                        String userRef = "Users/" + uid;
 
-                        Map userInfoMap = new HashMap();
+
+                        Map<String,Object> userInfoMap = new HashMap<>();
                         userInfoMap.put("name", googleFirstName);
                         userInfoMap.put("surname", googleLastName);
                         userInfoMap.put("username", username);
@@ -617,27 +572,27 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         userInfoMap.put("premium", true);
                         userInfoMap.put("premiumDate", todayDateTime);
 
-                        Map setUserDatabaseInfo = new HashMap();
-                        setUserDatabaseInfo.put(userRef, userInfoMap);
 
-                        mReference.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener() {
+                        googleCollection.collection("Users").document(uid).set(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void onComplete(@NonNull Task task) {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.i("Successfully written",task.getResult().toString());
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-
+                                Log.i("Error",e.getLocalizedMessage());
                             }
                         });
 
-                        FirebaseFirestore usersChat = FirebaseFirestore.getInstance();
 
-                        String usersChatRef = "UsersChat/" + favoriteClubString + "/" + uid;
+
+
+
                         final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
 
-                        Map userChatInfo = new HashMap();
+                        Map<String,Object> userChatInfo = new HashMap<>();
                         userChatInfo.put("username", username);
                         userChatInfo.put("date", currentDate);
                         if (downloadUrl != null)
@@ -649,18 +604,20 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         userChatInfo.put("userID", uid);
                         userChatInfo.put("online", "true");
 
-
                         usersChat.collection("UsersChat").document(favoriteClubString).collection(uid).add(userChatInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
+
+                                Log.i("Successfully written",task.getResult().toString());
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-
+                                Log.i("Error",e.getLocalizedMessage());
                             }
                         });
+
 
                         mDialog.dismiss();
                     }else   Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
@@ -734,12 +691,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                mReference = FirebaseFirestore.getInstance();
 
 
-                String userRef = "Users/" + uid;
 
-                Map userInfoMap = new HashMap();
+
+
+                Map<String,Object> userInfoMap = new HashMap<>();
                 userInfoMap.put("username", username);
                 userInfoMap.put("date", userDate);
                 userInfoMap.put("gender", gender);
@@ -753,51 +710,26 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 userInfoMap.put("premium", true);
                 userInfoMap.put("premiumDate", todayDateTime);
 
-                mReference.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener() {
+                loginViaEmailCollection.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task task) {
-
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.i("Successfully written",task.getResult().toString());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("error custom reg", e.getLocalizedMessage());
+                        Log.i("Error",e.getLocalizedMessage());
                     }
                 });
 
 
-                /*mReference.child("username").setValue(username);
-                mReference.child("date").setValue(userDate);
-                mReference.child("gender").setValue(gender);
-                if (downloadUrl != null)
-                    mReference.child("profileImage").setValue(downloadUrl.toString());
-                mReference.child("country").setValue(countryString);
-                mReference.child("flag").setValue(imageOfCountry);
-                mReference.child("favoriteClub").setValue(clubName);
-                mReference.child("favoriteClubLogo").setValue(clubLogo);
-                mReference.child("userID").setValue(uid);
-                mReference.child("premium").setValue(true);
-                mReference.child("premiumDate").setValue(todayDateTime);
 
-                /*Map setUserDatabaseInfo = new HashMap();
-                setUserDatabaseInfo.put(userRef, userInfoMap);
 
-                mReference.updateChildren(setUserDatabaseInfo, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Log.e("errorUserSet", databaseError.getMessage().toString());
-                        }
 
-                    }
-                });*/
 
-                FirebaseFirestore usersChat = FirebaseFirestore.getInstance();
-
-                String usersChatRef = "UsersChat/" + favoriteClubString + "/" + uid;
                 final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
 
-                Map userChatInfo = new HashMap();
+                Map<String,Object> userChatInfo = new HashMap<>();
                 userChatInfo.put("username", username);
                 userChatInfo.put("date", currentDate);
                 if (downloadUrl != null)

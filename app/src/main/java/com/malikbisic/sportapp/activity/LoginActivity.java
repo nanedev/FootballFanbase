@@ -389,7 +389,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (task.isSuccessful()) {
                         DocumentSnapshot snapshot = task.getResult();
                         if (snapshot.exists()) {
-                            if (snapshot.contains(user_id)) {
+                            if (task.getResult().getString("username") != null) {
                                 FirebaseUser user = mAuth.getCurrentUser();
 
                                 if (user.isEmailVerified() && snapshot.contains("username")) {
