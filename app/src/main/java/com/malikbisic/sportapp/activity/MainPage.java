@@ -70,6 +70,8 @@ import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -82,8 +84,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.malikbisic.sportapp.adapter.MainPageAdapter;
@@ -133,7 +138,7 @@ public class MainPage extends AppCompatActivity
     FirebaseAuth mAuth;
     public static String clubHeaderString;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference, postingDatabase, likesReference, dislikeReference;
+    private FirebaseFirestore mReference, postingDatabase, likesReference, dislikeReference;
     private ImageView backgroundHeader;
     private ImageView userProfileImage;
     private TextView usernameuser;
@@ -213,7 +218,8 @@ public class MainPage extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
+        postingDatabase = FirebaseFirestore.getInstance();
+        //postingDatabase.collection("Posting");
         profileUsers = FirebaseDatabase.getInstance().getReference();
         notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         userProfileImage = (ImageView) findViewById(R.id.userProfilImage);
@@ -319,10 +325,12 @@ public class MainPage extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        likesReference = mDatabase.getReference().child("Likes");
-        dislikeReference = mDatabase.getReference().child("Dislikes");
-        likesReference.keepSynced(true);
-        dislikeReference.keepSynced(true);
+        likesReference = FirebaseFirestore.getInstance();
+        likesReference.collection("Likes");
+        dislikeReference = FirebaseFirestore.getInstance();
+        dislikeReference.collection("Dislikes");
+        //likesReference.keepSynced(true);
+        //dislikeReference.keepSynced(true);
 
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -334,7 +342,7 @@ public class MainPage extends AppCompatActivity
 
                     Log.i("proba", uid);
 
-                  FirebaseFirestore  mReferenceInfo = FirebaseFirestore.getInstance();
+                  final FirebaseFirestore  mReferenceInfo = FirebaseFirestore.getInstance();
                   mReferenceInfo.collection("Users").document(uid)
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
@@ -373,16 +381,20 @@ public class MainPage extends AppCompatActivity
                                     ee.printStackTrace();
                                 }
 
-                               /* FirebaseFirestore setOfline = FirebaseFirestore.getInstance();
-                                setOfline.collection("UsersChat").document(myClubName).collection(uid).getId();
-                                setOfline.document("online").set(true);*/
+                                Map onlie = new HashMap();
+                                onlie.put("online", true);
+                                FirebaseFirestore setOfline = FirebaseFirestore.getInstance();
+                                setOfline.collection("UsersChat").document(myClubName).collection(uid).document().update(onlie);
 
 
                                 calendar.add(Calendar.DAY_OF_MONTH, 15);
                                 trialDate = calendar.getTime();
                                 trialDateString = dateFormat.format(trialDate);
-                                //mReference.child("trialPremiumDate").setValue(trialDateString);
+                                Map trialMap = new HashMap();
+                                trialMap.put("trialPremiumDate", trialDateString);
 
+                                FirebaseFirestore trialPremiumRef = FirebaseFirestore.getInstance();
+                                trialPremiumRef.collection("Users").document(uid).update(trialMap);
 
                                /* if (nowDate.equals(trialDate) || nowDate.after(trialDate)) {
                                     mReference.child("premium").setValue(false);
@@ -398,74 +410,6 @@ public class MainPage extends AppCompatActivity
 
                             }
                         }
-/*
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                            if (dataSnapshot.exists()) {
-                                Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
-
-
-                                profielImage = String.valueOf(value.get("profileImage"));
-                                Picasso.with(getApplicationContext())
-                                        .load(profielImage)
-                                        .into(profile);
-                                username.setText(String.valueOf(value.get("username")));
-                                usernameuser.setText(String.valueOf(value.get("username")));
-                                usernameInfo = usernameuser.getText().toString().trim();
-                                nameSurname.setText(String.valueOf(value.get("name") + " " + String.valueOf(value.get("surname"))));
-                                userProfileImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                                userProfileImage.setAlpha(0.9f);
-
-                                Picasso.with(getApplicationContext())
-                                        .load(profielImage)
-                                        .into(userProfileImage);
-
-                                country = String.valueOf(value.get("flag"));
-                                clubHeaderString = String.valueOf(value.get("favoriteClubLogo"));
-                                myClubName = String.valueOf(value.get("favoriteClub"));
-                                Picasso.with(getApplicationContext())
-                                        .load(clubHeaderString)
-                                        .into(clubHeader);
-                                getDateFromDatabaseMainPage = String.valueOf(value.get("premiumDate"));
-                                try {
-                                    currentDateOfUserMainPage = dateFormat.parse(getDateFromDatabaseMainPage);
-                                    calendar.setTime(currentDateOfUserMainPage);
-
-                                } catch (java.text.ParseException e) {
-                                    e.printStackTrace();
-                                }
-
-                                DatabaseReference setOfline = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(myClubName).child(uid);
-                                setOfline.child("online").setValue(true);
-
-
-                                calendar.add(Calendar.DAY_OF_MONTH, 15);
-                                trialDate = calendar.getTime();
-                                trialDateString = dateFormat.format(trialDate);
-                                mReference.child("trialPremiumDate").setValue(trialDateString);
-
-
-                                if (nowDate.equals(trialDate) || nowDate.after(trialDate)) {
-                                    mReference.child("premium").setValue(false);
-                                }
-
-                                Log.i("country", country);
-
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                if (user != null)
-                                    email.setText(user.getEmail());
-                                backgroundImage();
-
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        } */
                     });
 
 
@@ -660,19 +604,33 @@ public class MainPage extends AppCompatActivity
             final String clubLogo = MainPage.clubHeaderString;
             postingDialog.setMessage("Posting...");
             postingDialog.show();
-            DatabaseReference newPost = postingDatabase.push();
-            String key = newPost.getKey();
 
-            Map textMap = new HashMap();
+
+
+            Map<String, Object> textMap = new HashMap<>();
             textMap.put("desc", textPost);
             textMap.put("username", MainPage.usernameInfo);
-            textMap.put("profileImag", MainPage.profielImage);
+            textMap.put("profileImage", MainPage.profielImage);
             textMap.put("uid", mAuth.getCurrentUser().getUid());
             textMap.put("country", country);
             textMap.put("clubLogo", clubLogo);
             textMap.put("favoritePostClub", MainPage.myClubName);
-            textMap.put("key", key);
-            newPost.updateChildren(textMap, new DatabaseReference.CompletionListener() {
+            postingDatabase.collection("Posting").add(textMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentReference> task) {
+                    if (task.isSuccessful()){
+                        String key = task.getResult().getId();
+                        Map<String,Object> keyUpdate = new HashMap<>();
+                        keyUpdate.put("key", key);
+                        postingDatabase.collection("Posting").document(key).update(keyUpdate);
+                        postingDialog.dismiss();
+                        postText.setText("");
+                    }
+                }
+            });
+
+
+            /*newPost.updateChildren(textMap, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError != null) {
@@ -682,7 +640,7 @@ public class MainPage extends AppCompatActivity
                         postText.setText("");
                     }
                 }
-            });
+            }); */
 
             return true;
         }
@@ -822,7 +780,6 @@ public class MainPage extends AppCompatActivity
 
         initializeCountDrawer();
         launcerCounter();
-        checkAllLoaded();
 
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -855,42 +812,6 @@ public class MainPage extends AppCompatActivity
 
     }
 
-    private void checkAllLoaded() {
-
-        postingDatabase.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                countItem = (int) dataSnapshot.getChildrenCount();
-                loaditem++;
-                if (loaditem == 1) {
-                    firstKey = dataSnapshot.getKey();
-                }
-
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
 
     public void premiumUsersLoadMore() {
