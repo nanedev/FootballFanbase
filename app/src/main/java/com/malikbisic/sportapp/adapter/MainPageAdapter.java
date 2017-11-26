@@ -10,6 +10,7 @@ import android.graphics.drawable.PictureDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +37,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.FirebaseUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,9 +46,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -151,7 +156,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
         //DocumentSnapshot refDoc = postingDatabase.collection("Posting").document(model.getKey());
 
-        final String post_key = key;
+        final String post_key = model.getKey();
         viewHolder.setDescForAudio(model.getDescForAudio());
         viewHolder.setDescForPhoto(model.getDescForPhoto());
         viewHolder.setDescVideo(model.getDescVideo());
@@ -160,12 +165,12 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         viewHolder.setPhotoPost(ctx, model.getPhotoPost());
         viewHolder.setVideoPost(ctx, model.getVideoPost());
         viewHolder.setAudioFile(ctx, model.getAudioFile());
-        //viewHolder.setLikeBtn(post_key);
-        //viewHolder.setNumberLikes(post_key);
+        viewHolder.setLikeBtn(post_key);
+        viewHolder.setNumberLikes(post_key);
         viewHolder.setDesc(model.getDesc());
-        //viewHolder.setDislikeBtn(post_key);
-        //viewHolder.setNumberComments(post_key);
-        //viewHolder.setNumberDislikes(post_key);
+        viewHolder.setDislikeBtn(post_key);
+        viewHolder.setNumberComments(post_key);
+        viewHolder.setNumberDislikes(post_key);
         viewHolder.setClubLogo(ctx, model.getClubLogo());
         viewHolder.setCountry(ctx, model.getCountry());
 
@@ -301,27 +306,28 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                 like_process = true;
 
 
-                likesReference.collection("Likes").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                likesReference.collection("Likes").document(post_key).collection(uid).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
+                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                         if (like_process) {
 
-                            if (documentSnapshots.exists()) {
 
-                                if (documentSnapshots.contains(mAuth.getCurrentUser().getUid())) {
 
-                                    likesReference.document(mAuth.getCurrentUser().getUid()).delete();
+                                if (!documentSnapshots.isEmpty()) {
+
+                                    likesReference.collection("Likes").document(post_key).collection(uid).document(String.valueOf(FieldPath.documentId())).delete();
                                     like_process = false;
 
+                                    Log.i("nema like", "NEMA");
 
                                 } else {
-
+                                    Log.i("ima like", "IMA");
                                     Map<String, Object> userLikeInfo = new HashMap<>();
                                     userLikeInfo.put("username", MainPage.usernameInfo);
                                     userLikeInfo.put("photoProfile", MainPage.profielImage);
 
-                                    final DocumentReference newPost = likesReference.document(mAuth.getCurrentUser().getUid());
-                                    newPost.set(userLikeInfo);
+                                    final CollectionReference newPost = likesReference.collection("Likes").document(post_key).collection(uid);
+                                    newPost.add(userLikeInfo);
 
 
                                     FirebaseFirestore getIduserpost = postingDatabase;
@@ -344,6 +350,10 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
                                             }
 
+                                            if (e != null){
+                                                Log.e("likeERROR", e.getLocalizedMessage());
+                                            }
+
                                         }
 
 
@@ -354,10 +364,10 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
 
                                 }
-                            }
                         }
                     }
-                });
+                    });
+
 
                         /*.new ValueEventListener() {
                             @Override
