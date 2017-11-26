@@ -192,7 +192,6 @@ public class MainPage extends AppCompatActivity
 
     List<Post> itemSize = new ArrayList<>();
     MainPageAdapter adapter;
-    public static String postKey;
 
 
     private static final int TOTAL_ITEM_LOAD = 5;
@@ -210,6 +209,7 @@ public class MainPage extends AppCompatActivity
 
     PremiumUsers premiumUsers;
     FreeUser freeUser;
+    String postKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,7 +252,7 @@ public class MainPage extends AppCompatActivity
         handler = new Handler();
         premiumUsers = new PremiumUsers();
         freeUser = new FreeUser();
-        adapter = new MainPageAdapter(itemSize, getApplicationContext(), MainPage.this, wallList);
+        adapter = new MainPageAdapter(itemSize, getApplicationContext(), MainPage.this, wallList, postKey);
         wallList.setAdapter(adapter);
 
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -806,8 +806,11 @@ public class MainPage extends AppCompatActivity
                         public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                             if (e == null){
-                                itemSize.add(documentSnapshot.toObject(Post.class));
-                                adapter.notifyDataSetChanged();
+                                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
+                                    Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
+                                    itemSize.add(model);
+                                    adapter.notifyDataSetChanged();
+                                }
                             } else {
                                 Log.e("errorPremium", e.getLocalizedMessage());
                             }

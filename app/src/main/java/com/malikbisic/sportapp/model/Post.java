@@ -1,9 +1,14 @@
 package com.malikbisic.sportapp.model;
 
+import android.support.annotation.NonNull;
+
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 /**
  * Created by Nane on 26.4.2017.
  */
-
+@IgnoreExtraProperties
 public class Post {
     private String username;
     private String profileImage;
@@ -17,6 +22,7 @@ public class Post {
     private String uid;
     private String country;
     String clubLogo;
+    @Exclude
     private String key;
 
 
@@ -25,8 +31,12 @@ public class Post {
     }
 
 
+    public <T extends Post> T withId(@NonNull final String id) {
+        this.key = id;
+        return (T) this;
+    }
 
-    public Post(String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key) {
+    public Post (String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key) {
         this.username = username;
         this.profileImage = profileImage;
         this.descForAudio = descForAudio;

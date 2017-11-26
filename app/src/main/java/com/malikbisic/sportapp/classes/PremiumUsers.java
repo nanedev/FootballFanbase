@@ -88,7 +88,7 @@ public class PremiumUsers {
         FirestoreRecyclerAdapter firebaseRecyclerAdapter = new FirestoreRecyclerAdapter<Post, PostViewHolder>(options) {
             @Override
             protected void onBindViewHolder(final PostViewHolder viewHolder, int position, Post model) {
-                final String post_key = getItem(position).getKey();
+                final String post_key = model.getKey();
                 viewHolder.setDescForAudio(model.getDescForAudio());
                 viewHolder.setDescForPhoto(model.getDescForPhoto());
                 viewHolder.setDescVideo(model.getDescVideo());
@@ -243,52 +243,54 @@ public class PremiumUsers {
                             public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
                                 if (like_process) {
 
+                                    if (documentSnapshots.exists()) {
 
-                                    if (documentSnapshots.contains(mAuth.getCurrentUser().getUid())) {
+                                        if (documentSnapshots.contains(mAuth.getCurrentUser().getUid())) {
 
-                                        likesReference.document(mAuth.getCurrentUser().getUid()).delete();
-                                        like_process = false;
-
-
-                                    } else {
-
-                                        Map<String, Object> userLikeInfo = new HashMap<>();
-                                        userLikeInfo.put("username", MainPage.usernameInfo);
-                                        userLikeInfo.put("photoProfile", MainPage.profielImage);
-
-                                        final DocumentReference newPost = likesReference.document(mAuth.getCurrentUser().getUid());
-                                        newPost.set(userLikeInfo);
+                                            likesReference.document(mAuth.getCurrentUser().getUid()).delete();
+                                            like_process = false;
 
 
-                                        FirebaseFirestore getIduserpost = postingDatabase;
-                                        getIduserpost.collection(post_key).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                        } else {
 
-                                                for (DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
+                                            Map<String, Object> userLikeInfo = new HashMap<>();
+                                            userLikeInfo.put("username", MainPage.usernameInfo);
+                                            userLikeInfo.put("photoProfile", MainPage.profielImage);
 
-                                                    String userpostUID = snapshot.getString("uid");
+                                            final DocumentReference newPost = likesReference.document(mAuth.getCurrentUser().getUid());
+                                            newPost.set(userLikeInfo);
 
-                                                    Map<String, Object> notifMap = new HashMap<>();
-                                                    notifMap.put("action", "liked");
-                                                    notifMap.put("uid", uid);
-                                                    notifMap.put("seen", false);
-                                                    notifMap.put("whatIS", "post");
-                                                    notifMap.put("post_key", post_key);
-                                                    DocumentReference notifSet = notificationReference.collection("Notification").document(userpostUID);
-                                                    notifSet.set(notifMap);
+
+                                            FirebaseFirestore getIduserpost = postingDatabase;
+                                            getIduserpost.collection(post_key).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                                    for (DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
+
+                                                        String userpostUID = snapshot.getString("uid");
+
+                                                        Map<String, Object> notifMap = new HashMap<>();
+                                                        notifMap.put("action", "liked");
+                                                        notifMap.put("uid", uid);
+                                                        notifMap.put("seen", false);
+                                                        notifMap.put("whatIS", "post");
+                                                        notifMap.put("post_key", post_key);
+                                                        DocumentReference notifSet = notificationReference.collection("Notification").document(userpostUID);
+                                                        notifSet.set(notifMap);
+
+                                                    }
 
                                                 }
 
-                                            }
+
+                                            });
 
 
-                                        });
+                                            like_process = false;
 
 
-                                        like_process = false;
-
-
+                                        }
                                     }
                                 }
                             }
@@ -372,54 +374,56 @@ public class PremiumUsers {
                                 dislikeReference.collection("Dislikes").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
                                     public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
-                                        if (like_process) {
+                                        if (dislike_process) {
+
+                                            if (documentSnapshots.exists()) {
+
+                                                if (documentSnapshots.contains(mAuth.getCurrentUser().getUid())) {
+
+                                                    dislikeReference.document(mAuth.getCurrentUser().getUid()).delete();
+                                                    dislike_process = false;
 
 
-                                            if (documentSnapshots.contains(mAuth.getCurrentUser().getUid())) {
+                                                } else {
 
-                                                dislikeReference.document(mAuth.getCurrentUser().getUid()).delete();
-                                                dislike_process = false;
+                                                    Map<String, Object> userDislikeInfo = new HashMap<>();
+                                                    userDislikeInfo.put("username", MainPage.usernameInfo);
+                                                    userDislikeInfo.put("photoProfile", MainPage.profielImage);
 
-
-                                            } else {
-
-                                                Map<String, Object> userDislikeInfo = new HashMap<>();
-                                                userDislikeInfo.put("username", MainPage.usernameInfo);
-                                                userDislikeInfo.put("photoProfile", MainPage.profielImage);
-
-                                                final DocumentReference newPost = dislikeReference.document(mAuth.getCurrentUser().getUid());
-                                                newPost.set(userDislikeInfo);
+                                                    final DocumentReference newPost = dislikeReference.document(mAuth.getCurrentUser().getUid());
+                                                    newPost.set(userDislikeInfo);
 
 
-                                                FirebaseFirestore getIduserpost = postingDatabase;
-                                                getIduserpost.collection(post_key).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                                    FirebaseFirestore getIduserpost = postingDatabase;
+                                                    getIduserpost.collection(post_key).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                                        for (DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
+                                                            for (DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
 
-                                                            String userpostUID = snapshot.getString("uid");
+                                                                String userpostUID = snapshot.getString("uid");
 
-                                                            Map<String, Object> notifMap = new HashMap<>();
-                                                            notifMap.put("action", "disliked");
-                                                            notifMap.put("uid", uid);
-                                                            notifMap.put("seen", false);
-                                                            notifMap.put("whatIS", "post");
-                                                            notifMap.put("post_key", post_key);
-                                                            DocumentReference notifSet = notificationReference.collection("Notification").document(userpostUID);
-                                                            notifSet.set(notifMap);
+                                                                Map<String, Object> notifMap = new HashMap<>();
+                                                                notifMap.put("action", "disliked");
+                                                                notifMap.put("uid", uid);
+                                                                notifMap.put("seen", false);
+                                                                notifMap.put("whatIS", "post");
+                                                                notifMap.put("post_key", post_key);
+                                                                DocumentReference notifSet = notificationReference.collection("Notification").document(userpostUID);
+                                                                notifSet.set(notifMap);
+
+                                                            }
 
                                                         }
 
-                                                    }
+
+                                                    });
 
 
-                                                });
+                                                    dislike_process = false;
 
 
-                                                dislike_process = false;
-
-
+                                                }
                                             }
                                         }
                                     }
@@ -699,6 +703,7 @@ public class PremiumUsers {
         wallList.setAdapter(firebaseRecyclerAdapter);
         wallList.setLayoutManager(new LinearLayoutManager(ctx));
         firebaseRecyclerAdapter.notifyDataSetChanged();
+        firebaseRecyclerAdapter.startListening();
 
         /*FirestoreR<Post, PostViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
                 Post.class,
@@ -1305,4 +1310,7 @@ public class PremiumUsers {
             }}; */
 
     }
+
+
+
 }
