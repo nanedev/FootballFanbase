@@ -70,7 +70,7 @@ public class PremiumUsers {
 
     public void premiumUser(RecyclerView wallList, final Context ctx, final Activity activity) {
         com.google.firebase.firestore.Query query = postingDatabase.collection("Posting");
-        query.orderBy("dd0v0YjiXc6n3LJb8OIk");
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         notificationReference = FirebaseFirestore.getInstance();//.getReference().child("Notification");

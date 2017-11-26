@@ -91,6 +91,7 @@ import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.adapter.MainPageAdapter;
 import com.malikbisic.sportapp.classes.FreeUser;
 import com.malikbisic.sportapp.classes.PremiumUsers;
@@ -251,6 +252,8 @@ public class MainPage extends AppCompatActivity
         handler = new Handler();
         premiumUsers = new PremiumUsers();
         freeUser = new FreeUser();
+        adapter = new MainPageAdapter(itemSize, getApplicationContext(), MainPage.this, wallList);
+        wallList.setAdapter(adapter);
 
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -789,14 +792,28 @@ public class MainPage extends AppCompatActivity
         checkPremiumUser.collection("Users").document(myUserId)
         .addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+            public void onEvent(final DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                 model = documentSnapshot.toObject(UsersModel.class);
 
                 isPremium = model.isPremium();
 
 
                 if (isPremium) {
-                    premiumUsers.premiumUser(wallList, getApplicationContext(), MainPage.this);
+                    Log.i("premium users", "YEEEEEES");
+                    com.google.firebase.firestore.Query premiumQuery = FirebaseFirestore.getInstance().collection("Posting");
+                    premiumQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                            if (e == null){
+                                itemSize.add(documentSnapshot.toObject(Post.class));
+                                adapter.notifyDataSetChanged();
+                            } else {
+                                Log.e("errorPremium", e.getLocalizedMessage());
+                            }
+
+                        }
+                    });
 
                 } else {
                     freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
