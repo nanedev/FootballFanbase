@@ -921,18 +921,17 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
             likeReference.collection("Likes").document(post_key).collection(mAuth.getCurrentUser().getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshot, FirebaseFirestoreException e) {
-                    {
-                        if (!documentSnapshot.isEmpty()) {
+
+                        if (documentSnapshot.size() > 0) {
                             dislike_button.setClickable(false);
                             like_button.setActivated(true);
                             Log.i("key like ima ", post_key);
 
-                        } else {
+                        } else if (documentSnapshot.size() < 1){
                             dislike_button.setClickable(true);
                             like_button.setActivated(false);
                             Log.i("key like nema ", post_key);
                         }
-                    }
                 }
             });
         }
@@ -964,13 +963,13 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                 public void onEvent(QuerySnapshot documentSnapshot, FirebaseFirestoreException e) {
                     {
                         if (!documentSnapshot.isEmpty()) {
-                            dislike_button.setClickable(false);
-                            like_button.setActivated(true);
+                            dislike_button.setClickable(true);
+                            like_button.setActivated(false);
                             Log.i("key like ima ", post_key);
 
                         } else {
-                            dislike_button.setClickable(true);
-                            like_button.setActivated(false);
+                            dislike_button.setClickable(false);
+                            like_button.setActivated(true);
                             Log.i("key like nema ", post_key);
                         }
                     }
