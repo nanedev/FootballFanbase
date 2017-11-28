@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,6 +31,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -68,8 +71,10 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     private StorageReference photoPost;
     private StorageReference postVideo;
     private FirebaseStorage mStorage;
-    private DatabaseReference postingDatabase;
-    private FirebaseDatabase mDatabase;
+
+    FirebaseFirestore postingCollection;
+
+
     private FirebaseAuth mAuth;
     private static final String TAG = "AddPhotoOrVideo";
     String videoSize;
@@ -84,8 +89,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         myIntent = getIntent();
         mStorage = FirebaseStorage.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
-        postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
+        postingCollection = FirebaseFirestore.getInstance();
         photoSelected = (ImageView) findViewById(R.id.post_image);
         videoSelected = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.post_video);
         saySomething = (EditText) findViewById(R.id.tell_something_about_video_image);
@@ -158,7 +162,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                     File imagePath = new File(getRealPathFromURI(imageUri));
                     Log.i("imagePath", imagePath.getPath());
 
-                    Bitmap imageCompressBitmap = new Compressor(this)
+                    final Bitmap imageCompressBitmap = new Compressor(this)
                             .setMaxWidth(640)
                             .setMaxHeight(480)
                             .setQuality(75)
@@ -185,26 +189,28 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
-                            DatabaseReference newPost = postingDatabase.push();
-                            String key = newPost.getKey();
-                            Map imageMap = new HashMap();
-                            imageMap.put("descForPhoto", aboutPhotoText);
-                            imageMap.put("username", username);
-                            imageMap.put("profileImage", profileImage);
-                            imageMap.put("photoPost", downloadUri.toString());
-                            imageMap.put("uid", mAuth.getCurrentUser().getUid());
-                            imageMap.put("country", country);
-                            imageMap.put("clubLogo", clubLogo);
-                            imageMap.put("favoritePostClub", MainPage.myClubName);
-                            imageMap.put("key", key);
 
+                            Map<String,Object> imagePost = new HashMap<>();
 
-                            newPost.updateChildren(imageMap, new DatabaseReference.CompletionListener() {
+                            imagePost.put("username", username);
+                            imagePost.put("profileImage", profileImage);
+                            imagePost.put("photoPost", downloadUri.toString());
+                            imagePost.put("uid", mAuth.getCurrentUser().getUid());
+                            imagePost.put("country", country);
+                            imagePost.put("clubLogo", clubLogo);
+                            imagePost.put("favoritePostClub", MainPage.myClubName);
+                            imagePost.put("descForPhoto", aboutPhotoText);
+                            postingCollection.collection("Posting").add(imagePost).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
-                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                    if (databaseError != null) {
-                                        Log.e("photoError", databaseError.getMessage().toString());
-                                    }
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Toast.makeText(AddPhotoOrVideo.this,
+                                            "Event document has been added",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
                                 }
                             });
                             postingDialog.dismiss();
@@ -249,34 +255,38 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                     postingDialog.setMessage("Posting");
                     postingDialog.show();
 
+
+
+
                     postVideo.putFile(videoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
-                            DatabaseReference newPost = postingDatabase.push();
-                            String key = newPost.getKey();
 
-                            Map videoMap = new HashMap();
-                            videoMap.put("descVideo", aboutVideoText);
-                            videoMap.put("username", username);
-                            videoMap.put("profileImage", profileImage);
-                            videoMap.put("videoPost", downloadUri.toString());
-                            videoMap.put("uid", mAuth.getCurrentUser().getUid());
-                            videoMap.put("country", country);
-                            videoMap.put("clubLogo", clubLogo);
-                            videoMap.put("favoritePostClub", MainPage.myClubName);
-                            videoMap.put("key", key);
+                            Map<String,Object> videoPost = new HashMap<>();
 
+                            videoPost.put("descVideo", aboutVideoText);
+                            videoPost.put("username", username);
+                            videoPost.put("profileImage", profileImage);
+                            videoPost.put("videoPost", downloadUri.toString());
+                            videoPost.put("uid", mAuth.getCurrentUser().getUid());
+                            videoPost.put("country", country);
+                            videoPost.put("clubLogo", clubLogo);
+                            videoPost.put("favoritePostClub", MainPage.myClubName);
 
-                            newPost.updateChildren(videoMap, new DatabaseReference.CompletionListener() {
+                            postingCollection.collection("Posting").add(videoPost).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
-                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                    if (databaseError != null) {
-                                        Log.e("VideoError", databaseError.getMessage().toString());
-                                    }
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Toast.makeText(AddPhotoOrVideo.this,
+                                            "Event document has been added",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
                                 }
                             });
-
                             postingDialog.dismiss();
                             Intent goToMain = new Intent(AddPhotoOrVideo.this, MainPage.class);
                             startActivity(goToMain);

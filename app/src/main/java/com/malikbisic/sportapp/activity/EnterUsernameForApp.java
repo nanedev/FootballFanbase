@@ -255,17 +255,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             }
         });
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Usernames");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null) {
-                    for (ParseObject object : objects) {
-                        usernameList.add(String.valueOf(object.get("username")));
-                    }
-                }
-            }
-        });
 
 
         genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

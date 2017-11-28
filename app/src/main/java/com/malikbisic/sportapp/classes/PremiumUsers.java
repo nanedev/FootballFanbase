@@ -201,15 +201,6 @@ public class PremiumUsers {
                     }
                 });
 
-                /*viewHolder.openSinglePost.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent openSinglePost = new Intent(ctx, SinglePostViewActivity.class);
-                        openSinglePost.putExtra("post_id", post_key);
-                        activity.startActivity(openSinglePost);
-                        Log.i("linkPost", link_post);
-                    }
-                });*/
 
 
                 viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
@@ -236,6 +227,8 @@ public class PremiumUsers {
                     @Override
                     public void onClick(View v) {
                         like_process = true;
+
+
 
 
                         likesReference.collection("Likes").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -296,63 +289,7 @@ public class PremiumUsers {
                             }
                         });
 
-                        /*.new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                if (like_process) {
-                                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
-                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                        like_process = false;
-
-
-                                    } else {
-
-                                        final DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
-
-                                        newPost.child("username").setValue(MainPage.usernameInfo);
-                                        newPost.child("photoProfile").setValue(MainPage.profielImage);
-
-                                        DatabaseReference getIduserpost = postingDatabase;
-                                        getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
-
-                                                DatabaseReference notifSet = notificationReference.child(userpostUID).push();
-                                                notifSet.child("action").setValue("like");
-                                                notifSet.child("uid").setValue(uid);
-                                                notifSet.child("seen").setValue(false);
-                                                notifSet.child("whatIS").setValue("post");
-                                                notifSet.child("post_key").setValue(post_key);
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-
-                                            }
-                                        });
-
-
-                                        like_process = false;
-
-
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                                Log.i("error", databaseError.getMessage());
-
-                            }
-                        });
-
-                    }
-                }); */
 
 
                         viewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
@@ -429,61 +366,6 @@ public class PremiumUsers {
                                     }
                                 });
 
-
-                                /*
-                                dislikeReference.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                        if (dislike_process) {
-                                            if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
-                                                dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                                dislike_process = false;
-
-
-                                            } else {
-
-                                                DatabaseReference newPost = dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid());
-
-                                                newPost.child("username").setValue(MainPage.usernameInfo);
-                                                newPost.child("photoProfile").setValue(MainPage.profielImage);
-
-                                                DatabaseReference getIduserpost = postingDatabase;
-                                                getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
-
-                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
-                                                        notifSet.child("action").setValue("disliked");
-                                                        notifSet.child("uid").setValue(uid);
-                                                        notifSet.child("seen").setValue(false);
-                                                        notifSet.child("whatIS").setValue("post");
-                                                        notifSet.child("post_key").setValue(post_key);
-
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-
-                                                    }
-                                                });
-
-
-                                                dislike_process = false;
-
-
-                                            }
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                }); */
 
                             }
                         });
