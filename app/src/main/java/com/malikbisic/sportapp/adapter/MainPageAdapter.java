@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -38,6 +39,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.FirebaseUI;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -595,9 +598,15 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         });
 
         final FirebaseFirestore postingDatabaseProfile = FirebaseFirestore.getInstance();
-        postingDatabaseProfile.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+
+
+
+
+
+
+        postingDatabaseProfile.collection("Posting").document(post_key).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+            public void onEvent(final DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
                 if (dataSnapshot.exists()) {
                     if (dataSnapshot.contains("uid")) {
@@ -621,7 +630,20 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                                 activity.startActivity(openSinglePost);
                                             } else if (items[i].equals("Delete post")) {
 
-                                                postingDatabaseProfile.document(post_key).delete();
+
+                                                postingDatabaseProfile.collection("Posting").document(post_key).delete().addOnSuccessListener(activity,new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+
+                                                        Toast.makeText(activity.getApplicationContext(),"deleted",Toast.LENGTH_LONG).show();
+
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(activity.getApplicationContext(),e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
                                             } else if (items[i].equals("Cancel")) {
 
 
@@ -633,6 +655,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                 }
                             });
                         }
+                        else viewHolder.arrow_down.setVisibility(View.INVISIBLE);
                     }
                 }
             }

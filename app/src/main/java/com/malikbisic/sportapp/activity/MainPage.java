@@ -84,6 +84,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -210,7 +211,7 @@ public class MainPage extends AppCompatActivity
     PremiumUsers premiumUsers;
     FreeUser freeUser;
     String postKey;
-
+    private ArrayList<DocumentSnapshot> mSnapshots = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -806,6 +807,7 @@ public class MainPage extends AppCompatActivity
                         public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                             if (e == null){
+                                itemSize.clear();
                                 for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
                                     Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                                     itemSize.add(model);
@@ -831,7 +833,6 @@ public class MainPage extends AppCompatActivity
         firstTimeOpened = false;
 
     }
-
 
 
     public void premiumUsersLoadMore() {
