@@ -50,6 +50,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -165,7 +166,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         viewHolder.setPhotoPost(ctx, model.getPhotoPost());
         viewHolder.setVideoPost(ctx, model.getVideoPost());
         viewHolder.setAudioFile(ctx, model.getAudioFile());
-        viewHolder.setLikeBtn(post_key);
+        viewHolder.setLikeBtn(post_key, activity);
         viewHolder.setNumberLikes(post_key);
         viewHolder.setDesc(model.getDesc());
         viewHolder.setDislikeBtn(post_key);
@@ -306,16 +307,25 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                 like_process = true;
 
 
-                likesReference.collection("Likes").document(post_key).collection(uid).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                    public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
                         if (like_process) {
 
 
-                            if (!documentSnapshots.isEmpty()) {
+                            if (documentSnapshots.exists()) {
 
-                                likesReference.collection("Likes").document(post_key).collection(uid).document(String.valueOf(FieldPath.documentId())).delete();
-                                like_process = false;
+                                likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Log.i("deleteLike", "complete");
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("deleteLike", e.getLocalizedMessage());
+                                    }
+                                });
 
                                 Log.i("nema like", "NEMA");
 
@@ -325,8 +335,8 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                 userLikeInfo.put("username", MainPage.usernameInfo);
                                 userLikeInfo.put("photoProfile", MainPage.profielImage);
 
-                                final CollectionReference newPost = likesReference.collection("Likes").document(post_key).collection(uid);
-                                newPost.add(userLikeInfo);
+                                final DocumentReference newPost = likesReference.collection("Likes").document(post_key).collection("like-id").document(uid);
+                                newPost.set(userLikeInfo);
 
 
                                 FirebaseFirestore getIduserpost = postingDatabase;
@@ -596,14 +606,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                 activity.startActivity(openCom);
             }
         });
-
         final FirebaseFirestore postingDatabaseProfile = FirebaseFirestore.getInstance();
-
-
-
-
-
-
         postingDatabaseProfile.collection("Posting").document(post_key).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(final DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
@@ -832,6 +835,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         String usersFavClub;
         String myClub;
         boolean isPremium;
+        int docID;
 
 
         public PostViewHolder(View itemView) {
@@ -892,19 +896,28 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
         public void setNumberLikes(String post_key) {
 
-            likeReference.collection("Likes").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            likeReference.collection("Likes").document(post_key).collection("like-id").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
-                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
 
-                    if (dataSnapshot.exists()) {
-                        long numberLikes = dataSnapshot.getData().size();
-                        if (numberLikes == 0) {
+
+                    ArrayList docList = new ArrayList();
+                    docList.clear();
+
+                    for (DocumentChange snapshot : querySnapshot.getDocumentChanges()){
+                        docID = snapshot.getDocument().getData().size();
+                        Log.i("idDOC", String.valueOf(docID));
+                        docList.add(docList);
+
+                        long numberLikes = docList.size();
+                        if (docID == 0) {
                             numberofLikes.setText("");
                         } else {
                             numberofLikes.setText(String.valueOf(numberLikes));
                         }
-
                     }
+
+
                 }
             });
         }
@@ -940,21 +953,28 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         }
 
 
-        public void setLikeBtn(final String post_key) {
-            likeReference.collection("Likes").document(post_key).collection(mAuth.getCurrentUser().getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        public void setLikeBtn(final String post_key, Activity activity) {
+            String uid = mAuth.getCurrentUser().getUid();
+            Log.i("uid", uid);
+            likeReference.collection("Likes").document(post_key).collection("like-id").document(uid).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onEvent(QuerySnapshot documentSnapshot, FirebaseFirestoreException e) {
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
-                        if (documentSnapshot.size() > 0) {
+                    if (documentSnapshot.exists()) {
+
+                        if (documentSnapshot.contains("username")) {
                             dislike_button.setClickable(false);
                             like_button.setActivated(true);
                             Log.i("key like ima ", post_key);
 
-                        } else if (documentSnapshot.size() < 1){
+
+                        } else {
                             dislike_button.setClickable(true);
                             like_button.setActivated(false);
                             Log.i("key like nema ", post_key);
                         }
+
+                    }
                 }
             });
         }
@@ -981,24 +1001,25 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
 
         public void setDislikeBtn(final String post_key) {
-            dislikeReference.collection("Dislikes").document(post_key).collection(mAuth.getCurrentUser().getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(mAuth.getCurrentUser().getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onEvent(QuerySnapshot documentSnapshot, FirebaseFirestoreException e) {
-                    {
-                        if (!documentSnapshot.isEmpty()) {
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                    if (documentSnapshot.exists()){
+                        if (!documentSnapshot.contains("username")) {
                             dislike_button.setClickable(true);
                             like_button.setActivated(false);
-                            Log.i("key like ima ", post_key);
+                            Log.i("key dislike ima ", post_key);
 
                         } else {
                             dislike_button.setClickable(false);
                             like_button.setActivated(true);
-                            Log.i("key like nema ", post_key);
+                            Log.i("key dislike nema ", post_key);
                         }
                     }
                 }
             });
         }
+
 
         public void setDesc(String desc) {
             if (desc != null) {

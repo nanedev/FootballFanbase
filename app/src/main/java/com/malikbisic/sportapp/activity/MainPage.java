@@ -123,6 +123,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
+import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
+import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
+
 
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher {
@@ -801,21 +805,46 @@ public class MainPage extends AppCompatActivity
 
                 if (isPremium) {
                     Log.i("premium users", "YEEEEEES");
+                    CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
                     com.google.firebase.firestore.Query premiumQuery = FirebaseFirestore.getInstance().collection("Posting");
-                    premiumQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    db.addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
                             if (e == null){
                                 itemSize.clear();
                                 for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
+
+
                                     Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                                     itemSize.add(model);
                                     adapter.notifyDataSetChanged();
+
+                                    for (DocumentChange change : documentSnapshots.getDocumentChanges()){
+                                        switch (change.getType()) {
+
+                                            case MODIFIED:
+                                                if (change.getOldIndex() == change.getNewIndex()) {
+                                                    // Item changed but remained in same position
+                                                    adapter.notifyItemChanged(change.getOldIndex());
+                                                } else {
+                                                    // Item changed and changed position
+
+                                                    adapter.notifyItemMoved(change.getOldIndex(), change.getNewIndex());
+                                                }
+                                                break;
+                                            case REMOVED:
+                                                adapter.notifyItemRemoved(change.getOldIndex());
+                                                break;
+                                        }
+                                    }
+
                                 }
+
+
                             } else {
                                 Log.e("errorPremium", e.getLocalizedMessage());
                             }
+
 
                         }
                     });

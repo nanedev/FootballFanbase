@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,11 +21,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -51,7 +56,7 @@ public class RecordAudio extends AppCompatActivity {
     public static final int RequestPermissionCode = 1;
     MediaPlayer mediaPlayer;
     StorageReference mStorage;
-    DatabaseReference postAudio;
+    FirebaseFirestore postAudio;
     ProgressDialog mDialog;
     Uri uriAudio;
     EditText aboutAudio;
@@ -61,7 +66,7 @@ public class RecordAudio extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        postAudio = FirebaseDatabase.getInstance().getReference().child("Posting");
+        postAudio = FirebaseFirestore.getInstance();
         setContentView(R.layout.activity_record_audio);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         buttonStart = (Button) findViewById(R.id.button);
@@ -231,8 +236,8 @@ public class RecordAudio extends AppCompatActivity {
                 String about = aboutAudio.getText().toString().trim();
                 mDialog.setMessage("Posting...");
                 mDialog.show();
-                DatabaseReference newPost = postAudio.push();
-                String pushKey = newPost.getKey();
+
+
                 /*newPost.child("audioFile").setValue(uriAudio.toString());
                 newPost.child("username").setValue(MainPage.usernameInfo);
                 newPost.child("profileImage").setValue(MainPage.profielImage);
@@ -241,7 +246,7 @@ public class RecordAudio extends AppCompatActivity {
                 newPost.child("country").setValue(country);
                 newPost.child("clubLogo").setValue(clubLogo);*/
 
-                Map audioMap = new HashMap();
+                Map<String, Object> audioMap = new HashMap<>();
                 audioMap.put("audioFile", uriAudio.toString());
                 audioMap.put("username", MainPage.usernameInfo);
                 audioMap.put("profileImage", MainPage.profielImage);
@@ -251,15 +256,17 @@ public class RecordAudio extends AppCompatActivity {
                 audioMap.put("clubLogo", clubLogo);
                 audioMap.put("favoritePostClub", MainPage.myClubName);
 
-                newPost.updateChildren(audioMap, new DatabaseReference.CompletionListener() {
+                postAudio.collection("Posting").add(audioMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null){
-                            Log.e("audioError", databaseError.getMessage().toString());
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if (task.isSuccessful()){
+                            String key = task.getResult().getId();
+                            Map<String,Object> keyUpdate = new HashMap<>();
+                            keyUpdate.put("key", key);
+                            postAudio.collection("Posting").document(key).update(keyUpdate);
                         }
                     }
                 });
-
                 mDialog.dismiss();
                 buttonStart.setEnabled(true);
                 buttonStopPlayingRecording.setEnabled(false);
