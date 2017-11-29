@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -198,11 +199,18 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                             imagePost.put("uid", mAuth.getCurrentUser().getUid());
                             imagePost.put("country", country);
                             imagePost.put("clubLogo", clubLogo);
+                            imagePost.put("time", FieldValue.serverTimestamp());
                             imagePost.put("favoritePostClub", MainPage.myClubName);
                             imagePost.put("descForPhoto", aboutPhotoText);
                             postingCollection.collection("Posting").add(imagePost).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
+
+                                    String key = documentReference.getId();
+                                    Map<String,Object> keyUpdate = new HashMap<>();
+                                    keyUpdate.put("key", key);
+                                    postingCollection.collection("Posting").document(key).update(keyUpdate);
+
                                     Toast.makeText(AddPhotoOrVideo.this,
                                             "Event document has been added",
                                             Toast.LENGTH_SHORT).show();
@@ -271,12 +279,19 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                             videoPost.put("videoPost", downloadUri.toString());
                             videoPost.put("uid", mAuth.getCurrentUser().getUid());
                             videoPost.put("country", country);
+                            videoPost.put("time", FieldValue.serverTimestamp());
                             videoPost.put("clubLogo", clubLogo);
                             videoPost.put("favoritePostClub", MainPage.myClubName);
 
                             postingCollection.collection("Posting").add(videoPost).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
+
+                                    String key = documentReference.getId();
+                                    Map<String,Object> keyUpdate = new HashMap<>();
+                                    keyUpdate.put("key", key);
+                                    postingCollection.collection("Posting").document(key).update(keyUpdate);
+
                                     Toast.makeText(AddPhotoOrVideo.this,
                                             "Event document has been added",
                                             Toast.LENGTH_SHORT).show();

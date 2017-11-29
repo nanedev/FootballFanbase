@@ -106,6 +106,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -621,6 +622,7 @@ public class MainPage extends AppCompatActivity
             textMap.put("profileImage", MainPage.profielImage);
             textMap.put("uid", mAuth.getCurrentUser().getUid());
             textMap.put("country", country);
+            textMap.put("time", FieldValue.serverTimestamp());
             textMap.put("clubLogo", clubLogo);
             textMap.put("favoritePostClub", MainPage.myClubName);
             postingDatabase.collection("Posting").add(textMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -806,8 +808,7 @@ public class MainPage extends AppCompatActivity
                 if (isPremium) {
                     Log.i("premium users", "YEEEEEES");
                     CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
-                    com.google.firebase.firestore.Query premiumQuery = FirebaseFirestore.getInstance().collection("Posting");
-                    db.addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
+                    db.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                             if (e == null){

@@ -11,11 +11,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +27,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.UsersModel;
 import com.malikbisic.sportapp.model.DislikeUsernamPhoto;
@@ -31,7 +37,7 @@ import com.squareup.picasso.Picasso;
 public class Username_Dislikes_Activity extends AppCompatActivity {
 
     RecyclerView dislikesRec;
-    DatabaseReference dislikesReferences;
+    FirebaseFirestore dislikesReferences;
     Intent myIntent;
 
 
@@ -42,11 +48,13 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
     String openActivity = "";
     String postKey = "";
 
+    Query query;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_username__dislikes_);
-
+        dislikesReferences = FirebaseFirestore.getInstance();
         myIntent = getIntent();
         dislikeToolbar = (Toolbar) findViewById(R.id.dislike_toolbar);
         setSupportActionBar(dislikeToolbar);
@@ -59,10 +67,10 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
         boolean isComment = myIntent.getBooleanExtra("isDislikeComment", false);
 
         if (isComment){
-            dislikesReferences = FirebaseDatabase.getInstance().getReference().child("DislikesComments").child(post_keyComments);
+            query = FirebaseFirestore.getInstance().collection("DislikesComments").document(post_keyComments).collection("dislike-id");
         } else {
 
-            dislikesReferences = FirebaseDatabase.getInstance().getReference().child("Dislikes").child(post_key);
+            query = FirebaseFirestore.getInstance().collection("Dislikes").document(post_key).collection("dislike-id");
         }
         profileUsers = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -84,16 +92,19 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        FirebaseRecyclerAdapter<DislikeUsernamPhoto, Username_Dislikes_Activity.DislikeViewHolder> populateRecView = new FirebaseRecyclerAdapter<DislikeUsernamPhoto, Username_Dislikes_Activity.DislikeViewHolder>(
-                DislikeUsernamPhoto.class,
-                R.layout.username_dislike_row,
-                Username_Dislikes_Activity.DislikeViewHolder.class,
-                dislikesReferences
-        ) {
+        FirestoreRecyclerOptions<DislikeUsernamPhoto> response = new FirestoreRecyclerOptions.Builder<DislikeUsernamPhoto>()
+                .setQuery(query, DislikeUsernamPhoto.class)
+                .build();
 
+        FirestoreRecyclerAdapter populateRecView = new FirestoreRecyclerAdapter<DislikeUsernamPhoto, DislikeViewHolder>(response) {
+            @Override
+            public DislikeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.username_dislike_row, parent, false);
+                return new DislikeViewHolder(view);
+            }
 
             @Override
-            protected void populateViewHolder(final Username_Dislikes_Activity.DislikeViewHolder viewHolder, DislikeUsernamPhoto model, int position) {
+            protected void onBindViewHolder(final DislikeViewHolder viewHolder, int position, DislikeUsernamPhoto model) {
                 viewHolder.setProfilePhoto(getApplicationContext(), model.getPhotoProfile());
                 viewHolder.setUsername(model.getUsername());
 
@@ -230,6 +241,8 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
         };
 
         dislikesRec.setAdapter(populateRecView);
+        populateRecView.notifyDataSetChanged();
+        populateRecView.startListening();
     }
 
     public static class DislikeViewHolder extends RecyclerView.ViewHolder {

@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
@@ -253,6 +254,7 @@ public class RecordAudio extends AppCompatActivity {
                 audioMap.put("descForAudio", about);
                 audioMap.put("uid", mAuth.getCurrentUser().getUid());
                 audioMap.put("country", country);
+                audioMap.put("time", FieldValue.serverTimestamp());
                 audioMap.put("clubLogo", clubLogo);
                 audioMap.put("favoritePostClub", MainPage.myClubName);
 
