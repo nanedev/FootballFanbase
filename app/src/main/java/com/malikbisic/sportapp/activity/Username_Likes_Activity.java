@@ -30,12 +30,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.UsersModel;
 import com.malikbisic.sportapp.model.LikesUsernamePhoto;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Username_Likes_Activity extends AppCompatActivity {
 
@@ -48,7 +55,13 @@ public class Username_Likes_Activity extends AppCompatActivity {
     String openActivity = "";
     String postKey = "";
     CollectionReference likesReferences;
+    FirebaseAuth mAuth;
+   CollectionReference userReference;
+   List<UsersModel> list;
     Query query;
+    String userId;
+    UsersModel usersModel;
+    String usernameUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,12 +71,15 @@ public class Username_Likes_Activity extends AppCompatActivity {
         setSupportActionBar(likeToolbar);
         getSupportActionBar().setTitle("People who liked");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        String post_key = myIntent.getStringExtra("post_key");
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        usersModel = new UsersModel();
+        final String post_key = myIntent.getStringExtra("post_key");
         openActivity = myIntent.getStringExtra("openActivityToBack");
         postKey = myIntent.getStringExtra("keyPost");
         String post_keyComments = myIntent.getStringExtra("post_keyComment");
         boolean isComment = myIntent.getBooleanExtra("isLikeComment", false);
-
+list = new ArrayList<>();
         if (isComment){
             likesReferences = FirebaseFirestore.getInstance().collection("LikesComments").document(post_keyComments).collection("like-id");
         } else {
@@ -83,7 +99,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
             }
         };
 
-
+userId = mAuth.getCurrentUser().getUid();
 
          query = likesReferences;
 
@@ -100,9 +116,64 @@ public class Username_Likes_Activity extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(LikesViewHolder holder, int position, LikesUsernamePhoto model) {
+            protected void onBindViewHolder(final LikesViewHolder holder, int position, final LikesUsernamePhoto model) {
 holder.setProfilePhoto(getApplicationContext(),model.getPhotoProfile());
 holder.setUsername(model.getUsername());
+
+holder.mView.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        final String username = holder.usernameProfile.getText().toString().trim();
+        userReference = db.collection("Users");
+        userReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("Fail", "Listen failed.", e);
+                    return;
+                }
+
+                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()){
+
+                    if (snapshot != null && snapshot.exists()) {
+
+                        String usernameFirestore = String.valueOf(snapshot.getData().get("username"));
+                       usersModel = snapshot.toObject(UsersModel.class);
+
+if (username.equals(usernameFirestore)) {
+
+                            if (userId.equals(usersModel.getUserID())){
+                                ProfileFragment profileFragment = new ProfileFragment();
+
+                                FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+
+                                manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                        R.anim.push_left_out, R.anim.push_left_out).replace(R.id.likes_layout, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                Log.i("tacno", "true");
+                            }
+                           else {
+                                userReference.document(usersModel.getUserID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
+                                        Intent openUserProfile = new Intent(Username_Likes_Activity.this, UserProfileActivity.class);
+                                        openUserProfile.putExtra("userID", usersModel.getUserID());
+                                        startActivity(openUserProfile);
+                                    }
+                                });
+                            }
+                            }
+
+                        }
+
+                    }
+                }
+
+
+        });
+
+
+    }
+});
             }
         };
 
