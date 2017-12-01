@@ -706,7 +706,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
                                 } else {
 
-                                    DocumentReference profileInfo = profileUsers.document(uid);
+                                    DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
 
                                     profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                         @Override
@@ -742,6 +742,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                             final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
 
                             String usernameFirebase = userInfo.getUsername();
+                            Log.i("usernameFirebase", usernameFirebase);
 
                             if (username.equals(usernameFirebase)) {
                                 final String uid = userInfo.getUserID();
@@ -762,7 +763,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
                                 } else {
 
-                                    DocumentReference profileInfo = profileUsers.document(uid);
+                                    DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
 
                                     profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                         @Override

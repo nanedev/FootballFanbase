@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,8 +28,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.UsersModel;
 import com.malikbisic.sportapp.model.DislikeUsernamPhoto;
@@ -41,7 +47,7 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
     Intent myIntent;
 
 
-    DatabaseReference profileUsers;
+    FirebaseFirestore profileUsers;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthStateListener;
     Toolbar dislikeToolbar;
@@ -66,13 +72,13 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
         String post_keyComments = myIntent.getStringExtra("post_keyComment");
         boolean isComment = myIntent.getBooleanExtra("isDislikeComment", false);
 
-        if (isComment){
+        if (isComment) {
             query = FirebaseFirestore.getInstance().collection("DislikesComments").document(post_keyComments).collection("dislike-id");
         } else {
 
             query = FirebaseFirestore.getInstance().collection("Dislikes").document(post_key).collection("dislike-id");
         }
-        profileUsers = FirebaseDatabase.getInstance().getReference();
+        profileUsers = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
         dislikesRec = (RecyclerView) findViewById(R.id.rec_view_dislike);
@@ -114,19 +120,18 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
                         final String username = viewHolder.usernameProfile.getText().toString().trim();
                         Log.i("username", username);
 
-                        profileUsers.child("Users").addValueEventListener(new ValueEventListener() {
+                        profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                for (DocumentSnapshot dataSnapshot1 : dataSnapshot.getDocuments()) {
 
-                                    final UsersModel userInfo = dataSnapshot1.getValue(UsersModel.class);
+                                    final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
 
                                     String usernameFirebase = userInfo.getUsername();
 
                                     if (username.equals(usernameFirebase)) {
                                         final String uid = userInfo.getUserID();
-
                                         FirebaseUser user1 = mAuth.getCurrentUser();
                                         String myUID = user1.getUid();
                                         Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
@@ -143,32 +148,23 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
 
                                         } else {
 
-                                            DatabaseReference profileInfo = profileUsers.child(uid);
+                                            DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
 
-                                            profileInfo.addValueEventListener(new ValueEventListener() {
+                                            profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                                 @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
 
                                                     Intent openUserProfile = new Intent(Username_Dislikes_Activity.this, UserProfileActivity.class);
                                                     openUserProfile.putExtra("userID", uid);
                                                     startActivity(openUserProfile);
                                                 }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-
-                                                }
                                             });
-
                                         }
                                     }
                                 }
                             }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
                         });
                     }
                 });
@@ -179,19 +175,18 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
                         final String username = viewHolder.usernameProfile.getText().toString().trim();
                         Log.i("username", username);
 
-                        profileUsers.child("Users").addValueEventListener(new ValueEventListener() {
+                        profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                for (DocumentSnapshot dataSnapshot1 : dataSnapshot.getDocuments()) {
 
-                                    final UsersModel userInfo = dataSnapshot1.getValue(UsersModel.class);
+                                    final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
 
                                     String usernameFirebase = userInfo.getUsername();
 
                                     if (username.equals(usernameFirebase)) {
                                         final String uid = userInfo.getUserID();
-
                                         FirebaseUser user1 = mAuth.getCurrentUser();
                                         String myUID = user1.getUid();
                                         Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
@@ -208,21 +203,16 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
 
                                         } else {
 
-                                            DatabaseReference profileInfo = profileUsers.child(uid);
+                                            DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
 
-                                            profileInfo.addValueEventListener(new ValueEventListener() {
+                                            profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                                 @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
 
                                                     Intent openUserProfile = new Intent(Username_Dislikes_Activity.this, UserProfileActivity.class);
                                                     openUserProfile.putExtra("userID", uid);
                                                     startActivity(openUserProfile);
-                                                }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-
                                                 }
                                             });
                                         }
@@ -230,16 +220,11 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
                                 }
                             }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
                         });
                     }
                 });
             }
         };
-
         dislikesRec.setAdapter(populateRecView);
         populateRecView.notifyDataSetChanged();
         populateRecView.startListening();
@@ -253,7 +238,7 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
         public DislikeViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
-             photo_image = (ImageView) mView.findViewById(R.id.profile_image_dislike);
+            photo_image = (ImageView) mView.findViewById(R.id.profile_image_dislike);
             usernameProfile = (TextView) mView.findViewById(R.id.username_dislike);
 
         }
@@ -276,11 +261,11 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
     public Intent getParentActivityIntent() {
 
 
-        if (openActivity.equals("mainPage")){
+        if (openActivity.equals("mainPage")) {
             Intent backMainPage = new Intent(Username_Dislikes_Activity.this, MainPage.class);
             startActivity(backMainPage);
             finish();
-        } else if (openActivity.equals("commentsActivity")){
+        } else if (openActivity.equals("commentsActivity")) {
             Intent backComments = new Intent(Username_Dislikes_Activity.this, CommentsActivity.class);
             backComments.putExtra("keyComment", postKey);
             startActivity(backComments);

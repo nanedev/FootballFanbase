@@ -33,6 +33,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -78,7 +82,7 @@ ImageView genderImageUser;
     static String uid;
     private static final int GALLERY_REQUEST = 134;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
+    private FirebaseFirestore mReference;
     boolean hasSetProfileImage = false;
     int selectYear;
     int currentYear;
@@ -113,7 +117,7 @@ ImageView genderImageUser;
         mDatabase = FirebaseDatabase.getInstance();
         myIntent = getIntent();
         uid = myIntent.getStringExtra("userID");
-        mReference = mDatabase.getReference().child("Users").child(uid);
+        mReference = FirebaseFirestore.getInstance();
         profile = (ImageView) findViewById(R.id.get_profile_image_idUser);
         flag = (ImageView) findViewById(R.id.user_countryFlagUser);
         username = (TextView) findViewById(R.id.user_usernameUser);
@@ -124,7 +128,7 @@ ImageView genderImageUser;
         seeUserPosts = (TextView) findViewById(R.id.see_user_posts);
         genderImageUser = (ImageView) findViewById(R.id.gender_imageUser);
         backgroundFlagUsers = (ImageView) findViewById(R.id.user_countryFlagUsersUsers);
-seeUserPosts.setOnClickListener(new View.OnClickListener() {
+        seeUserPosts.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(UserProfileActivity.this,SeeUsersPostsActivity.class);
@@ -152,12 +156,12 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
 
         loadProfile_image.getIndeterminateDrawable()
                 .setColorFilter(ContextCompat.getColor(this, R.color.redError), PorterDuff.Mode.SRC_IN );
-        mReference.addValueEventListener(new ValueEventListener() {
+        mReference.collection("Users").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
 
-                Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
+                Map<String, Object> value = dataSnapshot.getData();
 
 
                 profileImage = String.valueOf(value.get("profileImage"));
@@ -228,10 +232,6 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
                 backgroundImage();
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
 
 
@@ -316,8 +316,8 @@ seeUserPosts.setOnClickListener(new View.OnClickListener() {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUri = taskSnapshot.getDownloadUrl();
 
-                        mReference = mDatabase.getReference().child("Users").child(uid);
-                        mReference.child("profileImage").setValue(downloadUri.toString());
+                        //mReference = mDatabase.getReference().child("Users").child(uid);
+                        //mReference.child("profileImage").setValue(downloadUri.toString());
                     }
                 });
                 hasSetProfileImage = true;

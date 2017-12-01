@@ -46,12 +46,20 @@ import com.caverock.androidsvg.SVG;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -110,7 +118,7 @@ public class ProfileFragment extends Fragment {
     private static final int GALLERY_REQUEST = 134;
 
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
+    private FirebaseFirestore mReference;
     boolean hasSetProfileImage = false;
     int selectYear;
     int currentYear;
@@ -140,6 +148,7 @@ public class ProfileFragment extends Fragment {
 
     String myUid;
     boolean checkOpenActivity;
+    DocumentReference mReference2;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -159,7 +168,9 @@ public class ProfileFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mDatabase = FirebaseDatabase.getInstance();
-        uid = MainPage.uid;
+        mReference = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        uid = mAuth.getCurrentUser().getUid();
 
         if (this.getArguments() != null) {
             myUid = this.getArguments().getString("myUid");
@@ -167,10 +178,13 @@ public class ProfileFragment extends Fragment {
         }
 
         if (checkOpenActivity) {
-            mReference = mDatabase.getReference().child("Users").child(myUid);
+            mReference2 = FirebaseFirestore.getInstance().collection("Users").document(myUid);
         }else {
-            mReference = mDatabase.getReference().child("Users").child(uid);
+             mReference2 = mReference.collection("Users").document(uid);
+
         }
+
+        Log.i("myUID", myUid + " |uid" + uid);
         profile = (ImageView) view.findViewById(R.id.get_profile_image_id);
         //  name_surname = (TextView) view.findViewById(R.id.name_surname);
         flag = (ImageView) view.findViewById(R.id.user_countryFlag);
@@ -224,78 +238,76 @@ public class ProfileFragment extends Fragment {
 
         loadProfile_image.getIndeterminateDrawable()
                 .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN);
-        mReference.addValueEventListener(new ValueEventListener() {
+        mReference2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                    Map<String, Object> value = dataSnapshot.getData();
 
 
-                Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
+                    profileImage = String.valueOf(value.get("profileImage"));
+                    Picasso.with(getActivity())
+                            .load(profileImage)
+                            .networkPolicy(NetworkPolicy.OFFLINE)
+                            .into(profile, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    loadProfile_image.setVisibility(View.GONE);
+                                }
 
+                                @Override
+                                public void onError() {
 
-                profileImage = String.valueOf(value.get("profileImage"));
-                Picasso.with(getActivity())
-                        .load(profileImage)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(profile, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                loadProfile_image.setVisibility(View.GONE);
-                            }
+                                }
+                            });
 
-                            @Override
-                            public void onError() {
-
-                            }
-                        });
-
-                name = value.get("name") + " " + value.get("surname");
+                    name = value.get("name") + " " + value.get("surname");
 //                name_surname.setText(name);
-                username.setText(String.valueOf(value.get("username")));
-                gender.setText(String.valueOf(value.get("gender")));
-                if (String.valueOf(value.get("gender")).equals("Male")) {
-                    genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
-                } else if (String.valueOf(value.get("gender")).equals("Female")) {
-                    genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
-                }
+                    username.setText(String.valueOf(value.get("username")));
+                    gender.setText(String.valueOf(value.get("gender")));
+                    if (String.valueOf(value.get("gender")).equals("Male")) {
+                        genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
+                    } else if (String.valueOf(value.get("gender")).equals("Female")) {
+                        genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
+                    }
 
 
-                birthday.setText(String.valueOf(value.get("date")));
-                club.setText(String.valueOf(value.get("favoriteClub")));
+                    birthday.setText(String.valueOf(value.get("date")));
+                    club.setText(String.valueOf(value.get("favoriteClub")));
 
 
+                    flagImageFirebase = String.valueOf(value.get("flag"));
+                    Log.i("flag uri", flagImageFirebase);
 
-                flagImageFirebase = String.valueOf(value.get("flag"));
-                Log.i("flag uri", flagImageFirebase);
+                    clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
 
-                clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
+                    flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
-                flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
-
-                requestBuilder = Glide
-                        .with(getActivity())
-                        .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
-                        .from(Uri.class)
-                        .as(SVG.class)
-                        .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-                        .sourceEncoder(new StreamEncoder())
-                        .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
-                        .decoder(new SearchableCountry.SvgDecoder())
-                        .animate(android.R.anim.fade_in);
-
-
-                Uri uri = Uri.parse(flagImageFirebase);
-                requestBuilder
-                        // SVG cannot be serialized so it's not worth to cache it
-                        .diskCacheStrategy(SOURCE)
-                        .load(uri)
-                        .into(flag);
+                    requestBuilder = Glide
+                            .with(getActivity())
+                            .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
+                            .from(Uri.class)
+                            .as(SVG.class)
+                            .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                            .sourceEncoder(new StreamEncoder())
+                            .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                            .decoder(new SearchableCountry.SvgDecoder())
+                            .animate(android.R.anim.fade_in);
 
 
-                Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
+                    Uri uri = Uri.parse(flagImageFirebase);
+                    requestBuilder
+                            // SVG cannot be serialized so it's not worth to cache it
+                            .diskCacheStrategy(SOURCE)
+                            .load(uri)
+                            .into(flag);
+
+
+                    Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
 
                                /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
@@ -317,15 +329,10 @@ public class ProfileFragment extends Fragment {
                             }
                         });*/
 
-                country.setText(String.valueOf(value.get("country")));
+                    country.setText(String.valueOf(value.get("country")));
 
-                backgroundImage();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+                    backgroundImage();
+                }
         });
 
 
@@ -431,49 +438,20 @@ public class ProfileFragment extends Fragment {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             final Uri downloadUri = taskSnapshot.getDownloadUrl();
 
-                            mReference = mDatabase.getReference().child("Users").child(uid);
-                            if (downloadUri != null)
-                                mReference.child("profileImage").setValue(downloadUri.toString());
+                            DocumentReference mDoc = mReference.collection("Users").document(uid);
+                            if (downloadUri != null) {
+                                Map<String, Object> updateProfile = new HashMap<>();
+                                updateProfile.put("profileImage", downloadUri.toString());
 
-                            final DatabaseReference postingImageUpdate = FirebaseDatabase.getInstance().getReference().child("Posting");
-                            Query query = postingImageUpdate.orderByChild("uid").equalTo(uid);
-                            query.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                mDoc.update(updateProfile);
 
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                        snapshot.getRef().child("profileImage").setValue(downloadUri.toString());
-                                    }
+                                final DocumentReference postingImageUpdate = mReference.collection("Posting").document(uid);
+                                //com.google.firebase.firestore.Query query = postingImageUpdate.whereEqualTo("uid",uid);
 
-                                       /* String path = dataSnapshot.child("profileImage").getRef().toString();
-                                        Map imageUpdate = new HashMap();
-                                        imageUpdate.put("profileImage", downloadUri.toString());
-                                        Map refMap = new HashMap();
-                                        refMap.put(path, imageUpdate);
-                                        postingImageUpdate.updateChildren(refMap, new DatabaseReference.CompletionListener() {
-                                            @Override
-                                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                                if (databaseError != null){
-                                                    Log.e("photoUpdateError", databaseError.getMessage().toString());
-                                                }
-                                            }
-                                        });*/
+                                postingImageUpdate.update(updateProfile);
+                                hasSetProfileImage = true;
 
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
-
-
-
-                    });
-                    hasSetProfileImage = true;
-
-
+                            }}});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
