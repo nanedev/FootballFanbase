@@ -141,8 +141,11 @@ holder.mView.setOnClickListener(new View.OnClickListener() {
                        usersModel = snapshot.toObject(UsersModel.class);
 
 if (username.equals(usernameFirestore)) {
-
-                            if (userId.equals(usersModel.getUserID())){
+    final String uid = usersModel.getUserID();
+    FirebaseUser user1 = mAuth.getCurrentUser();
+    String myUID = user1.getUid();
+    Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
+                            if (uid.equals(myUID)){
                                 ProfileFragment profileFragment = new ProfileFragment();
 
                                 FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
@@ -156,7 +159,7 @@ if (username.equals(usernameFirestore)) {
                                     @Override
                                     public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
                                         Intent openUserProfile = new Intent(Username_Likes_Activity.this, UserProfileActivity.class);
-                                        openUserProfile.putExtra("userID", usersModel.getUserID());
+                                        openUserProfile.putExtra("userID", uid);
                                         startActivity(openUserProfile);
                                     }
                                 });
@@ -179,7 +182,7 @@ if (username.equals(usernameFirestore)) {
 
 adapter.notifyDataSetChanged();
 likesRec.setAdapter(adapter);
-
+adapter.startListening();
     }
 
     @Override
