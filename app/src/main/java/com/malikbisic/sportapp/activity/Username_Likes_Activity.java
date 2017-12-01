@@ -101,7 +101,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(LikesViewHolder holder, int position, LikesUsernamePhoto model) {
-holder.setProfilePhoto(getApplicationContext(),model.getPhoto());
+holder.setProfilePhoto(getApplicationContext(),model.getPhotoProfile());
 holder.setUsername(model.getUsername());
             }
         };
@@ -305,7 +305,7 @@ likesRec.setAdapter(adapter);
         }
 
         public void setProfilePhoto(Context ctx, String photoProfile) {
-
+photo_image.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
             Picasso.with(ctx).load(photoProfile).into(photo_image);
 
         }

@@ -40,12 +40,7 @@ public class Application extends android.app.Application{
         if (!FirebaseApp.getApps(this).isEmpty()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
-        Parse.initialize(new Parse.Configuration.Builder(this)
-                .applicationId("1l5MQohP0oGkgU2LhfK89mRV6ojjQYFXc7CQwvw1")
-                .clientKey("KFCpsprLkYcsIjlWXqOri5y1RqB16Ji63P5cLvYg")
-                .server("https://parseapi.back4app.com/")
-                .build()
-        );
+
 
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttpDownloader(this, Integer.MAX_VALUE));

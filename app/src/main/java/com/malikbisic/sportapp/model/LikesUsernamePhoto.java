@@ -16,12 +16,12 @@ public class LikesUsernamePhoto {
         this.username = username;
     }
 
-    public String getPhoto() {
+    public String getPhotoProfile() {
         return photoProfile;
     }
 
-    public void setPhoto(String photo) {
-        this.photoProfile = photo;
+    public void setPhotoProfile(String photoProfile) {
+        this.photoProfile = photoProfile;
     }
 
     public String getUsername() {
