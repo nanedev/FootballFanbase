@@ -86,6 +86,9 @@ public class PremiumUsers {
                 .build();
 
         FirestoreRecyclerAdapter firebaseRecyclerAdapter = new FirestoreRecyclerAdapter<Post, PostViewHolder>(options) {
+
+
+
             @Override
             protected void onBindViewHolder(final PostViewHolder viewHolder, int position, Post model) {
                 final String post_key = model.getKey();

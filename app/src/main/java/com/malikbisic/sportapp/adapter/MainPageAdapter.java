@@ -338,13 +338,13 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
 
                                 FirebaseFirestore getIduserpost = postingDatabase;
-                                getIduserpost.collection(post_key).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                        for (DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
 
-                                            String userpostUID = snapshot.getString("uid");
+
+                                            String userpostUID = dataSnapshot.getString("uid");
 
                                             Map<String, Object> notifMap = new HashMap<>();
                                             notifMap.put("action", "liked");
@@ -352,10 +352,9 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                             notifMap.put("seen", false);
                                             notifMap.put("whatIS", "post");
                                             notifMap.put("post_key", post_key);
-                                            DocumentReference notifSet = notificationReference.collection("Notification").document(userpostUID);
-                                            notifSet.set(notifMap);
+                                            CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                            notifSet.add(notifMap);
 
-                                        }
 
                                         if (e != null) {
                                             Log.e("likeERROR", e.getLocalizedMessage());
@@ -376,65 +375,6 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                 });
             }
         });
-
-
-                        /*.new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                if (like_process) {
-                                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
-                                        likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                        like_process = false;
-
-
-                                    } else {
-
-                                        final DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
-
-                                        newPost.child("username").setValue(MainPage.usernameInfo);
-                                        newPost.child("photoProfile").setValue(MainPage.profielImage);
-
-                                        DatabaseReference getIduserpost = postingDatabase;
-                                        getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
-
-                                                DatabaseReference notifSet = notificationReference.child(userpostUID).push();
-                                                notifSet.child("action").setValue("like");
-                                                notifSet.child("uid").setValue(uid);
-                                                notifSet.child("seen").setValue(false);
-                                                notifSet.child("whatIS").setValue("post");
-                                                notifSet.child("post_key").setValue(post_key);
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-
-                                            }
-                                        });
-
-
-                                        like_process = false;
-
-
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                                Log.i("error", databaseError.getMessage());
-
-                            }
-                        });
-
-                    }
-                }); */
 
 
         viewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
@@ -487,13 +427,11 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
 
                                 FirebaseFirestore getIduserpost = postingDatabase;
-                                getIduserpost.collection(post_key).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                        for (DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
-
-                                            String userpostUID = snapshot.getString("uid");
+                                            String userpostUID = dataSnapshot.getString("uid");
 
                                             Map<String, Object> notifMap = new HashMap<>();
                                             notifMap.put("action", "disliked");
@@ -501,13 +439,10 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                             notifMap.put("seen", false);
                                             notifMap.put("whatIS", "post");
                                             notifMap.put("post_key", post_key);
-                                            DocumentReference notifSet = notificationReference.collection("Notification").document(userpostUID);
-                                            notifSet.set(notifMap);
+                                            CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                            notifSet.add(notifMap);
 
                                         }
-
-                                    }
-
 
                                 });
 

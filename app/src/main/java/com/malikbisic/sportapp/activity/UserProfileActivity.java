@@ -151,6 +151,7 @@ ImageView genderImageUser;
         adapter = new UserProfileAdapter(UserProfileActivity.this);
         rec.setAdapter(adapter);
 
+        Log.i("userID", uid);
 
 
 
