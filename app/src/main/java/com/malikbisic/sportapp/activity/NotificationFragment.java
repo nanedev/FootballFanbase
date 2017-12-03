@@ -20,8 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -30,12 +36,22 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.Notification;
 import com.malikbisic.sportapp.model.UsersModel;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -45,11 +61,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class NotificationFragment extends Fragment {
 
-    DatabaseReference notificationRef;
+    FirebaseFirestore notificationRef;
     FirebaseAuth auth;
     FirebaseAuth.AuthStateListener authStateListener;
     RecyclerView notificationRecView;
     static boolean isNotificationClicked = false;
+    Query query;
+    String uid;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -79,9 +97,10 @@ public class NotificationFragment extends Fragment {
         };
 
         FirebaseUser user = auth.getCurrentUser();
-        String uid = user.getUid();
+        uid = user.getUid();
 
-        notificationRef = FirebaseDatabase.getInstance().getReference().child("Notification").child(uid);
+        notificationRef = FirebaseFirestore.getInstance();
+        query = notificationRef.collection("Notification").document(uid).collection("notif-id").orderBy("timestamp", Query.Direction.ASCENDING);
 
 
         return view;
@@ -93,28 +112,29 @@ public class NotificationFragment extends Fragment {
 
         auth.addAuthStateListener(authStateListener);
 
-        FirebaseRecyclerAdapter<Notification, NotificationViewHolder> populateAdapter = new FirebaseRecyclerAdapter<Notification, NotificationViewHolder>(
-                Notification.class,
-                R.layout.notification_row,
-                NotificationViewHolder.class,
-                notificationRef
-        ) {
+        FirestoreRecyclerOptions<Notification> options = new FirestoreRecyclerOptions.Builder<Notification>()
+                .setQuery(query, Notification.class)
+                .build();
+
+        FirestoreRecyclerAdapter<Notification, NotificationViewHolder> populateAdapter = new FirestoreRecyclerAdapter<Notification, NotificationViewHolder>(options) {
             @Override
-            protected void populateViewHolder(final NotificationViewHolder viewHolder, Notification model, int position) {
-                final String post_key_notification = getRef(position).getKey();
+            protected void onBindViewHolder(final NotificationViewHolder viewHolder, int position, Notification model) {
+
+                final String post_key_notification = getSnapshots().getSnapshot(position).getId();
                 viewHolder.setUid(getContext(), model.getUid());
                 viewHolder.setAction(model.getAction(), model.getWhatIS());
+                viewHolder.setTimeAgo(model.getTimestamp(), getContext());
 
                 viewHolder.itemview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        final DatabaseReference getKey = notificationRef.child(post_key_notification);
-                        getKey.addValueEventListener(new ValueEventListener() {
+                        final DocumentReference getKey = notificationRef.collection("Notification").document(auth.getCurrentUser().getUid()).collection("notif-id").document(post_key_notification);
+                        getKey.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                String key = String.valueOf(dataSnapshot.child("post_key").getValue());
-                                String action = String.valueOf(dataSnapshot.child("action").getValue());
-                                String whatIS = String.valueOf(dataSnapshot.child("whatIS").getValue());
+                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                String key = String.valueOf(dataSnapshot.getString("post_key"));
+                                String action = String.valueOf(dataSnapshot.getString("action"));
+                                String whatIS = String.valueOf(dataSnapshot.getString("whatIS"));
                                 if (whatIS.equals("post")) {
                                     Intent openSinglePost = new Intent(getContext(), SinglePostViewNotificationActivity.class);
                                     openSinglePost.putExtra("post_key", key);
@@ -138,64 +158,76 @@ public class NotificationFragment extends Fragment {
                                 }
                             }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
                         });
 
                     }
                 });
 
-                notificationRef.addValueEventListener(new ValueEventListener() {
+                notificationRef.collection("Notification").document(auth.getCurrentUser().getUid()).collection("notif-id").addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.child(post_key_notification).child("uid").exists()) {
+                    public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                        for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+                            if (snapshot.exists()) {
 
-                            viewHolder.downArrowNotification.setVisibility(View.VISIBLE);
+                                viewHolder.downArrowNotification.setVisibility(View.VISIBLE);
 
-                            viewHolder.downArrowNotification.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    final String[] items = {"Delete notification", "Cancel"};
+                                viewHolder.downArrowNotification.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        final String[] items = {"Delete notification", "Cancel"};
 
-                                    android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.itemView.getContext());
-                                    dialog.setItems(items, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (items[which].equals("Delete notification")) {
-                                                notificationRef.child(post_key_notification).removeValue();
-                                            } else if (items[which].equals("Cancel")) {
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.itemView.getContext());
+                                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (items[which].equals("Delete notification")) {
+                                                    notificationRef.collection("Notification").document(auth.getCurrentUser().getUid()).collection("notif-id").document(post_key_notification).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            Toast.makeText(getContext(), "Deleted", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.e("errorDeleteNotif", e.getLocalizedMessage());
+                                                        }
+                                                    });
+                                                } else if (items[which].equals("Cancel")) {
 
+                                                }
                                             }
-                                        }
 
-                                    });
-                                    dialog.create();
-                                    dialog.show();
-                                }
-                            });
+                                        });
+                                        dialog.create();
+                                        dialog.show();
+                                    }
+                                });
 
 
+                            }
                         }
 
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
 
                     }
                 });
 
 
             }
+
+            @Override
+            public NotificationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.notification_row, parent, false);
+                return new NotificationViewHolder(view);
+            }
         };
 
         notificationRecView.setAdapter(populateAdapter);
+        populateAdapter.notifyDataSetChanged();
+        populateAdapter.startListening();
 
 
     }
+
 
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
@@ -207,6 +239,7 @@ public class NotificationFragment extends Fragment {
         String usernameTxt;
         String actionString;
         ImageView downArrowNotification;
+        TextView timeAgoTextView;
 
         public NotificationViewHolder(View itemView) {
             super(itemView);
@@ -216,16 +249,18 @@ public class NotificationFragment extends Fragment {
             profileImage = (CircleImageView) itemview.findViewById(R.id.notification_profil_image);
             actionTxt = (TextView) itemview.findViewById(R.id.notification_action);
             downArrowNotification = (ImageView) itemView.findViewById(R.id.down_arrow_notification);
+            timeAgoTextView = (TextView) itemView.findViewById(R.id.setTimeAgo);
         }
 
         public void setUid(final Context ctx, String uid) {
-            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
-            usersRef.addValueEventListener(new ValueEventListener() {
+            FirebaseFirestore userFirestore = FirebaseFirestore.getInstance();
+            DocumentReference usersRef = userFirestore.collection("Users").document(uid);
+            usersRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
+                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                    UsersModel model = dataSnapshot.getValue(UsersModel.class);
+
+                    UsersModel model = dataSnapshot.toObject(UsersModel.class);
                     usernameTxt = model.getUsername(); //String.valueOf(value.get("username"));
                     String profileIMG = model.getProfileImage();
 
@@ -236,15 +271,19 @@ public class NotificationFragment extends Fragment {
 
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
             });
         }
 
         public void setAction(String action, String whatIS) {
             actionTxt.setText(action + " your " + whatIS + "!");
+        }
+
+        public void setTimeAgo(Date timestamp, Context ctx){
+            GetTimeAgo getTimeAgo = new GetTimeAgo();
+            //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
+            long lastTime = timestamp.getTime();
+            String lastStringTime = getTimeAgo.getTimeAgo(lastTime, ctx);
+            timeAgoTextView.setText(lastStringTime);
         }
 
     }
@@ -274,7 +313,20 @@ public class NotificationFragment extends Fragment {
 
                     if (items[which].equals("Delete all notification")) {
 
-                                notificationRef.removeValue();
+                                notificationRef.collection("Notification").document().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(getContext(), "Cleared", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("errorDeleteAllNotif", e.getLocalizedMessage());
+                                    }
+                                });
 
                     } else if (items[which].equals("Cancel")) {
 

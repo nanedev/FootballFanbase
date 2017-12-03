@@ -50,6 +50,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -351,6 +352,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                             notifMap.put("uid", uid);
                                             notifMap.put("seen", false);
                                             notifMap.put("whatIS", "post");
+                                            notifMap.put("timestamp", FieldValue.serverTimestamp());
                                             notifMap.put("post_key", post_key);
                                             CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
                                             notifSet.add(notifMap);
@@ -438,6 +440,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                             notifMap.put("uid", uid);
                                             notifMap.put("seen", false);
                                             notifMap.put("whatIS", "post");
+                                            notifMap.put("timestamp", FieldValue.serverTimestamp());
                                             notifMap.put("post_key", post_key);
                                             CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
                                             notifSet.add(notifMap);

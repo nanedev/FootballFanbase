@@ -47,6 +47,16 @@
                 android:layout_toRightOf="@+id/notification_username"
                 android:textColor="#000" />
 
+            <TextView
+                android:id="@+id/setTimeAgo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/notification_profil_image"
+                android:layout_marginLeft="50dp"
+                android:layout_marginStart="50dp"
+                android:text="TextView"
+                android:textColor="@color/blueColor" />
+
             <ImageView
                 android:id="@+id/down_arrow_notification"
                 android:layout_width="wrap_content"

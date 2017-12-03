@@ -38,6 +38,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -280,6 +281,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
                         notifMap.put("uid", auth.getCurrentUser().getUid());
                         notifMap.put("seen", false);
                         notifMap.put("whatIS", "reply");
+                        notifMap.put("timestamp", FieldValue.serverTimestamp());
                         notifMap.put("post_key", key);
                         CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
                         notifSet.add(notifMap);
