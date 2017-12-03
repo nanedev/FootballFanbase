@@ -308,8 +308,8 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                         newPost.set(userLikeInfo);
 
 
-                                        CollectionReference getIduserpost = postingDatabase;
-                                        getIduserpost.document(key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        CollectionReference getIduserpost = FirebaseFirestore.getInstance().collection("Comments").document(key).collection("comment-id");
+                                        getIduserpost.document(post_key_comments).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                             @Override
                                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
@@ -386,8 +386,8 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                         newPost.set(userDislikeInfo);
 
 
-                                        CollectionReference getIduserpost = postingDatabase;
-                                        getIduserpost.document(key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        CollectionReference getIduserpost = FirebaseFirestore.getInstance().collection("Comments").document(key).collection("comment-id");
+                                        getIduserpost.document(post_key_comments).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                             @Override
                                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
@@ -663,8 +663,6 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
                         dislikeComment.setClickable(false);
                         likeComments.setActivated(true);
-                        Log.i("key like ima ", post_key);
-
 
                     } else {
                         dislikeComment.setClickable(true);
@@ -683,13 +681,13 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 @Override
                 public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
                     if (snapshot.exists()) {
-                        dislikeComment.setActivated(true);
                         likeComments.setClickable(false);
-                        Log.i("key dislike ima ", post_key);
+                        dislikeComment.setActivated(true);
+
 
                     } else {
-                        dislikeComment.setActivated(false);
                         likeComments.setClickable(true);
+                        dislikeComment.setActivated(false);
                         Log.i("key dislike nema ", post_key);
                     }
                 }
