@@ -94,6 +94,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
         likesReference = FirebaseFirestore.getInstance();
         dislikeReference = FirebaseFirestore.getInstance();
+        mReference = FirebaseFirestore.getInstance();
 
 
         if (key == null && keyNotifPush != null) {
@@ -101,13 +102,14 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         } else {
             keyNotif = key;
         }
+        Log.i("keyComment", key);
 
         if (!NotificationFragment.isNotificationClicked) {
            getCommentRef = mReference.collection("Comments").document(key).collection("comment-id");
 
             keyNotif = key;
         } else {
-           getCommentRef = mReference.collection("Comments").document(keyNotif).collection("comment");
+           getCommentRef = mReference.collection("Comments").document(keyNotif).collection("comment-id");
             key = keyNotif;
             NotificationFragment.isNotificationClicked = false;
         }
@@ -158,6 +160,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 viewHolder.setNumberLikes(post_key_comments,CommentsActivity.this);
                 viewHolder.setNumberDislikes(post_key_comments,CommentsActivity.this);
                 viewHolder.setNumberComments(post_key_comments);
+                final String uid = auth.getCurrentUser().getUid();
 
 
 
@@ -270,7 +273,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                     public void onClick(View v) {
 
 
-                        final String uid = auth.getCurrentUser().getUid();
+
 
 
                         like_process = true;
@@ -347,6 +350,9 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                 }
                             }
                         });
+
+                    }
+                });
                         viewHolder.dislikeComment.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -521,8 +527,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                 startActivity(intent);
                             }
                         });
-                    }
-                });
+
 
             }
 
@@ -546,7 +551,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         if (view.getId() == R.id.sendComment) {
             String textComment = writeComment.getText().toString().trim();
-            CollectionReference post_comment = FirebaseFirestore.getInstance().collection("CommentsInComments").document(key).collection("reply-id");
+            CollectionReference post_comment = FirebaseFirestore.getInstance().collection("Comments").document(key).collection("comment-id");
             Map<String, Object> commentsMap = new HashMap<>();
             commentsMap.put("textComment", textComment);
             commentsMap.put("profileImage", profileImage);

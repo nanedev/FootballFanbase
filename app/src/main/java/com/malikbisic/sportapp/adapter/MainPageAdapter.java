@@ -164,7 +164,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         viewHolder.setNumberLikes(post_key, activity);
         viewHolder.setDesc(model.getDesc());
         viewHolder.setDislikeBtn(post_key, activity);
-        viewHolder.setNumberComments(post_key);
+        viewHolder.setNumberComments(post_key, activity);
         viewHolder.setNumberDislikes(post_key, activity);
         viewHolder.setClubLogo(ctx, model.getClubLogo());
         viewHolder.setCountry(ctx, model.getCountry());
@@ -858,14 +858,14 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         }
 
 
-        public void setNumberComments(String post_key) {
+        public void setNumberComments(String post_key, Activity activity) {
 
-            numberCommentsReference.collection("Comments").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
-                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
-                    if (dataSnapshot.exists()) {
-                        long numberOfComments = dataSnapshot.getData().size();
+
+                        int numberOfComments = querySnapshot.getResult().size();
 
                         if (numberOfComments == 0) {
 
@@ -880,9 +880,6 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                             numberComments.setText(String.valueOf(numberOfComments));
 
                         }
-
-
-                    }
                 }
             });
         }

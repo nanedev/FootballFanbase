@@ -193,7 +193,7 @@ public class MainPage extends AppCompatActivity
     public static String myClubName;
 
     TextView notificationCounterNumber;
-    DatabaseReference notificationReference;
+    FirebaseFirestore notificationReference;
     NavigationView navigationView;
 
     List<Post> itemSize = new ArrayList<>();
@@ -228,7 +228,6 @@ public class MainPage extends AppCompatActivity
         postingDatabase = FirebaseFirestore.getInstance();
         //postingDatabase.collection("Posting");
         profileUsers = FirebaseDatabase.getInstance().getReference();
-        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         userProfileImage = (ImageView) findViewById(R.id.userProfilImage);
         usernameuser = (TextView) findViewById(R.id.user_username);
         galleryIcon = (ImageView) findViewById(R.id.gallery_icon_content_main);
@@ -746,16 +745,18 @@ public class MainPage extends AppCompatActivity
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
-        DatabaseReference getNumberNotification = notificationReference.child(myUserId);
+        notificationReference = FirebaseFirestore.getInstance();
 
-        Query query = getNumberNotification.orderByChild("seen").equalTo(false);
+        CollectionReference getNumberNotification = notificationReference.collection("Notification").document(myUserId).collection("notif-id");
 
-        query.addValueEventListener(new ValueEventListener() {
-            @TargetApi(Build.VERSION_CODES.N_MR1)
+        com.google.firebase.firestore.Query query = getNumberNotification.whereEqualTo("seen", false);
+
+        query.get().addOnCompleteListener(MainPage.this, new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
-                int number = (int) dataSnapshot.getChildrenCount();
+
+                int number = (int) querySnapshot.getResult().size();
 
                 if (number == 0) {
 
@@ -769,10 +770,6 @@ public class MainPage extends AppCompatActivity
                 }
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
 
         Intent intent2 = new Intent(Intent.ACTION_MAIN);
@@ -935,17 +932,17 @@ public class MainPage extends AppCompatActivity
 
         notificationCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
 
+        notificationReference = FirebaseFirestore.getInstance();
 
-        DatabaseReference getNumberNotification = notificationReference.child(myUserId);
+        CollectionReference getNumberNotification = notificationReference.collection("Notification").document(myUserId).collection("notif-id");
 
-        Query query = getNumberNotification.orderByChild("seen").equalTo(false);
+        com.google.firebase.firestore.Query query = getNumberNotification.whereEqualTo("seen", false);
 
-        query.addValueEventListener(new ValueEventListener() {
-            @TargetApi(Build.VERSION_CODES.N_MR1)
+        query.get().addOnCompleteListener(MainPage.this, new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
-                int number = (int) dataSnapshot.getChildrenCount();
+                int number = querySnapshot.getResult().size();
 
                 if (number == 0) {
                     notificationCounterNumber.setText("");
@@ -960,10 +957,6 @@ public class MainPage extends AppCompatActivity
                 }
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
 
 //        Intent intent = new Intent(Intent.ACTION_MAIN);
