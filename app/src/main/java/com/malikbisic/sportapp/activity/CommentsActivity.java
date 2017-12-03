@@ -272,13 +272,9 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void onClick(View v) {
 
-
-
-
-
                         like_process = true;
                         viewHolder.setNumberLikes(post_key_comments,CommentsActivity.this);
-                        likesReference.collection("LikeComments").document(post_key_comments).collection("comment-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
                             public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
 
@@ -287,7 +283,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
                                     if (snapshot.exists()) {
 
-                                        likesReference.collection("LikeComments").document(post_key_comments).collection("comment-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 Log.i("deleteLike", "complete");
@@ -310,12 +306,12 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                         userLikeInfo.put("username", MainPage.usernameInfo);
                                         userLikeInfo.put("photoProfile", MainPage.profielImage);
 
-                                        final DocumentReference newPost = likesReference.collection("LikeComments").document(post_key_comments).collection("comment-id").document(uid);
+                                        final DocumentReference newPost = likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(uid);
                                         newPost.set(userLikeInfo);
 
 
                                         CollectionReference getIduserpost = postingDatabase;
-                                        getIduserpost.document(post_key_comments).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        getIduserpost.document(key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                             @Override
                                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
