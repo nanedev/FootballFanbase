@@ -81,7 +81,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
         boolean isComment = myIntent.getBooleanExtra("isLikeComment", false);
 list = new ArrayList<>();
         if (isComment){
-            likesReferences = FirebaseFirestore.getInstance().collection("LikesComments").document(post_keyComments).collection("like-id");
+            likesReferences = FirebaseFirestore.getInstance().collection("LikeComments").document(post_keyComments).collection("like-id");
         } else {
             likesReferences = FirebaseFirestore.getInstance().collection("Likes").document(post_key).collection("like-id");
         }

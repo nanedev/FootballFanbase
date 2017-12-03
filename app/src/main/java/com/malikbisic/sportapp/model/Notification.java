@@ -12,17 +12,26 @@ public class Notification {
     String uid;
     String whatIS;
     Date timestamp;
+    boolean seen;
 
 
     public Notification() {
     }
 
-    public Notification(String action, String uid, String whatIS, Date timestamp) {
+    public Notification(String action, String uid, String whatIS, Date timestamp, boolean seen) {
         this.action = action;
         this.uid = uid;
         this.whatIS = whatIS;
         this.timestamp = timestamp;
+        this.seen = seen;
+    }
 
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
     }
 
     public Date getTimestamp() {

@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -124,6 +125,7 @@ public class NotificationFragment extends Fragment {
                 viewHolder.setUid(getContext(), model.getUid());
                 viewHolder.setAction(model.getAction(), model.getWhatIS());
                 viewHolder.setTimeAgo(model.getTimestamp(), getContext());
+                viewHolder.isSeen(model.isSeen(), getActivity());
 
                 viewHolder.itemview.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -284,6 +286,14 @@ public class NotificationFragment extends Fragment {
             long lastTime = timestamp.getTime();
             String lastStringTime = getTimeAgo.getTimeAgo(lastTime, ctx);
             timeAgoTextView.setText(lastStringTime);
+        }
+
+        public void isSeen (boolean isSeen, Activity activity){
+            if (isSeen){
+                itemview.setBackgroundColor(activity.getResources().getColor(R.color.white));
+            } else {
+                itemview.setBackgroundColor(activity.getResources().getColor(R.color.notifnotSeen));
+            }
         }
 
     }
