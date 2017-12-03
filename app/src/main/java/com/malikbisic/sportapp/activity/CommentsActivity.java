@@ -39,6 +39,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -73,7 +74,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     FirebaseAuth.AuthStateListener mAuthStateListener;
     FirebaseFirestore profileUsers;
 
-   FirebaseFirestore likesReference, dislikeReference;
+    FirebaseFirestore likesReference, dislikeReference;
     boolean like_process = false;
     boolean dislike_process = false;
 
@@ -90,7 +91,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         username = myIntent.getStringExtra("username");
         profileUsers = FirebaseFirestore.getInstance();
         postingDatabase = profileUsers.collection("Posting");
-   //     notificationReference = mReference.collection("Notification");
+        //     notificationReference = mReference.collection("Notification");
 
         likesReference = FirebaseFirestore.getInstance();
         dislikeReference = FirebaseFirestore.getInstance();
@@ -105,11 +106,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         Log.i("keyComment", key);
 
         if (!NotificationFragment.isNotificationClicked) {
-           getCommentRef = mReference.collection("Comments").document(key).collection("comment-id");
+            getCommentRef = mReference.collection("Comments").document(key).collection("comment-id");
 
             keyNotif = key;
         } else {
-           getCommentRef = mReference.collection("Comments").document(keyNotif).collection("comment-id");
+            getCommentRef = mReference.collection("Comments").document(keyNotif).collection("comment-id");
             key = keyNotif;
             NotificationFragment.isNotificationClicked = false;
         }
@@ -141,7 +142,6 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 .build();
 
 
-
         FirestoreRecyclerAdapter populate = new FirestoreRecyclerAdapter<Comments, CommentsActivity.CommentsViewHolder>(response) {
             @Override
             public CommentsActivity.CommentsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -155,13 +155,12 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 viewHolder.setProfileImage(getApplicationContext(), model.getProfileImage());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setTextComment(model.getTextComment());
-                viewHolder.setLikeBtn(post_key_comments,CommentsActivity.this);
-                viewHolder.setDislikeBtn(post_key_comments,CommentsActivity.this);
-                viewHolder.setNumberLikes(post_key_comments,CommentsActivity.this);
-                viewHolder.setNumberDislikes(post_key_comments,CommentsActivity.this);
+                viewHolder.setLikeBtn(post_key_comments, CommentsActivity.this);
+                viewHolder.setDislikeBtn(post_key_comments, CommentsActivity.this);
+                viewHolder.setNumberLikes(post_key_comments, CommentsActivity.this);
+                viewHolder.setNumberDislikes(post_key_comments, CommentsActivity.this);
                 viewHolder.setNumberComments(post_key_comments);
                 final String uid = auth.getCurrentUser().getUid();
-
 
 
                 viewHolder.profileImageImg.setOnClickListener(new View.OnClickListener() {
@@ -267,13 +266,12 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 });
 
 
-
                 viewHolder.likeComments.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                         like_process = true;
-                        viewHolder.setNumberLikes(post_key_comments,CommentsActivity.this);
+                        viewHolder.setNumberLikes(post_key_comments, CommentsActivity.this);
                         likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
                             public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
@@ -316,7 +314,6 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
 
-
                                                 String userpostUID = dataSnapshot.getString("uid");
 
                                                 Map<String, Object> notifMap = new HashMap<>();
@@ -325,7 +322,8 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                                 notifMap.put("seen", false);
                                                 notifMap.put("whatIS", "comment");
                                                 notifMap.put("post_key", post_key_comments);
-                                                CollectionReference notifSet =  FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                                                notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
                                                 notifSet.add(notifMap);
 
 
@@ -349,180 +347,177 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
                     }
                 });
-                        viewHolder.dislikeComment.setOnClickListener(new View.OnClickListener() {
+                viewHolder.dislikeComment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dislike_process = true;
+                        viewHolder.setNumberDislikes(post_key_comments, CommentsActivity.this);
+
+
+                        dislikeReference.collection("DislikesComments").document(post_key_comments).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
-                            public void onClick(View v) {
-                                dislike_process = true;
-                                viewHolder.setNumberDislikes(post_key_comments,CommentsActivity.this);
+                            public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                if (dislike_process) {
 
 
-                                dislikeReference.collection("Dislikes").document(post_key_comments).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
-                                        if (dislike_process) {
-
-
-                                            if (documentSnapshots.exists()) {
-                                                dislikeReference.collection("Dislikes").document(post_key_comments).collection("dislike-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        Log.i("deleteDislike", "complete");
-
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.e("deletedislike", e.getLocalizedMessage());
-                                                    }
-                                                });
-                                                dislike_process = false;
-
-
-                                            } else {
-
-                                                Map<String, Object> userDislikeInfo = new HashMap<>();
-                                                userDislikeInfo.put("username", MainPage.usernameInfo);
-                                                userDislikeInfo.put("photoProfile", MainPage.profielImage);
-
-                                                final DocumentReference newPost = dislikeReference.collection("Dislikes").document(post_key_comments).collection("dislike-id").document(uid);
-                                                newPost.set(userDislikeInfo);
-
-
-                                                CollectionReference getIduserpost = postingDatabase;
-                                                getIduserpost.document(post_key_comments).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
-
-                                                        String userpostUID = dataSnapshot.getString("uid");
-
-                                                        Map<String, Object> notifMap = new HashMap<>();
-                                                        notifMap.put("action", "disliked");
-                                                        notifMap.put("uid", uid);
-                                                        notifMap.put("seen", false);
-                                                        notifMap.put("whatIS", "comment");
-                                                        notifMap.put("post_key", post_key_comments);
-                                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                                                        notifSet.add(notifMap);
-
-                                                    }
-
-                                                });
-
-
-                                                dislike_process = false;
-
+                                    if (documentSnapshots.exists()) {
+                                        dislikeReference.collection("DislikesComments").document(post_key_comments).collection("dislike-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Log.i("deleteDislike", "complete");
 
                                             }
-                                        }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("deletedislike", e.getLocalizedMessage());
+                                            }
+                                        });
+                                        dislike_process = false;
+
+
+                                    } else {
+
+                                        Map<String, Object> userDislikeInfo = new HashMap<>();
+                                        userDislikeInfo.put("username", MainPage.usernameInfo);
+                                        userDislikeInfo.put("photoProfile", MainPage.profielImage);
+
+                                        final DocumentReference newPost = dislikeReference.collection("DislikesComments").document(post_key_comments).collection("dislike-id").document(uid);
+                                        newPost.set(userDislikeInfo);
+
+
+                                        CollectionReference getIduserpost = postingDatabase;
+                                        getIduserpost.document(key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                                String userpostUID = dataSnapshot.getString("uid");
+
+                                                Map<String, Object> notifMap = new HashMap<>();
+                                                notifMap.put("action", "disliked");
+                                                notifMap.put("uid", uid);
+                                                notifMap.put("seen", false);
+                                                notifMap.put("whatIS", "comment");
+                                                notifMap.put("post_key", post_key_comments);
+                                                notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                                                notifSet.add(notifMap);
+
+                                            }
+
+                                        });
+
+
+                                        dislike_process = false;
+
+
                                     }
-                                });
-
-
-
-                            }
-                        });
-
-
-
-
-                        viewHolder.numberLikes.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent listUsername = new Intent(CommentsActivity.this, Username_Likes_Activity.class);
-                                listUsername.putExtra("post_keyComment", post_key_comments);
-                                listUsername.putExtra("isLikeComment", true);
-                                if (key != null) {
-                                    listUsername.putExtra("keyPost", key);
-                                }else if (keyNotif != null){
-                                    listUsername.putExtra("keyPost", keyNotif);
                                 }
-                                listUsername.putExtra("openActivityToBack", "commentsActivity");
-                                startActivity(listUsername);
-                            }
-                        });
-
-                        viewHolder.numberDislikes.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent listUsername = new Intent(CommentsActivity.this, Username_Dislikes_Activity.class);
-                                listUsername.putExtra("post_keyComment", post_key_comments);
-                                listUsername.putExtra("isDislikeComment", true);
-                                if (key != null) {
-                                    listUsername.putExtra("keyPost", key);
-                                }else if (keyNotif != null){
-                                    listUsername.putExtra("keyPost", keyNotif);
-                                }
-                                listUsername.putExtra("openActivityToBack", "commentsActivity");
-                                startActivity(listUsername);
-                            }
-                        });
-                        viewHolder.likeBtnImage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent listUsername = new Intent(CommentsActivity.this, Username_Likes_Activity.class);
-                                listUsername.putExtra("post_keyComment", post_key_comments);
-                                listUsername.putExtra("isLikeComment", true);
-                                if (key != null) {
-                                    listUsername.putExtra("keyPost", key);
-                                }else if (keyNotif != null){
-                                    listUsername.putExtra("keyPost", keyNotif);
-                                }
-                                listUsername.putExtra("openActivityToBack", "commentsActivity");
-                                startActivity(listUsername);
                             }
                         });
 
 
-
-                        viewHolder.dislikeBtnImage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent listUsername = new Intent(CommentsActivity.this, Username_Dislikes_Activity.class);
-                                listUsername.putExtra("post_keyComment", post_key_comments);
-                                listUsername.putExtra("isDislikeComment", true);
-                                if (key != null) {
-                                    listUsername.putExtra("keyPost", key);
-                                }else if (keyNotif != null){
-                                    listUsername.putExtra("keyPost", keyNotif);
-                                }
-                                listUsername.putExtra("openActivityToBack", "commentsActivity");
-                                startActivity(listUsername);
-                            }
-                        });
+                    }
+                });
 
 
-                        viewHolder.commentSomething.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(CommentsActivity.this, CommentsInComments.class);
-                                intent.putExtra("keyComment", post_key_comments);
-                                if (key != null) {
-                                    intent.putExtra("keyPost", key);
-                                }else if (keyNotif != null){
-                                    intent.putExtra("keyPost", keyNotif);
-                                }
-                                intent.putExtra("profileComment", MainPage.profielImage);
-                                intent.putExtra("username", MainPage.usernameInfo);
-                                startActivity(intent);
-                            }
-                        });
+                viewHolder.numberLikes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent listUsername = new Intent(CommentsActivity.this, Username_Likes_Activity.class);
+                        listUsername.putExtra("post_keyComment", post_key_comments);
+                        listUsername.putExtra("isLikeComment", true);
+                        if (key != null) {
+                            listUsername.putExtra("keyPost", key);
+                        } else if (keyNotif != null) {
+                            listUsername.putExtra("keyPost", keyNotif);
+                        }
+                        listUsername.putExtra("openActivityToBack", "commentsActivity");
+                        startActivity(listUsername);
+                    }
+                });
+
+                viewHolder.numberDislikes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent listUsername = new Intent(CommentsActivity.this, Username_Dislikes_Activity.class);
+                        listUsername.putExtra("post_keyComment", post_key_comments);
+                        listUsername.putExtra("isDislikeComment", true);
+                        if (key != null) {
+                            listUsername.putExtra("keyPost", key);
+                        } else if (keyNotif != null) {
+                            listUsername.putExtra("keyPost", keyNotif);
+                        }
+                        listUsername.putExtra("openActivityToBack", "commentsActivity");
+                        startActivity(listUsername);
+                    }
+                });
+                viewHolder.likeBtnImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent listUsername = new Intent(CommentsActivity.this, Username_Likes_Activity.class);
+                        listUsername.putExtra("post_keyComment", post_key_comments);
+                        listUsername.putExtra("isLikeComment", true);
+                        if (key != null) {
+                            listUsername.putExtra("keyPost", key);
+                        } else if (keyNotif != null) {
+                            listUsername.putExtra("keyPost", keyNotif);
+                        }
+                        listUsername.putExtra("openActivityToBack", "commentsActivity");
+                        startActivity(listUsername);
+                    }
+                });
 
 
-                        viewHolder.commentsReplyNumber.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(CommentsActivity.this, CommentsInComments.class);
-                                intent.putExtra("keyComment", post_key_comments);
-                                if (key != null) {
-                                    intent.putExtra("keyPost", key);
-                                }else if (keyNotif != null){
-                                    intent.putExtra("keyPost", keyNotif);
-                                }
-                                intent.putExtra("profileComment", MainPage.profielImage);
-                                intent.putExtra("username", MainPage.usernameInfo);
-                                startActivity(intent);
-                            }
-                        });
+                viewHolder.dislikeBtnImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent listUsername = new Intent(CommentsActivity.this, Username_Dislikes_Activity.class);
+                        listUsername.putExtra("post_keyComment", post_key_comments);
+                        listUsername.putExtra("isDislikeComment", true);
+                        if (key != null) {
+                            listUsername.putExtra("keyPost", key);
+                        } else if (keyNotif != null) {
+                            listUsername.putExtra("keyPost", keyNotif);
+                        }
+                        listUsername.putExtra("openActivityToBack", "commentsActivity");
+                        startActivity(listUsername);
+                    }
+                });
+
+
+                viewHolder.commentSomething.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(CommentsActivity.this, CommentsInComments.class);
+                        intent.putExtra("keyComment", post_key_comments);
+                        if (key != null) {
+                            intent.putExtra("keyPost", key);
+                        } else if (keyNotif != null) {
+                            intent.putExtra("keyPost", keyNotif);
+                        }
+                        intent.putExtra("profileComment", MainPage.profielImage);
+                        intent.putExtra("username", MainPage.usernameInfo);
+                        startActivity(intent);
+                    }
+                });
+
+
+                viewHolder.commentsReplyNumber.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(CommentsActivity.this, CommentsInComments.class);
+                        intent.putExtra("keyComment", post_key_comments);
+                        if (key != null) {
+                            intent.putExtra("keyPost", key);
+                        } else if (keyNotif != null) {
+                            intent.putExtra("keyPost", keyNotif);
+                        }
+                        intent.putExtra("profileComment", MainPage.profielImage);
+                        intent.putExtra("username", MainPage.usernameInfo);
+                        startActivity(intent);
+                    }
+                });
 
 
             }
@@ -570,6 +565,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                         notifMap.put("seen", false);
                         notifMap.put("whatIS", "reply");
                         notifMap.put("post_key", key);
+                        notifMap.put("timestamp", FieldValue.serverTimestamp());
                         CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
                         notifSet.add(notifMap);
                     }
@@ -606,6 +602,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         TextView commentsReplyNumber;
         int numberLikesInt;
         int numberDislikesInt;
+
         public CommentsViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
@@ -624,7 +621,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             commentsReplyNumber = (TextView) mView.findViewById(R.id.number_commentsInComments);
             dislikeBtnImage = (ImageView) mView.findViewById(R.id.dislikecommentsimage);
             mAuth = FirebaseAuth.getInstance();
-            likeReference = database.collection("LikesComments");
+            likeReference = database.collection("LikeComments");
             dislikeReference = database.collection("DislikesComments");
             numberCommentsReference = database.collection("CommentsInComments");
 
@@ -654,11 +651,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
         }
 
-        public void setLikeBtn(final String post_key,Activity activity) {
+        public void setLikeBtn(final String post_key, Activity activity) {
             String uid = mAuth.getCurrentUser().getUid();
             Log.i("uid", uid);
             final DocumentReference doc = likeReference.document(post_key).collection("like-id").document(uid);
-            doc.addSnapshotListener(activity,new EventListener<DocumentSnapshot>() {
+            doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
@@ -679,7 +676,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             });
         }
 
-        public void setDislikeBtn(final String post_key,Activity activity) {
+        public void setDislikeBtn(final String post_key, Activity activity) {
             String uid = mAuth.getCurrentUser().getUid();
             final DocumentReference doc = dislikeReference.document(post_key).collection("dislike-id").document(uid);
             doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
@@ -700,7 +697,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
         }
 
-        public void setNumberLikes(String post_key,Activity activity) {
+        public void setNumberLikes(String post_key, Activity activity) {
             CollectionReference col = likeReference.document(post_key).collection("like-id");
             col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -711,15 +708,18 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
                     if (numberLikesInt == 0) {
                         numberLikes.setText("");
+                        likeBtnImage.setVisibility(View.GONE);
                     } else {
-                        numberLikes.setText(String.valueOf(numberLikes));
+                        numberLikes.setText(String.valueOf(numberLikesInt));
+                        likeBtnImage.setVisibility(View.VISIBLE);
+                        numberLikes.setVisibility(View.VISIBLE);
                     }
                 }
 
             });
         }
 
-        public void setNumberDislikes(String post_key,Activity activity) {
+        public void setNumberDislikes(String post_key, Activity activity) {
 
             CollectionReference col = dislikeReference.document(post_key).collection("dislike-id");
             col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
@@ -731,8 +731,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
                     if (numberDislikesInt == 0) {
                         numberDislikes.setText("");
+                        dislikeBtnImage.setVisibility(View.GONE);
                     } else {
-                        numberDislikes.setText(String.valueOf(numberDislikes));
+                        numberDislikes.setVisibility(View.VISIBLE);
+                        numberDislikes.setText(String.valueOf(numberDislikesInt));
+                        dislikeBtnImage.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -741,27 +744,22 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
         public void setNumberComments(String post_key) {
 
-            numberCommentsReference.document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            numberCommentsReference.document(post_key).collection("reply-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
-                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                    if (dataSnapshot.exists()) {
-                        long numberOfComments = dataSnapshot.getData().size();
+                    long numberOfComments = task.getResult().size();
 
-                        if (numberOfComments == 0) {
+                    if (numberOfComments == 0) {
 
-                            commentSomething.setVisibility(View.GONE);
-                            commentsReplyNumber.setText("");
-                        } else if (numberOfComments == 1) {
+                        commentsReplyNumber.setText("");
+                    } else if (numberOfComments == 1) {
 
-                            commentSomething.setText("Comment");
-                            commentsReplyNumber.setText(String.valueOf(numberOfComments));
-                        } else {
-                            commentSomething.setText("Comments");
-                            commentsReplyNumber.setText(String.valueOf(numberOfComments));
-
-                        }
-
+                        commentSomething.setText("Reply");
+                        commentsReplyNumber.setText(String.valueOf(numberOfComments));
+                    } else {
+                        commentSomething.setText("Replies");
+                        commentsReplyNumber.setText(String.valueOf(numberOfComments));
 
                     }
                 }
