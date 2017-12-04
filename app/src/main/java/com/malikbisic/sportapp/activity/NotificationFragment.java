@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -41,19 +43,25 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.Notification;
 import com.malikbisic.sportapp.model.UsersModel;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -69,6 +77,8 @@ public class NotificationFragment extends Fragment {
     static boolean isNotificationClicked = false;
     Query query;
     String uid;
+
+    ArrayList listNotfikey;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -96,6 +106,7 @@ public class NotificationFragment extends Fragment {
 
             }
         };
+        listNotfikey = new ArrayList();
 
         FirebaseUser user = auth.getCurrentUser();
         uid = user.getUid();
@@ -127,6 +138,8 @@ public class NotificationFragment extends Fragment {
                 viewHolder.setTimeAgo(model.getTimestamp(), getContext());
                 viewHolder.isSeen(model.isSeen(), getActivity());
 
+                listNotfikey.add(post_key_notification);
+
                 viewHolder.itemview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -146,6 +159,7 @@ public class NotificationFragment extends Fragment {
                                     Intent openCom = new Intent(getContext(), CommentsActivity.class);
                                     openCom.putExtra("keyComment2", key);
                                     isNotificationClicked = true;
+                                    Log.i("KeyNOTIF", key);
                                     openCom.putExtra("profileComment", MainPage.profielImage);
                                     openCom.putExtra("username", MainPage.usernameInfo);
                                     startActivity(openCom);
@@ -308,6 +322,53 @@ public class NotificationFragment extends Fragment {
 
     }
 
+    private Task<Void> deleteCollection(final CollectionReference collection,
+                                        final int batchSize,
+                                        Executor executor) {
+
+        // Perform the delete operation on the provided Executor, which allows us to use
+        // simpler synchronous logic without blocking the main thread.
+        return Tasks.call(executor, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                // Get the first batch of documents in the collection
+                Query query = collection.orderBy(FieldPath.documentId()).limit(batchSize);
+
+                // Get a list of deleted documents
+                List<DocumentSnapshot> deleted = deleteQueryBatch(query);
+
+                // While the deleted documents in the last batch indicate that there
+                // may still be more documents in the collection, page down to the
+                // next batch and delete again
+                while (deleted.size() >= batchSize) {
+                    // Move the query cursor to start after the last doc in the batch
+                    DocumentSnapshot last = deleted.get(deleted.size() - 1);
+                    query = collection.orderBy(FieldPath.documentId())
+                            .startAfter(last.getId())
+                            .limit(batchSize);
+
+                    deleted = deleteQueryBatch(query);
+                }
+
+                return null;
+            }
+        });
+
+    }
+
+    @WorkerThread
+    private List<DocumentSnapshot> deleteQueryBatch(final Query query) throws Exception {
+        QuerySnapshot querySnapshot = Tasks.await(query.get());
+
+        WriteBatch batch = query.getFirestore().batch();
+        for (DocumentSnapshot snapshot : querySnapshot) {
+            batch.delete(snapshot.getReference());
+        }
+        Tasks.await(batch.commit());
+
+        return querySnapshot.getDocuments();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -322,22 +383,49 @@ public class NotificationFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int which) {
 
                     if (items[which].equals("Delete all notification")) {
+                        WriteBatch batch = FirebaseFirestore.getInstance().batch();
 
-                                notificationRef.collection("Notification").document().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
+                            CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
+                            notif.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()){
+                                        String docID = snapshot.getId();
 
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(getContext(), "Cleared", Toast.LENGTH_LONG).show();
-                                        }
+                                        DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
+                                                .document(uid).collection("notif-id").document(docID);
+                                        docDelete.delete()
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        Toast.makeText(getActivity().getApplicationContext(), "Cleared", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.e("errorDeleteAllNotif", e.getLocalizedMessage());
+                                                    }
+                                                });
                                     }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.e("errorDeleteAllNotif", e.getLocalizedMessage());
-                                    }
-                                });
 
+                                }
+                            });
+
+                            /*
+                            notif.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                    }
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                }
+                            });*/
                     } else if (items[which].equals("Cancel")) {
 
                     }

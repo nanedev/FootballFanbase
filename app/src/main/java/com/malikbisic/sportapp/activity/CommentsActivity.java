@@ -44,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.CommentsInCommentsModel;
 import com.malikbisic.sportapp.model.UsersModel;
@@ -103,7 +104,12 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         } else {
             keyNotif = key;
         }
-        Log.i("keyComment", key);
+
+        if (key == null && keyNotif != null){
+            key = keyNotif;
+        }
+
+        Log.i("keyNotfi", keyNotif);
 
         if (!NotificationFragment.isNotificationClicked) {
             getCommentRef = mReference.collection("Comments").document(key).collection("comment-id");
@@ -321,7 +327,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                                 notifMap.put("uid", uid);
                                                 notifMap.put("seen", false);
                                                 notifMap.put("whatIS", "comment");
-                                                notifMap.put("post_key", post_key_comments);
+                                                notifMap.put("post_key", key);
                                                 notifMap.put("timestamp", FieldValue.serverTimestamp());
                                                 CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
                                                 notifSet.add(notifMap);
@@ -398,7 +404,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                                 notifMap.put("uid", uid);
                                                 notifMap.put("seen", false);
                                                 notifMap.put("whatIS", "comment");
-                                                notifMap.put("post_key", post_key_comments);
+                                                notifMap.put("post_key", key);
                                                 notifMap.put("timestamp", FieldValue.serverTimestamp());
                                                 CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
                                                 notifSet.add(notifMap);
