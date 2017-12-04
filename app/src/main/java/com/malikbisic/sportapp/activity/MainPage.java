@@ -216,7 +216,8 @@ public class MainPage extends AppCompatActivity
     PremiumUsers premiumUsers;
     FreeUser freeUser;
     String postKey;
-    private ArrayList<DocumentSnapshot> mSnapshots = new ArrayList<>();
+    ActionBarDrawerToggle toggle;
+    int id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -341,6 +342,7 @@ public class MainPage extends AppCompatActivity
         //dislikeReference.keepSynced(true);
 
 
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -429,7 +431,7 @@ public class MainPage extends AppCompatActivity
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -577,15 +579,26 @@ public class MainPage extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        getSupportActionBar().show();
+        navigationView.getMenu().findItem(id).setChecked(false);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (cn.jzvd.JZVideoPlayerStandard.backPress()) {
             return;
         }
-
-        super.onBackPressed();
-
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.executePendingTransactions();
+        if (fragmentManager.getBackStackEntryCount() < 1){
+            super.onBackPressed();
+        } else {
+            fragmentManager.executePendingTransactions();
+            fragmentManager.popBackStack();
+            fragmentManager.executePendingTransactions();
+            if (fragmentManager.getBackStackEntryCount() < 1){
+                toggle.setDrawerIndicatorEnabled(true);
+            }
+        }
 
     }
 
@@ -663,7 +676,13 @@ public class MainPage extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+
+        if (toggle.isDrawerIndicatorEnabled() &&
+                toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        id = item.getItemId();
 
         if (id == R.id.nav_profile) {
             // Handle the camera action
