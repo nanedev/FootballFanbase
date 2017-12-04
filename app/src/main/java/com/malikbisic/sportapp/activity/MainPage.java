@@ -583,7 +583,7 @@ public class MainPage extends AppCompatActivity
         } else if (cn.jzvd.JZVideoPlayerStandard.backPress()) {
             return;
         }
-        finish();
+
         super.onBackPressed();
 
 
@@ -674,6 +674,7 @@ public class MainPage extends AppCompatActivity
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
                     R.anim.push_left_out, R.anim.push_left_out).
                     replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag())
+                    .addToBackStack(MainPage.class.getName())
                     .commit();
         } else if (id == R.id.nav_news) {
 
@@ -697,6 +698,7 @@ public class MainPage extends AppCompatActivity
             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
                     R.anim.push_left_out, R.anim.push_left_out).
                     replace(R.id.mainpage_fragment, notificationFragment, notificationFragment.getTag())
+                    .addToBackStack(null)
                     .commit();
 
             isNotificationClicked = true;

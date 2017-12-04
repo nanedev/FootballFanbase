@@ -91,6 +91,8 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
 
         if (key == null && keyNotifPush != null ){
             key = keyNotifPush;
+        } else if (key == null && keyNotif != null){
+            key = keyNotif;
         }
 
 
@@ -98,7 +100,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
         if (!NotificationFragment.isNotificationClicked) {
             getCommentRef = mReference.collection("CommentsInComments").document(key).collection("reply-id");
         } else  {
-            getCommentRef = mReference.collection("CommentsInComments").document(keyNotif).collection("reply");
+            getCommentRef = mReference.collection("CommentsInComments").document(keyNotif).collection("reply-id");
             NotificationFragment.isNotificationClicked = false;
         }
         postingDatabase = mReference.collection("Posting");
@@ -268,7 +270,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
             post_comment.add(commentsMap);
 
             FirebaseFirestore getIduserpost = FirebaseFirestore.getInstance();
-            getIduserpost.collection("Posting").document(key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            getIduserpost.collection("Comments").document(keyPost).collection("comment-id").document(key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 

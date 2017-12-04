@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -97,7 +98,7 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements View.OnKeyListener{
 
     private ImageView profile;
     private ImageView flag;
@@ -463,6 +464,8 @@ public class ProfileFragment extends Fragment {
 
         }
 
+
+
     }
 
 
@@ -488,6 +491,20 @@ public class ProfileFragment extends Fragment {
         return super.onOptionsItemSelected(item);
 
 
+    }
+
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                String cameback="CameBack";
+                Intent intent = new Intent(getActivity(),MainPage.class);
+                startActivity(intent);
+                return true;
+        }
+        return false;
     }
 }
 

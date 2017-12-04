@@ -99,9 +99,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         mReference = FirebaseFirestore.getInstance();
 
 
+
+
         if (key == null && keyNotifPush != null) {
             key = keyNotifPush;
-        } else {
+        } else if (key != null){
             keyNotif = key;
         }
 
@@ -109,14 +111,17 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             key = keyNotif;
         }
 
-        Log.i("keyNotfi", keyNotif);
 
         if (!NotificationFragment.isNotificationClicked) {
             getCommentRef = mReference.collection("Comments").document(key).collection("comment-id");
 
             keyNotif = key;
         } else {
-            getCommentRef = mReference.collection("Comments").document(keyNotif).collection("comment-id");
+            try {
+                getCommentRef = mReference.collection("Comments").document(keyNotif).collection("comment-id");
+            } catch (Exception e){
+                Log.e("error", e.getLocalizedMessage());
+            }
             key = keyNotif;
             NotificationFragment.isNotificationClicked = false;
         }
