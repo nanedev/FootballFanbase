@@ -23,6 +23,6 @@ public class FullScreenImage extends AppCompatActivity {
 
         String uri = myIntet.getStringExtra("imageURL");
 
-        Picasso.with(this).load(uri).into(image);
+        Glide.with(this).load(uri).into(image);
     }
 }

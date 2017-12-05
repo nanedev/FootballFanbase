@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,21 +13,34 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.malikbisic.sportapp.R;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SinglePostViewActivity extends AppCompatActivity{
     private String post_key = null;
 
-    private DatabaseReference postReference;
-    private DatabaseReference editPost;
+    private CollectionReference postReference;
+    private CollectionReference editPost;
     private ImageView post_image;
     private ImageView profile_image;
     private TextView username;
@@ -44,8 +58,8 @@ public class SinglePostViewActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_post_view);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        postReference = FirebaseDatabase.getInstance().getReference().child("Posting");
-        editPost = FirebaseDatabase.getInstance().getReference().child("Posting");
+        postReference = FirebaseFirestore.getInstance().collection("Posting");
+        editPost = FirebaseFirestore.getInstance().collection("Posting");
         profile_image = (ImageView) findViewById(R.id.profile_image_wall);
         username = (TextView) findViewById(R.id.username_wall);
         post_image = (ImageView) findViewById(R.id.posted_image);
@@ -63,18 +77,18 @@ public class SinglePostViewActivity extends AppCompatActivity{
         Intent myIntent = getIntent();
         post_key = myIntent.getStringExtra("post_id");
 
-        postReference.child(post_key).addValueEventListener(new ValueEventListener() {
+        postReference.document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                String profileImage = (String) dataSnapshot.child("profileImage").getValue();
-                String profileUsername = (String) dataSnapshot.child("username").getValue();
-                String postImage = (String) dataSnapshot.child("photoPost").getValue();
-                String postVideo = (String) dataSnapshot.child("videoPost").getValue();
-                String descVideo = (String) dataSnapshot.child("descVideo").getValue();
-                String descImage = (String) dataSnapshot.child("descForPhoto").getValue();
-                String postAudio = (String) dataSnapshot.child("audioFile").getValue();
-                String postText = (String) dataSnapshot.child("desc").getValue();
+                String profileImage = dataSnapshot.getString("profileImage");
+                String profileUsername = dataSnapshot.getString("username");
+                String postImage =  dataSnapshot.getString("photoPost");
+                String postVideo =  dataSnapshot.getString("videoPost");
+                String descVideo =  dataSnapshot.getString("descVideo");
+                String descImage =  dataSnapshot.getString("descForPhoto");
+                String postAudio = dataSnapshot.getString("audioFile");
+                String postText = dataSnapshot.getString("desc");
 
                 Picasso.with(SinglePostViewActivity.this).load(profileImage).into(profile_image);
                 username.setText(profileUsername);
@@ -123,10 +137,6 @@ public class SinglePostViewActivity extends AppCompatActivity{
 
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
     }
 
@@ -142,43 +152,98 @@ public class SinglePostViewActivity extends AppCompatActivity{
         final int id = item.getItemId();
 
         if (id == R.id.save_edit_text) {
-           final DatabaseReference editPostComplete =  editPost.child(post_key);
+           final DocumentReference editPostComplete =  editPost.document(post_key);
             final String newTextVideo = post_text_video.getText().toString().trim();
             final String newTextImage = post_text_image.getText().toString().trim();
             final String newTextAudio = post_text_audio.getText().toString().trim();
             final String newText = post_only_text.getText().toString().trim();
 
-            editPostComplete.addListenerForSingleValueEvent(new ValueEventListener() {
+            editPostComplete.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child("descVideo").exists()) {
-                        editPostComplete.child("descVideo").setValue(newTextVideo);
+                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                    if (dataSnapshot.contains("descVideo")) {
+                        Map<String, Object> descVideoMap = new HashMap<>();
+                        descVideoMap.put("descVideo", newTextVideo);
+                       DocumentReference edit = FirebaseFirestore.getInstance().collection("Posting").document(post_key);
+                       edit.update(descVideoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                           @Override
+                           public void onComplete(@NonNull Task<Void> task) {
+                               if (task.isSuccessful()){
+                                   Toast.makeText(SinglePostViewActivity.this, "Successfuly", Toast.LENGTH_LONG).show();
+                               }
+                           }
+                       }).addOnFailureListener(new OnFailureListener() {
+                           @Override
+                           public void onFailure(@NonNull Exception e) {
+                               Log.e("errorUpdate", e.getLocalizedMessage());
+                           }
+                       });
                     }
 
-                    if (dataSnapshot.child("desc").exists()) {
+                    if (dataSnapshot.contains("desc")) {
+                        Map<String, Object> descMap = new HashMap<>();
+                        descMap.put("desc", newText);
+                        DocumentReference edit = FirebaseFirestore.getInstance().collection("Posting").document(post_key);
+                        edit.update(descMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(SinglePostViewActivity.this, "Successfuly", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("errorUpdate", e.getLocalizedMessage());
+                            }
+                        });
 
-                        DatabaseReference newTekstSet = editPostComplete;
-                        newTekstSet.child("desc").setValue(newText);
+
                     }
 
-                    if (dataSnapshot.child("descForPhoto").exists()) {
-                        editPostComplete.child("descForPhoto").setValue(newTextImage);
+                    if (dataSnapshot.contains("descForPhoto")) {
+                        Map<String, Object> descPhotoMap = new HashMap<>();
+                        descPhotoMap.put("descForPhoto", newTextImage);
+                        DocumentReference edit = FirebaseFirestore.getInstance().collection("Posting").document(post_key);
+                        edit.update(descPhotoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(SinglePostViewActivity.this, "Successfuly", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("errorUpdate", e.getLocalizedMessage());
+                            }
+                        });
                     }
 
-                    if (dataSnapshot.child("descForAudio").exists()) {
-                        editPostComplete.child("descForAudio").setValue(newTextAudio);
+                    if (dataSnapshot.contains("descForAudio")) {
+
+                        Map<String, Object> descAudioMap = new HashMap<>();
+                        descAudioMap.put("descForAudio", newTextAudio);
+                       DocumentReference edit = FirebaseFirestore.getInstance().collection("Posting").document(post_key);
+                       edit.update(descAudioMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                           @Override
+                           public void onComplete(@NonNull Task<Void> task) {
+                               if (task.isSuccessful()){
+                                   Toast.makeText(SinglePostViewActivity.this, "Successfuly", Toast.LENGTH_LONG).show();
+                               }
+                           }
+                       }).addOnFailureListener(new OnFailureListener() {
+                           @Override
+                           public void onFailure(@NonNull Exception e) {
+                               Log.e("errorUpdate", e.getLocalizedMessage());
+                           }
+                       });
+
                     }
 
                     Intent backToMainPage = new Intent(SinglePostViewActivity.this, MainPage.class);
                     startActivity(backToMainPage);
                     finish();
-
-                }
-
-
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
 
                 }
             });
