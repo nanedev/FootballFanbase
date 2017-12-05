@@ -1,8 +1,8 @@
 package com.malikbisic.sportapp.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,6 +21,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.FanbaseFanClubTable;
 import com.malikbisic.sportapp.activity.MyPostsActivity;
@@ -27,7 +36,6 @@ import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -122,8 +130,8 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
         ImageView itemImage;
         TextView itemTitle;
         TextView numberSomething;
-        FirebaseDatabase mDatabase;
-        DatabaseReference mReference;
+        FirebaseFirestore mDatabase;
+        DocumentReference mReference;
         String uid;
         FirebaseAuth mAuth;
 
@@ -143,12 +151,13 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
 
 
 
-            mDatabase = FirebaseDatabase.getInstance();
+            mDatabase = FirebaseFirestore.getInstance();
 
             mAuth = FirebaseAuth.getInstance();
             uid = mAuth.getCurrentUser().getUid();
+            mReference = mDatabase.collection("Users").document(uid);
 
-            mReference = mDatabase.getReference().child("Users").child(uid);
+
             String clubLogo;
 
             itemImage = (ImageView) itemView.findViewById(R.id.card_image);
@@ -171,8 +180,27 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
 
 
     public void numberPost() {
+            final CollectionReference numberPostRef = FirebaseFirestore.getInstance().collection("Posting");
 
-        DatabaseReference numberPostRef = FirebaseDatabase.getInstance().getReference().child("Posting");
+        final com.google.firebase.firestore.Query query = numberPostRef.whereEqualTo("uid",uid);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                number = documentSnapshots.size();
+                numberSomething.setText(String.valueOf(number));
+            }
+        });
+
+   /*numberPostRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+       @Override
+       public void onComplete(@NonNull Task<QuerySnapshot> task) {
+           DocumentReference ref = numberPostRef.getDo
+      number = task.getResult().size();
+      numberSomething.setText("" + number);
+       }
+   });*/
+   /*     DatabaseReference numberPostRef = FirebaseDatabase.getInstance().getReference().child("Posting");
         Query numberPostQuery = numberPostRef.orderByChild("uid").equalTo(uid);
         numberPostQuery.addValueEventListener(new ValueEventListener() {
             @Override
@@ -185,7 +213,7 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
     }
         public void numberPointsForYourTeam() {
@@ -194,7 +222,15 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
 
         public void positionTeam() {
             numberSomething.setText("11.");
-            mReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            mReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+               String logoClub = (String) documentSnapshot.getData().get("favoriteClubLogo");
+                    Picasso.with(itemView.getContext()).load(logoClub).into(itemImage);
+                }
+            });
+
+     /*       mReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     String logoClub = (String) dataSnapshot.child("favoriteClubLogo").getValue();
@@ -205,12 +241,12 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            });*/
         }
 
         public void premiumTrialDateText(){
 
-            mReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        /*    mReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     getDateFromDatabase = String.valueOf(dataSnapshot.child("premiumDate").getValue());
@@ -244,7 +280,7 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            });*/
 
         }
     }

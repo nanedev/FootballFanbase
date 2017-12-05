@@ -493,6 +493,11 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
 
     }
 
+    @Override
+    public void onPause() {
+
+        super.onPause();
+    }
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {

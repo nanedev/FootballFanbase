@@ -16,6 +16,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.MyPostsActivity;
 import com.malikbisic.sportapp.activity.UserProfileActivity;
@@ -109,8 +115,8 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         ImageView itemImage;
         TextView itemTitle;
         TextView numberSomething;
-        FirebaseDatabase mDatabase;
-        DatabaseReference mReference;
+        FirebaseFirestore mDatabase;
+        DocumentReference mReference;
 
         String uid;
         public UserProfileViewHodler(View itemView) {
@@ -119,29 +125,27 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             itemTitle = (TextView) itemView.findViewById(R.id.card_textUser);
             numberSomething = (TextView) itemView.findViewById(R.id.number_ofUser);
             itemImage = (ImageView) itemView.findViewById(R.id.card_imageUser);
-            mDatabase = FirebaseDatabase.getInstance();
+            mDatabase = FirebaseFirestore.getInstance();
             Intent myIntent = activity.getIntent();
             String userUid = myIntent.getStringExtra("userID");
-            mReference = mDatabase.getReference().child("Users").child(userUid);
+            mReference = mDatabase.collection("Users").document(userUid);
+
         }
 
         public void numberPost() {
             Intent myIntent = activity.getIntent();
             String userUid = myIntent.getStringExtra("userID");
-            DatabaseReference numberPostRef = FirebaseDatabase.getInstance().getReference().child("Posting");
-            Query numberPostQuery = numberPostRef.orderByChild("uid").equalTo(userUid);
-            numberPostQuery.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    number  = (int) dataSnapshot.getChildrenCount();
-                    numberSomething.setText(""+number);
-                }
+            CollectionReference numberPostRef =FirebaseFirestore.getInstance().collection("Posting");
+            final com.google.firebase.firestore.Query query = numberPostRef.whereEqualTo("uid",userUid);
 
+            query.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                    number = documentSnapshots.size();
+                    numberSomething.setText(String.valueOf(number));
                 }
             });
+
 
         }
     }
