@@ -245,7 +245,37 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
         }
 
         public void premiumTrialDateText(){
+mReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+    @Override
+    public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+        getDateFromDatabase = String.valueOf(documentSnapshot.getData().get("premiumDate"));
 
+        try {
+            currentDateOfUser = dateFormat.parse(getDateFromDatabase);
+            calendar.setTime(currentDateOfUser);
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+        calendar.add(Calendar.DAY_OF_MONTH,15);
+        trialDate = calendar.getTime();
+        trialDateString = dateFormat.format(trialDate);
+        mReference.collection("Users").document(uid).update(
+          "trialPremiumDate", trialDateString
+        );
+        numberSomething.setText(trialDateString);
+
+        if (dateRightNow.equals(trialDate) || dateRightNow.after(trialDate)) {
+
+            numberSomething.setText("Your premium trial ended");
+            mReference.collection("Users").document(uid).update(
+              "premium",false
+            );
+
+
+            Log.i("proba", "isti su");
+        }
+    }
+});
         /*    mReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

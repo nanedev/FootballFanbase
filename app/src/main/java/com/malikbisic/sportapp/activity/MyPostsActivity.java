@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.graphics.drawable.PictureDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,7 +18,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -25,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -35,6 +40,12 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +54,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.Post;
 import com.malikbisic.sportapp.model.SvgDrawableTranscoder;
@@ -51,6 +70,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -62,12 +83,12 @@ public class MyPostsActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     RecyclerView postRecyclerView;
     LinearLayoutManager linearLayoutManager;
-    private DatabaseReference mReference, postingDatabase, likesReference, dislikeReference, notificationReference;
+    private FirebaseFirestore mReference, postingDatabase, likesReference, dislikeReference, notificationReference;
     boolean pause_state;
     boolean play_state;
     boolean like_process = false;
     boolean dislike_process = false;
-    private FirebaseDatabase mDatabase;
+    private FirebaseFirestore mDatabase;
     String uid;
     Intent myIntent;
 
@@ -77,8 +98,8 @@ public class MyPostsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_posts);
         mAuth = FirebaseAuth.getInstance();
         myIntent = getIntent();
-        mDatabase = FirebaseDatabase.getInstance();
-        postingDatabase = FirebaseDatabase.getInstance().getReference().child("Posting");
+        mDatabase = FirebaseFirestore.getInstance();
+        postingDatabase = FirebaseFirestore.getInstance();
         postRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_my_posts);
         postRecyclerView.setHasFixedSize(false);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -90,41 +111,40 @@ public class MyPostsActivity extends AppCompatActivity {
         postRecyclerView.setDrawingCacheEnabled(true);
         postRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        likesReference = mDatabase.getReference().child("Likes");
-        dislikeReference = mDatabase.getReference().child("Dislikes");
-        likesReference.keepSynced(true);
-        dislikeReference.keepSynced(true);
-        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
+        likesReference = FirebaseFirestore.getInstance();
+        dislikeReference = FirebaseFirestore.getInstance();
+
+        notificationReference = FirebaseFirestore.getInstance();
         uid = MainPage.uid;
-        DatabaseReference myPostsReference = FirebaseDatabase.getInstance().getReference().child("Posting");
+        CollectionReference myPostsReference = FirebaseFirestore.getInstance().collection("Posting");
         String userID = myIntent.getStringExtra("userID");
         boolean isUserClicked = myIntent.getBooleanExtra("isClicked", false);
-        final Query query;
+        final com.google.firebase.firestore.Query query;
 
         if (isUserClicked) {
-            query = myPostsReference
-                    .orderByChild("uid")
-                    .equalTo(userID);
+          query = myPostsReference.whereEqualTo("uid",userID);
             isUserClicked = false;
         }else {
-            query = myPostsReference
-                    .orderByChild("uid")
-                    .equalTo(mAuth.getCurrentUser().getUid());
+            query = myPostsReference.whereEqualTo("uid",mAuth.getCurrentUser().getUid());
         }
-
-        query.addValueEventListener(new ValueEventListener() {
+        query.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                FirebaseRecyclerAdapter<Post, PostViewHolder> recyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
-                        Post.class,
-                        R.layout.my_posts_row,
-                        PostViewHolder.class,
-                        query
-                ) {
-                    @Override
-                    protected void populateViewHolder(final PostViewHolder viewHolder, Post model, int position) {
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                FirestoreRecyclerOptions<Post> response = new FirestoreRecyclerOptions.Builder<Post>()
+                        .setQuery(query,Post.class)
+                        .build();
 
-                        final String post_key = getRef(position).getKey();
+                FirestoreRecyclerAdapter<Post,PostViewHolder> adapter = new FirestoreRecyclerAdapter<Post,PostViewHolder>(response) {
+                    @Override
+                    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_posts_row,parent,false);
+                        return new PostViewHolder(view);
+                    }
+
+                    @Override
+                    protected void onBindViewHolder(final PostViewHolder viewHolder, int position, Post model) {
+                        final String post_key = model.getKey();
+
                         viewHolder.setDescForAudio(model.getDescForAudio());
                         viewHolder.setDescForPhoto(model.getDescForPhoto());
                         viewHolder.setDescVideo(model.getDescVideo());
@@ -133,14 +153,17 @@ public class MyPostsActivity extends AppCompatActivity {
                         viewHolder.setPhotoPost(getApplicationContext(), model.getPhotoPost());
                         viewHolder.setVideoPost(getApplicationContext(), model.getVideoPost());
                         viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
-                        viewHolder.setLikeBtn(post_key);
-                        viewHolder.setNumberLikes(post_key);
+                        viewHolder.setCountry(getApplicationContext(),model.getCountry());
+                        viewHolder.setLikeBtn(post_key,MyPostsActivity.this);
+                        viewHolder.setNumberLikes(post_key,MyPostsActivity.this);
                         viewHolder.setDesc(model.getDesc());
-                        viewHolder.setDislikeBtn(post_key);
-                        viewHolder.setNumberComments(post_key);
-                        viewHolder.setNumberDislikes(post_key);
+                        viewHolder.setDislikeBtn(post_key,MyPostsActivity.this);
+                        viewHolder.setNumberComments(post_key,MyPostsActivity.this);
+                        viewHolder.setNumberDislikes(post_key,MyPostsActivity.this);
                         viewHolder.setClubLogo(getApplicationContext(), model.getClubLogo());
                         viewHolder.seekBar.setEnabled(true);
+
+
                         viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(final View v) {
@@ -209,6 +232,7 @@ public class MyPostsActivity extends AppCompatActivity {
                         });
 
 
+
                         viewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -234,16 +258,6 @@ public class MyPostsActivity extends AppCompatActivity {
                             }
                         });
 
-                /*viewHolder.openSinglePost.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent openSinglePost = new Intent(MainPage.this, SinglePostViewActivity.class);
-                        openSinglePost.putExtra("post_id", post_key);
-                        startActivity(openSinglePost);
-                        Log.i("linkPost", link_post);
-                    }
-                }); */
-
                         viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -265,49 +279,75 @@ public class MyPostsActivity extends AppCompatActivity {
 
                         viewHolder.like_button.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(View v) {
+                            public void onClick(final View v) {
                                 like_process = true;
+                                viewHolder.setNumberLikes(post_key,MyPostsActivity.this);
 
 
-                                likesReference.addValueEventListener(new ValueEventListener() {
+                                likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-
+                                    public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
                                         if (like_process) {
-                                            if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
-                                                likesReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                                like_process = false;
 
 
-                                            } else {
+                                            if (documentSnapshots.exists()) {
 
-                                                DatabaseReference newPost = likesReference.child(post_key).child(mAuth.getCurrentUser().getUid());
-
-                                                newPost.child("username").setValue(MainPage.usernameInfo);
-                                                newPost.child("photoProfile").setValue(MainPage.profielImage);
-
-
-                                                DatabaseReference getIduserpost = postingDatabase;
-                                                getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
+                                                likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
-
-                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
-                                                        notifSet.child("action").setValue("like");
-                                                        notifSet.child("uid").setValue(uid);
-                                                        notifSet.child("seen").setValue(false);
-                                                        notifSet.child("whatIS").setValue("post");
-                                                        notifSet.child("post_key").setValue(post_key);
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        Log.i("deleteLike", "complete");
 
                                                     }
-
+                                                }).addOnFailureListener(new OnFailureListener() {
                                                     @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.e("deleteLike", e.getLocalizedMessage());
                                                     }
                                                 });
+                                                like_process = false;
+
+                                                Log.i("nema like", "NEMA");
+
+                                            } else {
+                                                Log.i("ima like", "IMA");
+                                                Map<String, Object> userLikeInfo = new HashMap<>();
+                                                userLikeInfo.clear();
+                                                userLikeInfo.put("username", MainPage.usernameInfo);
+                                                userLikeInfo.put("photoProfile", MainPage.profielImage);
+
+                                                final DocumentReference newPost = likesReference.collection("Likes").document(post_key).collection("like-id").document(uid);
+                                                newPost.set(userLikeInfo);
+
+
+                                                FirebaseFirestore getIduserpost = postingDatabase;
+                                                getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+
+
+                                                        String userpostUID = dataSnapshot.getString("uid");
+
+                                                        Map<String, Object> notifMap = new HashMap<>();
+                                                        notifMap.put("action", "liked");
+                                                        notifMap.put("uid", uid);
+                                                        notifMap.put("seen", false);
+                                                        notifMap.put("whatIS", "post");
+                                                        notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                        notifMap.put("post_key", post_key);
+                                                        CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                                        notifSet.add(notifMap);
+
+
+                                                        if (e != null) {
+                                                            Log.e("likeERROR", e.getLocalizedMessage());
+                                                        }
+
+                                                    }
+
+
+                                                });
+
 
                                                 like_process = false;
 
@@ -315,17 +355,11 @@ public class MyPostsActivity extends AppCompatActivity {
                                             }
                                         }
                                     }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                        Log.i("error", databaseError.getMessage());
-
-                                    }
                                 });
-
                             }
                         });
+
+
 
 
                         viewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
@@ -338,10 +372,78 @@ public class MyPostsActivity extends AppCompatActivity {
                             }
                         });
 
+
                         viewHolder.dislike_button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dislike_process = true;
+                                viewHolder.setNumberDislikes(post_key, MyPostsActivity.this);
+
+
+                                dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                        if (dislike_process) {
+
+
+                                            if (documentSnapshots.exists()) {
+                                                dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        Log.i("deleteDislike", "complete");
+
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.e("deletedislike", e.getLocalizedMessage());
+                                                    }
+                                                });
+                                                dislike_process = false;
+
+
+                                            } else {
+
+                                                Map<String, Object> userDislikeInfo = new HashMap<>();
+                                                userDislikeInfo.put("username", MainPage.usernameInfo);
+                                                userDislikeInfo.put("photoProfile", MainPage.profielImage);
+
+                                                final DocumentReference newPost = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid);
+                                                newPost.set(userDislikeInfo);
+
+
+                                                FirebaseFirestore getIduserpost = postingDatabase;
+                                                getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                                        String userpostUID = dataSnapshot.getString("uid");
+
+                                                        Map<String, Object> notifMap = new HashMap<>();
+                                                        notifMap.put("action", "disliked");
+                                                        notifMap.put("uid", uid);
+                                                        notifMap.put("seen", false);
+                                                        notifMap.put("whatIS", "post");
+                                                        notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                        notifMap.put("post_key", post_key);
+                                                        CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                                        notifSet.add(notifMap);
+
+                                                    }
+
+                                                });
+
+
+                                                dislike_process = false;
+
+
+                                            }
+                                        }
+                                    }
+                                });
+
+
+                                /*
                                 dislikeReference.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -359,7 +461,6 @@ public class MyPostsActivity extends AppCompatActivity {
 
                                                 newPost.child("username").setValue(MainPage.usernameInfo);
                                                 newPost.child("photoProfile").setValue(MainPage.profielImage);
-
 
                                                 DatabaseReference getIduserpost = postingDatabase;
                                                 getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
@@ -382,6 +483,7 @@ public class MyPostsActivity extends AppCompatActivity {
                                                     }
                                                 });
 
+
                                                 dislike_process = false;
 
 
@@ -394,17 +496,19 @@ public class MyPostsActivity extends AppCompatActivity {
                                     public void onCancelled(DatabaseError databaseError) {
 
                                     }
-                                });
+                                }); */
 
                             }
                         });
 
+
                         viewHolder.comments.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent openCom = new Intent(MyPostsActivity.this, CommentsActivity.class);
+                                Intent openCom = new Intent(getApplicationContext(), CommentsActivity.class);
                                 openCom.putExtra("keyComment", post_key);
                                 openCom.putExtra("profileComment", MainPage.profielImage);
+                                openCom.putExtra("username", MainPage.usernameInfo);
                                 startActivity(openCom);
                             }
                         });
@@ -412,9 +516,10 @@ public class MyPostsActivity extends AppCompatActivity {
                         viewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent openCom = new Intent(MyPostsActivity.this, CommentsActivity.class);
+                                Intent openCom = new Intent(getApplicationContext(), CommentsActivity.class);
                                 openCom.putExtra("keyComment", post_key);
                                 openCom.putExtra("profileComment", MainPage.profielImage);
+                                openCom.putExtra("username", MainPage.usernameInfo);
                                 startActivity(openCom);
                             }
                         });
@@ -423,74 +528,90 @@ public class MyPostsActivity extends AppCompatActivity {
                         viewHolder.openComment.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent openCom = new Intent(MyPostsActivity.this, CommentsActivity.class);
+
+                                Intent openCom = new Intent(getApplicationContext(), CommentsActivity.class);
                                 openCom.putExtra("keyComment", post_key);
                                 openCom.putExtra("profileComment", MainPage.profielImage);
+                                openCom.putExtra("username", MainPage.usernameInfo);
                                 startActivity(openCom);
                             }
                         });
 
-                        postingDatabase.addValueEventListener(new ValueEventListener() {
+
+                        final FirebaseFirestore postingDatabaseProfile = FirebaseFirestore.getInstance();
+                        postingDatabaseProfile.collection("Posting").document(post_key).addSnapshotListener(MyPostsActivity.this, new EventListener<DocumentSnapshot>() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                            public void onEvent(final DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                if (dataSnapshot.child(post_key).child("uid").exists()) {
-                                    if (mAuth.getCurrentUser().getUid().equals(dataSnapshot.child(post_key).child("uid").getValue().toString())) {
-                                        viewHolder.arrow_down.setVisibility(View.VISIBLE);
+                                if (dataSnapshot.exists()) {
+                                    if (dataSnapshot.contains("uid")) {
+                                        if (mAuth.getCurrentUser().getUid().equals(dataSnapshot.getString("uid"))) {
 
-                                        viewHolder.arrow_down.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
+                                            viewHolder.arrow_down.setVisibility(View.VISIBLE);
 
-                                                final String[] items = {"Edit post", "Delete post", "Cancel"};
-                                                android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.mView.getContext());
-                                                dialog.setItems(items, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                            viewHolder.arrow_down.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
 
-                                                        if (items[i].equals("Edit post")) {
-                                                            Intent openSinglePost = new Intent(MyPostsActivity.this, SinglePostViewActivity.class);
-                                                            openSinglePost.putExtra("post_id", post_key);
-                                                            startActivity(openSinglePost);
-                                                        } else if (items[i].equals("Delete post")) {
+                                                    final String[] items = {"Edit post", "Delete post", "Cancel"};
+                                                    android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.mView.getContext());
+                                                    dialog.setItems(items, new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                                                            postingDatabase.child(post_key).removeValue();
-                                                        } else if (items[i].equals("Cancel")) {
+                                                            if (items[i].equals("Edit post")) {
+                                                                Intent openSinglePost = new Intent(getApplicationContext(), SinglePostViewActivity.class);
+                                                                openSinglePost.putExtra("post_id", post_key);
+                                                                startActivity(openSinglePost);
+                                                            } else if (items[i].equals("Delete post")) {
 
 
+                                                                postingDatabaseProfile.collection("Posting").document(post_key).delete().addOnSuccessListener(MyPostsActivity.this, new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+
+                                                                        Toast.makeText(getApplicationContext(), "deleted", Toast.LENGTH_LONG).show();
+
+                                                                    }
+                                                                }).addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Toast.makeText(getApplicationContext(), e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                });
+                                                            } else if (items[i].equals("Cancel")) {
+
+
+                                                            }
                                                         }
-                                                    }
-                                                });
-                                                dialog.create();
-                                                dialog.show();
-                                            }
-                                        });
+                                                    });
+                                                    dialog.create();
+                                                    dialog.show();
+                                                }
+                                            });
+                                        } else viewHolder.arrow_down.setVisibility(View.INVISIBLE);
                                     }
                                 }
                             }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
                         });
 
 
+
+
                     }
+
+
+
+
+
                 };
-
-
-                postRecyclerView.setAdapter(recyclerAdapter);
-                recyclerAdapter.notifyDataSetChanged();
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                adapter.notifyDataSetChanged();
+                postRecyclerView.setAdapter(adapter);
+                adapter.startListening();
 
             }
         });
-
 
     }
 
@@ -509,10 +630,11 @@ public class MyPostsActivity extends AppCompatActivity {
         public Button stop_button;
         ImageView like_button;
         ImageView dislike_button;
-        FirebaseDatabase database;
-        DatabaseReference likeReference, dislikeReference;
-        DatabaseReference userReference;
-        DatabaseReference numberCommentsReference;
+
+
+        FirebaseFirestore likeReference, dislikeReference;
+        FirebaseFirestore userReference;
+        FirebaseFirestore numberCommentsReference;
         FirebaseAuth mAuth;
         public TextView numberofLikes;
         public TextView numberOfDislikes;
@@ -534,7 +656,8 @@ public class MyPostsActivity extends AppCompatActivity {
         String usersFavClub;
         String myClub;
         boolean isPremium;
-
+        int numberLikes;
+        int numberDislikes;
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -565,11 +688,11 @@ public class MyPostsActivity extends AppCompatActivity {
             layoutVideo = (FrameLayout) mView.findViewById(R.id.framelayout_my_posts);
             //loadPhoto = (ProgressBar) mView.findViewById(R.id.post_photo_bar_load);
             layoutVideoText = (RelativeLayout) mView.findViewById(R.id.layout_for_video_text_my_posts);
-            database = FirebaseDatabase.getInstance();
-            likeReference = database.getReference().child("Likes");
-            dislikeReference = database.getReference().child("Dislikes");
-            userReference = database.getReference().child("Users");
-            numberCommentsReference = database.getReference().child("Comments");
+
+            likeReference = FirebaseFirestore.getInstance(); //.child("Likes");
+            dislikeReference = FirebaseFirestore.getInstance(); //.child("Dislikes");
+            userReference = FirebaseFirestore.getInstance(); //.child("Users");
+            numberCommentsReference = FirebaseFirestore.getInstance();
             mAuth = FirebaseAuth.getInstance();
             openComment = (TextView) mView.findViewById(R.id.comment_something_my_posts);
             post_username = (TextView) mView.findViewById(R.id.username_wall_my_posts);
@@ -578,44 +701,41 @@ public class MyPostsActivity extends AppCompatActivity {
             postBackgroundImage = (ImageView) mView.findViewById(R.id.image_post_background_my_posts);
             comments = (TextView) mView.findViewById(R.id.comments_textview_my_posts);
             numberComments = (TextView) mView.findViewById(R.id.number_comments_my_posts);
-            likeReference.keepSynced(true);
-            dislikeReference.keepSynced(true);
+
 
 
         }
 
 
-        public void setNumberLikes(String post_key) {
+        public void setNumberLikes(final String post_key,Activity activity) {
 
-            likeReference.child(post_key).addValueEventListener(new ValueEventListener() {
+            CollectionReference col = likeReference.collection("Likes").document(post_key).collection("like-id");
+            col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onComplete(Task<QuerySnapshot> querySnapshot) {
+
+                    numberLikes = querySnapshot.getResult().size();
 
 
-                    long numberLikes = dataSnapshot.getChildrenCount();
                     if (numberLikes == 0) {
                         numberofLikes.setText("");
                     } else {
                         numberofLikes.setText(String.valueOf(numberLikes));
                     }
-
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
             });
         }
 
 
-        public void setNumberComments(String post_key) {
+        public void setNumberComments(String post_key, Activity activity) {
 
-            numberCommentsReference.child(post_key).addValueEventListener(new ValueEventListener() {
+            numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
-                    long numberOfComments = dataSnapshot.getChildrenCount();
+
+                    int numberOfComments = querySnapshot.getResult().size();
 
                     if (numberOfComments == 0) {
 
@@ -630,88 +750,78 @@ public class MyPostsActivity extends AppCompatActivity {
                         numberComments.setText(String.valueOf(numberOfComments));
 
                     }
-
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
                 }
             });
         }
 
 
-        public void setLikeBtn(final String post_key) {
-            likeReference.addValueEventListener(new ValueEventListener() {
+        public void setLikeBtn(final String post_key, Activity activity) {
+            String uid = mAuth.getCurrentUser().getUid();
+            Log.i("uid", uid);
+            final DocumentReference doc = likeReference.collection("Likes").document(post_key).collection("like-id").document(uid);
+            doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
-                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+                    if (documentSnapshot.exists()) {
+
                         dislike_button.setClickable(false);
                         like_button.setActivated(true);
+                        Log.i("key like ima ", post_key);
+
 
                     } else {
                         dislike_button.setClickable(true);
                         like_button.setActivated(false);
+                        Log.i("key like nema ", post_key);
                     }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
 
                 }
             });
         }
 
-        public void setNumberDislikes(String post_key) {
+        public void setNumberDislikes(String post_key, Activity activity) {
 
-            dislikeReference.child(post_key).addValueEventListener(new ValueEventListener() {
+            CollectionReference col = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id");
+            col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
-                    Log.i("fffff", String.valueOf(dataSnapshot.getChildrenCount()));
-                    long numberDislikes = dataSnapshot.getChildrenCount();
+                    numberDislikes = querySnapshot.getResult().size();
+
+
                     if (numberDislikes == 0) {
                         numberOfDislikes.setText("");
                     } else {
                         numberOfDislikes.setText(String.valueOf(numberDislikes));
                     }
-
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
             });
         }
 
 
-        public void setDislikeBtn(final String post_key) {
-            dislikeReference.addValueEventListener(new ValueEventListener() {
+        public void setDislikeBtn(final String post_key, Activity activity) {
+            String uid = mAuth.getCurrentUser().getUid();
+            final DocumentReference doc = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid);
+            doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
+                    if (documentSnapshot.exists()) {
                         dislike_button.setActivated(true);
                         like_button.setClickable(false);
+                        Log.i("key dislike ima ", post_key);
 
                     } else {
                         dislike_button.setActivated(false);
                         like_button.setClickable(true);
+                        Log.i("key dislike nema ", post_key);
                     }
                 }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
             });
-
-
         }
+
 
         public void setDesc(String desc) {
             if (desc != null) {
@@ -882,6 +992,5 @@ public class MyPostsActivity extends AppCompatActivity {
             }
 
         }
-
     }
 }

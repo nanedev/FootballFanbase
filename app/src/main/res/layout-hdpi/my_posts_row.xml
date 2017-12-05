@@ -217,7 +217,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_margin="10dp">
 
-                <fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard
+                <cn.jzvd.JZVideoPlayerStandard
                     android:id="@+id/posted_video_my_posts"
                     android:layout_width="match_parent"
                     android:layout_height="200dp" />
