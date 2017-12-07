@@ -872,7 +872,7 @@ public class MainPage extends AppCompatActivity
                                             public void onLoadMore(int current_page) {
 
 
-                                                new CountDownTimer(4000, 1000) {
+                                                new CountDownTimer(10000, 10000) {
                                                     @Override
                                                     public void onTick(long millisUntilFinished) {
 
@@ -893,7 +893,7 @@ public class MainPage extends AppCompatActivity
 
                                                                     for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
 
-
+Toast.makeText(MainPage.this,"Hi",Toast.LENGTH_SHORT).show();
                                                                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                                                                         itemSize.add(model);
                                                                         adapter.notifyDataSetChanged();
