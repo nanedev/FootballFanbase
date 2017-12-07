@@ -959,7 +959,26 @@ public class MainPage extends AppCompatActivity
 
         com.google.firebase.firestore.Query query = getNumberNotification.whereEqualTo("seen", false);
 
-        query.get().addOnCompleteListener(MainPage.this, new OnCompleteListener<QuerySnapshot>() {
+        query.addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                int number = documentSnapshots.getDocuments().size();
+
+                if (number == 0) {
+                    notificationCounterNumber.setText("");
+//                    ShortcutBadger.removeCount(MainPage.this);
+
+
+                } else {
+                    notificationCounterNumber.setText(" " + String.valueOf(number));
+//                    startService(
+//                            new Intent(MainPage.this, BadgeServices.class).putExtra("badgeCount", number)
+//                    );
+                }
+            }
+        });
+
+      /*  query.get().addOnCompleteListener(MainPage.this, new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
@@ -978,7 +997,7 @@ public class MainPage extends AppCompatActivity
                 }
             }
 
-        });
+        });*/
 
 //        Intent intent = new Intent(Intent.ACTION_MAIN);
 //        intent.addCategory(Intent.CATEGORY_HOME);

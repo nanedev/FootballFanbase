@@ -300,7 +300,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
             @Override
             public void onClick(final View v) {
                 like_process = true;
-                viewHolder.setNumberLikes(post_key, activity);
+
 
 
                 likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -393,7 +393,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
             @Override
             public void onClick(View v) {
                 dislike_process = true;
-                viewHolder.setNumberDislikes(post_key, activity);
+               /* viewHolder.setNumberDislikes(post_key, activity);*/
 
 
                 dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -843,7 +843,20 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         public void setNumberLikes(final String post_key, Activity activity) {
 
             CollectionReference col = likeReference.collection("Likes").document(post_key).collection("like-id");
-            col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+            col.addSnapshotListener(activity,new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                    numberLikes = documentSnapshots.size();
+                    if (numberLikes == 0) {
+                        numberofLikes.setText("");
+                    } else {
+                        numberofLikes.setText(String.valueOf(numberLikes));
+                    }
+                }
+            });
+
+
+           /* col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
@@ -857,13 +870,35 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                     }
                 }
 
-            });
+            });*/
         }
 
 
         public void setNumberComments(String post_key, Activity activity) {
+            numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                    int numberOfComments = documentSnapshots.getDocuments().size();
 
-            numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+
+
+                    if (numberOfComments == 0) {
+
+                        comments.setVisibility(View.GONE);
+                        numberComments.setText("");
+                    } else if (numberOfComments == 1) {
+
+                        comments.setText("Comment");
+                        numberComments.setText(String.valueOf(numberOfComments));
+                    } else {
+                        comments.setText("Comments");
+                        numberComments.setText(String.valueOf(numberOfComments));
+
+                    }
+                }
+            });
+
+      /*      numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
@@ -884,7 +919,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
                         }
                 }
-            });
+            });*/
         }
 
 
@@ -916,7 +951,21 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         public void setNumberDislikes(String post_key, Activity activity) {
 
             CollectionReference col = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id");
-            col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+       col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+           @Override
+           public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+               numberDislikes = documentSnapshots.getDocuments().size();
+
+
+               if (numberDislikes == 0) {
+                   numberOfDislikes.setText("");
+               } else {
+                   numberOfDislikes.setText(String.valueOf(numberDislikes));
+               }
+
+           }
+       });
+            /*     col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
@@ -930,7 +979,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                     }
                 }
 
-            });
+            });*/
         }
 
 

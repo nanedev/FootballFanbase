@@ -78,7 +78,7 @@ public class NotificationFragment extends Fragment {
     Query query;
     String uid;
 
-    ArrayList listNotfikey;
+    ArrayList <String>listNotfikey;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -106,7 +106,7 @@ public class NotificationFragment extends Fragment {
 
             }
         };
-        listNotfikey = new ArrayList();
+        listNotfikey = new ArrayList<>();
 
         FirebaseUser user = auth.getCurrentUser();
         uid = user.getUid();
@@ -322,52 +322,7 @@ public class NotificationFragment extends Fragment {
 
     }
 
-    private Task<Void> deleteCollection(final CollectionReference collection,
-                                        final int batchSize,
-                                        Executor executor) {
 
-        // Perform the delete operation on the provided Executor, which allows us to use
-        // simpler synchronous logic without blocking the main thread.
-        return Tasks.call(executor, new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                // Get the first batch of documents in the collection
-                Query query = collection.orderBy(FieldPath.documentId()).limit(batchSize);
-
-                // Get a list of deleted documents
-                List<DocumentSnapshot> deleted = deleteQueryBatch(query);
-
-                // While the deleted documents in the last batch indicate that there
-                // may still be more documents in the collection, page down to the
-                // next batch and delete again
-                while (deleted.size() >= batchSize) {
-                    // Move the query cursor to start after the last doc in the batch
-                    DocumentSnapshot last = deleted.get(deleted.size() - 1);
-                    query = collection.orderBy(FieldPath.documentId())
-                            .startAfter(last.getId())
-                            .limit(batchSize);
-
-                    deleted = deleteQueryBatch(query);
-                }
-
-                return null;
-            }
-        });
-
-    }
-
-    @WorkerThread
-    private List<DocumentSnapshot> deleteQueryBatch(final Query query) throws Exception {
-        QuerySnapshot querySnapshot = Tasks.await(query.get());
-
-        WriteBatch batch = query.getFirestore().batch();
-        for (DocumentSnapshot snapshot : querySnapshot) {
-            batch.delete(snapshot.getReference());
-        }
-        Tasks.await(batch.commit());
-
-        return querySnapshot.getDocuments();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
