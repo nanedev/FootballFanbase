@@ -91,7 +91,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
 
         if (key == null && keyNotifPush != null ){
             key = keyNotifPush;
-        } else if (key == null && keyNotif != null){
+        } else if (key == null && keyNotif != null && keyNotifPush == null){
             key = keyNotif;
         }
 

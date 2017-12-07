@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.IdRes;
@@ -218,6 +219,9 @@ public class MainPage extends AppCompatActivity
     String postKey;
     ActionBarDrawerToggle toggle;
     int id;
+
+    DocumentSnapshot lastVisible;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -245,8 +249,8 @@ public class MainPage extends AppCompatActivity
         wallList.setHasFixedSize(false);
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        linearLayoutManager.setStackFromEnd(true);
-        linearLayoutManager.setReverseLayout(true);
+        //linearLayoutManager.setStackFromEnd(true);
+        //linearLayoutManager.setReverseLayout(true);
         wallList.setLayoutManager(linearLayoutManager);
         wallList.setItemViewCacheSize(20);
         wallList.setDrawingCacheEnabled(true);
@@ -342,7 +346,6 @@ public class MainPage extends AppCompatActivity
         //dislikeReference.keepSynced(true);
 
 
-
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -352,75 +355,75 @@ public class MainPage extends AppCompatActivity
 
                     Log.i("proba", uid);
 
-                  final FirebaseFirestore  mReferenceInfo = FirebaseFirestore.getInstance();
-                  mReferenceInfo.collection("Users").document(uid)
-                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                        @Override
-                        public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                            if (documentSnapshot.exists()) {
-                                Map<String, Object> value = (Map<String, Object>) documentSnapshot.getData();
+                    final FirebaseFirestore mReferenceInfo = FirebaseFirestore.getInstance();
+                    mReferenceInfo.collection("Users").document(uid)
+                            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                @Override
+                                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                                    if (documentSnapshot.exists()) {
+                                        Map<String, Object> value = (Map<String, Object>) documentSnapshot.getData();
 
 
-                                profielImage = String.valueOf(value.get("profileImage"));
-                                Picasso.with(getApplicationContext())
-                                        .load(profielImage)
-                                        .into(profile);
-                                username.setText(String.valueOf(value.get("username")));
-                                usernameuser.setText(String.valueOf(value.get("username")));
-                                usernameInfo = usernameuser.getText().toString().trim();
-                                nameSurname.setText(String.valueOf(value.get("name") + " " + String.valueOf(value.get("surname"))));
-                                userProfileImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                                userProfileImage.setAlpha(0.9f);
+                                        profielImage = String.valueOf(value.get("profileImage"));
+                                        Picasso.with(getApplicationContext())
+                                                .load(profielImage)
+                                                .into(profile);
+                                        username.setText(String.valueOf(value.get("username")));
+                                        usernameuser.setText(String.valueOf(value.get("username")));
+                                        usernameInfo = usernameuser.getText().toString().trim();
+                                        nameSurname.setText(String.valueOf(value.get("name") + " " + String.valueOf(value.get("surname"))));
+                                        userProfileImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                                        userProfileImage.setAlpha(0.9f);
 
-                                Picasso.with(getApplicationContext())
-                                        .load(profielImage)
-                                        .into(userProfileImage);
+                                        Picasso.with(getApplicationContext())
+                                                .load(profielImage)
+                                                .into(userProfileImage);
 
-                                country = String.valueOf(value.get("flag"));
-                                clubHeaderString = String.valueOf(value.get("favoriteClubLogo"));
-                                myClubName = String.valueOf(value.get("favoriteClub"));
-                                Picasso.with(getApplicationContext())
-                                        .load(clubHeaderString)
-                                        .into(clubHeader);
-                                getDateFromDatabaseMainPage = String.valueOf(value.get("premiumDate"));
-                                try {
-                                    currentDateOfUserMainPage = dateFormat.parse(getDateFromDatabaseMainPage);
-                                    calendar.setTime(currentDateOfUserMainPage);
+                                        country = String.valueOf(value.get("flag"));
+                                        clubHeaderString = String.valueOf(value.get("favoriteClubLogo"));
+                                        myClubName = String.valueOf(value.get("favoriteClub"));
+                                        Picasso.with(getApplicationContext())
+                                                .load(clubHeaderString)
+                                                .into(clubHeader);
+                                        getDateFromDatabaseMainPage = String.valueOf(value.get("premiumDate"));
+                                        try {
+                                            currentDateOfUserMainPage = dateFormat.parse(getDateFromDatabaseMainPage);
+                                            calendar.setTime(currentDateOfUserMainPage);
 
-                                } catch (java.text.ParseException ee) {
-                                    ee.printStackTrace();
-                                }
+                                        } catch (java.text.ParseException ee) {
+                                            ee.printStackTrace();
+                                        }
 
-                                Map onlie = new HashMap();
-                                onlie.put("online", true);
-                                FirebaseFirestore setOfline = FirebaseFirestore.getInstance();
-                                setOfline.collection("UsersChat").document(myClubName).collection(uid).document().update(onlie);
+                                        Map onlie = new HashMap();
+                                        onlie.put("online", true);
+                                        FirebaseFirestore setOfline = FirebaseFirestore.getInstance();
+                                        setOfline.collection("UsersChat").document(myClubName).collection(uid).document().update(onlie);
 
 
-                                calendar.add(Calendar.DAY_OF_MONTH, 15);
-                                trialDate = calendar.getTime();
-                                trialDateString = dateFormat.format(trialDate);
-                                Map trialMap = new HashMap();
-                                trialMap.put("trialPremiumDate", trialDateString);
+                                        calendar.add(Calendar.DAY_OF_MONTH, 15);
+                                        trialDate = calendar.getTime();
+                                        trialDateString = dateFormat.format(trialDate);
+                                        Map trialMap = new HashMap();
+                                        trialMap.put("trialPremiumDate", trialDateString);
 
-                                FirebaseFirestore trialPremiumRef = FirebaseFirestore.getInstance();
-                                trialPremiumRef.collection("Users").document(uid).update(trialMap);
+                                        FirebaseFirestore trialPremiumRef = FirebaseFirestore.getInstance();
+                                        trialPremiumRef.collection("Users").document(uid).update(trialMap);
 
                                /* if (nowDate.equals(trialDate) || nowDate.after(trialDate)) {
                                     mReference.child("premium").setValue(false);
                                 }*/
 
-                                Log.i("country", country);
+                                        Log.i("country", country);
 
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                if (user != null)
-                                    email.setText(user.getEmail());
-                                backgroundImage();
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        if (user != null)
+                                            email.setText(user.getEmail());
+                                        backgroundImage();
 
 
-                            }
-                        }
-                    });
+                                    }
+                                }
+                            });
 
 
                 }
@@ -463,8 +466,8 @@ public class MainPage extends AppCompatActivity
 
         Boolean isFirstTime = getSharedPreferences("check first time", MODE_PRIVATE).getBoolean("isFirstTime", true);
 
-        if (isFirstTime){
-        setNumberClubFans();
+        if (isFirstTime) {
+            setNumberClubFans();
             getSharedPreferences("check first time", MODE_PRIVATE).edit().putBoolean("isFirstTime", false).commit();
         }
 
@@ -589,13 +592,13 @@ public class MainPage extends AppCompatActivity
         }
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.executePendingTransactions();
-        if (fragmentManager.getBackStackEntryCount() < 1){
+        if (fragmentManager.getBackStackEntryCount() < 1) {
             super.onBackPressed();
         } else {
             fragmentManager.executePendingTransactions();
             fragmentManager.popBackStack();
             fragmentManager.executePendingTransactions();
-            if (fragmentManager.getBackStackEntryCount() < 1){
+            if (fragmentManager.getBackStackEntryCount() < 1) {
                 toggle.setDrawerIndicatorEnabled(true);
             }
         }
@@ -627,7 +630,6 @@ public class MainPage extends AppCompatActivity
             postingDialog.show();
 
 
-
             Map<String, Object> textMap = new HashMap<>();
             textMap.put("desc", textPost);
             textMap.put("username", MainPage.usernameInfo);
@@ -640,9 +642,9 @@ public class MainPage extends AppCompatActivity
             postingDatabase.collection("Posting").add(textMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         String key = task.getResult().getId();
-                        Map<String,Object> keyUpdate = new HashMap<>();
+                        Map<String, Object> keyUpdate = new HashMap<>();
                         keyUpdate.put("key", key);
                         postingDatabase.collection("Posting").document(key).update(keyUpdate);
                         postingDialog.dismiss();
@@ -815,68 +817,137 @@ public class MainPage extends AppCompatActivity
 
         FirebaseFirestore checkPremiumUser = FirebaseFirestore.getInstance();
         checkPremiumUser.collection("Users").document(myUserId)
-        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(final DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                model = documentSnapshot.toObject(UsersModel.class);
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(final DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                        model = documentSnapshot.toObject(UsersModel.class);
 
-                isPremium = model.isPremium();
-
-
-                if (isPremium) {
-                    Log.i("premium users", "YEEEEEES");
-                    CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
-                    db.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                            if (e == null){
-                                itemSize.clear();
-                                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
+                        isPremium = model.isPremium();
 
 
-                                    Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
-                                    itemSize.add(model);
-                                    adapter.notifyDataSetChanged();
+                        if (isPremium) {
+                            Log.i("premium users", "YEEEEEES");
+                            CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
+                            db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(4).addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                    if (e == null) {
+                                        itemSize.clear();
+                                        for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
 
-                                    for (DocumentChange change : documentSnapshots.getDocumentChanges()){
-                                        switch (change.getType()) {
 
-                                            case MODIFIED:
-                                                if (change.getOldIndex() == change.getNewIndex()) {
-                                                    // Item changed but remained in same position
-                                                    adapter.notifyItemChanged(change.getOldIndex());
-                                                } else {
-                                                    // Item changed and changed position
+                                            Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
+                                            itemSize.add(model);
+                                            adapter.notifyDataSetChanged();
 
-                                                    adapter.notifyItemMoved(change.getOldIndex(), change.getNewIndex());
+                                            for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
+                                                switch (change.getType()) {
+
+                                                    case MODIFIED:
+                                                        if (change.getOldIndex() == change.getNewIndex()) {
+                                                            // Item changed but remained in same position
+                                                            adapter.notifyItemChanged(change.getOldIndex());
+                                                        } else {
+                                                            // Item changed and changed position
+
+                                                            adapter.notifyItemMoved(change.getOldIndex(), change.getNewIndex());
+                                                        }
+                                                        break;
+                                                    case REMOVED:
+                                                        adapter.notifyItemRemoved(change.getOldIndex());
+                                                        break;
                                                 }
-                                                break;
-                                            case REMOVED:
-                                                adapter.notifyItemRemoved(change.getOldIndex());
-                                                break;
+                                            }
+
                                         }
+
+                                         lastVisible = documentSnapshots.getDocuments()
+                                                .get(documentSnapshots.size() - 1);
+
+                                        // Construct a new query starting at this document,
+                                        // get the next 25 cities.
+
+                                        wallList.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                                            @Override
+                                            public void onLoadMore(int current_page) {
+
+
+                                                new CountDownTimer(4000, 1000) {
+                                                    @Override
+                                                    public void onTick(long millisUntilFinished) {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onFinish() {
+
+                                                        Log.i("load", String.valueOf(adapter.getItemCount()));
+                                                        com.google.firebase.firestore.Query next = FirebaseFirestore.getInstance().collection("Posting")
+                                                                .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                                                                .startAfter(lastVisible)
+                                                                .limit(4);
+                                                        next.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                                                                if (e == null) {
+
+                                                                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+
+
+                                                                        Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
+                                                                        itemSize.add(model);
+                                                                        adapter.notifyDataSetChanged();
+
+
+                                                                        for (DocumentChange change : querySnapshot.getDocumentChanges()) {
+                                                                            switch (change.getType()) {
+
+                                                                                case MODIFIED:
+                                                                                    if (change.getOldIndex() == change.getNewIndex()) {
+                                                                                        // Item changed but remained in same position
+                                                                                        adapter.notifyItemChanged(change.getOldIndex());
+                                                                                    } else {
+                                                                                        // Item changed and changed position
+
+                                                                                        adapter.notifyItemMoved(change.getOldIndex(), change.getNewIndex());
+                                                                                    }
+                                                                                    break;
+                                                                                case REMOVED:
+                                                                                    adapter.notifyItemRemoved(change.getOldIndex());
+                                                                                    break;
+                                                                            }
+
+                                                                            lastVisible = querySnapshot.getDocuments().get(querySnapshot.size()-1);
+                                                                        }
+
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        });
+
+                                                    }
+                                                }.start();
+
+                                            }
+                                        });
+
+                                    } else {
+                                        Log.e("errorPremium", e.getLocalizedMessage());
                                     }
 
+
                                 }
+                            });
 
-
-                            } else {
-                                Log.e("errorPremium", e.getLocalizedMessage());
-                            }
-
-
+                        } else {
+                            freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
                         }
-                    });
 
-                } else {
-                    freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
-                }
-
-            }
+                    }
 
 
-
-        });
+                });
 
         firstTimeOpened = false;
 
@@ -1104,7 +1175,7 @@ public class MainPage extends AppCompatActivity
     }
 
 
-    private  class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
+    private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
 
         @Override

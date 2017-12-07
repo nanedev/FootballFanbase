@@ -175,7 +175,7 @@ public class SinglePostViewNotificationActivity extends AppCompatActivity {
         key = myIntent.getStringExtra("post_key");
         action = myIntent.getStringExtra("action");
         whatIS = myIntent.getStringExtra("whatIS");
-        Log.i("post", key);
+
 
         postingReference = mReference.collection("Posting").document(key);
         profileUsers = mReference.collection("Users");

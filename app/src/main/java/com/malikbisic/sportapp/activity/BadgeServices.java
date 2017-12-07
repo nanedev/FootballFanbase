@@ -44,7 +44,7 @@ public class BadgeServices extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(final RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        launcherCounter();
+
 
         notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         mAuth = FirebaseAuth.getInstance();
