@@ -574,7 +574,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                         notifMap.put("action", "coment");
                         notifMap.put("uid", auth.getCurrentUser().getUid());
                         notifMap.put("seen", false);
-                        notifMap.put("whatIS", "reply");
+                        notifMap.put("whatIS", "post");
                         notifMap.put("post_key", key);
                         notifMap.put("timestamp", FieldValue.serverTimestamp());
                         CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");

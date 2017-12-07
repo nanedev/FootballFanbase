@@ -196,7 +196,7 @@
                 android:id="@+id/framelayout"
                 android:layout_below="@+id/layout_for_video_text">
 
-                <fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard
+                <cn.jzvd.JZVideoPlayerStandard
                     android:id="@+id/posted_video"
                     android:layout_width="match_parent"
                     android:layout_height="200dp" />
@@ -210,6 +210,7 @@
                 android:visibility="visible">
 
                 <EditText
+                    android:inputType="textMultiLine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -218,7 +219,6 @@
                     android:layout_marginStart="10dp"
                     android:id="@+id/post_text_main_page"
                     android:textColor="#000000"
-                    android:inputType="textMultiLine"
                     android:textStyle="bold" />
 
             </RelativeLayout>
@@ -326,6 +326,7 @@
 
 
     </RelativeLayout>
+
 
 
 </RelativeLayout>

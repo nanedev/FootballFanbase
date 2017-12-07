@@ -196,7 +196,7 @@
                 android:id="@+id/framelayout"
                 android:layout_below="@+id/layout_for_video_text">
 
-                <fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard
+                <cn.jzvd.JZVideoPlayerStandard
                     android:id="@+id/posted_video"
                     android:layout_width="match_parent"
                     android:layout_height="200dp" />
@@ -326,6 +326,7 @@
 
 
     </RelativeLayout>
+
 
 
 </RelativeLayout>
