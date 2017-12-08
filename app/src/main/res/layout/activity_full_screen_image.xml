@@ -4,23 +4,179 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-android:background="#000"
+    android:background="#000"
     tools:context="com.malikbisic.sportapp.activity.FullScreenImage">
 
-    <ScrollView
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_alignParentTop="true"
+        android:id="@+id/textfromposttoimage"
+        android:text="sadasdahgsjadhfasfglsagzf"/>
+
+
+    <ImageView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/fullScreenImageView"
+        android:layout_below="@+id/textfromposttoimage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_above="@+id/parentlayout"/>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:scrollbarAlwaysDrawVerticalTrack="true">
+        android:id="@+id/parentlayout"
+        android:layout_alignParentBottom="true"
+        android:padding="10dp">
 
-        <com.malikbisic.sportapp.activity.DynamicImageView
-        android:id="@+id/fullScreenImageView"
-        android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scrollbars="vertical"
+            android:id="@+id/parentlayoutforlikesdislajkscomments"
+            >
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/likeslayout"
+                android:padding="5dp">
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:id="@+id/likesImageInFullscreen"
+                    android:src="@drawable/bluelike"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_centerVertical="true"/>
 
-            />
-    </ScrollView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/likesinfullscreen"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:layout_toRightOf="@+id/likesImageInFullscreen"
+                    android:layout_toEndOf="@+id/likesImageInFullscreen"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:textSize="15sp"/>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dislikeslayout"
+                android:padding="5dp"
+                android:layout_toRightOf="@+id/likeslayout"
+                android:layout_toEndOf="@+id/likeslayout">
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:id="@+id/dislikesInFUllscreenImage"
+                    android:src="@drawable/reddislike"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dislikesFullscreen"
+                    android:textColor="@color/white"
+                    android:layout_toRightOf="@+id/dislikesInFUllscreenImage"
+                    android:layout_toEndOf="@+id/dislikesInFUllscreenImage"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/comentslayout"
+                android:padding="5dp"
+                android:layout_toRightOf="@+id/dislikeslayout"
+                android:layout_toEndOf="@+id/dislikeslayout">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/commentsfullscren"
+                    android:text="Comments:"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/numberCommentsFullscreen"
+                    android:textColor="@color/white"
+                    android:layout_toRightOf="@+id/commentsfullscren"
+                    android:layout_toEndOf="@+id/commentsfullscren"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:textStyle="bold"
+                    android:textSize="15sp"/>
+
+            </RelativeLayout>
+
+
+
+
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/someview"
+            android:background="@color/white"
+            android:layout_below="@+id/parentlayoutforlikesdislajkscomments"
+            android:layout_marginTop="5dp"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentLikeDislikeImage"
+            android:layout_below="@+id/someview">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/likeImageFullscreen"
+                android:src="@drawable/likesomethingg"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dislikeImageFullscreen"
+                android:layout_toRightOf="@+id/likeImageFullscreen"
+                android:layout_toEndOf="@+id/likeImageFullscreen"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/dislikesomething"/>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/commentFullscreenimage"
+                android:layout_toRightOf="@+id/dislikeImageFullscreen"
+                android:layout_toEndOf="@+id/dislikeImageFullscreen"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/commentimage"/>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 </RelativeLayout>

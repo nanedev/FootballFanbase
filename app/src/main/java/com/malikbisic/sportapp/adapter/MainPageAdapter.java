@@ -384,6 +384,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
             public void onClick(View view) {
                 Intent openFullScreen = new Intent(ctx, FullScreenImage.class);
                 String tag = (String) viewHolder.post_photo.getTag();
+                openFullScreen.putExtra("postKey",post_key);
                 openFullScreen.putExtra("imageURL", tag);
                 activity.startActivity(openFullScreen);
             }
