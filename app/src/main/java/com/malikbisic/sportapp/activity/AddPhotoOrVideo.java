@@ -96,7 +96,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         saySomething = (EditText) findViewById(R.id.tell_something_about_video_image);
         post = (Button) findViewById(R.id.btn_post_photo_or_video);
         post.setOnClickListener(this);
-        postingDialog = new ProgressDialog(this);
+        postingDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
         mAuth = FirebaseAuth.getInstance();
         layout = (RelativeLayout) findViewById(R.id.container);
 
@@ -104,6 +104,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         mFilePath = FirebaseStorage.getInstance().getReference();
 
         if (MainPage.photoSelected) {
+            videoSelected.setVisibility(View.GONE);
             photoSelected.setVisibility(View.VISIBLE);
             photoSelected.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             Uri imageUri = myIntent.getData();
@@ -112,7 +113,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         } else if (!MainPage.photoSelected) {
             photoSelected.setVisibility(View.GONE);
 
-            pDialog = new ProgressDialog(this);
+            pDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
             pDialog.setMessage("Buffering");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);

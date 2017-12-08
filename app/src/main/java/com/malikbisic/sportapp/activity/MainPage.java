@@ -246,7 +246,7 @@ public class MainPage extends AppCompatActivity
         postText = (EditText) findViewById(R.id.postOnlyText);
         backgroundUserPost = (RelativeLayout) findViewById(R.id.relativeLayout);
         calendar = Calendar.getInstance();
-        postingDialog = new ProgressDialog(this);
+        postingDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
         wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
         wallList.setHasFixedSize(false);
         linearLayoutManager = new LinearLayoutManager(this);

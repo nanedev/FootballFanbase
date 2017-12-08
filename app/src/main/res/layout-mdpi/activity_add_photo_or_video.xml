@@ -35,11 +35,6 @@
                 android:id="@+id/tell_something_about_video_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginStart="10dp"
-
                 android:layout_marginTop="15dp"
                 android:gravity="top"
                 android:hint="Tell something about this"
@@ -56,7 +51,7 @@
                     android:id="@+id/post_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginTop="10dp"
                     android:adjustViewBounds="true"
                     android:scrollbars="vertical"
                     android:visibility="visible" />
@@ -65,12 +60,13 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:layout_below="@id/tell_something_about_video_image">
 
                 <cn.jzvd.JZVideoPlayerStandard
                     android:id="@+id/post_video"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp" />
+                    android:layout_height="260dp" />
 
             </FrameLayout>
 
