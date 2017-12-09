@@ -140,7 +140,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
     public void onBindViewHolder(final PostViewHolder viewHolder, final int position) {
 
 
-        Post model = postList.get(position);
+        final Post model = postList.get(position);
 
         postingDatabase = FirebaseFirestore.getInstance();
         notificationReference = FirebaseFirestore.getInstance();//.getReference().child("Notification");
@@ -386,6 +386,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                 String tag = (String) viewHolder.post_photo.getTag();
                 openFullScreen.putExtra("postKey",post_key);
                 openFullScreen.putExtra("imageURL", tag);
+                openFullScreen.putExtra("title",model.getDescForPhoto());
                 activity.startActivity(openFullScreen);
             }
         });

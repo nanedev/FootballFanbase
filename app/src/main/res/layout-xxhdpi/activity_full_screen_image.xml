@@ -143,16 +143,20 @@
 
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commentLikeDislikeImage"
-        android:layout_below="@+id/someview">
+        android:layout_below="@+id/someview"
+        android:layout_centerHorizontal="true"
+
+     >
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/likeImageFullscreen"
-            android:src="@drawable/likesomethingg"/>
+            android:src="@drawable/likesomethingg"
+        />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -160,8 +164,8 @@
            android:id="@+id/dislikeImageFullscreen"
             android:layout_toRightOf="@+id/likeImageFullscreen"
             android:layout_toEndOf="@+id/likeImageFullscreen"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:src="@drawable/dislikesomething"/>
 
 
@@ -171,8 +175,8 @@
             android:id="@+id/commentFullscreenimage"
             android:layout_toRightOf="@+id/dislikeImageFullscreen"
             android:layout_toEndOf="@+id/dislikeImageFullscreen"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:src="@drawable/commentimage"/>
 
 

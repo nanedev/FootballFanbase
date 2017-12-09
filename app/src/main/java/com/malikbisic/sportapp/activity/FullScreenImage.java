@@ -42,9 +42,8 @@ public class FullScreenImage extends AppCompatActivity {
     Intent intent;
     String postKey;
     String uri;
-  ImageView numberLikeImage;
-  ImageView numberDislikeImage;
-FirebaseFirestore likesReference;
+    FirebaseFirestore likesReference;
+    FirebaseFirestore dislikesReference;
     TextView numberLikesTextview;
     TextView numberDislikesTextview;
     TextView numberCommentsTextivew;
@@ -52,14 +51,17 @@ FirebaseFirestore likesReference;
     RelativeLayout numberDislikesLayout;
     RelativeLayout numberCommentsLayout;
     FirebaseAuth mAuth;
-  ImageView likeFullscreenImage;
-  ImageView dislikeFullscreenImage;
-  ImageView commentFullscreenImage;
+    ImageView likeFullscreenImage;
+    ImageView dislikeFullscreenImage;
+    ImageView commentFullscreenImage;
     boolean like_process = false;
     boolean dislike_process = false;
     FirebaseFirestore postingDatabase;
     FirebaseFirestore notificationReference;
     String uid;
+    String imageTitle;
+    TextView titleImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,22 +70,29 @@ FirebaseFirestore likesReference;
         db = FirebaseFirestore.getInstance();
         likesReference = FirebaseFirestore.getInstance();
         notificationReference = FirebaseFirestore.getInstance();
+        dislikesReference = FirebaseFirestore.getInstance();
         numberLikesTextview = (TextView) findViewById(R.id.likesinfullscreen);
         numberDislikesTextview = (TextView) findViewById(R.id.dislikesFullscreen);
         numberCommentsTextivew = (TextView) findViewById(R.id.numberCommentsFullscreen);
-        likeFullscreenImage = (ImageView)findViewById(R.id.likeImageFullscreen);
+        likeFullscreenImage = (ImageView) findViewById(R.id.likeImageFullscreen);
         dislikeFullscreenImage = (ImageView) findViewById(R.id.dislikeImageFullscreen);
-        commentFullscreenImage = (ImageView)findViewById(R.id.commentFullscreenimage);
-postingDatabase = FirebaseFirestore.getInstance();
+        titleImage = (TextView) findViewById(R.id.textfromposttoimage);
+        commentFullscreenImage = (ImageView) findViewById(R.id.commentFullscreenimage);
+        postingDatabase = FirebaseFirestore.getInstance();
         intent = getIntent();
         postKey = intent.getStringExtra("postKey");
         ImageView image = (ImageView) findViewById(R.id.fullScreenImageView);
         uri = intent.getStringExtra("imageURL");
+        imageTitle = intent.getStringExtra("title");
         Glide.with(this).load(uri).into(image);
         numberLikesLayout = (RelativeLayout) findViewById(R.id.likeslayout);
-        numberDislikesLayout = (RelativeLayout)findViewById(R.id.dislikeslayout);
+        numberDislikesLayout = (RelativeLayout) findViewById(R.id.dislikeslayout);
         numberCommentsLayout = (RelativeLayout) findViewById(R.id.comentslayout);
-uid = mAuth.getCurrentUser().getUid();
+        uid = mAuth.getCurrentUser().getUid();
+
+        if (imageTitle != null){
+            titleImage.setText(imageTitle);
+        }
 
         likeRef = db.collection("Likes").document(postKey).collection("like-id");
         likeRef.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
@@ -95,6 +104,7 @@ uid = mAuth.getCurrentUser().getUid();
                     numberLikesLayout.setVisibility(View.GONE);
                 } else {
                     numberLikesTextview.setText(String.valueOf(numberLikes));
+                    numberLikesLayout.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -124,10 +134,10 @@ uid = mAuth.getCurrentUser().getUid();
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 int numberComments = documentSnapshots.size();
 
-                if (numberComments == 0){
+                if (numberComments == 0) {
 
                     numberCommentsLayout.setVisibility(View.GONE);
-                }else {
+                } else {
                     numberCommentsLayout.setVisibility(View.VISIBLE);
                     numberCommentsTextivew.setText(String.valueOf(numberComments));
                 }
@@ -137,16 +147,16 @@ uid = mAuth.getCurrentUser().getUid();
         numberLikesLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent  = new Intent(FullScreenImage.this,Username_Likes_Activity.class);
-                intent.putExtra("post_key",postKey);
+                Intent intent = new Intent(FullScreenImage.this, Username_Likes_Activity.class);
+                intent.putExtra("post_key", postKey);
                 startActivity(intent);
             }
         });
         numberDislikesLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent  = new Intent(FullScreenImage.this,Username_Dislikes_Activity.class);
-                intent.putExtra("post_key",postKey);
+                Intent intent = new Intent(FullScreenImage.this, Username_Dislikes_Activity.class);
+                intent.putExtra("post_key", postKey);
                 startActivity(intent);
             }
         });
@@ -155,7 +165,7 @@ uid = mAuth.getCurrentUser().getUid();
         numberCommentsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FullScreenImage.this,CommentsActivity.class);
+                Intent intent = new Intent(FullScreenImage.this, CommentsActivity.class);
                 intent.putExtra("keyComment", postKey);
                 intent.putExtra("profileComment", MainPage.profielImage);
                 intent.putExtra("username", MainPage.usernameInfo);
@@ -164,34 +174,99 @@ uid = mAuth.getCurrentUser().getUid();
         });
 
 
+        final DocumentReference doc = likesReference.collection("Likes").document(postKey).collection("like-id").document(uid);
+        doc.addSnapshotListener(FullScreenImage.this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                if (documentSnapshot.exists()) {
+
+                    dislikeFullscreenImage.setClickable(false);
+                    likeFullscreenImage.setActivated(true);
+
+
+                } else {
+                    dislikeFullscreenImage.setClickable(true);
+                    likeFullscreenImage.setActivated(false);
+
+                }
+
+            }
+        });
+
+        final DocumentReference docDislike = dislikesReference.collection("Dislikes").document(postKey).collection("dislike-id").document(uid);
+        docDislike.addSnapshotListener(FullScreenImage.this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                if (documentSnapshot.exists()) {
+                    dislikeFullscreenImage.setActivated(true);
+                    likeFullscreenImage.setClickable(false);
+
+
+                } else {
+                    dislikeFullscreenImage.setActivated(false);
+                    likeFullscreenImage.setClickable(true);
+
+                }
+            }
+        });
+
+        likesReference.collection("Likes").document(postKey).collection("like-id").document(uid).addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (documentSnapshot.exists()) {
+                    likeFullscreenImage.setImageDrawable(getResources().getDrawable(R.drawable.likesomethingfull));
+
+                }
+            }
+        });
+
+        dislikesReference.collection("Dislikes").document(postKey).collection("dislike-id").document(uid).addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                if (documentSnapshot.exists()) {
+                    dislikeFullscreenImage.setImageDrawable(getResources().getDrawable(R.drawable.dislikesomethingfull));
+
+                }
+            }
+        });
+
+
         likeFullscreenImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                likeFullscreenImage.setImageDrawable(getResources().getDrawable(R.drawable.likesomethingfull));
-                dislikeFullscreenImage.setActivated(false);
+
 
                 like_process = true;
 
-
-
-                likesReference.collection("Likes").document(postKey).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                likesReference.collection("Likes").document(postKey).collection("like-id").document(uid).addSnapshotListener(FullScreenImage.this, new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
                         if (like_process) {
 
+                            likeRef.addSnapshotListener(FullScreenImage.this, new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                    int numberLikes = documentSnapshots.size();
+                                    if (numberLikes == 0) {
+                                        numberLikesTextview.setText("");
+                                        numberLikesLayout.setVisibility(View.GONE);
+                                    } else {
+                                        numberLikesTextview.setText(String.valueOf(numberLikes));
+                                        numberLikesLayout.setVisibility(View.VISIBLE);
+                                    }
+
+                                }
+                            });
 
                             if (documentSnapshots.exists()) {
 
                                 likesReference.collection("Likes").document(postKey).collection("like-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Log.i("deleteLike", "complete");
 
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.e("deleteLike", e.getLocalizedMessage());
+                                        likeFullscreenImage.setImageDrawable(getResources().getDrawable(R.drawable.likesomethingg));
                                     }
                                 });
                                 like_process = false;
@@ -199,6 +274,7 @@ uid = mAuth.getCurrentUser().getUid();
                                 Log.i("nema like", "NEMA");
 
                             } else {
+                                likeFullscreenImage.setImageDrawable(getResources().getDrawable(R.drawable.likesomethingfull));
                                 Log.i("ima like", "IMA");
                                 Map<String, Object> userLikeInfo = new HashMap<>();
                                 userLikeInfo.clear();
@@ -208,12 +284,10 @@ uid = mAuth.getCurrentUser().getUid();
                                 final DocumentReference newPost = likesReference.collection("Likes").document(postKey).collection("like-id").document(uid);
                                 newPost.set(userLikeInfo);
 
-
                                 FirebaseFirestore getIduserpost = postingDatabase;
-                                getIduserpost.collection("Posting").document(postKey).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                getIduserpost.collection("Posting").document(postKey).addSnapshotListener(FullScreenImage.this, new EventListener<DocumentSnapshot>() {
                                     @Override
                                     public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
-
 
 
                                         String userpostUID = dataSnapshot.getString("uid");
@@ -249,5 +323,102 @@ uid = mAuth.getCurrentUser().getUid();
             }
         });
 
+
+        dislikeFullscreenImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dislike_process = true;
+               /* viewHolder.setNumberDislikes(post_key, activity);*/
+
+
+                dislikesReference.collection("Dislikes").document(postKey).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
+                        if (dislike_process) {
+
+                            dislikeRef.addSnapshotListener(FullScreenImage.this, new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                    int numberLikes = documentSnapshots.size();
+                                    if (numberLikes == 0) {
+                                        numberDislikesTextview.setText("");
+                                        numberDislikesLayout.setVisibility(View.GONE);
+                                    } else {
+                                        numberDislikesTextview.setText(String.valueOf(numberLikes));
+                                        numberDislikesLayout.setVisibility(View.VISIBLE);
+                                    }
+
+                                }
+                            });
+                            if (documentSnapshots.exists()) {
+                                dislikesReference.collection("Dislikes").document(postKey).collection("dislike-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Log.i("deleteDislike", "complete");
+                                        dislikeFullscreenImage.setImageDrawable(getResources().getDrawable(R.drawable.dislikesomething));
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("deletedislike", e.getLocalizedMessage());
+                                    }
+                                });
+                                dislike_process = false;
+
+
+                            } else {
+                                dislikeFullscreenImage.setImageDrawable(getResources().getDrawable(R.drawable.dislikesomethingfull));
+                                Map<String, Object> userDislikeInfo = new HashMap<>();
+                                userDislikeInfo.put("username", MainPage.usernameInfo);
+                                userDislikeInfo.put("photoProfile", MainPage.profielImage);
+
+                                final DocumentReference newPost = dislikesReference.collection("Dislikes").document(postKey).collection("dislike-id").document(uid);
+                                newPost.set(userDislikeInfo);
+
+
+                                FirebaseFirestore getIduserpost = postingDatabase;
+                                getIduserpost.collection("Posting").document(postKey).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                        String userpostUID = dataSnapshot.getString("uid");
+
+                                        Map<String, Object> notifMap = new HashMap<>();
+                                        notifMap.put("action", "disliked");
+                                        notifMap.put("uid", uid);
+                                        notifMap.put("seen", false);
+                                        notifMap.put("whatIS", "post");
+                                        notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                        notifMap.put("post_key", postKey);
+                                        CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                        notifSet.add(notifMap);
+
+                                    }
+
+                                });
+
+
+                                dislike_process = false;
+
+
+                            }
+                        }
+                    }
+                });
+
+            }
+        });
+
+        commentFullscreenImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FullScreenImage.this, CommentsActivity.class);
+                intent.putExtra("keyComment", postKey);
+                intent.putExtra("profileComment", MainPage.profielImage);
+                intent.putExtra("username", MainPage.usernameInfo);
+                startActivity(intent);
+            }
+        });
     }
 }
