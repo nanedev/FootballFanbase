@@ -112,6 +112,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
     UsersModel model;
     DatabaseReference mUsers;
     boolean isPremium;
+
     String post_key;
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;

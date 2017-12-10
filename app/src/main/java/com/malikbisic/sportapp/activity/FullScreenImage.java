@@ -61,6 +61,11 @@ public class FullScreenImage extends AppCompatActivity {
     String uid;
     String imageTitle;
     TextView titleImage;
+    boolean firstImageClick = true;
+    boolean secondImageClick = false;
+    ImageView image;
+    RelativeLayout parentLayout;
+    RelativeLayout layoutImageTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,19 +83,22 @@ public class FullScreenImage extends AppCompatActivity {
         dislikeFullscreenImage = (ImageView) findViewById(R.id.dislikeImageFullscreen);
         titleImage = (TextView) findViewById(R.id.textfromposttoimage);
         commentFullscreenImage = (ImageView) findViewById(R.id.commentFullscreenimage);
+        image = (ImageView) findViewById(R.id.fullScreenImageView);
+        layoutImageTitle  = (RelativeLayout) findViewById(R.id.imagetitlelayout);
         postingDatabase = FirebaseFirestore.getInstance();
         intent = getIntent();
         postKey = intent.getStringExtra("postKey");
-        ImageView image = (ImageView) findViewById(R.id.fullScreenImageView);
+        image = (ImageView) findViewById(R.id.fullScreenImageView);
         uri = intent.getStringExtra("imageURL");
         imageTitle = intent.getStringExtra("title");
         Glide.with(this).load(uri).into(image);
         numberLikesLayout = (RelativeLayout) findViewById(R.id.likeslayout);
         numberDislikesLayout = (RelativeLayout) findViewById(R.id.dislikeslayout);
         numberCommentsLayout = (RelativeLayout) findViewById(R.id.comentslayout);
+        parentLayout = (RelativeLayout) findViewById(R.id.parentlayout);
         uid = mAuth.getCurrentUser().getUid();
 
-        if (imageTitle != null){
+        if (imageTitle != null) {
             titleImage.setText(imageTitle);
         }
 
@@ -240,6 +248,7 @@ public class FullScreenImage extends AppCompatActivity {
 
                 like_process = true;
 
+
                 likesReference.collection("Likes").document(postKey).collection("like-id").document(uid).addSnapshotListener(FullScreenImage.this, new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -270,6 +279,7 @@ public class FullScreenImage extends AppCompatActivity {
                                     }
                                 });
                                 like_process = false;
+
 
                                 Log.i("nema like", "NEMA");
 
@@ -406,6 +416,26 @@ public class FullScreenImage extends AppCompatActivity {
                         }
                     }
                 });
+
+            }
+        });
+
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+if (firstImageClick ){
+    firstImageClick = false;
+    secondImageClick = true;
+    parentLayout.setVisibility(View.GONE);
+    layoutImageTitle.setVisibility(View.GONE);
+
+}else if (secondImageClick){
+    firstImageClick = true;
+    secondImageClick = false;
+    parentLayout.setVisibility(View.VISIBLE);
+    layoutImageTitle.setVisibility(View.VISIBLE);
+}
 
             }
         });

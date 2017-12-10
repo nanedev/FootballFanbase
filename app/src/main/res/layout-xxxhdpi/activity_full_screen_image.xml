@@ -6,21 +6,25 @@
     android:layout_height="match_parent"
     android:background="#000"
     tools:context="com.malikbisic.sportapp.activity.FullScreenImage">
-
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/imagetitlelayout"
+    android:layout_alignParentTop="true">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:layout_alignParentTop="true"
+
         android:id="@+id/textfromposttoimage"
         android:text="sadasdahgsjadhfasfglsagzf"/>
-
+</RelativeLayout>
 
     <ImageView
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:id="@+id/fullScreenImageView"
-        android:layout_below="@+id/textfromposttoimage"
+        android:layout_below="@+id/imagetitlelayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
