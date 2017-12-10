@@ -811,7 +811,7 @@ public class MainPage extends AppCompatActivity
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 if (e == null) {
-
+                    itemSize.clear();
                     for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
 
 
@@ -828,9 +828,15 @@ public class MainPage extends AppCompatActivity
                                 case REMOVED:
 
                                     break;
+                                case ADDED:
+                                    break;
                             }
                         }
 
+                    }
+
+                    if (swipeRefreshLayoutPost.isRefreshing()){
+                        swipeRefreshLayoutPost.setRefreshing(false);
                     }
 
                     lastVisible = documentSnapshots.getDocuments()
@@ -881,7 +887,7 @@ public class MainPage extends AppCompatActivity
                                 public void onLoadMore(int current_page) {
 
 
-                                    new CountDownTimer(10000, 10000) {
+                                    new CountDownTimer(3000, 10000) {
                                         @Override
                                         public void onTick(long millisUntilFinished) {
 
@@ -899,9 +905,9 @@ public class MainPage extends AppCompatActivity
                             swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                                 @Override
                                 public void onRefresh() {
-                                    itemSize.clear();
+
                                     loadPremium();
-                                    swipeRefreshLayoutPost.setRefreshing(false);
+
                                 }
                             });
                         } else {

@@ -12,6 +12,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.ChatMessageActivity;
 import com.malikbisic.sportapp.activity.FragmentChatUsers;
@@ -77,32 +84,29 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
 
 
 
-        final DatabaseReference onlineReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(group.getTitle()).child(userChat.getUserID());
-        onlineReference.addValueEventListener(new ValueEventListener() {
+        final CollectionReference onlineReference = FirebaseFirestore.getInstance().collection("UsersChat").document(group.getTitle()).collection(userChat.getUserID());
+        onlineReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                String usernameDatabase = String.valueOf(dataSnapshot.child("username").getValue());
-                String username = holder.usernameUser.getText().toString().trim();
-                String isOnline =  String.valueOf(dataSnapshot.child("online").getValue());
-                Log.i("ref", String.valueOf(dataSnapshot.getRef()));
+                for (DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
+                    String usernameDatabase = String.valueOf(snapshot.getString("username"));
+                    String username = holder.usernameUser.getText().toString().trim();
+                    String isOnline = String.valueOf(snapshot.getString("online"));
 
-                if (isOnline.equals("true")){
-                    numberOnline++;
-                }
+                    if (isOnline.equals("true")) {
+                        numberOnline++;
+                    }
 
-                if (isOnline.equals("true") && username.equals(usernameDatabase)) {
-                    holder.onlineImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.online_shape));
+                    if (isOnline.equals("true") && username.equals(usernameDatabase)) {
+                        holder.onlineImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.online_shape));
 
-                } else {
-                    holder.onlineImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.offline_shape));
+                    } else {
+                        holder.onlineImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.offline_shape));
+                    }
                 }
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
 
     }

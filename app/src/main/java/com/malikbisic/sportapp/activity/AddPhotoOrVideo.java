@@ -132,13 +132,13 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 float size = fileInputStream.available();
 
                 float fileSizeInKB = size / 1024;
-// Convert the KB to MegaBytes (1 MB = 1024 KBytes)
                 float fileSizeInMB = fileSizeInKB / 1024;
 
                 NumberFormat formatter = NumberFormat.getNumberInstance();
                 formatter.setMinimumFractionDigits(2);
                 formatter.setMaximumFractionDigits(2);
                 videoSize = formatter.format(fileSizeInMB);
+                Log.i("videoSize", videoSize);
 
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());

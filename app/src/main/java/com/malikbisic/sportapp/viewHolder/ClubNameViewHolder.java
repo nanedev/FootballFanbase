@@ -11,6 +11,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.FragmentChatUsers;
 import com.malikbisic.sportapp.adapter.ClubNameChatAdapter;
@@ -65,60 +72,47 @@ public class ClubNameViewHolder extends GroupViewHolder {
     }
 
     public void setNumberOnline(final String title){
-        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("UsersChat");
+        CollectionReference userReference = FirebaseFirestore.getInstance().collection("UsersChat");
 
-        userReference.addValueEventListener(new ValueEventListener() {
+        userReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
+                for (final DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
 
 
-                    final String clubNameString = snapshot.getKey().toString();
+                    final String clubNameString = snapshot.getId();
 
-                    final DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(title);
-                    chatReference.addValueEventListener(new ValueEventListener() {
+                    final DocumentReference chatReference = FirebaseFirestore.getInstance().collection("UsersChat").document(title);
+                    chatReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e1) {
                             final List<UserChat> userChats = new ArrayList<UserChat>();
                             numberOnline = 0;
-                            String  isOnline = "";
-                            for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
-                                if (snapshot1.child("online").exists())
+                            String isOnline = "";
 
-                        isOnline     =  snapshot1.child("online").getValue().toString();
+                            if (dataSnapshot.contains("online"))
 
-                                if (isOnline.equals("true")) {
-                                    numberOnline++;
-                                }
+                                isOnline = dataSnapshot.getString("online");
 
-                                online = String.valueOf(numberOnline);
+                            if (isOnline.equals("true")) {
+                                numberOnline++;
                             }
-                                onlineTexview.setText(online);
+
+                            online = String.valueOf(numberOnline);
+
+                            onlineTexview.setText(online);
 
 
-                            if (numberOnline == 0){
+                            if (numberOnline == 0) {
                                 view.setVisibility(View.GONE);
                             } else {
                                 view.setVisibility(View.VISIBLE);
                             }
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
 
 
                 }
-
-            }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
             }
         });

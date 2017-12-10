@@ -6,25 +6,25 @@ package com.malikbisic.sportapp.model;
 
 public class ClubTable {
 
-    int numbersFans;
+    int numberClubFan;
     String clubName;
     String clubLogo;
 
     public ClubTable() {
     }
 
-    public ClubTable(int numbersFans, String clubName, String clubLogo) {
-        this.numbersFans = numbersFans;
-        this.clubName = clubName;
+    public ClubTable(int numbersFans, String numberClubFan, String clubLogo) {
+        this.numberClubFan = numbersFans;
+        this.clubName = numberClubFan;
         this.clubLogo = clubLogo;
     }
 
-    public int getNumbersFans() {
-        return numbersFans;
+    public int getNumberClubFan() {
+        return numberClubFan;
     }
 
-    public void setNumbersFans(int numbersFans) {
-        this.numbersFans = numbersFans;
+    public void setNumberClubFan(int numberClubFan) {
+        this.numberClubFan = numberClubFan;
     }
 
     public String getClubName() {

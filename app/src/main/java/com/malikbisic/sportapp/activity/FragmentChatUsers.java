@@ -17,6 +17,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryListenOptions;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.ClubNameChatAdapter;
 import com.malikbisic.sportapp.model.UserChat;
@@ -41,7 +49,8 @@ public class FragmentChatUsers extends Fragment {
     RecyclerView userRecylerView;
     ClubNameChatAdapter adapter;
     List<UserChatGroup> clubName;
-    DatabaseReference userReference;
+    FirebaseFirestore mReference;
+    CollectionReference userReference;
     static String profileImage;
     static String username;
     static String flag;
@@ -54,45 +63,53 @@ public class FragmentChatUsers extends Fragment {
 
 
     public void getClubName() {
-        userReference = FirebaseDatabase.getInstance().getReference().child("UsersChat");
+        mReference = FirebaseFirestore.getInstance();
+        userReference = mReference.collection("UsersChat");
 
-        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        userReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
                 clubName = new ArrayList<UserChatGroup>();
-                for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    if (!snapshot.getKey().toString().equals("null")) {
-                        final String clubNameString = snapshot.getKey().toString();
+                if (e != null){
+                    Log.e("errorClub", e.getLocalizedMessage());
+                }
 
-                        final DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("UsersChat").child(clubNameString);
-                        chatReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                for (final DocumentSnapshot snapshot : dataSnapshot.getDocuments()) {
+
+                    if (snapshot.exists()) {
+                        final String clubNameString = snapshot.getId();
+                        Log.i("clubName", clubNameString);
+
+                        final DocumentReference chatReference = mReference.collection("UsersChat").document(clubNameString);
+                        chatReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
                                 final List<UserChat> userChats = new ArrayList<UserChat>();
                                 numberOnline = 0;
-                                for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                if (e != null){
+                                    Log.e("errorUsersChat", e.getLocalizedMessage());
+                                }
 
-                                    clubNameLogo = String.valueOf(snapshot1.child("favoriteClubLogo").getValue());
-                                    isOnline = Boolean.parseBoolean(String.valueOf(snapshot1.child("online").getValue()));
-                                    userUID = String.valueOf(snapshot1.child("userID").getValue());
-                                    date = String.valueOf(snapshot1.child("date").getValue());
+                                    clubNameLogo = String.valueOf(dataSnapshot.getString("favoriteClubLogo"));
+                                    isOnline = Boolean.parseBoolean(String.valueOf(dataSnapshot.getString("online")));
+                                    userUID = String.valueOf(dataSnapshot.getString("userID"));
+                                    date = String.valueOf(dataSnapshot.getString("date"));
 
-                                    DatabaseReference userInfo = FirebaseDatabase.getInstance().getReference().child("Users").child(userUID);
-                                    userInfo.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    DocumentReference userInfo = mReference.collection("Users").document(userUID);
+                                    userInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                         @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            username = String.valueOf(dataSnapshot.child("username").getValue());
-                                            profileImage = String.valueOf(dataSnapshot.child("profileImage").getValue());
-                                            flag = String.valueOf(dataSnapshot.child("flag").getValue());
+                                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                            if (e != null){
+                                                Log.e("erroruserInfo", e.getLocalizedMessage());
+                                            }
+                                            username = String.valueOf(dataSnapshot.getString("username"));
+                                            profileImage = String.valueOf(dataSnapshot.getString("profileImage"));
+                                            flag = String.valueOf(dataSnapshot.getString("flag"));
 
                                             userChats.add(new UserChat(username, flag, profileImage, userUID, date, isOnline));
                                             Collections.sort(userChats, new CheckOnline());
-
-                                    }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
 
                                         }
                                     });
@@ -111,7 +128,6 @@ public class FragmentChatUsers extends Fragment {
 
                                     //  userChats.add(new UserChat(FragmentChatUsers.username, FragmentChatUsers.flag, FragmentChatUsers.profileImage, FragmentChatUsers.userUID, FragmentChatUsers.date));
 
-                                }
 
                                 clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo, numberOnline));
 
@@ -126,11 +142,6 @@ public class FragmentChatUsers extends Fragment {
                                 adapter.notifyDataSetChanged();
 
                             }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
                         });
 
 
@@ -138,11 +149,6 @@ public class FragmentChatUsers extends Fragment {
                 }
             }
 
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
 
 

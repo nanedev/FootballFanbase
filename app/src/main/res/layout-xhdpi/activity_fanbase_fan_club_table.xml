@@ -83,7 +83,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/info_table"
-        android:padding="3dp">
+        android:padding="3dp"
+        android:pointerIcon="arrow">
 
     </android.support.v7.widget.RecyclerView>
 

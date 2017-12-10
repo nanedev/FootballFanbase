@@ -47,6 +47,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -396,6 +397,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             new DatePickerDialog(EnterUsernameForApp.this, date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         }
 
@@ -485,10 +487,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         if (LoginActivity.checkGoogleSignIn) {
                             googleEnterDatabase();
 
+
                         }
                         if (RegisterActivity.registerPressed) {
 
                             loginEnterDatabase();
+
                         }
 
                         new CountDownTimer(4000, 1000) {
@@ -608,7 +612,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                             }
                         });
 
-
+                        clubTableFan(downloadUrl.toString());
                         mDialog.dismiss();
                     }else   Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
@@ -618,10 +622,49 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
     }
+
+    public void clubTableFan(final String profileImage){
+        final String clubName = favoriteClub.getText().toString().trim();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final DocumentReference clubTable = db.collection("ClubTable").document(clubName);
+        clubTable.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    long numberFun = documentSnapshot.getLong("numberClubFan");
+                    int addNewFan = (int) (numberFun + 1);
+                    Map<String, Object> numberUpdateMap = new HashMap<>();
+                    numberUpdateMap.put("numberClubFan", addNewFan);
+                    clubTable.update(numberUpdateMap);
+
+                    Map<String, Object> usersInfo = new HashMap<>();
+                    usersInfo.put("userUID", mAuth.getCurrentUser().getUid());
+                    usersInfo.put("username", username);
+                    usersInfo.put("profileImage", profileImage);
+                   CollectionReference usersCol =  clubTable.collection("users");
+                   usersCol.add(usersInfo);
+
+                } else {
+                    Map<String, Object> numberUpdateMap = new HashMap<>();
+
+                    numberUpdateMap.put("numberClubFan", 1);
+                    numberUpdateMap.put("clubName", clubName);
+                    numberUpdateMap.put("clubLogo", clubLogo);
+                    clubTable.set(numberUpdateMap);
+
+                    Map<String, Object> usersInfo = new HashMap<>();
+                    usersInfo.put("userUID", mAuth.getCurrentUser().getUid());
+                    usersInfo.put("username", username);
+                    usersInfo.put("profileImage", profileImage);
+                    CollectionReference usersCol =  clubTable.collection("users");
+                    usersCol.add(usersInfo);
+                }
+            }
+        });
+    }
+
     private String getRealPathFromURI(Uri contentURI) {
         String result;
         Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
@@ -644,12 +687,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         } else {
             Intent intent = new Intent(EnterUsernameForApp.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("email", user.getEmail());
             Toast.makeText(EnterUsernameForApp.this, "Please verify your email!", Toast.LENGTH_LONG).show();
             startActivity(intent);
+            finish();
         }
     }
 
@@ -745,7 +790,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
 
 
-
+                clubTableFan(downloadUrl.toString());
 
                 mDialog.dismiss();
             }
@@ -781,5 +826,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
         Intent backLogin = new Intent(EnterUsernameForApp.this, LoginActivity.class);
         startActivity(backLogin);
+        finish();
     }
 }

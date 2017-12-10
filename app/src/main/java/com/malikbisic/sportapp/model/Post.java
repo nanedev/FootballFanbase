@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
+import java.util.Date;
+
 /**
  * Created by Nane on 26.4.2017.
  */
@@ -21,6 +23,7 @@ public class Post {
     private String desc;
     private String uid;
     private String country;
+    private Date time;
     String clubLogo;
     @Exclude
     private String key;
@@ -36,7 +39,7 @@ public class Post {
         return (T) this;
     }
 
-    public Post (String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key) {
+    public Post (String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key, Date time) {
         this.username = username;
         this.profileImage = profileImage;
         this.descForAudio = descForAudio;
@@ -50,7 +53,15 @@ public class Post {
         this.country = country;
         this.clubLogo = clubLogo;
         this.key = key;
+        this.time = time;
+    }
 
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 
     public String getKey() {

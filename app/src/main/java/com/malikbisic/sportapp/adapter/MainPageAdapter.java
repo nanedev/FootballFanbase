@@ -57,8 +57,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.CommentsActivity;
 import com.malikbisic.sportapp.activity.FullScreenImage;
+import com.malikbisic.sportapp.activity.GetTimeAgo;
 import com.malikbisic.sportapp.activity.MainPage;
 import com.malikbisic.sportapp.activity.OnLoadMoreListener;
+import com.malikbisic.sportapp.activity.PostingTimeAgo;
 import com.malikbisic.sportapp.activity.ProfileFragment;
 import com.malikbisic.sportapp.activity.SearchableCountry;
 import com.malikbisic.sportapp.activity.SinglePostViewActivity;
@@ -92,6 +94,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
     List<Post> postList;
     Context ctx;
     Activity activity;
+    String uid;
 
     public static boolean photoSelected;
     public static String usernameInfo;
@@ -149,7 +152,10 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         dislikeReference = FirebaseFirestore.getInstance(); //.child("Dislikes");
         profileUsers = FirebaseFirestore.getInstance();
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        final String uid = mAuth.getCurrentUser().getUid();
+
+        if (mAuth.getCurrentUser() != null) {
+            uid = mAuth.getCurrentUser().getUid();
+        }
 
         //DocumentSnapshot refDoc = postingDatabase.collection("Posting").document(model.getKey());
 
@@ -170,6 +176,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         viewHolder.setNumberDislikes(post_key, activity);
         viewHolder.setClubLogo(ctx, model.getClubLogo());
         viewHolder.setCountry(ctx, model.getCountry());
+        viewHolder.setTimeAgo(model.getTime(), ctx);
 
 
         viewHolder.seekBar.setEnabled(true);
@@ -586,6 +593,9 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
 
+                                                        postList.remove(viewHolder.getAdapterPosition());
+                                                        notifyItemRemoved(viewHolder.getAdapterPosition());
+                                                        notifyItemRangeRemoved(viewHolder.getAdapterPosition(), postList.size());
                                                         Toast.makeText(activity.getApplicationContext(), "deleted", Toast.LENGTH_LONG).show();
 
                                                     }
@@ -786,6 +796,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         int numberLikes;
         int numberDislikes;
 
+        TextView timeAgoTextView;
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -829,6 +840,7 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
             postBackgroundImage = (ImageView) mView.findViewById(R.id.image_post_background);
             comments = (TextView) mView.findViewById(R.id.comments_textview);
             numberComments = (TextView) mView.findViewById(R.id.number_comments);
+            timeAgoTextView = (TextView) mView.findViewById(R.id.postAgoTime);
 
 
         }
@@ -841,6 +853,16 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         public void onClick(View view) {
 
 
+        }
+
+        public void setTimeAgo(Date time, Context ctx){
+            PostingTimeAgo getTimeAgo = new PostingTimeAgo();
+            //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
+            if (time != null) {
+                long lastTime = time.getTime();
+                String lastStringTime = getTimeAgo.getTimeAgo(lastTime, ctx);
+                timeAgoTextView.setText(lastStringTime);
+            }
         }
 
         public void setNumberLikes(final String post_key, Activity activity) {
