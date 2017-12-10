@@ -67,7 +67,7 @@ public class FanbaseFanClubTable extends AppCompatActivity {
 
         likeToolbar = (Toolbar) findViewById(R.id.clubTable_toolbar);
         setSupportActionBar(likeToolbar);
-        getSupportActionBar().setTitle("Club Table");
+        getSupportActionBar().setTitle("Fanbase Club Ranking By Users");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         handler = new Handler();
 
@@ -150,7 +150,7 @@ public class FanbaseFanClubTable extends AppCompatActivity {
         public ClubTableViewHolder(View itemView) {
             super(itemView);
             positionClub = (TextView) itemView.findViewById(R.id.positionClub);
-            clubLogo = (ImageView) itemView.findViewById(R.id.clubLogo);
+            clubLogo = (ImageView) itemView.findViewById(R.id.clubLogoUsers);
             clubName = (TextView) itemView.findViewById(R.id. clubName);
             numberFans = (TextView) itemView.findViewById(R.id.fansNumber);
 

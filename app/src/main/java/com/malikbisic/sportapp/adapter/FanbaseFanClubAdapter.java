@@ -41,7 +41,7 @@ public class FanbaseFanClubAdapter extends RecyclerView.Adapter<FanbaseFanClubTa
     public void onBindViewHolder(FanbaseFanClubTable.ClubTableViewHolder viewHolder, int position) {
         ClubTable model = listClub.get(position);
         pos++;
-        viewHolder.positionClub.setText("" +pos);
+        viewHolder.positionClub.setText(pos + ".");
         viewHolder.clubName.setText(model.getClubName());
         Picasso.with(ctx).load(model.getClubLogo()).into(viewHolder.clubLogo);
         viewHolder.numberFans.setText("" + model.getNumberClubFan());
