@@ -5,6 +5,7 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -23,15 +24,25 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryListenOptions;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.adapter.FanbaseFanClubAdapter;
 import com.malikbisic.sportapp.model.ClubTable;
 import com.malikbisic.sportapp.model.LikesUsernamePhoto;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FanbaseFanClubTable extends AppCompatActivity {
 
@@ -45,6 +56,8 @@ public class FanbaseFanClubTable extends AppCompatActivity {
     RecyclerView recFanClub;
     FirebaseFirestore db;
     com.google.firebase.firestore.Query clubReference;
+    FanbaseFanClubAdapter adapter;
+    List<ClubTable> listClub;
 
 
     @Override
@@ -65,13 +78,27 @@ public class FanbaseFanClubTable extends AppCompatActivity {
         recFanClub.setLayoutManager(new LinearLayoutManager(this));
         recFanClub.setHasFixedSize(false);
         db = FirebaseFirestore.getInstance();
+        listClub = new ArrayList<>();
+        adapter = new FanbaseFanClubAdapter(listClub, this, this);
 
-
+        recFanClub.setLayoutManager(new LinearLayoutManager(this));
+        recFanClub.setAdapter(adapter);
         clubReference = db.collection("ClubTable");
 
 
-
-
+        final com.google.firebase.firestore.Query queryClub = clubReference.orderBy("numberClubFan", com.google.firebase.firestore.Query.Direction.DESCENDING);
+        queryClub.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (DocumentSnapshot snapshot : task.getResult().getDocuments()){
+                    if (snapshot.exists()){
+                        ClubTable model = snapshot.toObject(ClubTable.class);
+                        listClub.add(model);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
 
 
     }
@@ -80,9 +107,8 @@ public class FanbaseFanClubTable extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        final com.google.firebase.firestore.Query queryClub = clubReference.orderBy("numberClubFan", com.google.firebase.firestore.Query.Direction.DESCENDING);
 
-        FirestoreRecyclerOptions<ClubTable> response = new FirestoreRecyclerOptions.Builder<ClubTable>()
+        /*FirestoreRecyclerOptions<ClubTable> response = new FirestoreRecyclerOptions.Builder<ClubTable>()
                 .setQuery(queryClub,ClubTable.class)
                 .build();
 
@@ -103,11 +129,12 @@ public class FanbaseFanClubTable extends AppCompatActivity {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fanclabfans_row, parent, false);
                 return new ClubTableViewHolder(view);
             }
-        };
+        }
         populateRecView.notifyDataSetChanged();
         recFanClub.setAdapter(populateRecView);
         populateRecView.startListening();
 
+*/
 
 
 
@@ -115,10 +142,10 @@ public class FanbaseFanClubTable extends AppCompatActivity {
 
     public static class ClubTableViewHolder extends RecyclerView.ViewHolder{
 
-        TextView positionClub;
-        ImageView clubLogo;
-        TextView clubName;
-        TextView numberFans;
+        public TextView positionClub;
+        public ImageView clubLogo;
+        public TextView clubName;
+        public TextView numberFans;
 
         public ClubTableViewHolder(View itemView) {
             super(itemView);
