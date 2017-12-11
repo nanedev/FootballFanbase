@@ -637,9 +637,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
 
-                                                            postList.remove(((MainPageAdapter.PostViewHolder) holder).getAdapterPosition());
+
                                                             notifyItemRemoved(((MainPageAdapter.PostViewHolder) holder).getAdapterPosition());
-                                                            notifyItemRangeRemoved(((MainPageAdapter.PostViewHolder) holder).getAdapterPosition(), postList.size());
                                                             Toast.makeText(activity.getApplicationContext(), "deleted", Toast.LENGTH_LONG).show();
 
                                                         }
