@@ -203,7 +203,7 @@ public class MainPage extends AppCompatActivity
 
 
     private static final int TOTAL_ITEM_LOAD = 5;
-    int itemPosPremium = 0;
+    int itemPosPremium = 4;
     int itemPosFree = 0;
     String lastkeyPremium = "";
     String mPreviousKeyPremium = "";
@@ -246,7 +246,7 @@ public class MainPage extends AppCompatActivity
         postText = (EditText) findViewById(R.id.postOnlyText);
         backgroundUserPost = (RelativeLayout) findViewById(R.id.relativeLayout);
         calendar = Calendar.getInstance();
-        postingDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
+        postingDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
         wallList = (RecyclerView) findViewById(R.id.wall_rec_view);
         wallList.setHasFixedSize(false);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -807,11 +807,11 @@ public class MainPage extends AppCompatActivity
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
         CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
-        db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(4).addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
+        db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10).addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 if (e == null) {
-                    itemSize.clear();
+
                     for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
 
 
@@ -819,32 +819,20 @@ public class MainPage extends AppCompatActivity
                         itemSize.add(model);
                         adapter.notifyDataSetChanged();
 
-                        for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
-                            switch (change.getType()) {
+                        Log.i("itemCount", String.valueOf(adapter.getItemCount()));
 
-                                case MODIFIED:
 
-                                    break;
-                                case REMOVED:
-
-                                    break;
-                                case ADDED:
-                                    break;
-                            }
+                        if (swipeRefreshLayoutPost.isRefreshing()) {
+                            swipeRefreshLayoutPost.setRefreshing(false);
                         }
 
+                        lastVisible = documentSnapshots.getDocuments()
+                                .get(documentSnapshots.size() - 1);
+
+                        // Construct a new query starting at this document,
+                        // get the next 25 cities.
+
                     }
-
-                    if (swipeRefreshLayoutPost.isRefreshing()){
-                        swipeRefreshLayoutPost.setRefreshing(false);
-                    }
-
-                    lastVisible = documentSnapshots.getDocuments()
-                            .get(documentSnapshots.size() - 1);
-
-                    // Construct a new query starting at this document,
-                    // get the next 25 cities.
-
 
                 } else {
                     Log.e("errorPremium", e.getLocalizedMessage());
@@ -870,56 +858,58 @@ public class MainPage extends AppCompatActivity
 
         FirebaseFirestore checkPremiumUser = FirebaseFirestore.getInstance();
         checkPremiumUser.collection("Users").document(myUserId)
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(final DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                        model = documentSnapshot.toObject(UsersModel.class);
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                model = task.getResult().toObject(UsersModel.class);
 
-                        isPremium = model.isPremium();
+                isPremium = model.isPremium();
 
 
-                        if (isPremium) {
+                if (isPremium) {
 
+                    loadPremium();
+
+                    wallList.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                        @Override
+                        public void onLoadMore(int currentPage) {
+                            new CountDownTimer(2000, 1000) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+
+                                }
+
+                                @Override
+                                public void onFinish() {
+                                    premiumUsersLoadMore();
+                                    adapter.setLoaded();
+
+                                }
+
+                            }.start();
+                        }
+                    });
+
+                    swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+
+                            itemSize.clear();
                             loadPremium();
 
-                            wallList.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-                                @Override
-                                public void onLoadMore(int current_page) {
-
-
-                                    new CountDownTimer(3000, 10000) {
-                                        @Override
-                                        public void onTick(long millisUntilFinished) {
-
-                                        }
-
-                                        @Override
-                                        public void onFinish() {
-                                            premiumUsersLoadMore();
-                                        }
-
-                                    }.start();
-                                }
-                            });
-
-                            swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                                @Override
-                                public void onRefresh() {
-
-                                    loadPremium();
-
-                                }
-                            });
-                        } else {
-                            freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
                         }
+                    });
 
-                    }
 
+                } else {
+                    freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
+                }
 
-                });
+            }
+        });
 
         firstTimeOpened = false;
+
 
     }
 
@@ -931,7 +921,7 @@ public class MainPage extends AppCompatActivity
         com.google.firebase.firestore.Query next = FirebaseFirestore.getInstance().collection("Posting")
                 .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .startAfter(lastVisible)
-                .limit(4);
+                .limit(10);
         next.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
@@ -945,21 +935,11 @@ public class MainPage extends AppCompatActivity
                         adapter.notifyDataSetChanged();
 
 
-                        for (DocumentChange change : querySnapshot.getDocumentChanges()) {
-                            switch (change.getType()) {
 
-                                case MODIFIED:
-
-                                    break;
-                                case REMOVED:
-                                    adapter.notifyItemRemoved(change.getOldIndex());
-                                    break;
-                            }
-
-                            lastVisible = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
-                        }
+                        lastVisible = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
 
                     }
+                    Log.i("itemCount loadmore", String.valueOf(linearLayoutManager.findLastVisibleItemPosition()));
 
                 }
             }

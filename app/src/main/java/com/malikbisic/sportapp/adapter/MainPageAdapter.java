@@ -89,7 +89,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by korisnik on 26/09/2017.
  */
 
-public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostViewHolder> {
+public class MainPageAdapter extends RecyclerView.Adapter {
 
     List<Post> postList;
     Context ctx;
@@ -131,17 +131,62 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         this.ctx = ctx;
         this.activity = activity;
         this.key = key;
+
+        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+
+            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView
+                    .getLayoutManager();
+
+
+            recyclerView
+                    .addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrolled(RecyclerView recyclerView,
+                                               int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
+
+                            totalItemCount = linearLayoutManager.getItemCount();
+                            lastVisibleItem = linearLayoutManager
+                                    .findLastVisibleItemPosition();
+                            if (!loading
+                                    && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                                // End has been reached
+                                // Do something
+                                if (onLoadMoreListener != null) {
+                                    onLoadMoreListener.onLoadMore();
+                                }
+                                loading = true;
+                            }
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return postList.get(position) != null ? VIEW_ITEM : VIEW_PROG;
     }
 
 
     @Override
-    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.wall_row, parent, false);
-        return new PostViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder vh;
+        if (viewType == VIEW_ITEM) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.wall_row, parent, false);
+
+            vh = new PostViewHolder(v);
+        } else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.progressbar_item, parent, false);
+
+            vh = new ProgressViewHolder(v);
+        }
+        return vh;
     }
 
     @Override
-    public void onBindViewHolder(final PostViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
 
         final Post model = postList.get(position);
@@ -158,122 +203,123 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
         }
 
         //DocumentSnapshot refDoc = postingDatabase.collection("Posting").document(model.getKey());
+        if (holder instanceof MainPageAdapter.PostViewHolder) {
 
-        final String post_key = model.getKey();
-        viewHolder.setDescForAudio(model.getDescForAudio());
-        viewHolder.setDescForPhoto(model.getDescForPhoto());
-        viewHolder.setDescVideo(model.getDescVideo());
-        viewHolder.setProfileImage(ctx, model.getProfileImage());
-        viewHolder.setUsername(model.getUsername());
-        viewHolder.setPhotoPost(ctx, model.getPhotoPost());
-        viewHolder.setVideoPost(ctx, model.getVideoPost());
-        viewHolder.setAudioFile(ctx, model.getAudioFile());
-        viewHolder.setLikeBtn(post_key, activity);
-        viewHolder.setNumberLikes(post_key, activity);
-        viewHolder.setDesc(model.getDesc());
-        viewHolder.setDislikeBtn(post_key, activity);
-        viewHolder.setNumberComments(post_key, activity);
-        viewHolder.setNumberDislikes(post_key, activity);
-        viewHolder.setClubLogo(ctx, model.getClubLogo());
-        viewHolder.setCountry(ctx, model.getCountry());
-        viewHolder.setTimeAgo(model.getTime(), ctx);
+            final String post_key = model.getKey();
+            ((MainPageAdapter.PostViewHolder) holder).setDescForAudio(model.getDescForAudio());
+            ((MainPageAdapter.PostViewHolder) holder).setDescForPhoto(model.getDescForPhoto());
+            ((MainPageAdapter.PostViewHolder) holder).setDescVideo(model.getDescVideo());
+            ((MainPageAdapter.PostViewHolder) holder).setProfileImage(ctx, model.getProfileImage());
+            ((MainPageAdapter.PostViewHolder) holder).setUsername(model.getUsername());
+            ((MainPageAdapter.PostViewHolder) holder).setPhotoPost(ctx, model.getPhotoPost());
+            ((MainPageAdapter.PostViewHolder) holder).setVideoPost(ctx, model.getVideoPost());
+            ((MainPageAdapter.PostViewHolder) holder).setAudioFile(ctx, model.getAudioFile());
+            ((MainPageAdapter.PostViewHolder) holder).setLikeBtn(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setNumberLikes(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setDesc(model.getDesc());
+            ((MainPageAdapter.PostViewHolder) holder).setDislikeBtn(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setNumberComments(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setNumberDislikes(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
+            ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
+            ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
 
 
-        viewHolder.seekBar.setEnabled(true);
-        viewHolder.play_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
+            ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
+            ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
 
-                viewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-                try {
-                    viewHolder.mPlayer.prepareAsync();
-                    viewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            viewHolder.mPlayer.start();
+                    try {
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
 
-                            viewHolder.seekBar.setMax(viewHolder.mPlayer.getDuration());
+                                ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
 
-                            new Timer().scheduleAtFixedRate(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    viewHolder.seekBar.setProgress(viewHolder.mPlayer.getCurrentPosition());
-                                    viewHolder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                        @Override
-                                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                            if (fromUser) {
-                                                viewHolder.mPlayer.seekTo(progress);
+                                new Timer().scheduleAtFixedRate(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
+                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                            @Override
+                                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                if (fromUser) {
+                                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
+                                                }
                                             }
-                                        }
 
-                                        @Override
-                                        public void onStartTrackingTouch(SeekBar seekBar) {
+                                            @Override
+                                            public void onStartTrackingTouch(SeekBar seekBar) {
 
-                                        }
+                                            }
 
-                                        @Override
-                                        public void onStopTrackingTouch(SeekBar seekBar) {
+                                            @Override
+                                            public void onStopTrackingTouch(SeekBar seekBar) {
 
-                                        }
-                                    });
-                                }
-                            }, 0, 100);
+                                            }
+                                        });
+                                    }
+                                }, 0, 100);
 
-                        }
-                    });
+                            }
+                        });
 
 
-                    viewHolder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mediaPlayer) {
-                            Log.i("finished", "yes");
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mediaPlayer) {
+                                Log.i("finished", "yes");
 
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                    play_state = true;
+                    if (!pause_state) {
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
+                        pause_state = false;
+                    }
+
                 }
 
 
-                play_state = true;
-                if (!pause_state) {
-                    viewHolder.mPlayer.start();
+            });
+
+
+            ((MainPageAdapter.PostViewHolder) holder).pause_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pause_state = true;
+                    play_state = false;
+                    if (((MainPageAdapter.PostViewHolder) holder).mPlayer.isPlaying() && pause_state)
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.pause();
                     pause_state = false;
-                }
-
-            }
-
-
-        });
-
-
-        viewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pause_state = true;
-                play_state = false;
-                if (viewHolder.mPlayer.isPlaying() && pause_state)
-                    viewHolder.mPlayer.pause();
-                pause_state = false;
-
-            }
-        });
-
-        viewHolder.stop_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (viewHolder.mPlayer != null) {
-                    viewHolder.mPlayer.stop();
-                    viewHolder.seekBar.setMax(0);
-
 
                 }
-            }
-        });
+            });
 
-                /*viewHolder.openSinglePost.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).stop_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (((MainPageAdapter.PostViewHolder) holder).mPlayer != null) {
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.stop();
+                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(0);
+
+
+                    }
+                }
+            });
+
+                /*((MainPageAdapter.PostViewHolder) holder).openSinglePost.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent openSinglePost = new Intent(ctx, SinglePostViewActivity.class);
@@ -284,73 +330,71 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                 });*/
 
 
-        viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent listUsername = new Intent(ctx, Username_Likes_Activity.class);
-                listUsername.putExtra("post_key", post_key);
-                listUsername.putExtra("openActivityToBack", "mainPage");
-                activity.startActivity(listUsername);
-            }
-        });
+            ((MainPageAdapter.PostViewHolder) holder).numberofLikes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent listUsername = new Intent(ctx, Username_Likes_Activity.class);
+                    listUsername.putExtra("post_key", post_key);
+                    listUsername.putExtra("openActivityToBack", "mainPage");
+                    activity.startActivity(listUsername);
+                }
+            });
 
-        viewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent listUsername = new Intent(ctx, Username_Dislikes_Activity.class);
-                listUsername.putExtra("post_key", post_key);
-                listUsername.putExtra("openActivityToBack", "mainPage");
-                activity.startActivity(listUsername);
-            }
-        });
+            ((MainPageAdapter.PostViewHolder) holder).numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent listUsername = new Intent(ctx, Username_Dislikes_Activity.class);
+                    listUsername.putExtra("post_key", post_key);
+                    listUsername.putExtra("openActivityToBack", "mainPage");
+                    activity.startActivity(listUsername);
+                }
+            });
 
-        viewHolder.like_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                like_process = true;
-
-
-
-                likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        if (like_process) {
+            ((MainPageAdapter.PostViewHolder) holder).like_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    like_process = true;
 
 
-                            if (documentSnapshots.exists()) {
-
-                                likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        Log.i("deleteLike", "complete");
-
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.e("deleteLike", e.getLocalizedMessage());
-                                    }
-                                });
-                                like_process = false;
-
-                                Log.i("nema like", "NEMA");
-
-                            } else {
-                                Log.i("ima like", "IMA");
-                                Map<String, Object> userLikeInfo = new HashMap<>();
-                                userLikeInfo.clear();
-                                userLikeInfo.put("username", MainPage.usernameInfo);
-                                userLikeInfo.put("photoProfile", MainPage.profielImage);
-
-                                final DocumentReference newPost = likesReference.collection("Likes").document(post_key).collection("like-id").document(uid);
-                                newPost.set(userLikeInfo);
+                    likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
+                            if (like_process) {
 
 
-                                FirebaseFirestore getIduserpost = postingDatabase;
-                                getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                if (documentSnapshots.exists()) {
 
+                                    likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.i("deleteLike", "complete");
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("deleteLike", e.getLocalizedMessage());
+                                        }
+                                    });
+                                    like_process = false;
+
+                                    Log.i("nema like", "NEMA");
+
+                                } else {
+                                    Log.i("ima like", "IMA");
+                                    Map<String, Object> userLikeInfo = new HashMap<>();
+                                    userLikeInfo.clear();
+                                    userLikeInfo.put("username", MainPage.usernameInfo);
+                                    userLikeInfo.put("photoProfile", MainPage.profielImage);
+
+                                    final DocumentReference newPost = likesReference.collection("Likes").document(post_key).collection("like-id").document(uid);
+                                    newPost.set(userLikeInfo);
+
+
+                                    FirebaseFirestore getIduserpost = postingDatabase;
+                                    getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
 
                                             String userpostUID = dataSnapshot.getString("uid");
@@ -366,82 +410,82 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                             notifSet.add(notifMap);
 
 
-                                        if (e != null) {
-                                            Log.e("likeERROR", e.getLocalizedMessage());
+                                            if (e != null) {
+                                                Log.e("likeERROR", e.getLocalizedMessage());
+                                            }
+
                                         }
 
-                                    }
+
+                                    });
 
 
-                                });
+                                    like_process = false;
 
 
-                                like_process = false;
-
-
+                                }
                             }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
 
 
-        viewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent openFullScreen = new Intent(ctx, FullScreenImage.class);
-                String tag = (String) viewHolder.post_photo.getTag();
-                openFullScreen.putExtra("postKey",post_key);
-                openFullScreen.putExtra("imageURL", tag);
-                openFullScreen.putExtra("title",model.getDescForPhoto());
-                activity.startActivity(openFullScreen);
-            }
-        });
+            ((MainPageAdapter.PostViewHolder) holder).post_photo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent openFullScreen = new Intent(ctx, FullScreenImage.class);
+                    String tag = (String) ((MainPageAdapter.PostViewHolder) holder).post_photo.getTag();
+                    openFullScreen.putExtra("postKey", post_key);
+                    openFullScreen.putExtra("imageURL", tag);
+                    openFullScreen.putExtra("title", model.getDescForPhoto());
+                    activity.startActivity(openFullScreen);
+                }
+            });
 
-        viewHolder.dislike_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dislike_process = true;
-               /* viewHolder.setNumberDislikes(post_key, activity);*/
-
-
-                dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        if (dislike_process) {
+            ((MainPageAdapter.PostViewHolder) holder).dislike_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dislike_process = true;
+               /* ((MainPageAdapter.PostViewHolder) holder).setNumberDislikes(post_key, activity);*/
 
 
-                            if (documentSnapshots.exists()) {
-                                dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        Log.i("deleteDislike", "complete");
-
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.e("deletedislike", e.getLocalizedMessage());
-                                    }
-                                });
-                                dislike_process = false;
+                    dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
+                            if (dislike_process) {
 
 
-                            } else {
+                                if (documentSnapshots.exists()) {
+                                    dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.i("deleteDislike", "complete");
 
-                                Map<String, Object> userDislikeInfo = new HashMap<>();
-                                userDislikeInfo.put("username", MainPage.usernameInfo);
-                                userDislikeInfo.put("photoProfile", MainPage.profielImage);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("deletedislike", e.getLocalizedMessage());
+                                        }
+                                    });
+                                    dislike_process = false;
 
-                                final DocumentReference newPost = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid);
-                                newPost.set(userDislikeInfo);
+
+                                } else {
+
+                                    Map<String, Object> userDislikeInfo = new HashMap<>();
+                                    userDislikeInfo.put("username", MainPage.usernameInfo);
+                                    userDislikeInfo.put("photoProfile", MainPage.profielImage);
+
+                                    final DocumentReference newPost = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid);
+                                    newPost.set(userDislikeInfo);
 
 
-                                FirebaseFirestore getIduserpost = postingDatabase;
-                                getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                    FirebaseFirestore getIduserpost = postingDatabase;
+                                    getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
                                             String userpostUID = dataSnapshot.getString("uid");
 
@@ -457,16 +501,16 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
 
                                         }
 
-                                });
+                                    });
 
 
-                                dislike_process = false;
+                                    dislike_process = false;
 
 
+                                }
                             }
                         }
-                    }
-                });
+                    });
 
 
                                 /*
@@ -524,219 +568,222 @@ public class MainPageAdapter extends RecyclerView.Adapter<MainPageAdapter.PostVi
                                     }
                                 }); */
 
-            }
-        });
+                }
+            });
 
-        viewHolder.comments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent openCom = new Intent(ctx, CommentsActivity.class);
-                openCom.putExtra("keyComment", post_key);
-                openCom.putExtra("profileComment", MainPage.profielImage);
-                openCom.putExtra("username", MainPage.usernameInfo);
-                activity.startActivity(openCom);
-            }
-        });
+            ((MainPageAdapter.PostViewHolder) holder).comments.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent openCom = new Intent(ctx, CommentsActivity.class);
+                    openCom.putExtra("keyComment", post_key);
+                    openCom.putExtra("profileComment", MainPage.profielImage);
+                    openCom.putExtra("username", MainPage.usernameInfo);
+                    activity.startActivity(openCom);
+                }
+            });
 
-        viewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent openCom = new Intent(ctx, CommentsActivity.class);
-                openCom.putExtra("keyComment", post_key);
-                openCom.putExtra("profileComment", MainPage.profielImage);
-                openCom.putExtra("username", MainPage.usernameInfo);
-                activity.startActivity(openCom);
-            }
-        });
-
-
-        viewHolder.openComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent openCom = new Intent(ctx, CommentsActivity.class);
-                openCom.putExtra("keyComment", post_key);
-                openCom.putExtra("profileComment", MainPage.profielImage);
-                openCom.putExtra("username", MainPage.usernameInfo);
-                activity.startActivity(openCom);
-            }
-        });
-        final FirebaseFirestore postingDatabaseProfile = FirebaseFirestore.getInstance();
-        postingDatabaseProfile.collection("Posting").document(post_key).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(final DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
-
-                if (dataSnapshot.exists()) {
-                    if (dataSnapshot.contains("uid")) {
-                        if (mAuth.getCurrentUser().getUid().equals(dataSnapshot.getString("uid"))) {
-
-                            viewHolder.arrow_down.setVisibility(View.VISIBLE);
-
-                            viewHolder.arrow_down.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                    final String[] items = {"Edit post", "Delete post", "Cancel"};
-                                    android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(viewHolder.mView.getContext());
-                                    dialog.setItems(items, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                                            if (items[i].equals("Edit post")) {
-                                                Intent openSinglePost = new Intent(ctx, SinglePostViewActivity.class);
-                                                openSinglePost.putExtra("post_id", post_key);
-                                                activity.startActivity(openSinglePost);
-                                            } else if (items[i].equals("Delete post")) {
+            ((MainPageAdapter.PostViewHolder) holder).numberComments.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent openCom = new Intent(ctx, CommentsActivity.class);
+                    openCom.putExtra("keyComment", post_key);
+                    openCom.putExtra("profileComment", MainPage.profielImage);
+                    openCom.putExtra("username", MainPage.usernameInfo);
+                    activity.startActivity(openCom);
+                }
+            });
 
 
-                                                postingDatabaseProfile.collection("Posting").document(post_key).delete().addOnSuccessListener(activity, new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
+            ((MainPageAdapter.PostViewHolder) holder).openComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                                                        postList.remove(viewHolder.getAdapterPosition());
-                                                        notifyItemRemoved(viewHolder.getAdapterPosition());
-                                                        notifyItemRangeRemoved(viewHolder.getAdapterPosition(), postList.size());
-                                                        Toast.makeText(activity.getApplicationContext(), "deleted", Toast.LENGTH_LONG).show();
+                    Intent openCom = new Intent(ctx, CommentsActivity.class);
+                    openCom.putExtra("keyComment", post_key);
+                    openCom.putExtra("profileComment", MainPage.profielImage);
+                    openCom.putExtra("username", MainPage.usernameInfo);
+                    activity.startActivity(openCom);
+                }
+            });
+            final FirebaseFirestore postingDatabaseProfile = FirebaseFirestore.getInstance();
+            postingDatabaseProfile.collection("Posting").document(post_key).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(final DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(activity.getApplicationContext(), e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
-                                                    }
-                                                });
-                                            } else if (items[i].equals("Cancel")) {
+                    if (dataSnapshot.exists()) {
+                        if (dataSnapshot.contains("uid")) {
+                            if (mAuth.getCurrentUser().getUid().equals(dataSnapshot.getString("uid"))) {
+
+                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setVisibility(View.VISIBLE);
+
+                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        final String[] items = {"Edit post", "Delete post", "Cancel"};
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(((MainPageAdapter.PostViewHolder) holder).mView.getContext());
+                                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                if (items[i].equals("Edit post")) {
+                                                    Intent openSinglePost = new Intent(ctx, SinglePostViewActivity.class);
+                                                    openSinglePost.putExtra("post_id", post_key);
+                                                    activity.startActivity(openSinglePost);
+                                                } else if (items[i].equals("Delete post")) {
 
 
+                                                    postingDatabaseProfile.collection("Posting").document(post_key).delete().addOnSuccessListener(activity, new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+
+                                                            postList.remove(((MainPageAdapter.PostViewHolder) holder).getAdapterPosition());
+                                                            notifyItemRemoved(((MainPageAdapter.PostViewHolder) holder).getAdapterPosition());
+                                                            notifyItemRangeRemoved(((MainPageAdapter.PostViewHolder) holder).getAdapterPosition(), postList.size());
+                                                            Toast.makeText(activity.getApplicationContext(), "deleted", Toast.LENGTH_LONG).show();
+
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Toast.makeText(activity.getApplicationContext(), e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                                                        }
+                                                    });
+                                                } else if (items[i].equals("Cancel")) {
+
+
+                                                }
                                             }
-                                        }
-                                    });
-                                    dialog.create();
-                                    dialog.show();
-                                }
-                            });
-                        } else viewHolder.arrow_down.setVisibility(View.INVISIBLE);
+                                        });
+                                        dialog.create();
+                                        dialog.show();
+                                    }
+                                });
+                            } else ((MainPageAdapter.PostViewHolder) holder).arrow_down.setVisibility(View.INVISIBLE);
+                        }
                     }
                 }
-            }
 
-        });
-
-
-        viewHolder.post_username.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String username = viewHolder.post_username.getText().toString().trim();
-                Log.i("username", username);
-
-                profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
-
-                        for (DocumentSnapshot dataSnapshot1 : dataSnapshot.getDocuments()) {
-
-                            final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
-
-                            String usernameFirebase = userInfo.getUsername();
-
-                            if (username.equals(usernameFirebase)) {
-                                final String uid = userInfo.getUserID();
-                                FirebaseUser user1 = mAuth.getCurrentUser();
-                                String myUID = user1.getUid();
-                                Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
-
-                                if (uid.equals(myUID)) {
-
-                                    ProfileFragment profileFragment = new ProfileFragment();
-
-                                    FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
-
-                                    manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                            R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                    Log.i("tacno", "true");
-
-                                } else {
-
-                                    DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
-
-                                    profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+            });
 
 
-                                            Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
-                                            openUserProfile.putExtra("userID", uid);
-                                            activity.startActivity(openUserProfile);
-                                        }
-                                    });
+            ((MainPageAdapter.PostViewHolder) holder).post_username.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final String username = ((MainPageAdapter.PostViewHolder) holder).post_username.getText().toString().trim();
+                    Log.i("username", username);
+
+                    profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                            for (DocumentSnapshot dataSnapshot1 : dataSnapshot.getDocuments()) {
+
+                                final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
+
+                                String usernameFirebase = userInfo.getUsername();
+
+                                if (username.equals(usernameFirebase)) {
+                                    final String uid = userInfo.getUserID();
+                                    FirebaseUser user1 = mAuth.getCurrentUser();
+                                    String myUID = user1.getUid();
+                                    Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
+
+                                    if (uid.equals(myUID)) {
+
+                                        ProfileFragment profileFragment = new ProfileFragment();
+
+                                        FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
+
+                                        manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                        Log.i("tacno", "true");
+
+                                    } else {
+
+                                        DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
+
+                                        profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+
+                                                Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
+                                                openUserProfile.putExtra("userID", uid);
+                                                activity.startActivity(openUserProfile);
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         }
-                    }
 
-                });
-            }
-        });
+                    });
+                }
+            });
 
-        viewHolder.post_profile_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String username = viewHolder.post_username.getText().toString().trim();
-                Log.i("username", username);
+            ((MainPageAdapter.PostViewHolder) holder).post_profile_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final String username = ((MainPageAdapter.PostViewHolder) holder).post_username.getText().toString().trim();
+                    Log.i("username", username);
 
-                profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
+                    profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                        for (DocumentSnapshot dataSnapshot1 : dataSnapshot.getDocuments()) {
+                            for (DocumentSnapshot dataSnapshot1 : dataSnapshot.getDocuments()) {
 
-                            final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
+                                final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
 
-                            String usernameFirebase = userInfo.getUsername();
-                            Log.i("usernameFirebase", usernameFirebase);
+                                String usernameFirebase = userInfo.getUsername();
+                                Log.i("usernameFirebase", usernameFirebase);
 
-                            if (username.equals(usernameFirebase)) {
-                                final String uid = userInfo.getUserID();
+                                if (username.equals(usernameFirebase)) {
+                                    final String uid = userInfo.getUserID();
 
-                                FirebaseUser user1 = mAuth.getCurrentUser();
-                                String myUID = user1.getUid();
-                                Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
+                                    FirebaseUser user1 = mAuth.getCurrentUser();
+                                    String myUID = user1.getUid();
+                                    Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
-                                if (uid.equals(myUID)) {
+                                    if (uid.equals(myUID)) {
 
-                                    ProfileFragment profileFragment = new ProfileFragment();
+                                        ProfileFragment profileFragment = new ProfileFragment();
 
-                                    FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
+                                        FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
 
-                                    manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                            R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                    Log.i("tacno", "true");
+                                        manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                        Log.i("tacno", "true");
 
-                                } else {
+                                    } else {
 
-                                    DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
+                                        DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
 
-                                    profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                        profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
 
-                                            Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
-                                            openUserProfile.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                                            openUserProfile.putExtra("userID", uid);
-                                            activity.startActivity(openUserProfile);
-                                        }
+                                                Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
+                                                openUserProfile.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                                                openUserProfile.putExtra("userID", uid);
+                                                activity.startActivity(openUserProfile);
+                                            }
 
-                                    });
+                                        });
 
+                                    }
                                 }
                             }
                         }
-                    }
 
-                });
-            }
-        });
+                    });
+                }
+            });
+        } else {
+            ((MainPageAdapter.ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+        }
 
     }
 

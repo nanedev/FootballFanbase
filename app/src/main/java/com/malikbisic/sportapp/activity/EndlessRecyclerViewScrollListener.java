@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.activity;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 /**
  * Copy from https://gist.github.com/ssinss/e06f12ef66c51252563e
@@ -13,7 +14,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     private int previousTotal = 0; // The total number of items in the dataset after the last load
     private boolean loading = true; // True if we are still waiting for the last set of data to load.
     private int visibleThreshold = 5; // The minimum amount of items to have below your current scroll position before loading more.
-    int firstVisibleItem, visibleItemCount, totalItemCount;
+    int lastVisibleItem, visibleItemCount, totalItemCount;
 
     private int current_page = 1;
 
@@ -29,7 +30,10 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
         visibleItemCount = recyclerView.getChildCount();
         totalItemCount = mLinearLayoutManager.getItemCount();
-        firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+        lastVisibleItem = mLinearLayoutManager.findLastVisibleItemPosition() + 1;
+
+        Log.i("lasttotal", String.valueOf(totalItemCount));
+        Log.i("lastVisible", String.valueOf(lastVisibleItem));
 
         if (loading) {
             if (totalItemCount > previousTotal) {
@@ -37,8 +41,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
                 previousTotal = totalItemCount;
             }
         }
-        if (!loading && (totalItemCount - visibleItemCount)
-                <= (firstVisibleItem + visibleThreshold)) {
+        if (!loading && totalItemCount == lastVisibleItem ) {
             // End has been reached
 
             // Do something
