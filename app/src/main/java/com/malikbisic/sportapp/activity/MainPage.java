@@ -193,6 +193,7 @@ public class MainPage extends AppCompatActivity
     boolean isPremium;
     static boolean isNotificationClicked = false;
     public static String myClubName;
+    ProgressDialog pDialog;
 
     TextView notificationCounterNumber;
     FirebaseFirestore notificationReference;
@@ -876,13 +877,18 @@ public class MainPage extends AppCompatActivity
                             new CountDownTimer(2000, 1000) {
                                 @Override
                                 public void onTick(long millisUntilFinished) {
-
+ pDialog = new ProgressDialog(MainPage.this);
+                                    pDialog.show();
+                                    pDialog.setContentView(R.layout.progressbar_item);
+                                    pDialog.getWindow().setGravity(Gravity.BOTTOM);
                                 }
 
                                 @Override
                                 public void onFinish() {
                                     premiumUsersLoadMore();
                                     adapter.setLoaded();
+                                    pDialog.dismiss();
+
 
                                 }
 
@@ -890,15 +896,7 @@ public class MainPage extends AppCompatActivity
                         }
                     });
 
-                    swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                        @Override
-                        public void onRefresh() {
 
-                            itemSize.clear();
-                            loadPremium();
-
-                        }
-                    });
 
 
                 } else {
@@ -909,6 +907,16 @@ public class MainPage extends AppCompatActivity
         });
 
         firstTimeOpened = false;
+
+        swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                itemSize.clear();
+                loadPremium();
+
+            }
+        });
 
 
     }
@@ -929,7 +937,6 @@ public class MainPage extends AppCompatActivity
 
                     for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
 
-                        Toast.makeText(MainPage.this, "Hi", Toast.LENGTH_SHORT).show();
                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                         itemSize.add(model);
                         adapter.notifyDataSetChanged();
