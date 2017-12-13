@@ -114,7 +114,9 @@
             android:name=".activity.FullScreenImage"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.SinglePostViewActivity" />
+        <activity android:name=".activity.SinglePostViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activity.CommentsActivity"
             android:screenOrientation="portrait"

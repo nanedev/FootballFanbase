@@ -5,6 +5,7 @@
 
     <item
         android:id="@+id/save_edit_text"
-        android:title="Save"
+        android:title="Post"
+       android:icon="@drawable/ic_send_white_24dp"
         app:showAsAction="always" />
 </menu>

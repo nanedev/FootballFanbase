@@ -1,9 +1,14 @@
 package com.malikbisic.sportapp.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,18 +20,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.malikbisic.sportapp.R;
@@ -51,6 +55,7 @@ public class SinglePostViewActivity extends AppCompatActivity{
     private EditText post_only_text;
     private RelativeLayout layoutAudio;
     private RelativeLayout layoutImage;
+    Toolbar editPostToolbar;
 
 
     @Override
@@ -70,7 +75,10 @@ public class SinglePostViewActivity extends AppCompatActivity{
         layoutAudio = (RelativeLayout) findViewById(R.id.layout_for_audio_player);
         layoutImage = (RelativeLayout) findViewById(R.id.layout_for_image);
         post_only_text = (EditText)  findViewById(R.id.post_text_main_page);
-
+        editPostToolbar = (Toolbar) findViewById(R.id.editpostTooblar);
+        setSupportActionBar(editPostToolbar);
+        getSupportActionBar().setTitle("Edit post");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
 
@@ -81,60 +89,61 @@ public class SinglePostViewActivity extends AppCompatActivity{
             @Override
             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                String profileImage = dataSnapshot.getString("profileImage");
-                String profileUsername = dataSnapshot.getString("username");
-                String postImage =  dataSnapshot.getString("photoPost");
-                String postVideo =  dataSnapshot.getString("videoPost");
-                String descVideo =  dataSnapshot.getString("descVideo");
-                String descImage =  dataSnapshot.getString("descForPhoto");
-                String postAudio = dataSnapshot.getString("audioFile");
-                String postText = dataSnapshot.getString("desc");
+                if (dataSnapshot.exists()) {
 
-                Picasso.with(SinglePostViewActivity.this).load(profileImage).into(profile_image);
-                username.setText(profileUsername);
+                    String profileImage = dataSnapshot.getString("profileImage");
+                    String profileUsername = dataSnapshot.getString("username");
+                    String postImage = dataSnapshot.getString("photoPost");
+                    String postVideo = dataSnapshot.getString("videoPost");
+                    String descVideo = dataSnapshot.getString("descVideo");
+                    String descImage = dataSnapshot.getString("descForPhoto");
+                    String postAudio = dataSnapshot.getString("audioFile");
+                    String postText = dataSnapshot.getString("desc");
 
-                if (postImage != null) {
-                    layoutImage.setVisibility(View.VISIBLE);
-                    post_text_video.setVisibility(View.GONE);
-                    post_text_audio.setVisibility(View.GONE);
-                    post_only_text.setVisibility(View.GONE);
-                    Picasso.with(SinglePostViewActivity.this).load(postImage).into(post_image);
-                } else {
+                    Picasso.with(SinglePostViewActivity.this).load(profileImage).into(profile_image);
+                    username.setText(profileUsername);
 
-                    layoutImage.setVisibility(View.GONE);
+                    if (postImage != null) {
+                        layoutImage.setVisibility(View.VISIBLE);
+                        post_text_video.setVisibility(View.GONE);
+                        post_text_audio.setVisibility(View.GONE);
+                        post_only_text.setVisibility(View.GONE);
+                        post_text_image.setVisibility(View.VISIBLE);
+                        post_text_image.setText(descImage);
+                        Picasso.with(SinglePostViewActivity.this).load(postImage).into(post_image);
+                    } else {
+
+                        layoutImage.setVisibility(View.GONE);
+                    }
+
+                    if (postText != null) {
+                        post_text_video.setVisibility(View.GONE);
+                        post_text_audio.setVisibility(View.GONE);
+                        post_text_image.setVisibility(View.GONE);
+
+                        post_only_text.setText(postText);
+
+                    }
+
+                    if (postVideo != null) {
+                        post_video.setVisibility(View.VISIBLE);
+                        post_text_audio.setVisibility(View.GONE);
+                        post_text_image.setVisibility(View.GONE);
+                        post_only_text.setVisibility(View.GONE);
+                        post_text_video.setText(descVideo);
+                        post_video.setUp(postVideo, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
+                    } else {
+                        post_video.setVisibility(View.GONE);
+                    }
+
+                    if (postAudio != null) {
+                        post_text_image.setVisibility(View.GONE);
+                        post_text_video.setVisibility(View.GONE);
+                        Log.i("file", postAudio);
+                    } else {
+                        layoutAudio.setVisibility(View.GONE);
+                    }
                 }
-
-                if (postText != null) {
-                    post_text_video.setVisibility(View.GONE);
-                    post_text_audio.setVisibility(View.GONE);
-                    post_text_image.setVisibility(View.GONE);
-
-                    post_only_text.setText(postText);
-
-
-                }
-                post_text_image.setText(descImage);
-                post_text_video.setText(descVideo);
-
-
-                if (postVideo != null) {
-                    post_video.setVisibility(View.VISIBLE);
-                    post_text_audio.setVisibility(View.GONE);
-                    post_text_image.setVisibility(View.GONE);
-                    post_only_text.setVisibility(View.GONE);
-                    post_video.setUp(postVideo, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
-                } else {
-                    post_video.setVisibility(View.GONE);
-                }
-
-                if (postAudio != null) {
-                    post_text_image.setVisibility(View.GONE);
-                    post_text_video.setVisibility(View.GONE);
-                    Log.i("file", postAudio);
-                } else {
-                    layoutAudio.setVisibility(View.GONE);
-                }
-
             }
 
         });
@@ -157,8 +166,56 @@ public class SinglePostViewActivity extends AppCompatActivity{
             final String newTextImage = post_text_image.getText().toString().trim();
             final String newTextAudio = post_text_audio.getText().toString().trim();
             final String newText = post_only_text.getText().toString().trim();
+            editPostComplete.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+               if (documentSnapshot.exists()){
+                   editPostComplete.update("desc",newText,"time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                       @Override
+                       public void onSuccess(Void aVoid) {
+                           Toast.makeText(SinglePostViewActivity.this,"uhuuu",Toast.LENGTH_SHORT);
+                       }
+                   });
 
-            editPostComplete.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+
+                   editPostComplete.update("descForPhoto",newTextImage,"time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                       @Override
+                       public void onSuccess(Void aVoid) {
+                           Toast.makeText(SinglePostViewActivity.this,"uhuuu",Toast.LENGTH_SHORT);
+                       }
+                   });
+
+                   editPostComplete.update("descForAudio",newTextAudio,"time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                       @Override
+                       public void onSuccess(Void aVoid) {
+                           Toast.makeText(SinglePostViewActivity.this,"uhuuu",Toast.LENGTH_SHORT);
+                       }
+                   });
+
+
+                   editPostComplete.update("descVideo",newTextVideo,"time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                       @Override
+                       public void onSuccess(Void aVoid) {
+                           Toast.makeText(SinglePostViewActivity.this,"uhuuu",Toast.LENGTH_SHORT);
+                       }
+                   });
+
+
+
+
+
+                   Intent backToMainPage = new Intent(SinglePostViewActivity.this, MainPage.class);
+                   startActivity(backToMainPage);
+                   finish();
+
+
+               }
+                }
+            });
+
+
+
+         /*   editPostComplete.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
                     if (dataSnapshot.contains("descVideo")) {
@@ -180,24 +237,15 @@ public class SinglePostViewActivity extends AppCompatActivity{
                        });
                     }
 
-                    if (dataSnapshot.contains("desc")) {
-                        Map<String, Object> descMap = new HashMap<>();
-                        descMap.put("desc", newText);
-                        DocumentReference edit = FirebaseFirestore.getInstance().collection("Posting").document(post_key);
-                        edit.update(descMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(SinglePostViewActivity.this, "Successfuly", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e("errorUpdate", e.getLocalizedMessage());
-                            }
-                        });
+                    if (dataSnapshot.getString("desc")) {
 
+                  FirebaseFirestore.getInstance().collection("Posting").document(post_key).update(
+                    "desc",newText,
+                          "time",FieldValue.serverTimestamp()
+                  );
+                        Intent backToMainPage = new Intent(SinglePostViewActivity.this, MainPage.class);
+                        startActivity(backToMainPage);
+                        finish();
 
                     }
 
@@ -241,12 +289,10 @@ public class SinglePostViewActivity extends AppCompatActivity{
 
                     }
 
-                    Intent backToMainPage = new Intent(SinglePostViewActivity.this, MainPage.class);
-                    startActivity(backToMainPage);
-                    finish();
+
 
                 }
-            });
+            });*/
 
         }
 
