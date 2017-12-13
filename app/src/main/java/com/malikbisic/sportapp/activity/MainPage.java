@@ -223,7 +223,9 @@ public class MainPage extends AppCompatActivity
     int id;
 
     DocumentSnapshot lastVisible;
+    DocumentSnapshot lastItemInBase;
     SwipeRefreshLayout swipeRefreshLayoutPost;
+    int size;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -805,14 +807,35 @@ public class MainPage extends AppCompatActivity
         String currentHomePackage = resolveInfo.activityInfo.packageName;
     }
 
+    public void checkIsLoadAll() {
+
+        com.google.firebase.firestore.Query next = FirebaseFirestore.getInstance().collection("Posting")
+                .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING);
+        next.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                if (e == null) {
+
+                    size = querySnapshot.size();
+
+
+
+                }
+            }
+
+        });
+
+    }
+
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
+
         CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
         db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10).addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 if (e == null) {
-                    itemSize.clear();
+
                     for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
 
 
@@ -871,28 +894,29 @@ public class MainPage extends AppCompatActivity
 
                     loadPremium();
 
-                    wallList.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                    adapter.setOnLoadMore(new OnLoadMoreListener() {
                         @Override
-                        public void onLoadMore(int currentPage) {
-                            new CountDownTimer(2000, 1000) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
- pDialog = new ProgressDialog(MainPage.this);
-                                    pDialog.show();
-                                    pDialog.setContentView(R.layout.progressbar_item);
-                                    pDialog.getWindow().setGravity(Gravity.BOTTOM);
-                                }
+                        public void onLoadMore() {
 
+
+                            wallList.post(new Runnable() {
                                 @Override
-                                public void onFinish() {
+                                public void run() {
+                                    itemSize.add(null);
+                                    adapter.notifyItemInserted(itemSize.size() - 1);
+                                }
+                            });
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
                                     premiumUsersLoadMore();
-                                    adapter.setLoaded();
-                                    pDialog.dismiss();
 
 
                                 }
+                            }, 5000);
 
-                            }.start();
                         }
                     });
 
@@ -902,6 +926,7 @@ public class MainPage extends AppCompatActivity
 
 
                             EndlessRecyclerViewScrollListener.previousTotal = 0;
+                            itemSize.clear();
                             loadPremium();
 
                         }
@@ -923,6 +948,8 @@ public class MainPage extends AppCompatActivity
     }
 
 
+
+
     public void premiumUsersLoadMore() {
 
 
@@ -941,18 +968,26 @@ public class MainPage extends AppCompatActivity
                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                         itemSize.add(model);
                         adapter.notifyDataSetChanged();
-
-
-
+                        adapter.refreshAdapter(EndlessRecyclerViewScrollListener.loading, itemSize);
                         lastVisible = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
-
+                        adapter.setIsLoading(false);
                     }
+
+                    int loadMoreSize = querySnapshot.size();
+
+                    if (size == loadMoreSize){
+                        adapter.setIsLoading(false);
+                    }
+
                     Log.i("itemCount loadmore", String.valueOf(linearLayoutManager.findLastVisibleItemPosition()));
 
+                } else {
+                    Log.e("errorLoadMore", e.getLocalizedMessage());
                 }
             }
 
         });
+
 
     }
 

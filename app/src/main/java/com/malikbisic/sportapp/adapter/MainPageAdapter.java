@@ -95,6 +95,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     Context ctx;
     Activity activity;
     String uid;
+    boolean value;
 
     public static boolean photoSelected;
     public static String usernameInfo;
@@ -117,13 +118,15 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     boolean isPremium;
 
     String post_key;
-    private final int VIEW_ITEM = 1;
-    private final int VIEW_PROG = 0;
+    private static final int ITEM_VIEW = 0;
+    private static final int ITEM_LOADING = 1;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
     private OnLoadMoreListener onLoadMoreListener;
     String key;
+    LayoutInflater mLInflater;
+    boolean isLoading;
 
 
     public MainPageAdapter(List<Post> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
@@ -131,6 +134,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         this.ctx = ctx;
         this.activity = activity;
         this.key = key;
+        this.value = value;
+        mLInflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
 
@@ -138,57 +143,61 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     .getLayoutManager();
 
 
-            recyclerView
-                    .addOnScrollListener(new RecyclerView.OnScrollListener() {
-                        @Override
-                        public void onScrolled(RecyclerView recyclerView,
-                                               int dx, int dy) {
-                            super.onScrolled(recyclerView, dx, dy);
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
 
-                            totalItemCount = linearLayoutManager.getItemCount();
-                            lastVisibleItem = linearLayoutManager
-                                    .findLastVisibleItemPosition();
-                            if (!loading
-                                    && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
-                                // End has been reached
-                                // Do something
-                                if (onLoadMoreListener != null) {
-                                    onLoadMoreListener.onLoadMore();
-                                }
-                                loading = true;
-                            }
+                    LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                    lastVisibleItem = llm.findLastVisibleItemPosition();
+                    totalItemCount = llm.getItemCount();
+
+                    if(!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold))
+                    {
+                        if(onLoadMoreListener != null)
+                        {
+                            onLoadMoreListener.onLoadMore();
                         }
-                    });
+                        isLoading =true;
+                    }
+
+                }
+            });
+
         }
+    }
+
+    public void refreshAdapter(boolean value, List<Post> postList) {
+        this.value = value;
+        this.postList = postList;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return postList.get(position) != null ? VIEW_ITEM : VIEW_PROG;
+        return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
     }
 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-        if (viewType == VIEW_ITEM) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.wall_row, parent, false);
-
-            vh = new PostViewHolder(v);
-        } else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.progressbar_item, parent, false);
-
-            vh = new ProgressViewHolder(v);
+        if (viewType == ITEM_VIEW) {
+            View v = mLInflater.inflate(R.layout.wall_row, parent, false);
+            return new PostViewHolder(v);
+        } else if (viewType == ITEM_LOADING) {
+            View v1 = mLInflater.inflate(R.layout.progressbar_item, parent, false);
+            return new ProgressViewHolder(v1);
         }
-        return vh;
+
+        return null;
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
-
+        int getViewType = holder.getItemViewType();
         final Post model = postList.get(position);
 
         postingDatabase = FirebaseFirestore.getInstance();
@@ -203,7 +212,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         }
 
         //DocumentSnapshot refDoc = postingDatabase.collection("Posting").document(model.getKey());
-        if (holder instanceof MainPageAdapter.PostViewHolder) {
+        if (getViewType == ITEM_VIEW) {
 
             final String post_key = model.getKey();
             ((MainPageAdapter.PostViewHolder) holder).setDescForAudio(model.getDescForAudio());
@@ -658,7 +667,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                         dialog.show();
                                     }
                                 });
-                            } else ((MainPageAdapter.PostViewHolder) holder).arrow_down.setVisibility(View.INVISIBLE);
+                            } else
+                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setVisibility(View.INVISIBLE);
                         }
                     }
                 }
@@ -780,19 +790,37 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     });
                 }
             });
-        } else {
-            ((MainPageAdapter.ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+        } else if (getViewType == ITEM_LOADING) {
+
+
+            if (isLoading) {
+
+                ((ProgressViewHolder) holder).progressBar.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.spinnerLoad),
+                        android.graphics.PorterDuff.Mode.MULTIPLY);
+                ((ProgressViewHolder) holder).progressBar.setVisibility(
+                        View.VISIBLE);
+                ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+            } else{
+                    ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
+                }
+
         }
 
     }
 
 
-    public void setLoaded() {
-        loading = false;
+
+
+
+    public void setOnLoadMore(OnLoadMoreListener onLoadMore)
+    {
+        onLoadMoreListener = onLoadMore;
     }
 
-    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
-        this.onLoadMoreListener = onLoadMoreListener;
+
+    public void setIsLoading(boolean param)
+    {
+        isLoading = param;
     }
 
     @Override
@@ -901,7 +929,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         }
 
-        public void setTimeAgo(Date time, Context ctx){
+        public void setTimeAgo(Date time, Context ctx) {
             PostingTimeAgo getTimeAgo = new PostingTimeAgo();
             //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
             if (time != null) {
@@ -914,7 +942,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         public void setNumberLikes(final String post_key, Activity activity) {
 
             CollectionReference col = likeReference.collection("Likes").document(post_key).collection("like-id");
-            col.addSnapshotListener(activity,new EventListener<QuerySnapshot>() {
+            col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                     numberLikes = documentSnapshots.size();
@@ -950,7 +978,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                     int numberOfComments = documentSnapshots.getDocuments().size();
-
 
 
                     if (numberOfComments == 0) {
@@ -1022,20 +1049,20 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         public void setNumberDislikes(String post_key, Activity activity) {
 
             CollectionReference col = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id");
-       col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
-           @Override
-           public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-               numberDislikes = documentSnapshots.getDocuments().size();
+            col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                    numberDislikes = documentSnapshots.getDocuments().size();
 
 
-               if (numberDislikes == 0) {
-                   numberOfDislikes.setText("");
-               } else {
-                   numberOfDislikes.setText(String.valueOf(numberDislikes));
-               }
+                    if (numberDislikes == 0) {
+                        numberOfDislikes.setText("");
+                    } else {
+                        numberOfDislikes.setText(String.valueOf(numberDislikes));
+                    }
 
-           }
-       });
+                }
+            });
             /*     col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(Task<QuerySnapshot> querySnapshot) {
