@@ -812,7 +812,7 @@ public class MainPage extends AppCompatActivity
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 if (e == null) {
-
+                    itemSize.clear();
                     for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
 
 
@@ -896,6 +896,16 @@ public class MainPage extends AppCompatActivity
                         }
                     });
 
+                    swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+
+
+                            EndlessRecyclerViewScrollListener.previousTotal = 0;
+                            loadPremium();
+
+                        }
+                    });
 
 
 
@@ -908,15 +918,6 @@ public class MainPage extends AppCompatActivity
 
         firstTimeOpened = false;
 
-        swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                itemSize.clear();
-                loadPremium();
-
-            }
-        });
 
 
     }
