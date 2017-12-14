@@ -223,7 +223,7 @@ public class MainPage extends AppCompatActivity
     int id;
 
     DocumentSnapshot lastVisible;
-    DocumentSnapshot lastItemInBase;
+    DocumentSnapshot prevItemVisible;
     SwipeRefreshLayout swipeRefreshLayoutPost;
     int size;
 
@@ -877,6 +877,7 @@ public class MainPage extends AppCompatActivity
         initializeCountDrawer();
         launcerCounter();
 
+        itemSize.clear();
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
@@ -913,6 +914,7 @@ public class MainPage extends AppCompatActivity
                                 public void run() {
 
                                     premiumUsersLoadMore();
+
 
 
                                 }
@@ -961,7 +963,7 @@ public class MainPage extends AppCompatActivity
                 .limit(10);
         next.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+            public void onEvent(final QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
                 if (e == null) {
 
                     for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
@@ -972,13 +974,40 @@ public class MainPage extends AppCompatActivity
                         adapter.refreshAdapter(EndlessRecyclerViewScrollListener.loading, itemSize);
                         lastVisible = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
                         adapter.setIsLoading(false);
+                        prevItemVisible = lastVisible;
+                        size = snapshot.getData().size();
+                    }
+
+                    com.google.firebase.firestore.Query next = FirebaseFirestore.getInstance().collection("Posting")
+                            .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING);
+                    next.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException e) {
+                            if (e == null) {
+
+                                prevItemVisible = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
+
+                                if (prevItemVisible.getId().equals(lastVisible.getId())){
+                                    adapter.isFullLoaded(true);
+                                }
+
+
+                                Log.i("postTOTALCOUNT", String.valueOf(lastVisible.getId()));
+                                Log.i("postLIST", String.valueOf(prevItemVisible.getId()));
+                            }
+                        }
+
+                    });
+
+                    Log.i("VisPrev", String.valueOf(prevItemVisible));
+                    if (prevItemVisible.getId().equals(lastVisible.getId())){
+                        adapter.setIsLoading(false);
                     }
 
                     int loadMoreSize = querySnapshot.size();
 
-                    if (size == loadMoreSize){
-                        adapter.setIsLoading(false);
-                    }
+                    Log.i("Vislast", String.valueOf(lastVisible));
+
 
                     Log.i("itemCount loadmore", String.valueOf(linearLayoutManager.findLastVisibleItemPosition()));
 

@@ -128,9 +128,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     String key;
     LayoutInflater mLInflater;
     boolean isLoading;
+    boolean isAllLoaded = false;
 
 
-    public MainPageAdapter(List<Post> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
+    public MainPageAdapter(final List<Post> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
         this.postList = postList;
         this.ctx = ctx;
         this.activity = activity;
@@ -154,7 +155,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     lastVisibleItem = llm.findLastVisibleItemPosition();
                     totalItemCount = llm.getItemCount();
 
-                    if(!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold))
+
+                    if(!isLoading  && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded)
                     {
                         if(onLoadMoreListener != null)
                         {
@@ -165,6 +167,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                 }
             });
+
+
+
 
         }
     }
@@ -804,7 +809,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 ((ProgressViewHolder) holder).progressBar.setVisibility(
                         View.VISIBLE);
                 ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
-            } else{
+            } else if (!isLoading || isAllLoaded){
                     ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
                 }
 
@@ -827,6 +832,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         isLoading = param;
     }
 
+    public void isFullLoaded(boolean param){
+        isAllLoaded = param;
+    }
     @Override
     public int getItemCount() {
         return postList.size();
