@@ -89,7 +89,10 @@ public class SinglePostViewActivity extends AppCompatActivity{
             @Override
             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
+
                 if (dataSnapshot.exists()) {
+
+
 
                     String profileImage = dataSnapshot.getString("profileImage");
                     String profileUsername = dataSnapshot.getString("username");
