@@ -45,17 +45,16 @@ public class SinglePostViewActivity extends AppCompatActivity{
 
     private CollectionReference postReference;
     private CollectionReference editPost;
-    private ImageView post_image;
+
     private ImageView profile_image;
     private TextView username;
-    private cn.jzvd.JZVideoPlayerStandard post_video;
     private EditText post_text_video;
     private EditText post_text_image;
     private EditText post_text_audio;
     private EditText post_only_text;
-    private RelativeLayout layoutAudio;
-    private RelativeLayout layoutImage;
+
     Toolbar editPostToolbar;
+
 
 
     @Override
@@ -67,18 +66,18 @@ public class SinglePostViewActivity extends AppCompatActivity{
         editPost = FirebaseFirestore.getInstance().collection("Posting");
         profile_image = (ImageView) findViewById(R.id.profile_image_wall);
         username = (TextView) findViewById(R.id.username_wall);
-        post_image = (ImageView) findViewById(R.id.posted_image);
-        post_video = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.posted_video);
+
         post_text_image = (EditText) findViewById(R.id.text_for_image);
         post_text_video = (EditText) findViewById(R.id.text_for_video);
         post_text_audio = (EditText) findViewById(R.id.audio_textview);
-        layoutAudio = (RelativeLayout) findViewById(R.id.layout_for_audio_player);
-        layoutImage = (RelativeLayout) findViewById(R.id.layout_for_image);
+
+
         post_only_text = (EditText)  findViewById(R.id.post_text_main_page);
         editPostToolbar = (Toolbar) findViewById(R.id.editpostTooblar);
         setSupportActionBar(editPostToolbar);
         getSupportActionBar().setTitle("Edit post");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
 
@@ -96,27 +95,26 @@ public class SinglePostViewActivity extends AppCompatActivity{
 
                     String profileImage = dataSnapshot.getString("profileImage");
                     String profileUsername = dataSnapshot.getString("username");
-                    String postImage = dataSnapshot.getString("photoPost");
+                    final String postImage = dataSnapshot.getString("photoPost");
                     String postVideo = dataSnapshot.getString("videoPost");
                     String descVideo = dataSnapshot.getString("descVideo");
-                    String descImage = dataSnapshot.getString("descForPhoto");
+                    final String descImage = dataSnapshot.getString("descForPhoto");
                     String postAudio = dataSnapshot.getString("audioFile");
                     String postText = dataSnapshot.getString("desc");
+                    String descAudio = dataSnapshot.getString("descForAudio");
+
 
                     Picasso.with(SinglePostViewActivity.this).load(profileImage).into(profile_image);
                     username.setText(profileUsername);
 
                     if (postImage != null) {
-                        layoutImage.setVisibility(View.VISIBLE);
+
                         post_text_video.setVisibility(View.GONE);
                         post_text_audio.setVisibility(View.GONE);
                         post_only_text.setVisibility(View.GONE);
                         post_text_image.setVisibility(View.VISIBLE);
                         post_text_image.setText(descImage);
-                        Picasso.with(SinglePostViewActivity.this).load(postImage).into(post_image);
-                    } else {
 
-                        layoutImage.setVisibility(View.GONE);
                     }
 
                     if (postText != null) {
@@ -129,27 +127,29 @@ public class SinglePostViewActivity extends AppCompatActivity{
                     }
 
                     if (postVideo != null) {
-                        post_video.setVisibility(View.VISIBLE);
+
                         post_text_audio.setVisibility(View.GONE);
                         post_text_image.setVisibility(View.GONE);
                         post_only_text.setVisibility(View.GONE);
                         post_text_video.setText(descVideo);
-                        post_video.setUp(postVideo, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
-                    } else {
-                        post_video.setVisibility(View.GONE);
+
                     }
 
                     if (postAudio != null) {
+
+                        post_text_audio.setVisibility(View.VISIBLE);
                         post_text_image.setVisibility(View.GONE);
                         post_text_video.setVisibility(View.GONE);
+                        post_only_text.setVisibility(View.GONE);
+                        post_text_audio.setText(descAudio);
                         Log.i("file", postAudio);
-                    } else {
-                        layoutAudio.setVisibility(View.GONE);
                     }
                 }
             }
 
         });
+
+
     }
 
     @Override

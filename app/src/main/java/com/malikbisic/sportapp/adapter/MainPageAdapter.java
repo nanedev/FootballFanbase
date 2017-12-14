@@ -235,51 +235,51 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
-            ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-
-                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                    try {
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
+                            public void onClick(final View v) {
 
-                                ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
+                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-                                new Timer().scheduleAtFixedRate(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
-                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                            @Override
-                                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                                if (fromUser) {
-                                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
+                                try {
+                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
+                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                        @Override
+                                        public void onPrepared(MediaPlayer mp) {
+                                            ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
+
+                                            ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
+
+                                            new Timer().scheduleAtFixedRate(new TimerTask() {
+                                                @Override
+                                                public void run() {
+                                                    ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
+                                                    ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                        @Override
+                                                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                            if (fromUser) {
+                                                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                        }
+
+                                                        @Override
+                                                        public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                        }
+                                                    });
                                                 }
-                                            }
+                                            }, 0, 100);
 
-                                            @Override
-                                            public void onStartTrackingTouch(SeekBar seekBar) {
-
-                                            }
-
-                                            @Override
-                                            public void onStopTrackingTouch(SeekBar seekBar) {
-
-                                            }
-                                        });
-                                    }
-                                }, 0, 100);
-
-                            }
-                        });
+                                        }
+                                    });
 
 
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mediaPlayer) {
                                 Log.i("finished", "yes");
