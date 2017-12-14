@@ -630,7 +630,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                     public void onClick(View v) {
 
                                         final String[] items = {"Edit post", "Delete post", "Cancel"};
-                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(((MainPageAdapter.PostViewHolder) holder).mView.getContext());
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity);
                                         dialog.setItems(items, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {

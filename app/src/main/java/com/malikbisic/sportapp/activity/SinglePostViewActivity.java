@@ -173,35 +173,43 @@ public class SinglePostViewActivity extends AppCompatActivity{
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                if (documentSnapshot.exists()){
+
+                   if (documentSnapshot.contains("desc")){
                    editPostComplete.update("desc",newText,"time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
                        @Override
                        public void onSuccess(Void aVoid) {
                            Toast.makeText(SinglePostViewActivity.this,"uhuuu",Toast.LENGTH_SHORT);
                        }
                    });
+                   }
 
+                   if (documentSnapshot.contains("descForPhoto")) {
+                       editPostComplete.update("descForPhoto", newTextImage, "time", FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                           @Override
+                           public void onSuccess(Void aVoid) {
+                               Toast.makeText(SinglePostViewActivity.this, "uhuuu", Toast.LENGTH_SHORT);
+                           }
+                       });
 
-                   editPostComplete.update("descForPhoto",newTextImage,"time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                       @Override
-                       public void onSuccess(Void aVoid) {
-                           Toast.makeText(SinglePostViewActivity.this,"uhuuu",Toast.LENGTH_SHORT);
-                       }
-                   });
+                   }
+                   if (documentSnapshot.contains("descForAudio")) {
+                       editPostComplete.update("descForAudio", newTextAudio, "time", FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                           @Override
+                           public void onSuccess(Void aVoid) {
+                               Toast.makeText(SinglePostViewActivity.this, "uhuuu", Toast.LENGTH_SHORT);
+                           }
+                       });
+                   }
 
-                   editPostComplete.update("descForAudio",newTextAudio,"time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                       @Override
-                       public void onSuccess(Void aVoid) {
-                           Toast.makeText(SinglePostViewActivity.this,"uhuuu",Toast.LENGTH_SHORT);
-                       }
-                   });
+                   if (documentSnapshot.contains("descVideo")) {
 
-
-                   editPostComplete.update("descVideo",newTextVideo,"time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                       @Override
-                       public void onSuccess(Void aVoid) {
-                           Toast.makeText(SinglePostViewActivity.this,"uhuuu",Toast.LENGTH_SHORT);
-                       }
-                   });
+                       editPostComplete.update("descVideo", newTextVideo, "time", FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                           @Override
+                           public void onSuccess(Void aVoid) {
+                               Toast.makeText(SinglePostViewActivity.this, "uhuuu", Toast.LENGTH_SHORT);
+                           }
+                       });
+                   }
 
 
 
@@ -306,5 +314,12 @@ public class SinglePostViewActivity extends AppCompatActivity{
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
+        Intent backToMainPage = new Intent(SinglePostViewActivity.this, MainPage.class);
+        startActivity(backToMainPage);
+        finish();
+    }
 }

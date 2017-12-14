@@ -270,6 +270,7 @@ public class MainPage extends AppCompatActivity
         adapter = new MainPageAdapter(itemSize, getApplicationContext(), MainPage.this, wallList, postKey);
         wallList.setAdapter(adapter);
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
+        itemSize.clear();
 
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 

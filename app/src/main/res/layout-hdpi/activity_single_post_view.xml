@@ -154,6 +154,7 @@
                 android:id="@+id/layout_for_text_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/picture_and_username"
                 android:visibility="visible">
 
                 <EditText
@@ -191,6 +192,7 @@
             <RelativeLayout
                 android:id="@+id/layout_for_video_text"
                 android:layout_width="match_parent"
+                android:layout_below="@id/picture_and_username"
                 android:layout_height="wrap_content"
                 android:visibility="visible">
 
@@ -226,6 +228,7 @@
                 android:id="@+id/layout_for_only_post"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/picture_and_username"
                 android:layout_margin="10dp"
                 android:visibility="visible">
 
