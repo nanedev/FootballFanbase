@@ -116,7 +116,8 @@
             android:theme="@style/AppTheme.Dark" />
         <activity android:name=".activity.SinglePostViewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".activity.MainPage"/>
         <activity
             android:name=".activity.CommentsActivity"
             android:screenOrientation="portrait"

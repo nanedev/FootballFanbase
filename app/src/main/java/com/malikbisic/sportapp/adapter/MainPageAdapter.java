@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -629,8 +630,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                     @Override
                                     public void onClick(View v) {
 
+
                                         final String[] items = {"Edit post", "Delete post", "Cancel"};
-                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity);
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+
                                         dialog.setItems(items, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -663,6 +666,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                 }
                                             }
                                         });
+
                                         dialog.create();
                                         dialog.show();
                                     }
