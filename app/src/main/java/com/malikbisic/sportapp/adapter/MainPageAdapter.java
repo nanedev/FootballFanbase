@@ -25,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -38,6 +39,12 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.caverock.androidsvg.SVG;
+import com.google.android.gms.ads.formats.MediaView;
+import com.google.android.gms.ads.formats.NativeAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAdView;
+import com.google.android.gms.ads.formats.NativeContentAd;
+import com.google.android.gms.ads.formats.NativeContentAdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -92,7 +99,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainPageAdapter extends RecyclerView.Adapter {
 
-    List<Post> postList;
+    List<Object> postList;
     Context ctx;
     Activity activity;
     String uid;
@@ -121,6 +128,12 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     String post_key;
     private static final int ITEM_VIEW = 0;
     private static final int ITEM_LOADING = 1;
+    // The native app install ad view type.
+    private static final int NATIVE_APP_INSTALL_AD_VIEW_TYPE = 2;
+
+    // The native content ad view type.
+    private static final int NATIVE_CONTENT_AD_VIEW_TYPE = 3;
+
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
@@ -131,7 +144,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     boolean isAllLoaded = false;
 
 
-    public MainPageAdapter(final List<Post> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
+    public MainPageAdapter(final List<Object> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
         this.postList = postList;
         this.ctx = ctx;
         this.activity = activity;
@@ -174,15 +187,17 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void refreshAdapter(boolean value, List<Post> postList) {
-        this.value = value;
-        this.postList = postList;
-        notifyDataSetChanged();
-    }
 
     @Override
     public int getItemViewType(int position) {
-        return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
+        Object recyclerViewItem = postList.get(position);
+        if (recyclerViewItem instanceof NativeAppInstallAd) {
+            return NATIVE_APP_INSTALL_AD_VIEW_TYPE;
+        } else if (recyclerViewItem instanceof NativeContentAd) {
+            return NATIVE_CONTENT_AD_VIEW_TYPE;
+        } else {
+            return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
+        }
     }
 
 
@@ -195,6 +210,16 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         } else if (viewType == ITEM_LOADING) {
             View v1 = mLInflater.inflate(R.layout.progressbar_item, parent, false);
             return new ProgressViewHolder(v1);
+        } else if (viewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE){
+            View nativeAppInstallLayoutView = LayoutInflater.from(
+                    parent.getContext()).inflate(R.layout.ad_app_install,
+                    parent, false);
+            return new NativeAppInstallAdViewHolder(nativeAppInstallLayoutView);
+        } else if (viewType == NATIVE_CONTENT_AD_VIEW_TYPE){
+            View nativeContentLayoutView = LayoutInflater.from(
+                    parent.getContext()).inflate(R.layout.ad_native_layout,
+                    parent, false);
+            return new NativeContentAdViewHolder(nativeContentLayoutView);
         }
 
         return null;
@@ -204,7 +229,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         int getViewType = holder.getItemViewType();
-        final Post model = postList.get(position);
+        final Post model = (Post) postList.get(position);
 
         postingDatabase = FirebaseFirestore.getInstance();
         notificationReference = FirebaseFirestore.getInstance();//.getReference().child("Notification");
@@ -813,6 +838,13 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
                 }
 
+        } else if (getViewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
+            NativeAppInstallAd appInstallAd = (NativeAppInstallAd) postList.get(position);
+            populateAppInstallAdView(appInstallAd, (NativeAppInstallAdView) holder.itemView);
+
+        } else if (getViewType == NATIVE_CONTENT_AD_VIEW_TYPE){
+            NativeContentAd contentAd = (NativeContentAd) postList.get(position);
+            populateContentAdView(contentAd, (NativeContentAdView) holder.itemView);
         }
 
     }
@@ -1295,4 +1327,106 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             progressBar = (ProgressBar) v.findViewById(R.id.progressBar1);
         }
     }
+
+    public class NativeAppInstallAdViewHolder extends RecyclerView.ViewHolder {
+        NativeAppInstallAdViewHolder(View view) {
+            super(view);
+            NativeAppInstallAdView adView = (NativeAppInstallAdView) view;
+
+            // Register the view used for each individual asset.
+            // The MediaView will display a video asset if one is present in the ad, and the
+            // first image asset otherwise.
+            MediaView mediaView = (MediaView) adView.findViewById(R.id.appinstall_media);
+            adView.setMediaView(mediaView);
+            adView.setHeadlineView(adView.findViewById(R.id.appinstall_headline));
+            adView.setBodyView(adView.findViewById(R.id.appinstall_body));
+            adView.setCallToActionView(adView.findViewById(R.id.appinstall_call_to_action));
+            adView.setIconView(adView.findViewById(R.id.appinstall_app_icon));
+            adView.setPriceView(adView.findViewById(R.id.appinstall_price));
+            adView.setStarRatingView(adView.findViewById(R.id.appinstall_stars));
+            adView.setStoreView(adView.findViewById(R.id.appinstall_store));
+        }
+    }
+
+    public class NativeContentAdViewHolder extends RecyclerView.ViewHolder {
+        NativeContentAdViewHolder(View view) {
+            super(view);
+            NativeContentAdView adView = (NativeContentAdView) view;
+
+            // Register the view used for each individual asset.
+            adView.setHeadlineView(adView.findViewById(R.id.contentad_headline));
+            adView.setImageView(adView.findViewById(R.id.contentad_image));
+            adView.setBodyView(adView.findViewById(R.id.contentad_body));
+            adView.setCallToActionView(adView.findViewById(R.id.contentad_call_to_action));
+            adView.setLogoView(adView.findViewById(R.id.contentad_logo));
+            adView.setAdvertiserView(adView.findViewById(R.id.contentad_advertiser));
+        }
+    }
+
+    private void populateAppInstallAdView(NativeAppInstallAd nativeAppInstallAd,
+                                          NativeAppInstallAdView adView) {
+
+        // Some assets are guaranteed to be in every NativeAppInstallAd.
+        ((ImageView) adView.getIconView()).setImageDrawable(nativeAppInstallAd.getIcon()
+                .getDrawable());
+        ((TextView) adView.getHeadlineView()).setText(nativeAppInstallAd.getHeadline());
+        ((TextView) adView.getBodyView()).setText(nativeAppInstallAd.getBody());
+        ((Button) adView.getCallToActionView()).setText(nativeAppInstallAd.getCallToAction());
+
+        // These assets aren't guaranteed to be in every NativeAppInstallAd, so it's important to
+        // check before trying to display them.
+        if (nativeAppInstallAd.getPrice() == null) {
+            adView.getPriceView().setVisibility(View.INVISIBLE);
+        } else {
+            adView.getPriceView().setVisibility(View.VISIBLE);
+            ((TextView) adView.getPriceView()).setText(nativeAppInstallAd.getPrice());
+        }
+
+        if (nativeAppInstallAd.getStore() == null) {
+            adView.getStoreView().setVisibility(View.INVISIBLE);
+        } else {
+            adView.getStoreView().setVisibility(View.VISIBLE);
+            ((TextView) adView.getStoreView()).setText(nativeAppInstallAd.getStore());
+        }
+
+        if (nativeAppInstallAd.getStarRating() == null) {
+            adView.getStarRatingView().setVisibility(View.INVISIBLE);
+        } else {
+            ((RatingBar) adView.getStarRatingView())
+                    .setRating(nativeAppInstallAd.getStarRating().floatValue());
+            adView.getStarRatingView().setVisibility(View.VISIBLE);
+        }
+
+        // Assign native ad object to the native view.
+        adView.setNativeAd(nativeAppInstallAd);
+    }
+
+    private void populateContentAdView(NativeContentAd nativeContentAd,
+                                       NativeContentAdView adView) {
+        // Some assets are guaranteed to be in every NativeContentAd.
+        ((TextView) adView.getHeadlineView()).setText(nativeContentAd.getHeadline());
+        ((TextView) adView.getBodyView()).setText(nativeContentAd.getBody());
+        ((TextView) adView.getCallToActionView()).setText(nativeContentAd.getCallToAction());
+        ((TextView) adView.getAdvertiserView()).setText(nativeContentAd.getAdvertiser());
+
+        List<NativeAd.Image> images = nativeContentAd.getImages();
+
+        if (images.size() > 0) {
+            ((ImageView) adView.getImageView()).setImageDrawable(images.get(0).getDrawable());
+        }
+
+        // Some aren't guaranteed, however, and should be checked.
+        NativeAd.Image logoImage = nativeContentAd.getLogo();
+
+        if (logoImage == null) {
+            adView.getLogoView().setVisibility(View.INVISIBLE);
+        } else {
+            ((ImageView) adView.getLogoView()).setImageDrawable(logoImage.getDrawable());
+            adView.getLogoView().setVisibility(View.VISIBLE);
+        }
+
+        // Assign native ad object to the native view.
+        adView.setNativeAd(nativeContentAd);
+    }
+
 }

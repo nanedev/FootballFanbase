@@ -71,6 +71,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -199,7 +201,7 @@ public class MainPage extends AppCompatActivity
     FirebaseFirestore notificationReference;
     NavigationView navigationView;
 
-    List<Post> itemSize = new ArrayList<>();
+    List<Object> itemSize = new ArrayList<>();
     MainPageAdapter adapter;
 
 
@@ -227,6 +229,8 @@ public class MainPage extends AppCompatActivity
     SwipeRefreshLayout swipeRefreshLayoutPost;
     int size;
 
+    RewardedVideoAd ad;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,6 +238,8 @@ public class MainPage extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        MobileAds.initialize(MainPage.this,getString(R.string.admob_app_id));
 
         postingDatabase = FirebaseFirestore.getInstance();
         //postingDatabase.collection("Posting");
@@ -971,7 +977,6 @@ public class MainPage extends AppCompatActivity
                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                         itemSize.add(model);
                         adapter.notifyDataSetChanged();
-                        adapter.refreshAdapter(EndlessRecyclerViewScrollListener.loading, itemSize);
                         lastVisible = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
                         adapter.setIsLoading(false);
                         prevItemVisible = lastVisible;
