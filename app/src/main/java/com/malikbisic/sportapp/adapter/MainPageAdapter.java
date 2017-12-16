@@ -225,7 +225,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         int getViewType = holder.getItemViewType();
-        final Post model = (Post) postList.get(position);
+
 
         postingDatabase = FirebaseFirestore.getInstance();
         notificationReference = FirebaseFirestore.getInstance();//.getReference().child("Notification");
@@ -240,52 +240,56 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         //DocumentSnapshot refDoc = postingDatabase.collection("Posting").document(model.getKey());
         if (getViewType == ITEM_VIEW) {
+            final MainPageAdapter.PostViewHolder postViewHolder = (MainPageAdapter.PostViewHolder) holder;
+            final Post model = (Post) postList.get(position);
+
+
 
             final String post_key = model.getKey();
-            ((MainPageAdapter.PostViewHolder) holder).setDescForAudio(model.getDescForAudio());
-            ((MainPageAdapter.PostViewHolder) holder).setDescForPhoto(model.getDescForPhoto());
-            ((MainPageAdapter.PostViewHolder) holder).setDescVideo(model.getDescVideo());
-            ((MainPageAdapter.PostViewHolder) holder).setProfileImage(ctx, model.getProfileImage());
-            ((MainPageAdapter.PostViewHolder) holder).setUsername(model.getUsername());
-            ((MainPageAdapter.PostViewHolder) holder).setPhotoPost(ctx, model.getPhotoPost());
-            ((MainPageAdapter.PostViewHolder) holder).setVideoPost(ctx, model.getVideoPost());
-            ((MainPageAdapter.PostViewHolder) holder).setAudioFile(ctx, model.getAudioFile());
-            ((MainPageAdapter.PostViewHolder) holder).setLikeBtn(post_key, activity);
-            ((MainPageAdapter.PostViewHolder) holder).setNumberLikes(post_key, activity);
-            ((MainPageAdapter.PostViewHolder) holder).setDesc(model.getDesc());
-            ((MainPageAdapter.PostViewHolder) holder).setDislikeBtn(post_key, activity);
-            ((MainPageAdapter.PostViewHolder) holder).setNumberComments(post_key, activity);
-            ((MainPageAdapter.PostViewHolder) holder).setNumberDislikes(post_key, activity);
-            ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
-            ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
-            ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
+            postViewHolder.setDescForAudio(model.getDescForAudio());
+            postViewHolder.setDescForPhoto(model.getDescForPhoto());
+            postViewHolder.setDescVideo(model.getDescVideo());
+            postViewHolder.setProfileImage(ctx, model.getProfileImage());
+            postViewHolder.setUsername(model.getUsername());
+            postViewHolder.setPhotoPost(ctx, model.getPhotoPost());
+            postViewHolder.setVideoPost(ctx, model.getVideoPost());
+            postViewHolder.setAudioFile(ctx, model.getAudioFile());
+            postViewHolder.setLikeBtn(post_key, activity);
+            postViewHolder.setNumberLikes(post_key, activity);
+            postViewHolder.setDesc(model.getDesc());
+            postViewHolder.setDislikeBtn(post_key, activity);
+            postViewHolder.setNumberComments(post_key, activity);
+            postViewHolder.setNumberDislikes(post_key, activity);
+            postViewHolder.setClubLogo(ctx, model.getClubLogo());
+            postViewHolder.setCountry(ctx, model.getCountry());
+            postViewHolder.setTimeAgo(model.getTime(), ctx);
 
 
-            ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
-            ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.seekBar.setEnabled(true);
+            postViewHolder.play_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
 
-                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    postViewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
                     try {
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        postViewHolder.mPlayer.prepareAsync();
+                        postViewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                             @Override
                             public void onPrepared(MediaPlayer mp) {
-                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
+                                postViewHolder.mPlayer.start();
 
-                                ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
+                                postViewHolder.seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
 
                                 new Timer().scheduleAtFixedRate(new TimerTask() {
                                     @Override
                                     public void run() {
-                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
-                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                        postViewHolder.seekBar.setProgress(postViewHolder.mPlayer.getCurrentPosition());
+                                        postViewHolder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                             @Override
                                             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                                                 if (fromUser) {
-                                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
+                                                   postViewHolder.mPlayer.seekTo(progress);
                                                 }
                                             }
 
@@ -306,7 +310,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         });
 
 
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        postViewHolder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mediaPlayer) {
                                 Log.i("finished", "yes");
@@ -320,7 +324,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                     play_state = true;
                     if (!pause_state) {
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
+                        postViewHolder.mPlayer.start();
                         pause_state = false;
                     }
 
@@ -330,25 +334,25 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
 
 
-            ((MainPageAdapter.PostViewHolder) holder).pause_button.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     pause_state = true;
                     play_state = false;
-                    if (((MainPageAdapter.PostViewHolder) holder).mPlayer.isPlaying() && pause_state)
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.pause();
+                    if (postViewHolder.mPlayer.isPlaying() && pause_state)
+                        postViewHolder.mPlayer.pause();
                     pause_state = false;
 
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).stop_button.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.stop_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    if (((MainPageAdapter.PostViewHolder) holder).mPlayer != null) {
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.stop();
-                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(0);
+                    if (postViewHolder.mPlayer != null) {
+                        postViewHolder.mPlayer.stop();
+                        postViewHolder.seekBar.setMax(0);
 
 
                     }
@@ -366,7 +370,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 });*/
 
 
-            ((MainPageAdapter.PostViewHolder) holder).numberofLikes.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent listUsername = new Intent(ctx, Username_Likes_Activity.class);
@@ -376,7 +380,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent listUsername = new Intent(ctx, Username_Dislikes_Activity.class);
@@ -386,7 +390,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).like_button.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.like_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     like_process = true;
@@ -467,11 +471,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
 
 
-            ((MainPageAdapter.PostViewHolder) holder).post_photo.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent openFullScreen = new Intent(ctx, FullScreenImage.class);
-                    String tag = (String) ((MainPageAdapter.PostViewHolder) holder).post_photo.getTag();
+                    String tag = (String)  postViewHolder.post_photo.getTag();
                     openFullScreen.putExtra("postKey", post_key);
                     openFullScreen.putExtra("imageURL", tag);
                     openFullScreen.putExtra("title", model.getDescForPhoto());
@@ -479,11 +483,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).dislike_button.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.dislike_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dislike_process = true;
-               /* ((MainPageAdapter.PostViewHolder) holder).setNumberDislikes(post_key, activity);*/
+
 
 
                     dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -607,7 +611,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).comments.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.comments.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent openCom = new Intent(ctx, CommentsActivity.class);
@@ -618,7 +622,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).numberComments.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent openCom = new Intent(ctx, CommentsActivity.class);
@@ -629,8 +633,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-
-            ((MainPageAdapter.PostViewHolder) holder).openComment.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.openComment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -650,9 +653,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         if (dataSnapshot.contains("uid")) {
                             if (mAuth.getCurrentUser().getUid().equals(dataSnapshot.getString("uid"))) {
 
-                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setVisibility(View.VISIBLE);
+                                postViewHolder.arrow_down.setVisibility(View.VISIBLE);
 
-                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setOnClickListener(new View.OnClickListener() {
+                                postViewHolder.arrow_down.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
 
@@ -698,7 +701,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                     }
                                 });
                             } else
-                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setVisibility(View.INVISIBLE);
+                                postViewHolder.arrow_down.setVisibility(View.INVISIBLE);
                         }
                     }
                 }
@@ -706,10 +709,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
 
 
-            ((MainPageAdapter.PostViewHolder) holder).post_username.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.post_username.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final String username = ((MainPageAdapter.PostViewHolder) holder).post_username.getText().toString().trim();
+                    final String username =  postViewHolder.post_username.getText().toString().trim();
                     Log.i("username", username);
 
                     profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -761,10 +764,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).post_profile_image.setOnClickListener(new View.OnClickListener() {
+            postViewHolder.post_profile_image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final String username = ((MainPageAdapter.PostViewHolder) holder).post_username.getText().toString().trim();
+                    final String username =  postViewHolder.post_username.getText().toString().trim();
                     Log.i("username", username);
 
                     profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
