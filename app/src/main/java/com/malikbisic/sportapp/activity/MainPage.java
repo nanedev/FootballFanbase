@@ -60,18 +60,21 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
-import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.formats.NativeAd;
+import com.google.android.gms.ads.formats.NativeAdOptions;
+import com.google.android.gms.ads.formats.NativeAppInstallAd;
+import com.google.android.gms.ads.formats.NativeContentAd;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -230,6 +233,9 @@ public class MainPage extends AppCompatActivity
     int size;
 
     RewardedVideoAd ad;
+    public static final int NUMBER_OF_ADS = 5;
+
+    private List<NativeAd> mNativeAds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,6 +246,33 @@ public class MainPage extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         MobileAds.initialize(MainPage.this,getString(R.string.admob_app_id));
+
+        AdLoader adLoader = new AdLoader.Builder(MainPage.this, getString(R.string.admob_app_id))
+                .forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
+                    @Override
+                    public void onAppInstallAdLoaded(NativeAppInstallAd appInstallAd) {
+                        // Show the app install ad.
+                    }
+                })
+                .forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
+                    @Override
+                    public void onContentAdLoaded(NativeContentAd contentAd) {
+                        // Show the content ad.
+                    }
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(int errorCode) {
+                        // Handle the failure by logging, altering the UI, and so on.
+                        Log.e("errorLoadAdmob", String.valueOf(errorCode));
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+                        // Methods in the NativeAdOptions.Builder class can be
+                        // used here to specify individual options settings.
+                        .build())
+                .build();
+
 
         postingDatabase = FirebaseFirestore.getInstance();
         //postingDatabase.collection("Posting");
@@ -485,6 +518,64 @@ public class MainPage extends AppCompatActivity
         }
 
 
+    }
+
+    private void insertAdsInMenuItems() {
+        if (mNativeAds.size() <= 0) {
+            return;
+        }
+
+        int offset = (itemSize.size() / mNativeAds.size()) + 1;
+        int index = 0;
+        for (NativeAd ad: mNativeAds) {
+            itemSize.add(index, ad);
+            index = index + offset;
+        }
+
+    }
+
+    private void loadNativeAd(final int adLoadCount) {
+
+        if (adLoadCount >= NUMBER_OF_ADS) {
+            insertAdsInMenuItems();
+            return;
+        }
+
+        AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.admob_app_id));
+        AdLoader adLoader = builder.forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
+            @Override
+            public void onAppInstallAdLoaded(NativeAppInstallAd ad) {
+                // An app install ad loaded successfully, call this method again to
+                // load the next ad in the items list.
+                mNativeAds.add(ad);
+                loadNativeAd(adLoadCount + 1);
+
+            }
+        }).forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
+            @Override
+            public void onContentAdLoaded(NativeContentAd ad) {
+                // A content ad loaded successfully, call this method again to
+                // load the next ad in the items list.
+                mNativeAds.add(ad);
+                loadNativeAd(adLoadCount + 1);
+            }
+        }).withAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // A native ad failed to load. Call this method again to load
+                // the next ad in the items list.
+                Log.e("MainActivity", "The previous native ad failed to load. Attempting to" +
+                        " load another." + " code " + errorCode);
+                loadNativeAd(adLoadCount + 1);
+            }
+        }).build();
+
+        // Load the Native Express ad.
+        adLoader.loadAd(new AdRequest.Builder().build());
+    }
+
+    private void loadNativeAd() {
+        loadNativeAd(0);
     }
 
     public void setNumberClubFans() {
@@ -901,6 +992,7 @@ public class MainPage extends AppCompatActivity
                 if (isPremium) {
 
                     loadPremium();
+                    loadNativeAd();
 
                     adapter.setOnLoadMore(new OnLoadMoreListener() {
                         @Override
@@ -920,6 +1012,7 @@ public class MainPage extends AppCompatActivity
                                 public void run() {
 
                                     premiumUsersLoadMore();
+                                    loadNativeAd();
 
 
 
@@ -937,6 +1030,7 @@ public class MainPage extends AppCompatActivity
                             EndlessRecyclerViewScrollListener.previousTotal = 0;
                             itemSize.clear();
                             loadPremium();
+                            loadNativeAd();
 
                         }
                     });

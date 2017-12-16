@@ -169,19 +169,15 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     totalItemCount = llm.getItemCount();
 
 
-                    if(!isLoading  && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded)
-                    {
-                        if(onLoadMoreListener != null)
-                        {
+                    if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded) {
+                        if (onLoadMoreListener != null) {
                             onLoadMoreListener.onLoadMore();
                         }
-                        isLoading =true;
+                        isLoading = true;
                     }
 
                 }
             });
-
-
 
 
         }
@@ -195,9 +191,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             return NATIVE_APP_INSTALL_AD_VIEW_TYPE;
         } else if (recyclerViewItem instanceof NativeContentAd) {
             return NATIVE_CONTENT_AD_VIEW_TYPE;
-        } else {
-            return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
         }
+        return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
+
     }
 
 
@@ -210,12 +206,12 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         } else if (viewType == ITEM_LOADING) {
             View v1 = mLInflater.inflate(R.layout.progressbar_item, parent, false);
             return new ProgressViewHolder(v1);
-        } else if (viewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE){
+        } else if (viewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
             View nativeAppInstallLayoutView = LayoutInflater.from(
                     parent.getContext()).inflate(R.layout.ad_app_install,
                     parent, false);
             return new NativeAppInstallAdViewHolder(nativeAppInstallLayoutView);
-        } else if (viewType == NATIVE_CONTENT_AD_VIEW_TYPE){
+        } else if (viewType == NATIVE_CONTENT_AD_VIEW_TYPE) {
             View nativeContentLayoutView = LayoutInflater.from(
                     parent.getContext()).inflate(R.layout.ad_native_layout,
                     parent, false);
@@ -266,51 +262,51 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
-                        ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+
+                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                    try {
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                             @Override
-                            public void onClick(final View v) {
+                            public void onPrepared(MediaPlayer mp) {
+                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
 
-                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                                ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
 
-                                try {
-                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
-                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
-
-                                            ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
-
-                                            new Timer().scheduleAtFixedRate(new TimerTask() {
-                                                @Override
-                                                public void run() {
-                                                    ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
-                                                    ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                                        @Override
-                                                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                                            if (fromUser) {
-                                                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
-                                                            }
-                                                        }
-
-                                                        @Override
-                                                        public void onStartTrackingTouch(SeekBar seekBar) {
-
-                                                        }
-
-                                                        @Override
-                                                        public void onStopTrackingTouch(SeekBar seekBar) {
-
-                                                        }
-                                                    });
+                                new Timer().scheduleAtFixedRate(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
+                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                            @Override
+                                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                if (fromUser) {
+                                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
                                                 }
-                                            }, 0, 100);
+                                            }
 
-                                        }
-                                    });
+                                            @Override
+                                            public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                            }
+
+                                            @Override
+                                            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                            }
+                                        });
+                                    }
+                                }, 0, 100);
+
+                            }
+                        });
 
 
-                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mediaPlayer) {
                                 Log.i("finished", "yes");
@@ -662,7 +658,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
 
                                         final String[] items = {"Edit post", "Delete post", "Cancel"};
-                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity, R.style.AppTheme_Dark_Dialog);
 
                                         dialog.setItems(items, new DialogInterface.OnClickListener() {
                                             @Override
@@ -834,15 +830,15 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 ((ProgressViewHolder) holder).progressBar.setVisibility(
                         View.VISIBLE);
                 ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
-            } else if (!isLoading || isAllLoaded){
-                    ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
-                }
+            } else if (!isLoading || isAllLoaded) {
+                ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
+            }
 
         } else if (getViewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
             NativeAppInstallAd appInstallAd = (NativeAppInstallAd) postList.get(position);
             populateAppInstallAdView(appInstallAd, (NativeAppInstallAdView) holder.itemView);
 
-        } else if (getViewType == NATIVE_CONTENT_AD_VIEW_TYPE){
+        } else if (getViewType == NATIVE_CONTENT_AD_VIEW_TYPE) {
             NativeContentAd contentAd = (NativeContentAd) postList.get(position);
             populateContentAdView(contentAd, (NativeContentAdView) holder.itemView);
         }
@@ -850,23 +846,19 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     }
 
 
-
-
-
-    public void setOnLoadMore(OnLoadMoreListener onLoadMore)
-    {
+    public void setOnLoadMore(OnLoadMoreListener onLoadMore) {
         onLoadMoreListener = onLoadMore;
     }
 
 
-    public void setIsLoading(boolean param)
-    {
+    public void setIsLoading(boolean param) {
         isLoading = param;
     }
 
-    public void isFullLoaded(boolean param){
+    public void isFullLoaded(boolean param) {
         isAllLoaded = param;
     }
+
     @Override
     public int getItemCount() {
         return postList.size();
