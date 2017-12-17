@@ -47,8 +47,8 @@ import java.util.Locale;
 public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragmentAdapter.ViewHolder> {
 
 
-    private String[] titles = {"Posts", "Boost your team", "Fanbase club table", "Premium"};
-    private int[] images = {R.drawable.posts, R.drawable.boost, R.drawable.boost, R.drawable.premium};
+    private String[] titles = {"Posts",  "Fanbase club table", "Premium"};
+    private int[] images = {R.drawable.posts,  R.drawable.boost, R.drawable.premium};
 
     int number;
     Activity activity;
@@ -113,10 +113,8 @@ public class ProfileFragmentAdapter extends RecyclerView.Adapter<ProfileFragment
         if (position == 0){
             holder.numberPost();
         } else if (position == 1){
-            holder.numberPointsForYourTeam();
-        } else if (position == 2){
             holder.positionTeam();
-        }else if (position == 3){
+        }else if (position == 2){
             holder.premiumTrialDateText();
         }
     }

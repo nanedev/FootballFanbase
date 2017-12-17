@@ -129,10 +129,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     private static final int ITEM_VIEW = 0;
     private static final int ITEM_LOADING = 1;
     // The native app install ad view type.
-    private static final int NATIVE_APP_INSTALL_AD_VIEW_TYPE = 2;
+
 
     // The native content ad view type.
-    private static final int NATIVE_CONTENT_AD_VIEW_TYPE = 3;
+
 
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
@@ -556,61 +556,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     });
 
 
-                                /*
-                                dislikeReference.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                        if (dislike_process) {
-                                            if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
-                                                dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                                dislike_process = false;
-
-
-                                            } else {
-
-                                                DatabaseReference newPost = dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid());
-
-                                                newPost.child("username").setValue(MainPage.usernameInfo);
-                                                newPost.child("photoProfile").setValue(MainPage.profielImage);
-
-                                                DatabaseReference getIduserpost = postingDatabase;
-                                                getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
-
-                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
-                                                        notifSet.child("action").setValue("disliked");
-                                                        notifSet.child("uid").setValue(uid);
-                                                        notifSet.child("seen").setValue(false);
-                                                        notifSet.child("whatIS").setValue("post");
-                                                        notifSet.child("post_key").setValue(post_key);
-
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-
-                                                    }
-                                                });
-
-
-                                                dislike_process = false;
-
-
-                                            }
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                }); */
-
                 }
             });
 
@@ -997,21 +942,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
 
 
-           /* col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
-                    numberLikes = querySnapshot.getResult().size();
-
-
-                    if (numberLikes == 0) {
-                        numberofLikes.setText("");
-                    } else {
-                        numberofLikes.setText(String.valueOf(numberLikes));
-                    }
-                }
-
-            });*/
         }
 
 
@@ -1038,28 +969,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-      /*      numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-
-                        int numberOfComments = querySnapshot.getResult().size();
-
-                        if (numberOfComments == 0) {
-
-                            comments.setVisibility(View.GONE);
-                            numberComments.setText("");
-                        } else if (numberOfComments == 1) {
-
-                            comments.setText("Comment");
-                            numberComments.setText(String.valueOf(numberOfComments));
-                        } else {
-                            comments.setText("Comments");
-                            numberComments.setText(String.valueOf(numberOfComments));
-
-                        }
-                }
-            });*/
         }
 
 
@@ -1105,21 +1014,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                 }
             });
-            /*     col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
-                    numberDislikes = querySnapshot.getResult().size();
-
-
-                    if (numberDislikes == 0) {
-                        numberOfDislikes.setText("");
-                    } else {
-                        numberOfDislikes.setText(String.valueOf(numberDislikes));
-                    }
-                }
-
-            });*/
         }
 
 
@@ -1257,22 +1152,12 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                             }
 
                         });
-//                Picasso.with(ctx).load(photoPost).into(post_photo, new Callback() {
-//                    @Override
-//                    public void onSuccess() {
-//                        //     loadPhoto.setVisibility(View.GONE);
-//                    }
-//
-//                    @Override
-//                    public void onError() {
-//
-//                    }
-//                });
+
                 post_photo.setTag(photoPost);
             } else {
 
                 layoutPhoto.setVisibility(View.GONE);
-                // loadPhoto.setVisibility(View.GONE);
+
             }
 
         }

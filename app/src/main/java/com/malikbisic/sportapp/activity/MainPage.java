@@ -283,13 +283,8 @@ public class MainPage extends AppCompatActivity
         premiumUsers = new PremiumUsers();
         freeUser = new FreeUser();
         adapter = new MainPageAdapter(itemSize, getApplicationContext(), MainPage.this, wallList, postKey);
-        AdmobRecyclerAdapterWrapper admobRecyclerAdapterWrapper = new AdmobRecyclerAdapterWrapper(MainPage.this, String.valueOf(EnumSet.of(EAdType.ADVANCED_INSTALLAPP)));
-        admobRecyclerAdapterWrapper.setAdapter(adapter);
-        admobRecyclerAdapterWrapper.setLimitOfAds(3);
-        admobRecyclerAdapterWrapper.setNoOfDataBetweenAds(5);
-        admobRecyclerAdapterWrapper.setFirstAdIndex(5);
-        admobRecyclerAdapterWrapper.setViewTypeBiggestSource(2);
-        wallList.setAdapter(admobRecyclerAdapterWrapper);
+
+  wallList.setAdapter(adapter);
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
         itemSize.clear();
 
@@ -437,9 +432,7 @@ public class MainPage extends AppCompatActivity
                                         FirebaseFirestore trialPremiumRef = FirebaseFirestore.getInstance();
                                         trialPremiumRef.collection("Users").document(uid).update(trialMap);
 
-                               /* if (nowDate.equals(trialDate) || nowDate.after(trialDate)) {
-                                    mReference.child("premium").setValue(false);
-                                }*/
+
 
                                         Log.i("country", country);
 
@@ -492,141 +485,17 @@ public class MainPage extends AppCompatActivity
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
 
-        Boolean isFirstTime = getSharedPreferences("check first time", MODE_PRIVATE).getBoolean("isFirstTime", true);
 
-        if (isFirstTime) {
-            setNumberClubFans();
-            getSharedPreferences("check first time", MODE_PRIVATE).edit().putBoolean("isFirstTime", false).commit();
-        }
+
+
 
 
     }
 
-    public List<Object> getRecyclerViewItems() {
-        return itemSize;
-    }
 
-    private void insertAdsInMenuItems() {
-        if (mNativeAds.size() <= 0) {
-            return;
-        }
 
-        int offset = (itemSize.size() / mNativeAds.size()) + 1;
-        int index = 0;
-        for (NativeAd ad : mNativeAds) {
-            itemSize.add(index, ad);
-            index = index + offset;
-        }
-    }
 
-    private void loadNativeAd(final int adLoadCount) {
 
-        if (adLoadCount >= NUMBER_OF_ADS) {
-            insertAdsInMenuItems();
-            return;
-        }
-
-        AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.admob_app_id));
-        AdLoader adLoader = builder.forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
-            @Override
-            public void onAppInstallAdLoaded(NativeAppInstallAd ad) {
-                // An app install ad loaded successfully, call this method again to
-                // load the next ad in the items list.
-                mNativeAds.add(ad);
-                loadNativeAd(adLoadCount + 1);
-
-            }
-        }).forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
-            @Override
-            public void onContentAdLoaded(NativeContentAd ad) {
-                // A content ad loaded successfully, call this method again to
-                // load the next ad in the items list.
-                mNativeAds.add(ad);
-                loadNativeAd(adLoadCount + 1);
-            }
-        }).withAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                // A native ad failed to load. Call this method again to load
-                // the next ad in the items list.
-                Log.e("MainActivity", "The previous native ad failed to load. Attempting to" +
-                        " load another." + " code " + errorCode);
-                loadNativeAd(adLoadCount + 1);
-            }
-        }).build();
-
-        // Load the Native Express ad.
-        adLoader.loadAd(new AdRequest.Builder().build());
-    }
-
-    private void loadNativeAd() {
-        loadNativeAd(0);
-    }
-
-    public void setNumberClubFans() {
-
-        /*DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
-        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final UsersModel model = dataSnapshot.getValue(UsersModel.class);
-
-                final String myClub = model.getFavoriteClub();
-
-                Log.e("MY CLUB", myClub);
-                final DatabaseReference clubReference = FirebaseDatabase.getInstance().getReference().child("ClubTable").child(myClub);
-                clubReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.child(myClub).exists()) {
-                            Log.e("numbersFan root", String.valueOf(dataSnapshot.getRef()));
-                            ClubTable modelclub = dataSnapshot.getValue(ClubTable.class);
-                            int numbersFans = modelclub.getNumbersFans();
-                            int addNewFan = numbersFans + 1;
-
-                            Map setClubNumbers = new HashMap();
-                            setClubNumbers.put("clubName", model.getFavoriteClub());
-                            setClubNumbers.put("clubLogo", model.getFavoriteClubLogo());
-                            setClubNumbers.put("numbersFans", addNewFan);
-                            clubReference.updateChildren(setClubNumbers, new DatabaseReference.CompletionListener() {
-                                @Override
-                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                    if (databaseError != null) {
-                                        Log.e("numbersFan Error", databaseError.getMessage());
-                                    }
-                                }
-                            });
-                            Log.i("numbersFans", String.valueOf(numbersFans));
-                        } else {
-                            Map setClubNumbers = new HashMap();
-                            setClubNumbers.put("clubName", model.getFavoriteClub());
-                            setClubNumbers.put("clubLogo", model.getFavoriteClubLogo());
-                            setClubNumbers.put("numbersFans", 1);
-                            clubReference.updateChildren(setClubNumbers, new DatabaseReference.CompletionListener() {
-                                @Override
-                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                    if (databaseError != null) {
-                                        Log.e("numbersFan Error", databaseError.getMessage());
-                                    }
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); */
-    }
 
 
     @SuppressLint("RestrictedApi")
