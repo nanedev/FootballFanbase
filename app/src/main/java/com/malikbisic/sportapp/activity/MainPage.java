@@ -60,24 +60,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
-import com.clockbyte.admobadapter.AdmobRecyclerAdapterWrapper;
-import com.clockbyte.admobadapter.EAdType;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.NativeAdOptions;
-import com.google.android.gms.ads.formats.NativeAppInstallAd;
-import com.google.android.gms.ads.formats.NativeContentAd;
-import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -121,7 +114,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -207,7 +199,7 @@ public class MainPage extends AppCompatActivity
     FirebaseFirestore notificationReference;
     NavigationView navigationView;
 
-    List<Object> itemSize = new ArrayList<>();
+    List<Post> itemSize = new ArrayList<>();
     MainPageAdapter adapter;
 
 
@@ -235,11 +227,6 @@ public class MainPage extends AppCompatActivity
     SwipeRefreshLayout swipeRefreshLayoutPost;
     int size;
 
-    RewardedVideoAd ad;
-    public static final int NUMBER_OF_ADS = 5;
-
-    private List<NativeAd> mNativeAds = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -247,8 +234,6 @@ public class MainPage extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        MobileAds.initialize(MainPage.this, getString(R.string.admob_app_id));
 
         postingDatabase = FirebaseFirestore.getInstance();
         //postingDatabase.collection("Posting");
@@ -283,8 +268,7 @@ public class MainPage extends AppCompatActivity
         premiumUsers = new PremiumUsers();
         freeUser = new FreeUser();
         adapter = new MainPageAdapter(itemSize, getApplicationContext(), MainPage.this, wallList, postKey);
-
-  wallList.setAdapter(adapter);
+        wallList.setAdapter(adapter);
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
         itemSize.clear();
 
@@ -432,7 +416,9 @@ public class MainPage extends AppCompatActivity
                                         FirebaseFirestore trialPremiumRef = FirebaseFirestore.getInstance();
                                         trialPremiumRef.collection("Users").document(uid).update(trialMap);
 
-
+                               /* if (nowDate.equals(trialDate) || nowDate.after(trialDate)) {
+                                    mReference.child("premium").setValue(false);
+                                }*/
 
                                         Log.i("country", country);
 
@@ -485,17 +471,80 @@ public class MainPage extends AppCompatActivity
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
 
+        Boolean isFirstTime = getSharedPreferences("check first time", MODE_PRIVATE).getBoolean("isFirstTime", true);
 
-
-
+        if (isFirstTime) {
+            setNumberClubFans();
+            getSharedPreferences("check first time", MODE_PRIVATE).edit().putBoolean("isFirstTime", false).commit();
+        }
 
 
     }
 
+    public void setNumberClubFans() {
 
+        /*DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final UsersModel model = dataSnapshot.getValue(UsersModel.class);
 
+                final String myClub = model.getFavoriteClub();
 
+                Log.e("MY CLUB", myClub);
+                final DatabaseReference clubReference = FirebaseDatabase.getInstance().getReference().child("ClubTable").child(myClub);
+                clubReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.child(myClub).exists()) {
+                            Log.e("numbersFan root", String.valueOf(dataSnapshot.getRef()));
+                            ClubTable modelclub = dataSnapshot.getValue(ClubTable.class);
+                            int numbersFans = modelclub.getNumbersFans();
+                            int addNewFan = numbersFans + 1;
 
+                            Map setClubNumbers = new HashMap();
+                            setClubNumbers.put("clubName", model.getFavoriteClub());
+                            setClubNumbers.put("clubLogo", model.getFavoriteClubLogo());
+                            setClubNumbers.put("numbersFans", addNewFan);
+                            clubReference.updateChildren(setClubNumbers, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Log.e("numbersFan Error", databaseError.getMessage());
+                                    }
+                                }
+                            });
+                            Log.i("numbersFans", String.valueOf(numbersFans));
+                        } else {
+                            Map setClubNumbers = new HashMap();
+                            setClubNumbers.put("clubName", model.getFavoriteClub());
+                            setClubNumbers.put("clubLogo", model.getFavoriteClubLogo());
+                            setClubNumbers.put("numbersFans", 1);
+                            clubReference.updateChildren(setClubNumbers, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Log.e("numbersFan Error", databaseError.getMessage());
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        }); */
+    }
 
 
     @SuppressLint("RestrictedApi")
@@ -759,6 +808,26 @@ public class MainPage extends AppCompatActivity
         String currentHomePackage = resolveInfo.activityInfo.packageName;
     }
 
+    public void checkIsLoadAll() {
+
+        com.google.firebase.firestore.Query next = FirebaseFirestore.getInstance().collection("Posting")
+                .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING);
+        next.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                if (e == null) {
+
+                    size = querySnapshot.size();
+
+
+
+                }
+            }
+
+        });
+
+    }
+
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
 
@@ -808,32 +877,6 @@ public class MainPage extends AppCompatActivity
         initializeCountDrawer();
         launcerCounter();
 
-        adapter.setOnLoadMore(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-
-
-                wallList.post(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        adapter.notifyItemInserted(itemSize.size() - 1);
-                    }
-                });
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-
-
-
-                    }
-                }, 5000);
-
-            }
-        });
-
         itemSize.clear();
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -852,7 +895,6 @@ public class MainPage extends AppCompatActivity
                 if (isPremium) {
 
                     loadPremium();
-
 
                     adapter.setOnLoadMore(new OnLoadMoreListener() {
                         @Override
@@ -874,6 +916,7 @@ public class MainPage extends AppCompatActivity
                                     premiumUsersLoadMore();
 
 
+
                                 }
                             }, 5000);
 
@@ -893,6 +936,7 @@ public class MainPage extends AppCompatActivity
                     });
 
 
+
                 } else {
                     freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
                 }
@@ -903,7 +947,10 @@ public class MainPage extends AppCompatActivity
         firstTimeOpened = false;
 
 
+
     }
+
+
 
 
     public void premiumUsersLoadMore() {
@@ -924,6 +971,7 @@ public class MainPage extends AppCompatActivity
                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                         itemSize.add(model);
                         adapter.notifyDataSetChanged();
+                        adapter.refreshAdapter(EndlessRecyclerViewScrollListener.loading, itemSize);
                         lastVisible = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
                         adapter.setIsLoading(false);
                         prevItemVisible = lastVisible;
@@ -939,7 +987,7 @@ public class MainPage extends AppCompatActivity
 
                                 prevItemVisible = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
 
-                                if (prevItemVisible.getId().equals(lastVisible.getId())) {
+                                if (prevItemVisible.getId().equals(lastVisible.getId())){
                                     adapter.isFullLoaded(true);
                                 }
 
@@ -951,14 +999,6 @@ public class MainPage extends AppCompatActivity
 
                     });
 
-                    Log.i("VisPrev", String.valueOf(prevItemVisible));
-                    if (prevItemVisible.getId().equals(lastVisible.getId())) {
-                        adapter.setIsLoading(false);
-                    }
-
-                    int loadMoreSize = querySnapshot.size();
-
-                    Log.i("Vislast", String.valueOf(lastVisible));
 
 
                     Log.i("itemCount loadmore", String.valueOf(linearLayoutManager.findLastVisibleItemPosition()));

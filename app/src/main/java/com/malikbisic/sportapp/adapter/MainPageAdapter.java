@@ -25,7 +25,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -39,12 +38,6 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.caverock.androidsvg.SVG;
-import com.google.android.gms.ads.formats.MediaView;
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.NativeAppInstallAd;
-import com.google.android.gms.ads.formats.NativeAppInstallAdView;
-import com.google.android.gms.ads.formats.NativeContentAd;
-import com.google.android.gms.ads.formats.NativeContentAdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -99,7 +92,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainPageAdapter extends RecyclerView.Adapter {
 
-    List<Object> postList;
+    List<Post> postList;
     Context ctx;
     Activity activity;
     String uid;
@@ -128,12 +121,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     String post_key;
     private static final int ITEM_VIEW = 0;
     private static final int ITEM_LOADING = 1;
-    // The native app install ad view type.
-
-
-    // The native content ad view type.
-
-
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
@@ -144,7 +131,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     boolean isAllLoaded = false;
 
 
-    public MainPageAdapter(final List<Object> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
+    public MainPageAdapter(final List<Post> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
         this.postList = postList;
         this.ctx = ctx;
         this.activity = activity;
@@ -163,40 +150,39 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
 
-
-
                     LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                     lastVisibleItem = llm.findLastVisibleItemPosition();
                     totalItemCount = llm.getItemCount();
-                    Log.i("position", String.valueOf(lastVisibleItem));
 
 
-                    if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded) {
-                        if (onLoadMoreListener != null) {
+                    if(!isLoading  && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded)
+                    {
+                        if(onLoadMoreListener != null)
+                        {
                             onLoadMoreListener.onLoadMore();
                         }
-                        isLoading = true;
+                        isLoading =true;
                     }
 
                 }
             });
 
 
+
+
         }
     }
 
+    public void refreshAdapter(boolean value, List<Post> postList) {
+        this.value = value;
+        this.postList = postList;
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemViewType(int position) {
-        Object recyclerViewItem = postList.get(position);
-       /* if (recyclerViewItem instanceof NativeAppInstallAd) {
-            return NATIVE_APP_INSTALL_AD_VIEW_TYPE;
-        } else if (recyclerViewItem instanceof NativeContentAd) {
-            return NATIVE_CONTENT_AD_VIEW_TYPE;
-        } */
-            return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
-
+        return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
     }
 
 
@@ -209,18 +195,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         } else if (viewType == ITEM_LOADING) {
             View v1 = mLInflater.inflate(R.layout.progressbar_item, parent, false);
             return new ProgressViewHolder(v1);
-        } /*else if (viewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
-            View nativeAppInstallLayoutView = LayoutInflater.from(
-                    parent.getContext()).inflate(R.layout.ad_app_install,
-                    parent, false);
-            return new NativeAppInstallAdViewHolder(nativeAppInstallLayoutView);
-        } else if (viewType == NATIVE_CONTENT_AD_VIEW_TYPE) {
-            View nativeContentLayoutView = LayoutInflater.from(
-                    parent.getContext()).inflate(R.layout.ad_native_layout,
-                    parent, false);
-            return new NativeContentAdViewHolder(nativeContentLayoutView);
         }
- */
+
         return null;
     }
 
@@ -228,7 +204,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         int getViewType = holder.getItemViewType();
-
+        final Post model = postList.get(position);
 
         postingDatabase = FirebaseFirestore.getInstance();
         notificationReference = FirebaseFirestore.getInstance();//.getReference().child("Notification");
@@ -243,56 +219,52 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         //DocumentSnapshot refDoc = postingDatabase.collection("Posting").document(model.getKey());
         if (getViewType == ITEM_VIEW) {
-            final MainPageAdapter.PostViewHolder postViewHolder = (MainPageAdapter.PostViewHolder) holder;
-            final Post model = (Post) postList.get(position);
-
-
 
             final String post_key = model.getKey();
-            postViewHolder.setDescForAudio(model.getDescForAudio());
-            postViewHolder.setDescForPhoto(model.getDescForPhoto());
-            postViewHolder.setDescVideo(model.getDescVideo());
-            postViewHolder.setProfileImage(ctx, model.getProfileImage());
-            postViewHolder.setUsername(model.getUsername());
-            postViewHolder.setPhotoPost(ctx, model.getPhotoPost());
-            postViewHolder.setVideoPost(ctx, model.getVideoPost());
-            postViewHolder.setAudioFile(ctx, model.getAudioFile());
-            postViewHolder.setLikeBtn(post_key, activity);
-            postViewHolder.setNumberLikes(post_key, activity);
-            postViewHolder.setDesc(model.getDesc());
-            postViewHolder.setDislikeBtn(post_key, activity);
-            postViewHolder.setNumberComments(post_key, activity);
-            postViewHolder.setNumberDislikes(post_key, activity);
-            postViewHolder.setClubLogo(ctx, model.getClubLogo());
-            postViewHolder.setCountry(ctx, model.getCountry());
-            postViewHolder.setTimeAgo(model.getTime(), ctx);
+            ((MainPageAdapter.PostViewHolder) holder).setDescForAudio(model.getDescForAudio());
+            ((MainPageAdapter.PostViewHolder) holder).setDescForPhoto(model.getDescForPhoto());
+            ((MainPageAdapter.PostViewHolder) holder).setDescVideo(model.getDescVideo());
+            ((MainPageAdapter.PostViewHolder) holder).setProfileImage(ctx, model.getProfileImage());
+            ((MainPageAdapter.PostViewHolder) holder).setUsername(model.getUsername());
+            ((MainPageAdapter.PostViewHolder) holder).setPhotoPost(ctx, model.getPhotoPost());
+            ((MainPageAdapter.PostViewHolder) holder).setVideoPost(ctx, model.getVideoPost());
+            ((MainPageAdapter.PostViewHolder) holder).setAudioFile(ctx, model.getAudioFile());
+            ((MainPageAdapter.PostViewHolder) holder).setLikeBtn(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setNumberLikes(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setDesc(model.getDesc());
+            ((MainPageAdapter.PostViewHolder) holder).setDislikeBtn(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setNumberComments(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setNumberDislikes(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
+            ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
+            ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
 
 
-            postViewHolder.seekBar.setEnabled(true);
-            postViewHolder.play_button.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
+            ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
 
-                    postViewHolder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
                     try {
-                        postViewHolder.mPlayer.prepareAsync();
-                        postViewHolder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                             @Override
                             public void onPrepared(MediaPlayer mp) {
-                                postViewHolder.mPlayer.start();
+                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
 
-                                postViewHolder.seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
+                                ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
 
                                 new Timer().scheduleAtFixedRate(new TimerTask() {
                                     @Override
                                     public void run() {
-                                        postViewHolder.seekBar.setProgress(postViewHolder.mPlayer.getCurrentPosition());
-                                        postViewHolder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
+                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                             @Override
                                             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                                                 if (fromUser) {
-                                                   postViewHolder.mPlayer.seekTo(progress);
+                                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
                                                 }
                                             }
 
@@ -313,7 +285,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         });
 
 
-                        postViewHolder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mediaPlayer) {
                                 Log.i("finished", "yes");
@@ -327,7 +299,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                     play_state = true;
                     if (!pause_state) {
-                        postViewHolder.mPlayer.start();
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
                         pause_state = false;
                     }
 
@@ -337,25 +309,25 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
 
 
-            postViewHolder.pause_button.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).pause_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     pause_state = true;
                     play_state = false;
-                    if (postViewHolder.mPlayer.isPlaying() && pause_state)
-                        postViewHolder.mPlayer.pause();
+                    if (((MainPageAdapter.PostViewHolder) holder).mPlayer.isPlaying() && pause_state)
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.pause();
                     pause_state = false;
 
                 }
             });
 
-            postViewHolder.stop_button.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).stop_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    if (postViewHolder.mPlayer != null) {
-                        postViewHolder.mPlayer.stop();
-                        postViewHolder.seekBar.setMax(0);
+                    if (((MainPageAdapter.PostViewHolder) holder).mPlayer != null) {
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.stop();
+                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(0);
 
 
                     }
@@ -373,7 +345,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 });*/
 
 
-            postViewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).numberofLikes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent listUsername = new Intent(ctx, Username_Likes_Activity.class);
@@ -383,7 +355,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            postViewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent listUsername = new Intent(ctx, Username_Dislikes_Activity.class);
@@ -393,7 +365,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            postViewHolder.like_button.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).like_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     like_process = true;
@@ -474,11 +446,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
 
 
-            postViewHolder.post_photo.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).post_photo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent openFullScreen = new Intent(ctx, FullScreenImage.class);
-                    String tag = (String)  postViewHolder.post_photo.getTag();
+                    String tag = (String) ((MainPageAdapter.PostViewHolder) holder).post_photo.getTag();
                     openFullScreen.putExtra("postKey", post_key);
                     openFullScreen.putExtra("imageURL", tag);
                     openFullScreen.putExtra("title", model.getDescForPhoto());
@@ -486,11 +458,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            postViewHolder.dislike_button.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).dislike_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dislike_process = true;
-
+               /* ((MainPageAdapter.PostViewHolder) holder).setNumberDislikes(post_key, activity);*/
 
 
                     dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -556,10 +528,65 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     });
 
 
+                                /*
+                                dislikeReference.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                        if (dislike_process) {
+                                            if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
+
+                                                dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+                                                dislike_process = false;
+
+
+                                            } else {
+
+                                                DatabaseReference newPost = dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid());
+
+                                                newPost.child("username").setValue(MainPage.usernameInfo);
+                                                newPost.child("photoProfile").setValue(MainPage.profielImage);
+
+                                                DatabaseReference getIduserpost = postingDatabase;
+                                                getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
+
+                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
+                                                        notifSet.child("action").setValue("disliked");
+                                                        notifSet.child("uid").setValue(uid);
+                                                        notifSet.child("seen").setValue(false);
+                                                        notifSet.child("whatIS").setValue("post");
+                                                        notifSet.child("post_key").setValue(post_key);
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+
+                                                dislike_process = false;
+
+
+                                            }
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                }); */
+
                 }
             });
 
-            postViewHolder.comments.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).comments.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent openCom = new Intent(ctx, CommentsActivity.class);
@@ -570,7 +597,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            postViewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).numberComments.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent openCom = new Intent(ctx, CommentsActivity.class);
@@ -581,7 +608,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            postViewHolder.openComment.setOnClickListener(new View.OnClickListener() {
+
+            ((MainPageAdapter.PostViewHolder) holder).openComment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -601,15 +629,15 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         if (dataSnapshot.contains("uid")) {
                             if (mAuth.getCurrentUser().getUid().equals(dataSnapshot.getString("uid"))) {
 
-                                postViewHolder.arrow_down.setVisibility(View.VISIBLE);
+                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setVisibility(View.VISIBLE);
 
-                                postViewHolder.arrow_down.setOnClickListener(new View.OnClickListener() {
+                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
 
 
                                         final String[] items = {"Edit post", "Delete post", "Cancel"};
-                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity, R.style.AppTheme_Dark_Dialog);
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
 
                                         dialog.setItems(items, new DialogInterface.OnClickListener() {
                                             @Override
@@ -649,7 +677,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                     }
                                 });
                             } else
-                                postViewHolder.arrow_down.setVisibility(View.INVISIBLE);
+                                ((MainPageAdapter.PostViewHolder) holder).arrow_down.setVisibility(View.INVISIBLE);
                         }
                     }
                 }
@@ -657,10 +685,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
 
 
-            postViewHolder.post_username.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).post_username.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final String username =  postViewHolder.post_username.getText().toString().trim();
+                    final String username = ((MainPageAdapter.PostViewHolder) holder).post_username.getText().toString().trim();
                     Log.i("username", username);
 
                     profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -712,10 +740,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            postViewHolder.post_profile_image.setOnClickListener(new View.OnClickListener() {
+            ((MainPageAdapter.PostViewHolder) holder).post_profile_image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final String username =  postViewHolder.post_username.getText().toString().trim();
+                    final String username = ((MainPageAdapter.PostViewHolder) holder).post_username.getText().toString().trim();
                     Log.i("username", username);
 
                     profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -781,35 +809,32 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 ((ProgressViewHolder) holder).progressBar.setVisibility(
                         View.VISIBLE);
                 ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
-            } else if (!isLoading || isAllLoaded) {
+            } else if (!isLoading || isAllLoaded){
                 ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
             }
 
-        } /* else if (getViewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
-            NativeAppInstallAd appInstallAd = (NativeAppInstallAd) postList.get(position);
-            populateAppInstallAdView(appInstallAd, (NativeAppInstallAdView) holder.itemView);
-
-        } else if (getViewType == NATIVE_CONTENT_AD_VIEW_TYPE) {
-            NativeContentAd contentAd = (NativeContentAd) postList.get(position);
-            populateContentAdView(contentAd, (NativeContentAdView) holder.itemView);
-        }*/
+        }
 
     }
 
 
-    public void setOnLoadMore(OnLoadMoreListener onLoadMore) {
+
+
+
+    public void setOnLoadMore(OnLoadMoreListener onLoadMore)
+    {
         onLoadMoreListener = onLoadMore;
     }
 
 
-    public void setIsLoading(boolean param) {
+    public void setIsLoading(boolean param)
+    {
         isLoading = param;
     }
 
-    public void isFullLoaded(boolean param) {
+    public void isFullLoaded(boolean param){
         isAllLoaded = param;
     }
-
     @Override
     public int getItemCount() {
         return postList.size();
@@ -942,7 +967,21 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
 
 
+           /* col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
+                    numberLikes = querySnapshot.getResult().size();
+
+
+                    if (numberLikes == 0) {
+                        numberofLikes.setText("");
+                    } else {
+                        numberofLikes.setText(String.valueOf(numberLikes));
+                    }
+                }
+
+            });*/
         }
 
 
@@ -969,6 +1008,28 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
+      /*      numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(Task<QuerySnapshot> querySnapshot) {
+
+
+                        int numberOfComments = querySnapshot.getResult().size();
+
+                        if (numberOfComments == 0) {
+
+                            comments.setVisibility(View.GONE);
+                            numberComments.setText("");
+                        } else if (numberOfComments == 1) {
+
+                            comments.setText("Comment");
+                            numberComments.setText(String.valueOf(numberOfComments));
+                        } else {
+                            comments.setText("Comments");
+                            numberComments.setText(String.valueOf(numberOfComments));
+
+                        }
+                }
+            });*/
         }
 
 
@@ -1014,7 +1075,21 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                 }
             });
+            /*     col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(Task<QuerySnapshot> querySnapshot) {
 
+                    numberDislikes = querySnapshot.getResult().size();
+
+
+                    if (numberDislikes == 0) {
+                        numberOfDislikes.setText("");
+                    } else {
+                        numberOfDislikes.setText(String.valueOf(numberDislikes));
+                    }
+                }
+
+            });*/
         }
 
 
@@ -1152,12 +1227,22 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                             }
 
                         });
-
+//                Picasso.with(ctx).load(photoPost).into(post_photo, new Callback() {
+//                    @Override
+//                    public void onSuccess() {
+//                        //     loadPhoto.setVisibility(View.GONE);
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//
+//                    }
+//                });
                 post_photo.setTag(photoPost);
             } else {
 
                 layoutPhoto.setVisibility(View.GONE);
-
+                // loadPhoto.setVisibility(View.GONE);
             }
 
         }
@@ -1210,106 +1295,4 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             progressBar = (ProgressBar) v.findViewById(R.id.progressBar1);
         }
     }
-
-    public class NativeAppInstallAdViewHolder extends RecyclerView.ViewHolder {
-        NativeAppInstallAdViewHolder(View view) {
-            super(view);
-            NativeAppInstallAdView adView = (NativeAppInstallAdView) view;
-
-            // Register the view used for each individual asset.
-            // The MediaView will display a video asset if one is present in the ad, and the
-            // first image asset otherwise.
-            MediaView mediaView = (MediaView) adView.findViewById(R.id.appinstall_media);
-            adView.setMediaView(mediaView);
-            adView.setHeadlineView(adView.findViewById(R.id.appinstall_headline));
-            adView.setBodyView(adView.findViewById(R.id.appinstall_body));
-            adView.setCallToActionView(adView.findViewById(R.id.appinstall_call_to_action));
-            adView.setIconView(adView.findViewById(R.id.appinstall_app_icon));
-            adView.setPriceView(adView.findViewById(R.id.appinstall_price));
-            adView.setStarRatingView(adView.findViewById(R.id.appinstall_stars));
-            adView.setStoreView(adView.findViewById(R.id.appinstall_store));
-        }
-    }
-
-    public class NativeContentAdViewHolder extends RecyclerView.ViewHolder {
-        NativeContentAdViewHolder(View view) {
-            super(view);
-            NativeContentAdView adView = (NativeContentAdView) view;
-
-            // Register the view used for each individual asset.
-            adView.setHeadlineView(adView.findViewById(R.id.contentad_headline));
-            adView.setImageView(adView.findViewById(R.id.contentad_image));
-            adView.setBodyView(adView.findViewById(R.id.contentad_body));
-            adView.setCallToActionView(adView.findViewById(R.id.contentad_call_to_action));
-            adView.setLogoView(adView.findViewById(R.id.contentad_logo));
-            adView.setAdvertiserView(adView.findViewById(R.id.contentad_advertiser));
-        }
-    }
-
-    private void populateAppInstallAdView(NativeAppInstallAd nativeAppInstallAd,
-                                          NativeAppInstallAdView adView) {
-
-        // Some assets are guaranteed to be in every NativeAppInstallAd.
-        ((ImageView) adView.getIconView()).setImageDrawable(nativeAppInstallAd.getIcon()
-                .getDrawable());
-        ((TextView) adView.getHeadlineView()).setText(nativeAppInstallAd.getHeadline());
-        ((TextView) adView.getBodyView()).setText(nativeAppInstallAd.getBody());
-        ((Button) adView.getCallToActionView()).setText(nativeAppInstallAd.getCallToAction());
-
-        // These assets aren't guaranteed to be in every NativeAppInstallAd, so it's important to
-        // check before trying to display them.
-        if (nativeAppInstallAd.getPrice() == null) {
-            adView.getPriceView().setVisibility(View.INVISIBLE);
-        } else {
-            adView.getPriceView().setVisibility(View.VISIBLE);
-            ((TextView) adView.getPriceView()).setText(nativeAppInstallAd.getPrice());
-        }
-
-        if (nativeAppInstallAd.getStore() == null) {
-            adView.getStoreView().setVisibility(View.INVISIBLE);
-        } else {
-            adView.getStoreView().setVisibility(View.VISIBLE);
-            ((TextView) adView.getStoreView()).setText(nativeAppInstallAd.getStore());
-        }
-
-        if (nativeAppInstallAd.getStarRating() == null) {
-            adView.getStarRatingView().setVisibility(View.INVISIBLE);
-        } else {
-            ((RatingBar) adView.getStarRatingView())
-                    .setRating(nativeAppInstallAd.getStarRating().floatValue());
-            adView.getStarRatingView().setVisibility(View.VISIBLE);
-        }
-
-        // Assign native ad object to the native view.
-        adView.setNativeAd(nativeAppInstallAd);
-    }
-
-    private void populateContentAdView(NativeContentAd nativeContentAd,
-                                       NativeContentAdView adView) {
-        // Some assets are guaranteed to be in every NativeContentAd.
-        ((TextView) adView.getHeadlineView()).setText(nativeContentAd.getHeadline());
-        ((TextView) adView.getBodyView()).setText(nativeContentAd.getBody());
-        ((TextView) adView.getCallToActionView()).setText(nativeContentAd.getCallToAction());
-        ((TextView) adView.getAdvertiserView()).setText(nativeContentAd.getAdvertiser());
-
-        List<NativeAd.Image> images = nativeContentAd.getImages();
-
-        if (images.size() > 0) {
-            ((ImageView) adView.getImageView()).setImageDrawable(images.get(0).getDrawable());
-        }
-
-        // Some aren't guaranteed, however, and should be checked.
-        NativeAd.Image logoImage = nativeContentAd.getLogo();
-
-        if (logoImage == null) {
-            adView.getLogoView().setVisibility(View.INVISIBLE);
-        } else {
-            ((ImageView) adView.getLogoView()).setImageDrawable(logoImage.getDrawable());
-            adView.getLogoView().setVisibility(View.VISIBLE);
-        }
-
-        // Assign native ad object to the native view.
-        adView.setNativeAd(nativeContentAd);
-    }
-
 }
