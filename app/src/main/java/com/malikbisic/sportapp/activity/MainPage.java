@@ -67,6 +67,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
+import com.clockbyte.admobadapter.AdmobRecyclerAdapterWrapper;
+import com.clockbyte.admobadapter.EAdType;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
@@ -119,6 +121,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -245,34 +248,7 @@ public class MainPage extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        MobileAds.initialize(MainPage.this,getString(R.string.admob_app_id));
-
-        AdLoader adLoader = new AdLoader.Builder(MainPage.this, getString(R.string.admob_app_id))
-                .forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
-                    @Override
-                    public void onAppInstallAdLoaded(NativeAppInstallAd appInstallAd) {
-                        // Show the app install ad.
-                    }
-                })
-                .forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
-                    @Override
-                    public void onContentAdLoaded(NativeContentAd contentAd) {
-                        // Show the content ad.
-                    }
-                })
-                .withAdListener(new AdListener() {
-                    @Override
-                    public void onAdFailedToLoad(int errorCode) {
-                        // Handle the failure by logging, altering the UI, and so on.
-                        Log.e("errorLoadAdmob", String.valueOf(errorCode));
-                    }
-                })
-                .withNativeAdOptions(new NativeAdOptions.Builder()
-                        // Methods in the NativeAdOptions.Builder class can be
-                        // used here to specify individual options settings.
-                        .build())
-                .build();
-
+        MobileAds.initialize(MainPage.this, getString(R.string.admob_app_id));
 
         postingDatabase = FirebaseFirestore.getInstance();
         //postingDatabase.collection("Posting");
@@ -307,7 +283,13 @@ public class MainPage extends AppCompatActivity
         premiumUsers = new PremiumUsers();
         freeUser = new FreeUser();
         adapter = new MainPageAdapter(itemSize, getApplicationContext(), MainPage.this, wallList, postKey);
-        wallList.setAdapter(adapter);
+        AdmobRecyclerAdapterWrapper admobRecyclerAdapterWrapper = new AdmobRecyclerAdapterWrapper(MainPage.this, String.valueOf(EnumSet.of(EAdType.ADVANCED_INSTALLAPP)));
+        admobRecyclerAdapterWrapper.setAdapter(adapter);
+        admobRecyclerAdapterWrapper.setLimitOfAds(3);
+        admobRecyclerAdapterWrapper.setNoOfDataBetweenAds(5);
+        admobRecyclerAdapterWrapper.setFirstAdIndex(5);
+        admobRecyclerAdapterWrapper.setViewTypeBiggestSource(2);
+        wallList.setAdapter(admobRecyclerAdapterWrapper);
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
         itemSize.clear();
 
@@ -520,6 +502,10 @@ public class MainPage extends AppCompatActivity
 
     }
 
+    public List<Object> getRecyclerViewItems() {
+        return itemSize;
+    }
+
     private void insertAdsInMenuItems() {
         if (mNativeAds.size() <= 0) {
             return;
@@ -527,11 +513,10 @@ public class MainPage extends AppCompatActivity
 
         int offset = (itemSize.size() / mNativeAds.size()) + 1;
         int index = 0;
-        for (NativeAd ad: mNativeAds) {
+        for (NativeAd ad : mNativeAds) {
             itemSize.add(index, ad);
             index = index + offset;
         }
-
     }
 
     private void loadNativeAd(final int adLoadCount) {
@@ -905,26 +890,6 @@ public class MainPage extends AppCompatActivity
         String currentHomePackage = resolveInfo.activityInfo.packageName;
     }
 
-    public void checkIsLoadAll() {
-
-        com.google.firebase.firestore.Query next = FirebaseFirestore.getInstance().collection("Posting")
-                .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING);
-        next.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                if (e == null) {
-
-                    size = querySnapshot.size();
-
-
-
-                }
-            }
-
-        });
-
-    }
-
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
 
@@ -974,6 +939,32 @@ public class MainPage extends AppCompatActivity
         initializeCountDrawer();
         launcerCounter();
 
+        adapter.setOnLoadMore(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+
+
+                wallList.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        adapter.notifyItemInserted(itemSize.size() - 1);
+                    }
+                });
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+
+
+
+                    }
+                }, 5000);
+
+            }
+        });
+
         itemSize.clear();
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -992,7 +983,7 @@ public class MainPage extends AppCompatActivity
                 if (isPremium) {
 
                     loadPremium();
-                    loadNativeAd();
+
 
                     adapter.setOnLoadMore(new OnLoadMoreListener() {
                         @Override
@@ -1012,8 +1003,6 @@ public class MainPage extends AppCompatActivity
                                 public void run() {
 
                                     premiumUsersLoadMore();
-                                    loadNativeAd();
-
 
 
                                 }
@@ -1030,11 +1019,9 @@ public class MainPage extends AppCompatActivity
                             EndlessRecyclerViewScrollListener.previousTotal = 0;
                             itemSize.clear();
                             loadPremium();
-                            loadNativeAd();
 
                         }
                     });
-
 
 
                 } else {
@@ -1047,10 +1034,7 @@ public class MainPage extends AppCompatActivity
         firstTimeOpened = false;
 
 
-
     }
-
-
 
 
     public void premiumUsersLoadMore() {
@@ -1086,7 +1070,7 @@ public class MainPage extends AppCompatActivity
 
                                 prevItemVisible = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
 
-                                if (prevItemVisible.getId().equals(lastVisible.getId())){
+                                if (prevItemVisible.getId().equals(lastVisible.getId())) {
                                     adapter.isFullLoaded(true);
                                 }
 
@@ -1099,7 +1083,7 @@ public class MainPage extends AppCompatActivity
                     });
 
                     Log.i("VisPrev", String.valueOf(prevItemVisible));
-                    if (prevItemVisible.getId().equals(lastVisible.getId())){
+                    if (prevItemVisible.getId().equals(lastVisible.getId())) {
                         adapter.setIsLoading(false);
                     }
 

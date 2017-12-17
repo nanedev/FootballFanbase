@@ -163,10 +163,13 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
 
+
+
                     LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                     lastVisibleItem = llm.findLastVisibleItemPosition();
                     totalItemCount = llm.getItemCount();
+                    Log.i("position", String.valueOf(lastVisibleItem));
 
 
                     if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded) {
@@ -187,12 +190,12 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Object recyclerViewItem = postList.get(position);
-        if (recyclerViewItem instanceof NativeAppInstallAd) {
+       /* if (recyclerViewItem instanceof NativeAppInstallAd) {
             return NATIVE_APP_INSTALL_AD_VIEW_TYPE;
         } else if (recyclerViewItem instanceof NativeContentAd) {
             return NATIVE_CONTENT_AD_VIEW_TYPE;
-        }
-        return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
+        } */
+            return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
 
     }
 
@@ -206,7 +209,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         } else if (viewType == ITEM_LOADING) {
             View v1 = mLInflater.inflate(R.layout.progressbar_item, parent, false);
             return new ProgressViewHolder(v1);
-        } else if (viewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
+        } /*else if (viewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
             View nativeAppInstallLayoutView = LayoutInflater.from(
                     parent.getContext()).inflate(R.layout.ad_app_install,
                     parent, false);
@@ -217,7 +220,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     parent, false);
             return new NativeContentAdViewHolder(nativeContentLayoutView);
         }
-
+ */
         return null;
     }
 
@@ -837,14 +840,14 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
             }
 
-        } else if (getViewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
+        } /* else if (getViewType == NATIVE_APP_INSTALL_AD_VIEW_TYPE) {
             NativeAppInstallAd appInstallAd = (NativeAppInstallAd) postList.get(position);
             populateAppInstallAdView(appInstallAd, (NativeAppInstallAdView) holder.itemView);
 
         } else if (getViewType == NATIVE_CONTENT_AD_VIEW_TYPE) {
             NativeContentAd contentAd = (NativeContentAd) postList.get(position);
             populateContentAdView(contentAd, (NativeContentAdView) holder.itemView);
-        }
+        }*/
 
     }
 
