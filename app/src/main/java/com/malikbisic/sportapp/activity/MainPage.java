@@ -471,6 +471,7 @@ public class MainPage extends AppCompatActivity
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
+        getSupportActionBar().show();
 
         Boolean isFirstTime = getSharedPreferences("check first time", MODE_PRIVATE).getBoolean("isFirstTime", true);
 

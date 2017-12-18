@@ -83,6 +83,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.jzvd.JZVideoPlayerManager;
+import cn.jzvd.JZVideoPlayerStandard;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -190,10 +192,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
         if (viewType == ITEM_VIEW) {
-            View v = mLInflater.inflate(R.layout.wall_row, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.wall_row, parent, false);
             return new PostViewHolder(v);
         } else if (viewType == ITEM_LOADING) {
-            View v1 = mLInflater.inflate(R.layout.progressbar_item, parent, false);
+            View v1 = LayoutInflater.from(parent.getContext()).inflate(R.layout.progressbar_item, parent, false);
             return new ProgressViewHolder(v1);
         }
 
@@ -227,7 +229,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setProfileImage(ctx, model.getProfileImage());
             ((MainPageAdapter.PostViewHolder) holder).setUsername(model.getUsername());
             ((MainPageAdapter.PostViewHolder) holder).setPhotoPost(ctx, model.getPhotoPost());
-            ((MainPageAdapter.PostViewHolder) holder).setVideoPost(ctx, model.getVideoPost());
+            ((MainPageAdapter.PostViewHolder) holder).setVideoPost(activity, model.getVideoPost());
             ((MainPageAdapter.PostViewHolder) holder).setAudioFile(ctx, model.getAudioFile());
             ((MainPageAdapter.PostViewHolder) holder).setLikeBtn(post_key, activity);
             ((MainPageAdapter.PostViewHolder) holder).setNumberLikes(post_key, activity);
@@ -845,7 +847,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         View mView;
         public Button play_button;
         public MediaPlayer mPlayer;
-        cn.jzvd.JZVideoPlayerStandard videoView;
+        JZVideoPlayerStandard videoView;
         ImageView post_photo;
         MediaController mediaController;
         RelativeLayout audioLayout;
@@ -895,7 +897,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
             mediaController = new MediaController(mView.getContext());
 
-            videoView = (cn.jzvd.JZVideoPlayerStandard) mView.findViewById(R.id.posted_video);
+            videoView = (JZVideoPlayerStandard) mView.findViewById(R.id.posted_video);
             post_photo = (ImageView) mView.findViewById(R.id.posted_image);
             audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
             mPlayer = new MediaPlayer();
@@ -1248,7 +1250,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         }
 
-        public void setVideoPost(Context ctx, String videoPost) {
+        public void setVideoPost(Activity ctx, String videoPost) {
 
 
             if (videoPost != null) {
@@ -1256,12 +1258,13 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 try {
 
                     layoutVideo.setVisibility(View.VISIBLE);
-                    videoView.setUp(videoPost, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
+
+                    videoView.setUp(videoPost, cn.jzvd.JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "");
                     videoView.requestFocus();
                 } catch (Exception e) {
-                    e.getMessage();
+                    Log.e("errorVideo", e.getLocalizedMessage());
                 }
-
+                    videoView.requestFocus();
             } else {
                 layoutVideo.setVisibility(View.GONE);
             }
