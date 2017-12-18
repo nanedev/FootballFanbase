@@ -130,7 +130,7 @@ Toolbar addPhotoVideoToolbar;
                 videoSelected.setVisibility(View.VISIBLE);
                 Uri video = myIntent.getData(); //Uri.parse(myIntent.getStringExtra("video-uri_selected"));
 
-                videoSelected.setUp(getPath(AddPhotoOrVideo.this, video), JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "proba");
+                videoSelected.setUp(getPath(AddPhotoOrVideo.this, video), JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "");
                 videoSelected.requestFocus();
 
                 InputStream fileInputStream = this.getContentResolver().openInputStream(video);
