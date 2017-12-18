@@ -896,6 +896,7 @@ public class MainPage extends AppCompatActivity
 
                     loadPremium();
 
+
                     adapter.setOnLoadMore(new OnLoadMoreListener() {
                         @Override
                         public void onLoadMore() {

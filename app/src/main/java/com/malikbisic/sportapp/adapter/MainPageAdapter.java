@@ -802,7 +802,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         } else if (getViewType == ITEM_LOADING) {
 
 
-            if (isLoading) {
+            if (isLoading && !isAllLoaded) {
 
                 ((ProgressViewHolder) holder).progressBar.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.spinnerLoad),
                         android.graphics.PorterDuff.Mode.MULTIPLY);
