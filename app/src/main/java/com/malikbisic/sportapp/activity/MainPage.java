@@ -831,13 +831,17 @@ public class MainPage extends AppCompatActivity
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
 
-        CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
-        db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10).addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                if (e == null) {
 
-                    for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
+
+        CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
+        db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                itemSize.clear();
+                if (task.getException() == null) {
+
+                    for (DocumentSnapshot snapshot : task.getResult()) {
 
 
                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
@@ -851,16 +855,36 @@ public class MainPage extends AppCompatActivity
                             swipeRefreshLayoutPost.setRefreshing(false);
                         }
 
-                        lastVisible = documentSnapshots.getDocuments()
-                                .get(documentSnapshots.size() - 1);
-
-                        // Construct a new query starting at this document,
-                        // get the next 25 cities.
-
+                        lastVisible = task.getResult().getDocuments()
+                                .get(task.getResult().size() - 1);
                     }
 
+                    com.google.firebase.firestore.Query next = FirebaseFirestore.getInstance().collection("Posting")
+                            .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING);
+                    next.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException e) {
+                            if (e == null) {
+
+                                if (querySnapshot2.size() != 0) {
+
+                                    prevItemVisible = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
+
+                                    if (prevItemVisible.getId().equals(lastVisible.getId())) {
+                                        adapter.isFullLoaded(true);
+                                    } else {
+                                        adapter.isFullLoaded(false);
+                                    }
+                                }
+
+
+                            }
+                        }
+
+                    });
+
                 } else {
-                    Log.e("errorPremium", e.getLocalizedMessage());
+                    Log.e("errorPremium", task.getException().getLocalizedMessage());
                 }
 
 
@@ -877,7 +901,7 @@ public class MainPage extends AppCompatActivity
         initializeCountDrawer();
         launcerCounter();
 
-        itemSize.clear();
+
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
@@ -933,6 +957,7 @@ public class MainPage extends AppCompatActivity
                             itemSize.clear();
                             loadPremium();
 
+
                         }
                     });
 
@@ -962,39 +987,42 @@ public class MainPage extends AppCompatActivity
                 .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .startAfter(lastVisible)
                 .limit(10);
-        next.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        next.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(final QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                if (e == null) {
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+                if (task.getException() == null) {
+
+                    for (DocumentSnapshot snapshot : task.getResult()) {
 
                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                         itemSize.add(model);
                         adapter.notifyDataSetChanged();
                         adapter.refreshAdapter(EndlessRecyclerViewScrollListener.loading, itemSize);
-                        lastVisible = querySnapshot.getDocuments().get(querySnapshot.size() - 1);
+                        lastVisible = task.getResult().getDocuments().get(task.getResult().size() - 1);
                         adapter.setIsLoading(false);
-                        prevItemVisible = lastVisible;
-                        size = snapshot.getData().size();
+
                     }
 
                     com.google.firebase.firestore.Query next = FirebaseFirestore.getInstance().collection("Posting")
                             .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING);
-                    next.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    next.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
-                        public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException e) {
-                            if (e == null) {
+                        public void onComplete(@NonNull Task<QuerySnapshot> task2) {
 
-                                prevItemVisible = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
+                            if (task2.getException() == null) {
 
-                                if (prevItemVisible.getId().equals(lastVisible.getId())){
-                                    adapter.isFullLoaded(true);
+                                if (task2.getResult().size() != 0) {
+                                    prevItemVisible = task2.getResult().getDocuments().get(task2.getResult().size() - 1);
+
+                                    if (prevItemVisible.getId().equals(lastVisible.getId())) {
+                                        adapter.isFullLoaded(true);
+                                    }
+
+
+                                    Log.i("postTOTALCOUNT", String.valueOf(lastVisible.getId()));
+                                    Log.i("postLIST", String.valueOf(prevItemVisible.getId()));
                                 }
-
-
-                                Log.i("postTOTALCOUNT", String.valueOf(lastVisible.getId()));
-                                Log.i("postLIST", String.valueOf(prevItemVisible.getId()));
                             }
                         }
 
@@ -1005,7 +1033,7 @@ public class MainPage extends AppCompatActivity
                     Log.i("itemCount loadmore", String.valueOf(linearLayoutManager.findLastVisibleItemPosition()));
 
                 } else {
-                    Log.e("errorLoadMore", e.getLocalizedMessage());
+                    Log.e("errorLoadMore", task.getException().getLocalizedMessage());
                 }
             }
 

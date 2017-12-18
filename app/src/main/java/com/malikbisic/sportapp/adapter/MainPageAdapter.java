@@ -151,6 +151,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     super.onScrolled(recyclerView, dx, dy);
 
                     LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    totalItemCount = 0;
 
                     lastVisibleItem = llm.findLastVisibleItemPosition();
                     totalItemCount = llm.getItemCount();
@@ -655,7 +656,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                         public void onSuccess(Void aVoid) {
 
 
-                                                            notifyItemRemoved(((MainPageAdapter.PostViewHolder) holder).getAdapterPosition());
+
                                                             Toast.makeText(activity.getApplicationContext(), "deleted", Toast.LENGTH_LONG).show();
 
                                                         }
