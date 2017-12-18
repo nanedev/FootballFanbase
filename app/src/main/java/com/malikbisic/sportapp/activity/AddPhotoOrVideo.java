@@ -16,7 +16,10 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -32,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -64,7 +68,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     private ImageView photoSelected;
     private JZVideoPlayerStandard videoSelected;
     private EditText saySomething;
-    private Button post;
+
     ProgressDialog pDialog;
     ProgressDialog postingDialog;
 
@@ -80,7 +84,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     private static final String TAG = "AddPhotoOrVideo";
     String videoSize;
     RelativeLayout layout;
-
+Toolbar addPhotoVideoToolbar;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -94,12 +98,13 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         photoSelected = (ImageView) findViewById(R.id.post_image);
         videoSelected = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.post_video);
         saySomething = (EditText) findViewById(R.id.tell_something_about_video_image);
-        post = (Button) findViewById(R.id.btn_post_photo_or_video);
-        post.setOnClickListener(this);
         postingDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
         mAuth = FirebaseAuth.getInstance();
         layout = (RelativeLayout) findViewById(R.id.container);
-
+        addPhotoVideoToolbar = (Toolbar) findViewById(R.id.addPhotoVideoToolbar);
+        setSupportActionBar(addPhotoVideoToolbar);
+        getSupportActionBar().setTitle("Post");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mFilePath = FirebaseStorage.getInstance().getReference();
 
@@ -125,7 +130,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 videoSelected.setVisibility(View.VISIBLE);
                 Uri video = myIntent.getData(); //Uri.parse(myIntent.getStringExtra("video-uri_selected"));
 
-                videoSelected.setUp(getPath(AddPhotoOrVideo.this, video), cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "");
+                videoSelected.setUp(getPath(AddPhotoOrVideo.this, video), JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "proba");
                 videoSelected.requestFocus();
 
                 InputStream fileInputStream = this.getContentResolver().openInputStream(video);
@@ -156,12 +161,31 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View view) {
 
-        if (view.getId() == R.id.btn_post_photo_or_video) {
 
+
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.edit_post_text, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int id = item.getItemId();
+
+        if (id == R.id.save_edit_text) {
             if (MainPage.photoSelected) {
                 try {
                     Uri imageUri = myIntent.getData();
-                    File imagePath = new File(getRealPathFromURI(imageUri));
+                    File imagePath = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                        imagePath = new File(getRealPathFromURI(imageUri));
+                    }
                     Log.i("imagePath", imagePath.getPath());
 
                     final Bitmap imageCompressBitmap = new Compressor(this)
@@ -319,10 +343,17 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                 }
             }
 
+
         }
 
 
+
+        return super.onOptionsItemSelected(item);
+
+
     }
+
+
 
     @Override
     public void onBackPressed() {

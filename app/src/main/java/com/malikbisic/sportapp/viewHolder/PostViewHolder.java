@@ -40,6 +40,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.io.InputStream;
 
+import cn.jzvd.JZVideoPlayerStandard;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -416,7 +417,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
             try {
 
                 layoutVideo.setVisibility(View.VISIBLE);
-                videoView.setUp(videoPost, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
+                videoView.setUp(videoPost, JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "proba");
                 videoView.requestFocus();
             } catch (Exception e) {
                 e.getMessage();

@@ -76,7 +76,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.2'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     compile 'com.google.android.exoplayer:exoplayer:r2.0.0'
-    compile 'cn.jzvd:jiaozivideoplayer:6.0.2'
+    compile 'cn.jzvd:jiaozivideoplayer:6.2.3'
     compile 'com.pixplicity.sharp:library:1.1.0'
     compile 'me.leolin:ShortcutBadger:1.1.18@aar'
     compile 'com.android.support:support-vector-drawable:25.4.0'

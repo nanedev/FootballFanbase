@@ -122,6 +122,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import cn.jzvd.JZVideoPlayerStandard;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
@@ -834,6 +835,7 @@ public class MainPage extends AppCompatActivity
 
 
         CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
+
         db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -847,6 +849,7 @@ public class MainPage extends AppCompatActivity
                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                         itemSize.add(model);
                         adapter.notifyDataSetChanged();
+
 
                         Log.i("itemCount", String.valueOf(adapter.getItemCount()));
 
@@ -1120,7 +1123,7 @@ public class MainPage extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
-        cn.jzvd.JZVideoPlayerStandard.releaseAllVideos();
+        JZVideoPlayerStandard.releaseAllVideos();
         mBundleRecyclerViewState = new Bundle();
         Parcelable listState = linearLayoutManager.onSaveInstanceState();
         mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);

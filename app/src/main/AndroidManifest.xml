@@ -97,7 +97,8 @@
             android:name=".activity.AddPhotoOrVideo"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:parentActivityName=".activity.MainPage"/>
         <activity
             android:name=".activity.RecordAudio"
             android:screenOrientation="portrait"

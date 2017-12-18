@@ -75,6 +75,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.jzvd.JZVideoPlayerStandard;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -1009,7 +1010,7 @@ public class MyPostsActivity extends AppCompatActivity {
                 try {
 
                     layoutVideo.setVisibility(View.VISIBLE);
-                    videoView.setUp(videoPost, cn.jzvd.JZVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "proba");
+                    videoView.setUp(videoPost, JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "proba");
                     videoView.requestFocus();
                 } catch (Exception e) {
                     e.getMessage();
