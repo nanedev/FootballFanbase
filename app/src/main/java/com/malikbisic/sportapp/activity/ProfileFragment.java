@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -48,19 +49,12 @@ import com.caverock.androidsvg.SVG;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -78,12 +72,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -180,8 +171,8 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
 
         if (checkOpenActivity) {
             mReference2 = FirebaseFirestore.getInstance().collection("Users").document(myUid);
-        }else {
-             mReference2 = mReference.collection("Users").document(uid);
+        } else {
+            mReference2 = mReference.collection("Users").document(uid);
 
         }
 
@@ -209,9 +200,8 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
         rec = (RecyclerView) view.findViewById(R.id.hhhhhh);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rec.setLayoutManager(layoutManager);
-      adapter = new ProfileFragmentAdapter(getActivity());
-      rec.setAdapter(adapter);
-
+        adapter = new ProfileFragmentAdapter(getActivity());
+        rec.setAdapter(adapter);
 
 
         minAdultAge = new GregorianCalendar();
@@ -236,79 +226,80 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
             }
         });
 
+        Activity activity = getActivity();
+        if (activity != null) {
+            loadProfile_image.getIndeterminateDrawable()
+                    .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN);
+            mReference2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+if (dataSnapshot.exists()) {
+    Map<String, Object> value = dataSnapshot.getData();
 
-        loadProfile_image.getIndeterminateDrawable()
-                .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN);
-        mReference2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                    Map<String, Object> value = dataSnapshot.getData();
+    profileImage = String.valueOf(value.get("profileImage"));
+    Picasso.with(getActivity())
+            .load(profileImage)
+            .networkPolicy(NetworkPolicy.OFFLINE)
+            .into(profile, new Callback() {
+                @Override
+                public void onSuccess() {
+                    loadProfile_image.setVisibility(View.GONE);
+                }
 
+                @Override
+                public void onError() {
 
-                    profileImage = String.valueOf(value.get("profileImage"));
-                    Picasso.with(getActivity())
-                            .load(profileImage)
-                            .networkPolicy(NetworkPolicy.OFFLINE)
-                            .into(profile, new Callback() {
-                                @Override
-                                public void onSuccess() {
-                                    loadProfile_image.setVisibility(View.GONE);
-                                }
+                }
+            });
 
-                                @Override
-                                public void onError() {
-
-                                }
-                            });
-
-                    name = value.get("name") + " " + value.get("surname");
+    name = value.get("name") + " " + value.get("surname");
 //                name_surname.setText(name);
-                    username.setText(String.valueOf(value.get("username")));
-                    gender.setText(String.valueOf(value.get("gender")));
-                    if (String.valueOf(value.get("gender")).equals("Male")) {
-                        genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                        genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
-                    } else if (String.valueOf(value.get("gender")).equals("Female")) {
-                        genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                        genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
-                    }
+    username.setText(String.valueOf(value.get("username")));
+    gender.setText(String.valueOf(value.get("gender")));
+    if (String.valueOf(value.get("gender")).equals("Male")) {
+        genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
+    } else if (String.valueOf(value.get("gender")).equals("Female")) {
+        genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
+    }
 
 
-                    birthday.setText(String.valueOf(value.get("date")));
-                    club.setText(String.valueOf(value.get("favoriteClub")));
+    birthday.setText(String.valueOf(value.get("date")));
+    club.setText(String.valueOf(value.get("favoriteClub")));
 
 
-                    flagImageFirebase = String.valueOf(value.get("flag"));
-                    Log.i("flag uri", flagImageFirebase);
+    flagImageFirebase = String.valueOf(value.get("flag"));
+    Log.i("flag uri", flagImageFirebase);
 
-                    clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
+    clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
 
-                    flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+    flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+    logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+    GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
-                    requestBuilder = Glide
-                            .with(getActivity())
-                            .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
-                            .from(Uri.class)
-                            .as(SVG.class)
-                            .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-                            .sourceEncoder(new StreamEncoder())
-                            .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
-                            .decoder(new SearchableCountry.SvgDecoder())
-                            .animate(android.R.anim.fade_in);
-
-
-                    Uri uri = Uri.parse(flagImageFirebase);
-                    requestBuilder
-                            // SVG cannot be serialized so it's not worth to cache it
-                            .diskCacheStrategy(SOURCE)
-                            .load(uri)
-                            .into(flag);
+    requestBuilder = Glide
+            .with(getActivity())
+            .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
+            .from(Uri.class)
+            .as(SVG.class)
+            .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+            .sourceEncoder(new StreamEncoder())
+            .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+            .decoder(new SearchableCountry.SvgDecoder())
+            .animate(android.R.anim.fade_in);
 
 
-                    Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
+    Uri uri = Uri.parse(flagImageFirebase);
+    requestBuilder
+            // SVG cannot be serialized so it's not worth to cache it
+            .diskCacheStrategy(SOURCE)
+            .load(uri)
+            .into(flag);
+
+
+    Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
 
                                /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
@@ -330,32 +321,19 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
                             }
                         });*/
 
-                    country.setText(String.valueOf(value.get("country")));
+    country.setText(String.valueOf(value.get("country")));
 
-                    backgroundImage();
+}
                 }
-        });
+            });
+        }
+
+            return view;
+
+        }
 
 
-        return view;
 
-    }
-
-    public void backgroundImage() {
-
-   /* HttpImageRequestTask task = new HttpImageRequestTask();
-        try {
-            task.execute(flagImageFirebase).get();
-            backgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
-
-
-        } catch (InterruptedException e) {
-            Log.e("error1",e.getLocalizedMessage());
-        } catch (ExecutionException e) {
-            Log.e("error2", e.getLocalizedMessage());
-        }*/
-
-    }
 
     Calendar myCalendar = Calendar.getInstance();
 
@@ -423,8 +401,11 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
                             .compressToBitmap(imagePath);
 
 
+
+
                     Picasso.with(getActivity()).load(String.valueOf(imageCompressBitmap))
                             .networkPolicy(NetworkPolicy.OFFLINE)
+                           .resize(300,300)
                             .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
                             .into(profile);
                     profileImageUpdate = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());

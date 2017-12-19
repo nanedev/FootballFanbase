@@ -380,14 +380,14 @@ public class NotificationFragment extends Fragment {
 
         if (item.getItemId() == R.id.notification_clear_id) {
 
-            final String[] items = {"Set all notifications read", "Cancel"};
-            android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getActivity());
+            final String[] items = {"Mark all as read", "Cancel"};
+            android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getActivity(),R.style.AppTheme_Dark_Dialog);
             dialog.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    if (items[which].equals("Set all notifications read")) {
-                        WriteBatch batch = FirebaseFirestore.getInstance().batch();
+                    if (items[which].equals("Mark all as read")) {
+
 
                         CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
                         notif.addSnapshotListener(new EventListener<QuerySnapshot>() {

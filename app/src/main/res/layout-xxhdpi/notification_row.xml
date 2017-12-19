@@ -2,37 +2,38 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="4dp">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/notification_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        >
 
         <RelativeLayout
             android:id="@+id/image_username_layout_not"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+          >
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/notification_profil_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_margin="10dp" />
+                android:layout_centerVertical="true"
+                android:layout_margin="2dp"/>
 
             <TextView
                 android:id="@+id/notification_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/notification_profil_image"
+                android:layout_toRightOf="@+id/notification_profil_image"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/notification_profil_image"
-                android:layout_toRightOf="@+id/notification_profil_image"
                 android:textColor="#000"
-
                 android:textStyle="bold" />
 
             <TextView
@@ -40,9 +41,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/notification_username"
-                android:layout_centerVertical="true"
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/notification_username"
                 android:layout_toRightOf="@+id/notification_username"
                 android:textColor="#000" />
@@ -52,9 +53,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/notification_profil_image"
-                android:layout_marginLeft="50dp"
-                android:layout_marginStart="50dp"
+               android:layout_alignStart="@+id/notification_username"
+                android:layout_alignLeft="@+id/notification_username"
                 android:text="TextView"
+                android:layout_marginBottom="5dp"
                 android:textColor="@color/blueColor" />
 
             <ImageView
@@ -74,9 +76,7 @@
             android:id="@+id/separator"
             android:layout_width="fill_parent"
             android:layout_height="1dip"
-            android:layout_marginLeft="20dp"
-            android:layout_below="@id/image_username_layout_not"
-            android:layout_centerVertical="true"
+         android:layout_alignParentBottom="true"
             android:background="#C2C0BC" />
 
 
