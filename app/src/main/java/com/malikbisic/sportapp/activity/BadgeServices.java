@@ -9,11 +9,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Icon;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +34,11 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.malikbisic.sportapp.R;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Random;
+
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -37,34 +49,32 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class BadgeServices extends FirebaseMessagingService {
 
-    private int notificationId = 0;
-    DatabaseReference notificationReference;
+    private int notificationId;
+
     FirebaseAuth mAuth;
+
+
 
     @Override
     public void onMessageReceived(final RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
-
-        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
-        mAuth = FirebaseAuth.getInstance();
-
-        FirebaseUser user = mAuth.getCurrentUser();
-        final String myUserId = user.getUid();
-        DatabaseReference getNumberNotification = notificationReference.child(myUserId);
-
-
-        String notification_title = remoteMessage.getNotification().getTitle();
-        String notifification_body = remoteMessage.getNotification().getBody();
-        String clickAction = remoteMessage.getNotification().getClickAction();
-        String from_user_id = remoteMessage.getData().get("from_user_id");
+        notificationId = new Random().nextInt(60000);
+        Bitmap bitmap = getBitmapfromUrl(remoteMessage.getData().get("profileImage"));
         String postKey = remoteMessage.getData().get("post_key");
+        String from_user_id = remoteMessage.getData().get("from_user_id");
+        String clickAction = remoteMessage.getNotification().getClickAction();
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(BadgeServices.this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(notification_title)
-                        .setContentText(notifification_body);
+
+        Uri defaulSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setLargeIcon(bitmap)
+
+               .setContentTitle(remoteMessage.getNotification().getTitle())
+             .setContentText(remoteMessage.getNotification().getBody())
+                .setAutoCancel(true)
+                .setSound(defaulSoundUri);
+
 
         Intent resultIntent = new Intent(clickAction);
         resultIntent.putExtra("post_key", postKey);
@@ -80,60 +90,33 @@ public class BadgeServices extends FirebaseMessagingService {
                 );
 
 
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        int mNotificationId = (int) System.currentTimeMillis();
-
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        builder.setContentIntent(resultPendingIntent);
 
 
-    }
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notificationId /* ID of notification */, builder.build());
 
 
-    public void launcherCounter() {
-        notificationReference = FirebaseDatabase.getInstance().getReference().child("Notification");
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
-        DatabaseReference getNumberNotification = notificationReference.child(myUserId);
-
-        Query query = getNumberNotification.orderByChild("seen").equalTo(false);
-
-        query.addValueEventListener(new ValueEventListener() {
-            @TargetApi(Build.VERSION_CODES.N_MR1)
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                int number = (int) dataSnapshot.getChildrenCount();
-
-                if (number == 0) {
-
-                    ShortcutBadger.removeCount(getApplicationContext());
-
-
-                } else {
-                    startService(
-                            new Intent(BadgeServices.this, BadgeServices.class));
-                    ShortcutBadger.applyCount(getApplicationContext(), number);
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        Intent intent2 = new Intent(Intent.ACTION_MAIN);
-        intent2.addCategory(Intent.CATEGORY_HOME);
-        ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent2, PackageManager.MATCH_DEFAULT_ONLY);
-        String currentHomePackage = resolveInfo.activityInfo.packageName;
 
     }
+
+    public Bitmap getBitmapfromUrl(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream(); return BitmapFactory.decodeStream(input);
+        } catch (Exception e)
+        { e.printStackTrace();
+            return null;
+        }
+    }
+
+
 
 }
