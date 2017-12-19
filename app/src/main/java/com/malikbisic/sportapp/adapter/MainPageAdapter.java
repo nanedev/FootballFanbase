@@ -46,6 +46,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -942,6 +944,18 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         public void onClick(View view) {
 
 
+        }
+
+        public void dynamicLinkShare(){
+            DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                    .setLink(Uri.parse("https://footballfanbase.com/"))
+                    .setDynamicLinkDomain("https://ac33r.app.goo.gl")
+                    // Open links with this app on Android
+                    .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
+                    // Open links with com.example.ios on iOS
+                    .buildDynamicLink();
+
+            Uri dynamicLinkUri = dynamicLink.getUri();
         }
 
         public void setTimeAgo(Date time, Context ctx) {

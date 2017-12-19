@@ -29,6 +29,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,7 +79,7 @@ public class NotificationFragment extends Fragment {
     Query query;
     String uid;
 
-    ArrayList <String>listNotfikey;
+    ArrayList<String> listNotfikey;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -154,22 +155,73 @@ public class NotificationFragment extends Fragment {
                                     Intent openSinglePost = new Intent(getContext(), SinglePostViewNotificationActivity.class);
                                     openSinglePost.putExtra("post_key", key);
                                     isNotificationClicked = true;
+
+                                    DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
+                                            .document(uid).collection("notif-id").document(post_key_notification);
+                                    docDelete.update("seen", true)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("errorSetSeenNotif", e.getLocalizedMessage());
+                                        }
+                                    });
+
                                     startActivity(openSinglePost);
-                                } else if (whatIS.equals("comment")){
+                                } else if (whatIS.equals("comment")) {
                                     Intent openCom = new Intent(getContext(), CommentsActivity.class);
                                     openCom.putExtra("keyComment2", key);
                                     isNotificationClicked = true;
                                     Log.i("KeyNOTIF", key);
                                     openCom.putExtra("profileComment", MainPage.profielImage);
                                     openCom.putExtra("username", MainPage.usernameInfo);
+
+                                    DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
+                                            .document(uid).collection("notif-id").document(post_key_notification);
+                                    docDelete.update("seen", true)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("errorSetSeenNotif", e.getLocalizedMessage());
+                                        }
+                                    });
+
                                     startActivity(openCom);
                                 } else if (whatIS.equals("reply")) {
-                                    Intent intent = new Intent(getContext(),CommentsInComments.class);
+                                    Intent intent = new Intent(getContext(), CommentsInComments.class);
                                     intent.putExtra("keyComment3", key);
                                     isNotificationClicked = true;
                                     intent.putExtra("keyPost", CommentsActivity.key);
                                     intent.putExtra("profileComment", MainPage.profielImage);
                                     intent.putExtra("username", MainPage.usernameInfo);
+
+                                    DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
+                                            .document(uid).collection("notif-id").document(post_key_notification);
+                                    docDelete.update("seen", true)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("errorSetSeenNotif", e.getLocalizedMessage());
+                                        }
+                                    });
+
                                     startActivity(intent);
                                 }
                             }
@@ -245,7 +297,6 @@ public class NotificationFragment extends Fragment {
     }
 
 
-
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
 
         View itemview;
@@ -294,7 +345,7 @@ public class NotificationFragment extends Fragment {
             actionTxt.setText(action + " your " + whatIS + "!");
         }
 
-        public void setTimeAgo(Date timestamp, Context ctx){
+        public void setTimeAgo(Date timestamp, Context ctx) {
             GetTimeAgo getTimeAgo = new GetTimeAgo();
             //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
             long lastTime = timestamp.getTime();
@@ -302,8 +353,8 @@ public class NotificationFragment extends Fragment {
             timeAgoTextView.setText(lastStringTime);
         }
 
-        public void isSeen (boolean isSeen, Activity activity){
-            if (isSeen){
+        public void isSeen(boolean isSeen, Activity activity) {
+            if (isSeen) {
                 itemview.setBackgroundColor(activity.getResources().getColor(R.color.white));
             } else {
                 itemview.setBackgroundColor(activity.getResources().getColor(R.color.notifnotSeen));
@@ -323,48 +374,47 @@ public class NotificationFragment extends Fragment {
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
 
-
         if (item.getItemId() == R.id.notification_clear_id) {
 
-            final String[] items = {"Delete all notification", "Cancel"};
+            final String[] items = {"Set all notifications read", "Cancel"};
             android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(getActivity());
             dialog.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    if (items[which].equals("Delete all notification")) {
+                    if (items[which].equals("Set all notifications read")) {
                         WriteBatch batch = FirebaseFirestore.getInstance().batch();
 
-                            CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
-                            notif.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                @Override
-                                public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()){
-                                        String docID = snapshot.getId();
+                        CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
+                        notif.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                                for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+                                    String docID = snapshot.getId();
 
-                                        DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
-                                                .document(uid).collection("notif-id").document(docID);
-                                        docDelete.delete()
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
+                                    DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
+                                            .document(uid).collection("notif-id").document(docID);
+                                    docDelete.update("seen", true)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
 
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.e("errorDeleteAllNotif", e.getLocalizedMessage());
-                                                    }
-                                                });
-                                    }
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
 
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("errorSetSeenAllNotif", e.getLocalizedMessage());
+                                        }
+                                    });
                                 }
-                            });
+
+                            }
+                        });
 
                             /*
                             notif.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
