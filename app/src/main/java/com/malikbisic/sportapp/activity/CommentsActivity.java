@@ -99,15 +99,13 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         mReference = FirebaseFirestore.getInstance();
 
 
-
-
         if (key == null && keyNotifPush != null) {
             key = keyNotifPush;
-        } else if (key != null){
+        } else if (key != null) {
             keyNotif = key;
         }
 
-        if (key == null && keyNotif != null){
+        if (key == null && keyNotif != null) {
             key = keyNotif;
         }
 
@@ -119,7 +117,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         } else {
             try {
                 getCommentRef = mReference.collection("Comments").document(keyNotif).collection("comment-id");
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.e("error", e.getLocalizedMessage());
             }
             key = keyNotif;
@@ -170,7 +168,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 viewHolder.setDislikeBtn(post_key_comments, CommentsActivity.this);
                 viewHolder.setNumberLikes(post_key_comments, CommentsActivity.this);
                 viewHolder.setNumberDislikes(post_key_comments, CommentsActivity.this);
-                viewHolder.setNumberComments(post_key_comments);
+                viewHolder.setNumberComments(post_key_comments, CommentsActivity.this);
                 final String uid = auth.getCurrentUser().getUid();
 
 
@@ -324,27 +322,27 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                             @Override
                                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
+                                                if (dataSnapshot.exists()) {
+                                                    String userpostUID = dataSnapshot.getString("uid");
 
-                                                String userpostUID = dataSnapshot.getString("uid");
+                                                    Map<String, Object> notifMap = new HashMap<>();
+                                                    notifMap.put("action", "liked");
+                                                    notifMap.put("uid", uid);
+                                                    notifMap.put("seen", false);
+                                                    notifMap.put("whatIS", "comment");
+                                                    notifMap.put("post_key", key);
+                                                    notifMap.put("timestamp", FieldValue.serverTimestamp());
 
-                                                Map<String, Object> notifMap = new HashMap<>();
-                                                notifMap.put("action", "liked");
-                                                notifMap.put("uid", uid);
-                                                notifMap.put("seen", false);
-                                                notifMap.put("whatIS", "comment");
-                                                notifMap.put("post_key", key);
-                                                notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                    if (!userpostUID.equals(uid)) {
+                                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                                                        notifSet.add(notifMap);
+                                                    }
 
-                                                if (!userpostUID.equals(uid)) {
-                                                    CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                                                    notifSet.add(notifMap);
+
+                                                    if (e != null) {
+                                                        Log.e("likeERROR", e.getLocalizedMessage());
+                                                    }
                                                 }
-
-
-                                                if (e != null) {
-                                                    Log.e("likeERROR", e.getLocalizedMessage());
-                                                }
-
                                             }
 
 
@@ -405,18 +403,20 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                             @Override
                                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                                String userpostUID = dataSnapshot.getString("uid");
+                                                if (dataSnapshot.exists()) {
+                                                    String userpostUID = dataSnapshot.getString("uid");
 
-                                                Map<String, Object> notifMap = new HashMap<>();
-                                                notifMap.put("action", "disliked");
-                                                notifMap.put("uid", uid);
-                                                notifMap.put("seen", false);
-                                                notifMap.put("whatIS", "comment");
-                                                notifMap.put("post_key", key);
-                                                notifMap.put("timestamp", FieldValue.serverTimestamp());
-                                                if (!userpostUID.equals(uid)) {
-                                                    CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                                                    notifSet.add(notifMap);
+                                                    Map<String, Object> notifMap = new HashMap<>();
+                                                    notifMap.put("action", "disliked");
+                                                    notifMap.put("uid", uid);
+                                                    notifMap.put("seen", false);
+                                                    notifMap.put("whatIS", "comment");
+                                                    notifMap.put("post_key", key);
+                                                    notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                    if (!userpostUID.equals(uid)) {
+                                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                                                        notifSet.add(notifMap);
+                                                    }
                                                 }
 
                                             }
@@ -715,20 +715,23 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
         public void setNumberLikes(String post_key, Activity activity) {
             CollectionReference col = likeReference.document(post_key).collection("like-id");
-            col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+            col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                    numberLikesInt = querySnapshot.getResult().size();
+                    if (e == null) {
+
+                        numberLikesInt = documentSnapshots.size();
 
 
-                    if (numberLikesInt == 0) {
-                        numberLikes.setText("");
-                        likeBtnImage.setVisibility(View.GONE);
-                    } else {
-                        numberLikes.setText(String.valueOf(numberLikesInt));
-                        likeBtnImage.setVisibility(View.VISIBLE);
-                        numberLikes.setVisibility(View.VISIBLE);
+                        if (numberLikesInt == 0) {
+                            numberLikes.setText("");
+                            likeBtnImage.setVisibility(View.GONE);
+                        } else {
+                            numberLikes.setText(String.valueOf(numberLikesInt));
+                            likeBtnImage.setVisibility(View.VISIBLE);
+                            numberLikes.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
 
@@ -738,48 +741,52 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         public void setNumberDislikes(String post_key, Activity activity) {
 
             CollectionReference col = dislikeReference.document(post_key).collection("dislike-id");
-            col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+            col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                    numberDislikesInt = querySnapshot.getResult().size();
+                    if (e == null) {
+                        numberDislikesInt = documentSnapshots.size();
 
 
-                    if (numberDislikesInt == 0) {
-                        numberDislikes.setText("");
-                        dislikeBtnImage.setVisibility(View.GONE);
-                    } else {
-                        numberDislikes.setVisibility(View.VISIBLE);
-                        numberDislikes.setText(String.valueOf(numberDislikesInt));
-                        dislikeBtnImage.setVisibility(View.VISIBLE);
+                        if (numberDislikesInt == 0) {
+                            numberDislikes.setText("");
+                            dislikeBtnImage.setVisibility(View.GONE);
+                        } else {
+                            numberDislikes.setVisibility(View.VISIBLE);
+                            numberDislikes.setText(String.valueOf(numberDislikesInt));
+                            dislikeBtnImage.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
-
             });
         }
 
-        public void setNumberComments(String post_key) {
+        public void setNumberComments(String post_key, Activity activity) {
 
-            numberCommentsReference.document(post_key).collection("reply-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            numberCommentsReference.document(post_key).collection("reply-id").addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                    long numberOfComments = task.getResult().size();
+                    if (e == null) {
+                        long numberOfComments = documentSnapshots.size();
 
-                    if (numberOfComments == 0) {
+                        if (numberOfComments == 0) {
 
-                        commentsReplyNumber.setText("");
-                    } else if (numberOfComments == 1) {
+                            commentsReplyNumber.setText("");
+                        } else if (numberOfComments == 1) {
 
-                        commentSomething.setText("Reply");
-                        commentsReplyNumber.setText(String.valueOf(numberOfComments));
-                    } else {
-                        commentSomething.setText("Replies");
-                        commentsReplyNumber.setText(String.valueOf(numberOfComments));
+                            commentSomething.setText("Reply");
+                            commentsReplyNumber.setText(String.valueOf(numberOfComments));
+                        } else {
+                            commentSomething.setText("Replies");
+                            commentsReplyNumber.setText(String.valueOf(numberOfComments));
 
+                        }
                     }
                 }
             });
+
 
         }
     }

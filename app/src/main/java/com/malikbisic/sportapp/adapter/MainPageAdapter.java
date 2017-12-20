@@ -377,7 +377,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                     likesReference.collection("Likes").document(post_key).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
-                        public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
+                        public void onEvent(final DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
                             if (like_process) {
 
 
@@ -415,21 +415,23 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                         @Override
                                         public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
+                                            if (documentSnapshots.exists()) {
 
-                                            String userpostUID = dataSnapshot.getString("uid");
+                                                String userpostUID = dataSnapshot.getString("uid");
 
-                                            Map<String, Object> notifMap = new HashMap<>();
-                                            notifMap.put("action", "liked");
-                                            notifMap.put("uid", uid);
-                                            notifMap.put("seen", false);
-                                            notifMap.put("whatIS", "post");
-                                            notifMap.put("timestamp", FieldValue.serverTimestamp());
-                                            notifMap.put("post_key", post_key);
-                                            if (!userpostUID.equals(uid)) {
-                                                CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
-                                                notifSet.add(notifMap);
+                                                Map<String, Object> notifMap = new HashMap<>();
+                                                notifMap.put("action", "liked");
+                                                notifMap.put("uid", uid);
+                                                notifMap.put("seen", false);
+                                                notifMap.put("whatIS", "post");
+                                                notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                notifMap.put("post_key", post_key);
+                                                if (!userpostUID.equals(uid)) {
+                                                    CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                                    notifSet.add(notifMap);
+                                                }
+
                                             }
-
 
                                             if (e != null) {
                                                 Log.e("likeERROR", e.getLocalizedMessage());
@@ -508,18 +510,20 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                         @Override
                                         public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                            String userpostUID = dataSnapshot.getString("uid");
+                                            if (dataSnapshot.exists()) {
+                                                String userpostUID = dataSnapshot.getString("uid");
 
-                                            Map<String, Object> notifMap = new HashMap<>();
-                                            notifMap.put("action", "disliked");
-                                            notifMap.put("uid", uid);
-                                            notifMap.put("seen", false);
-                                            notifMap.put("whatIS", "post");
-                                            notifMap.put("timestamp", FieldValue.serverTimestamp());
-                                            notifMap.put("post_key", post_key);
-                                            if (!userpostUID.equals(uid)) {
-                                                CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
-                                                notifSet.add(notifMap);
+                                                Map<String, Object> notifMap = new HashMap<>();
+                                                notifMap.put("action", "disliked");
+                                                notifMap.put("uid", uid);
+                                                notifMap.put("seen", false);
+                                                notifMap.put("whatIS", "post");
+                                                notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                notifMap.put("post_key", post_key);
+                                                if (!userpostUID.equals(uid)) {
+                                                    CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                                    notifSet.add(notifMap);
+                                                }
                                             }
 
                                         }
@@ -534,63 +538,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                             }
                         }
                     });
-
-
-                                /*
-                                dislikeReference.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                        if (dislike_process) {
-                                            if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
-
-                                                dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                                dislike_process = false;
-
-
-                                            } else {
-
-                                                DatabaseReference newPost = dislikeReference.child(post_key).child(mAuth.getCurrentUser().getUid());
-
-                                                newPost.child("username").setValue(MainPage.usernameInfo);
-                                                newPost.child("photoProfile").setValue(MainPage.profielImage);
-
-                                                DatabaseReference getIduserpost = postingDatabase;
-                                                getIduserpost.child(post_key).addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        String userpostUID = String.valueOf(dataSnapshot.child("uid").getValue());
-
-                                                        DatabaseReference notifSet = notificationReference.child(userpostUID).push();
-                                                        notifSet.child("action").setValue("disliked");
-                                                        notifSet.child("uid").setValue(uid);
-                                                        notifSet.child("seen").setValue(false);
-                                                        notifSet.child("whatIS").setValue("post");
-                                                        notifSet.child("post_key").setValue(post_key);
-
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-
-                                                    }
-                                                });
-
-
-                                                dislike_process = false;
-
-
-                                            }
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                }); */
-
                 }
             });
 
@@ -706,40 +653,43 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                             for (DocumentSnapshot dataSnapshot1 : dataSnapshot.getDocuments()) {
 
-                                final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
+                                if (dataSnapshot1.exists()) {
 
-                                String usernameFirebase = userInfo.getUsername();
+                                    final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
 
-                                if (username.equals(usernameFirebase)) {
-                                    final String uid = userInfo.getUserID();
-                                    FirebaseUser user1 = mAuth.getCurrentUser();
-                                    String myUID = user1.getUid();
-                                    Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
+                                    String usernameFirebase = userInfo.getUsername();
 
-                                    if (uid.equals(myUID)) {
+                                    if (username.equals(usernameFirebase)) {
+                                        final String uid = userInfo.getUserID();
+                                        FirebaseUser user1 = mAuth.getCurrentUser();
+                                        String myUID = user1.getUid();
+                                        Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
-                                        ProfileFragment profileFragment = new ProfileFragment();
+                                        if (uid.equals(myUID)) {
 
-                                        FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
+                                            ProfileFragment profileFragment = new ProfileFragment();
 
-                                        manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                                R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                        Log.i("tacno", "true");
+                                            FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
 
-                                    } else {
+                                            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                            Log.i("tacno", "true");
 
-                                        DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
+                                        } else {
 
-                                        profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                            DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
+
+                                            profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
 
-                                                Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
-                                                openUserProfile.putExtra("userID", uid);
-                                                activity.startActivity(openUserProfile);
-                                            }
-                                        });
+                                                    Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
+                                                    openUserProfile.putExtra("userID", uid);
+                                                    activity.startActivity(openUserProfile);
+                                                }
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -761,45 +711,47 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                             for (DocumentSnapshot dataSnapshot1 : dataSnapshot.getDocuments()) {
 
-                                final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
+                                if (dataSnapshot1.exists()) {
+                                    final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
 
-                                String usernameFirebase = userInfo.getUsername();
-                                Log.i("usernameFirebase", usernameFirebase);
+                                    String usernameFirebase = userInfo.getUsername();
+                                    Log.i("usernameFirebase", usernameFirebase);
 
-                                if (username.equals(usernameFirebase)) {
-                                    final String uid = userInfo.getUserID();
+                                    if (username.equals(usernameFirebase)) {
+                                        final String uid = userInfo.getUserID();
 
-                                    FirebaseUser user1 = mAuth.getCurrentUser();
-                                    String myUID = user1.getUid();
-                                    Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
+                                        FirebaseUser user1 = mAuth.getCurrentUser();
+                                        String myUID = user1.getUid();
+                                        Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
-                                    if (uid.equals(myUID)) {
+                                        if (uid.equals(myUID)) {
 
-                                        ProfileFragment profileFragment = new ProfileFragment();
+                                            ProfileFragment profileFragment = new ProfileFragment();
 
-                                        FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
+                                            FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
 
-                                        manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                                R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                        Log.i("tacno", "true");
+                                            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                            Log.i("tacno", "true");
 
-                                    } else {
+                                        } else {
 
-                                        DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
+                                            DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
 
-                                        profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                            profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
 
-                                                Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
-                                                openUserProfile.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                                                openUserProfile.putExtra("userID", uid);
-                                                activity.startActivity(openUserProfile);
-                                            }
+                                                    Intent openUserProfile = new Intent(ctx, UserProfileActivity.class);
+                                                    openUserProfile.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                                                    openUserProfile.putExtra("userID", uid);
+                                                    activity.startActivity(openUserProfile);
+                                                }
 
-                                        });
+                                            });
 
+                                        }
                                     }
                                 }
                             }
@@ -978,31 +930,17 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    numberLikes = documentSnapshots.size();
-                    if (numberLikes == 0) {
-                        numberofLikes.setText("");
-                    } else {
-                        numberofLikes.setText(String.valueOf(numberLikes));
+
+                    if (e == null) {
+                        numberLikes = documentSnapshots.size();
+                        if (numberLikes == 0) {
+                            numberofLikes.setText("");
+                        } else {
+                            numberofLikes.setText(String.valueOf(numberLikes));
+                        }
                     }
                 }
             });
-
-
-           /* col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-                    numberLikes = querySnapshot.getResult().size();
-
-
-                    if (numberLikes == 0) {
-                        numberofLikes.setText("");
-                    } else {
-                        numberofLikes.setText(String.valueOf(numberLikes));
-                    }
-                }
-
-            });*/
         }
 
 
@@ -1010,31 +948,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    int numberOfComments = documentSnapshots.getDocuments().size();
 
+                    if (e == null) {
+                        int numberOfComments = documentSnapshots.getDocuments().size();
 
-                    if (numberOfComments == 0) {
-
-                        comments.setVisibility(View.GONE);
-                        numberComments.setText("");
-                    } else if (numberOfComments == 1) {
-
-                        comments.setText("Comment");
-                        numberComments.setText(String.valueOf(numberOfComments));
-                    } else {
-                        comments.setText("Comments");
-                        numberComments.setText(String.valueOf(numberOfComments));
-
-                    }
-                }
-            });
-
-      /*      numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-
-                        int numberOfComments = querySnapshot.getResult().size();
 
                         if (numberOfComments == 0) {
 
@@ -1049,8 +966,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                             numberComments.setText(String.valueOf(numberOfComments));
 
                         }
+                    }
                 }
-            });*/
+            });
         }
 
 
@@ -1085,32 +1003,20 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    numberDislikes = documentSnapshots.getDocuments().size();
+
+                    if (e == null) {
+                        numberDislikes = documentSnapshots.getDocuments().size();
 
 
-                    if (numberDislikes == 0) {
-                        numberOfDislikes.setText("");
-                    } else {
-                        numberOfDislikes.setText(String.valueOf(numberDislikes));
+                        if (numberDislikes == 0) {
+                            numberOfDislikes.setText("");
+                        } else {
+                            numberOfDislikes.setText(String.valueOf(numberDislikes));
+                        }
+
                     }
-
                 }
             });
-            /*     col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-                    numberDislikes = querySnapshot.getResult().size();
-
-
-                    if (numberDislikes == 0) {
-                        numberOfDislikes.setText("");
-                    } else {
-                        numberOfDislikes.setText(String.valueOf(numberDislikes));
-                    }
-                }
-
-            });*/
         }
 
 
