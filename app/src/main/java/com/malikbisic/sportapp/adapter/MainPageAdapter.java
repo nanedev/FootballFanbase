@@ -425,8 +425,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                             notifMap.put("whatIS", "post");
                                             notifMap.put("timestamp", FieldValue.serverTimestamp());
                                             notifMap.put("post_key", post_key);
-                                            CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
-                                            notifSet.add(notifMap);
+                                            if (!userpostUID.equals(uid)) {
+                                                CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                                notifSet.add(notifMap);
+                                            }
 
 
                                             if (e != null) {
@@ -515,8 +517,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                             notifMap.put("whatIS", "post");
                                             notifMap.put("timestamp", FieldValue.serverTimestamp());
                                             notifMap.put("post_key", post_key);
-                                            CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
-                                            notifSet.add(notifMap);
+                                            if (!userpostUID.equals(uid)) {
+                                                CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                                notifSet.add(notifMap);
+                                            }
 
                                         }
 

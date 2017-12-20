@@ -285,8 +285,11 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
                         notifMap.put("whatIS", "reply");
                         notifMap.put("timestamp", FieldValue.serverTimestamp());
                         notifMap.put("post_key", key);
-                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                        notifSet.add(notifMap);
+
+                        if (!userpostUID.equals(auth.getCurrentUser().getUid())) {
+                            CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                            notifSet.add(notifMap);
+                        }
                     }
 
                     if (e != null) {

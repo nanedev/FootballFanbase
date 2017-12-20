@@ -61,6 +61,8 @@ public class BadgeServices extends FirebaseMessagingService {
 
 
 
+
+
     @Override
     public void onMessageReceived(final RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -76,7 +78,7 @@ public class BadgeServices extends FirebaseMessagingService {
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setLargeIcon(getCircleBitmap(bitmap))
 
-               .setContentTitle(remoteMessage.getNotification().getTitle())
+               .setContentTitle("Football fanbase")
              .setContentText(remoteMessage.getNotification().getBody())
                 .setAutoCancel(true)
                 .setSound(defaulSoundUri);
@@ -107,6 +109,7 @@ public class BadgeServices extends FirebaseMessagingService {
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
+
 
     }
 

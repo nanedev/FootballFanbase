@@ -57,12 +57,14 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -112,11 +114,36 @@ public class NotificationFragment extends Fragment {
         FirebaseUser user = auth.getCurrentUser();
         uid = user.getUid();
 
-        notificationRef = FirebaseFirestore.getInstance();
-        query = notificationRef.collection("Notification").document(uid).collection("notif-id").orderBy("timestamp", Query.Direction.ASCENDING);
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -30);
+        Date d = c.getTime();
 
+        Log.i("30 days", String.valueOf(d));
+        long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS);
+        notificationRef = FirebaseFirestore.getInstance();
+        query = notificationRef.collection("Notification").document(uid).collection("notif-id").orderBy("timestamp", Query.Direction.ASCENDING).startAt(d);
+        deleteExpiredNotification();
 
         return view;
+    }
+
+    public void deleteExpiredNotification(){
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -30);
+        Date d = c.getTime();
+        Query notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id").orderBy("timestamp", Query.Direction.ASCENDING).endBefore(d);
+        notif.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (DocumentSnapshot snapshot : task.getResult()){
+                    String id = snapshot.getId();
+
+                    DocumentReference doc = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id").document(id);
+                    doc.delete();
+                }
+            }
+        });
     }
 
     @Override
@@ -390,10 +417,11 @@ public class NotificationFragment extends Fragment {
 
 
                         CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
-                        notif.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        notif.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
-                            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                                for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                for (DocumentSnapshot snapshot : task.getResult()) {
                                     String docID = snapshot.getId();
 
                                     DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
@@ -416,21 +444,6 @@ public class NotificationFragment extends Fragment {
                             }
                         });
 
-                            /*
-                            notif.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-
-                                    if (task.isSuccessful()) {
-
-                                    }
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-
-                                }
-                            });*/
                     } else if (items[which].equals("Cancel")) {
 
                     }

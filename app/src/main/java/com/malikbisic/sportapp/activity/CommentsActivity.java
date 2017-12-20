@@ -334,8 +334,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                                 notifMap.put("whatIS", "comment");
                                                 notifMap.put("post_key", key);
                                                 notifMap.put("timestamp", FieldValue.serverTimestamp());
-                                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                                                notifSet.add(notifMap);
+
+                                                if (!userpostUID.equals(uid)) {
+                                                    CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                                                    notifSet.add(notifMap);
+                                                }
 
 
                                                 if (e != null) {
@@ -411,8 +414,10 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                                 notifMap.put("whatIS", "comment");
                                                 notifMap.put("post_key", key);
                                                 notifMap.put("timestamp", FieldValue.serverTimestamp());
-                                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                                                notifSet.add(notifMap);
+                                                if (!userpostUID.equals(uid)) {
+                                                    CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                                                    notifSet.add(notifMap);
+                                                }
 
                                             }
 
@@ -577,8 +582,10 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                         notifMap.put("whatIS", "post");
                         notifMap.put("post_key", key);
                         notifMap.put("timestamp", FieldValue.serverTimestamp());
-                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                        notifSet.add(notifMap);
+                        if (!userpostUID.equals(auth.getCurrentUser().getUid())) {
+                            CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                            notifSet.add(notifMap);
+                        }
                     }
 
                     if (e != null) {
