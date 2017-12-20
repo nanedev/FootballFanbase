@@ -136,6 +136,8 @@ ArrayList<Post> postList = new ArrayList<>();
     TextView notificationCounterNumber;
     CollectionReference notificationReference;
 
+    RelativeLayout rowLAyout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,7 +196,7 @@ ArrayList<Post> postList = new ArrayList<>();
         mDatabase = FirebaseDatabase.getInstance();
         likesReference = mReference.collection("Likes");
         dislikeReference = mReference.collection("Dislikes");
-
+rowLAyout = (RelativeLayout) findViewById(R.id.row_layout_relative_notif);
 
         retrieveDataPost();
 
@@ -582,9 +584,13 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                                                             postingDatabaseProfile.collection("Posting").document(key).delete().addOnSuccessListener(SinglePostViewNotificationActivity.this, new OnSuccessListener<Void>() {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
+                                                                    Toast.makeText(SinglePostViewNotificationActivity.this, "Post deleted", Toast.LENGTH_LONG).show();
+                                                                    rowLAyout.setVisibility(View.GONE);
+                                                                    Intent intent = new Intent(SinglePostViewNotificationActivity.this,MainPage.class);
+                                                                    startActivity(intent);
+                                                                    finish();
 
 
-                                                                    Toast.makeText(SinglePostViewNotificationActivity.this, "deleted", Toast.LENGTH_LONG).show();
 
                                                                 }
                                                             }).addOnFailureListener(new OnFailureListener() {
@@ -593,6 +599,8 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                                                                     Toast.makeText(SinglePostViewNotificationActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
                                                                 }
                                                             });
+
+
                                                         } else if (items[i].equals("Cancel")) {
 
 
@@ -849,6 +857,7 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
     public void setDesc(String desc) {
         if (desc != null) {
             TextView single_post = (TextView) findViewById(R.id.post_text_main_pageSinglePost);
+            rowLAyout.setVisibility(View.VISIBLE);
             single_post_layout.setVisibility(View.VISIBLE);
             single_post.setText(desc);
         } else {
@@ -861,6 +870,7 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
 
         TextView post_desc_for_audio = (TextView) findViewById(R.id.audio_textviewSinglePost);
         if (descForAudio != null) {
+            rowLAyout.setVisibility(View.VISIBLE);
             layoutAudioText.setVisibility(View.VISIBLE);
             post_desc_for_audio.setText(descForAudio);
         } else {
@@ -874,6 +884,7 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
         TextView post_desc_for_photo = (TextView) findViewById(R.id.text_for_imageSinglePost);
 
         if (descForPhoto != null) {
+            rowLAyout.setVisibility(View.VISIBLE);
             layoutPhotoText.setVisibility(View.VISIBLE);
             post_desc_for_photo.setText(descForPhoto);
         } else {
@@ -885,6 +896,7 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
         TextView post_desc_for_video = (TextView) findViewById(R.id.text_for_videoSinglePost);
 
         if (descVideo != null) {
+            rowLAyout.setVisibility(View.VISIBLE);
             layoutVideoText.setVisibility(View.VISIBLE);
             post_desc_for_video.setText(descVideo);
         } else {
@@ -944,6 +956,7 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
     public void setPhotoPost(Context ctx, String photoPost) {
 
         if (photoPost != null) {
+            rowLAyout.setVisibility(View.VISIBLE);
             layoutPhoto.setVisibility(View.VISIBLE);
 
             Glide.with(ctx)
@@ -982,6 +995,7 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
 
 
         if (videoPost != null) {
+            rowLAyout.setVisibility(View.VISIBLE);
 
             try {
 
@@ -1001,6 +1015,7 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
     public void setAudioFile(Context context, String audioFile) {
 
         if (audioFile != null) {
+            rowLAyout.setVisibility(View.VISIBLE);
             mPlayer.reset();
             audioLayout.setVisibility(View.VISIBLE);
             try {
