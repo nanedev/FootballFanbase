@@ -822,7 +822,6 @@ public class MainPage extends AppCompatActivity
                     size = querySnapshot.size();
 
 
-
                 }
             }
 
@@ -832,7 +831,6 @@ public class MainPage extends AppCompatActivity
 
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
-
 
 
         CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
@@ -906,7 +904,6 @@ public class MainPage extends AppCompatActivity
         launcerCounter();
 
 
-
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
 
@@ -945,7 +942,6 @@ public class MainPage extends AppCompatActivity
                                     premiumUsersLoadMore();
 
 
-
                                 }
                             }, 5000);
 
@@ -956,15 +952,10 @@ public class MainPage extends AppCompatActivity
                         @Override
                         public void onRefresh() {
 
-
-                            EndlessRecyclerViewScrollListener.previousTotal = 0;
                             itemSize.clear();
                             loadPremium();
-
-
                         }
                     });
-
 
 
                 } else {
@@ -977,10 +968,7 @@ public class MainPage extends AppCompatActivity
         firstTimeOpened = false;
 
 
-
     }
-
-
 
 
     public void premiumUsersLoadMore() {
@@ -1021,6 +1009,8 @@ public class MainPage extends AppCompatActivity
 
                                     if (prevItemVisible.getId().equals(lastVisible.getId())) {
                                         adapter.isFullLoaded(true);
+                                    } else {
+                                        adapter.isFullLoaded(false);
                                     }
 
 
@@ -1031,7 +1021,6 @@ public class MainPage extends AppCompatActivity
                         }
 
                     });
-
 
 
                     Log.i("itemCount loadmore", String.valueOf(linearLayoutManager.findLastVisibleItemPosition()));

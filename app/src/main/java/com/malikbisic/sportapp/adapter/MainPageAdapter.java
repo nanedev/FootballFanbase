@@ -159,8 +159,13 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     lastVisibleItem = llm.findLastVisibleItemPosition();
                     totalItemCount = llm.getItemCount();
 
+                    Log.i("paginacijaLASTVISIBLE", String.valueOf(lastVisibleItem));
+                    Log.i("paginacijaTOTAL", String.valueOf(totalItemCount));
+                    Log.i("paginacijaIsLOADING", String.valueOf(isLoading));
+                    Log.i("paginacijaIsAllLoading", String.valueOf(isAllLoaded));
 
-                    if(!isLoading  && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded)
+
+                    if(!isLoading  && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded && lastVisibleItem >= 9)
                     {
                         if(onLoadMoreListener != null)
                         {
@@ -763,7 +768,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         } else if (getViewType == ITEM_LOADING) {
 
 
-            if (isLoading && !isAllLoaded) {
+            if (isLoading && !isAllLoaded && lastVisibleItem >= 9) {
 
                 ((ProgressViewHolder) holder).progressBar.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.spinnerLoad),
                         android.graphics.PorterDuff.Mode.MULTIPLY);
