@@ -706,11 +706,6 @@ public class MainPage extends AppCompatActivity
                     replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag())
                     .addToBackStack(MainPage.class.getName())
                     .commit();
-        } else if (id == R.id.nav_news) {
-
-            Intent openNEWS = new Intent(MainPage.this, NewsActivity.class);
-            startActivity(openNEWS);
-
         } else if (id == R.id.nav_message) {
 
             Intent intent = new Intent(MainPage.this, ChatActivity.class);
