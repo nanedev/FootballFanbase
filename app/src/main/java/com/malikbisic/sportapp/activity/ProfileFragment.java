@@ -50,11 +50,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -89,7 +92,7 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileFragment extends Fragment implements View.OnKeyListener{
+public class ProfileFragment extends Fragment implements View.OnKeyListener {
 
     private ImageView profile;
     private ImageView flag;
@@ -142,6 +145,11 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
     boolean checkOpenActivity;
     DocumentReference mReference2;
 
+    TextView userPointsTextView;
+    int numberLikes;
+    int numberDisliks;
+    int totalLikes, totalDislikes, pointsTotal;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -185,6 +193,8 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
         birthday = (TextView) view.findViewById(R.id.user_date);
         country = (TextView) view.findViewById(R.id.user_country);
         club = (TextView) view.findViewById(R.id.user_club);
+        userPointsTextView = (TextView) view.findViewById(R.id.user_points_textview);
+        usersPoint(getActivity());
 
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
 
@@ -233,73 +243,73 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener{
             mReference2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
-if (dataSnapshot.exists()) {
-    Map<String, Object> value = dataSnapshot.getData();
+                    if (dataSnapshot.exists()) {
+                        Map<String, Object> value = dataSnapshot.getData();
 
 
-    profileImage = String.valueOf(value.get("profileImage"));
-    Picasso.with(getActivity())
-            .load(profileImage)
-            .networkPolicy(NetworkPolicy.OFFLINE)
-            .into(profile, new Callback() {
-                @Override
-                public void onSuccess() {
-                    loadProfile_image.setVisibility(View.GONE);
-                }
+                        profileImage = String.valueOf(value.get("profileImage"));
+                        Picasso.with(getActivity())
+                                .load(profileImage)
+                                .networkPolicy(NetworkPolicy.OFFLINE)
+                                .into(profile, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        loadProfile_image.setVisibility(View.GONE);
+                                    }
 
-                @Override
-                public void onError() {
+                                    @Override
+                                    public void onError() {
 
-                }
-            });
+                                    }
+                                });
 
-    name = value.get("name") + " " + value.get("surname");
+                        name = value.get("name") + " " + value.get("surname");
 //                name_surname.setText(name);
-    username.setText(String.valueOf(value.get("username")));
-    gender.setText(String.valueOf(value.get("gender")));
-    if (String.valueOf(value.get("gender")).equals("Male")) {
-        genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
-    } else if (String.valueOf(value.get("gender")).equals("Female")) {
-        genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
-    }
+                        username.setText(String.valueOf(value.get("username")));
+                        gender.setText(String.valueOf(value.get("gender")));
+                        if (String.valueOf(value.get("gender")).equals("Male")) {
+                            genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                            genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
+                        } else if (String.valueOf(value.get("gender")).equals("Female")) {
+                            genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                            genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
+                        }
 
 
-    birthday.setText(String.valueOf(value.get("date")));
-    club.setText(String.valueOf(value.get("favoriteClub")));
+                        birthday.setText(String.valueOf(value.get("date")));
+                        club.setText(String.valueOf(value.get("favoriteClub")));
 
 
-    flagImageFirebase = String.valueOf(value.get("flag"));
-    Log.i("flag uri", flagImageFirebase);
+                        flagImageFirebase = String.valueOf(value.get("flag"));
+                        Log.i("flag uri", flagImageFirebase);
 
-    clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
+                        clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
 
-    flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-    logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-    GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+                        flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
-    requestBuilder = Glide
-            .with(getActivity())
-            .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
-            .from(Uri.class)
-            .as(SVG.class)
-            .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-            .sourceEncoder(new StreamEncoder())
-            .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
-            .decoder(new SearchableCountry.SvgDecoder())
-            .animate(android.R.anim.fade_in);
-
-
-    Uri uri = Uri.parse(flagImageFirebase);
-    requestBuilder
-            // SVG cannot be serialized so it's not worth to cache it
-            .diskCacheStrategy(SOURCE)
-            .load(uri)
-            .into(flag);
+                        requestBuilder = Glide
+                                .with(getActivity())
+                                .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
+                                .from(Uri.class)
+                                .as(SVG.class)
+                                .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                                .sourceEncoder(new StreamEncoder())
+                                .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                                .decoder(new SearchableCountry.SvgDecoder())
+                                .animate(android.R.anim.fade_in);
 
 
-    Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
+                        Uri uri = Uri.parse(flagImageFirebase);
+                        requestBuilder
+                                // SVG cannot be serialized so it's not worth to cache it
+                                .diskCacheStrategy(SOURCE)
+                                .load(uri)
+                                .into(flag);
+
+
+                        Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
 
                                /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
@@ -321,18 +331,17 @@ if (dataSnapshot.exists()) {
                             }
                         });*/
 
-    country.setText(String.valueOf(value.get("country")));
+                        country.setText(String.valueOf(value.get("country")));
 
-}
+                    }
                 }
             });
         }
 
-            return view;
-
-        }
+        return view;
 
 
+    }
 
 
     Calendar myCalendar = Calendar.getInstance();
@@ -360,6 +369,68 @@ if (dataSnapshot.exists()) {
         }
 
     };
+
+
+    public void usersPoint(final Activity activity) {
+
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
+        usersPost.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                if (e == null) {
+
+                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+                        final String postID = snapshot.getId();
+
+                        Log.i("postID", postID);
+
+                        CollectionReference likeNumber = db.collection("Likes").document(postID).collection("like-id");
+                        likeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                                if (e == null) {
+                                    numberLikes = documentSnapshots.size();
+                                    totalLikes += numberLikes;
+
+                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("like-id");
+                                    dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                                            if (e == null) {
+                                                numberDisliks = documentSnapshots.size();
+                                                totalDislikes += numberDisliks;
+
+
+                                            }
+                                        }
+
+                                    });
+
+                                    pointsTotal = totalLikes - totalDislikes;
+                                    if (pointsTotal >= 0) {
+                                        userPointsTextView.setText(String.valueOf(pointsTotal));
+                                    }
+
+
+                                }
+                            }
+
+                        });
+
+
+
+                    }
+
+
+                }
+            }
+        });
+
+    }
 
     private void updateLabel() {
 
@@ -401,11 +472,9 @@ if (dataSnapshot.exists()) {
                             .compressToBitmap(imagePath);
 
 
-
-
                     Picasso.with(getActivity()).load(String.valueOf(imageCompressBitmap))
                             .networkPolicy(NetworkPolicy.OFFLINE)
-                           .resize(300,300)
+                            .resize(300, 300)
                             .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
                             .into(profile);
                     profileImageUpdate = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
@@ -433,7 +502,9 @@ if (dataSnapshot.exists()) {
                                 postingImageUpdate.update(updateProfile);
                                 hasSetProfileImage = true;
 
-                            }}});
+                            }
+                        }
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -444,7 +515,6 @@ if (dataSnapshot.exists()) {
             }
 
         }
-
 
 
     }
@@ -485,8 +555,8 @@ if (dataSnapshot.exists()) {
 
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                String cameback="CameBack";
-                Intent intent = new Intent(getActivity(),MainPage.class);
+                String cameback = "CameBack";
+                Intent intent = new Intent(getActivity(), MainPage.class);
                 startActivity(intent);
                 return true;
         }
