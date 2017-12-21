@@ -395,7 +395,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                                     numberLikes = documentSnapshots.size();
                                     totalLikes += numberLikes;
 
-                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("like-id");
+                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
                                     dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                                         @Override
                                         public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -404,16 +404,18 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                                                 numberDisliks = documentSnapshots.size();
                                                 totalDislikes += numberDisliks;
 
+                                                pointsTotal = totalLikes - totalDislikes;
+                                                if (pointsTotal >= 0) {
+                                                    userPointsTextView.setText(String.valueOf(pointsTotal));
+                                                }
+
+
 
                                             }
                                         }
 
                                     });
 
-                                    pointsTotal = totalLikes - totalDislikes;
-                                    if (pointsTotal >= 0) {
-                                        userPointsTextView.setText(String.valueOf(pointsTotal));
-                                    }
 
 
                                 }

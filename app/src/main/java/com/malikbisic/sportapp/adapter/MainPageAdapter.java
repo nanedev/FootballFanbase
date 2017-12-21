@@ -720,7 +720,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                     final UsersModel userInfo = dataSnapshot1.toObject(UsersModel.class);
 
                                     String usernameFirebase = userInfo.getUsername();
-                                    Log.i("usernameFirebase", usernameFirebase);
+
 
                                     if (username.equals(usernameFirebase)) {
                                         final String uid = userInfo.getUserID();

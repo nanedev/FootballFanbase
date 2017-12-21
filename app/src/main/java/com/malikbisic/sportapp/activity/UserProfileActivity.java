@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -33,10 +34,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -109,6 +113,11 @@ ImageView genderImageUser;
     UserProfileAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
 
+    TextView userPointsTextView;
+    int numberLikes;
+    int numberDisliks;
+    int totalLikes, totalDislikes, pointsTotal;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,6 +152,8 @@ ImageView genderImageUser;
         dialog = new ProgressDialog(this);
         loadProfile_image = (ProgressBar) findViewById(R.id.loadingProfileImageProgressBarUser);;
         minAdultAge = new GregorianCalendar();
+        userPointsTextView = (TextView) findViewById(R.id.user_points_textview);
+        usersPoint(UserProfileActivity.this);
 
 
         rec = (RecyclerView) findViewById(R.id.hhhhhhUser);
@@ -237,6 +248,70 @@ ImageView genderImageUser;
 
 
     }
+
+    public void usersPoint(final Activity activity) {
+
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
+        usersPost.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                if (e == null) {
+
+                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+                        final String postID = snapshot.getId();
+
+                        Log.i("postID", postID);
+
+                        CollectionReference likeNumber = db.collection("Likes").document(postID).collection("like-id");
+                        likeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                                if (e == null) {
+                                    numberLikes = documentSnapshots.size();
+                                    totalLikes += numberLikes;
+
+                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
+                                    dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                                            if (e == null) {
+                                                numberDisliks = documentSnapshots.size();
+                                                totalDislikes += numberDisliks;
+
+                                                pointsTotal = totalLikes - totalDislikes;
+                                                if (pointsTotal >= 0) {
+                                                    userPointsTextView.setText(String.valueOf(pointsTotal));
+                                                }
+
+
+
+                                            }
+                                        }
+
+                                    });
+
+
+
+                                }
+                            }
+
+                        });
+
+
+
+                    }
+
+
+                }
+            }
+        });
+
+    }
+
 
     public void backgroundImage() {
 
