@@ -21,6 +21,8 @@
     <color name="checkGender">#0d3b01</color>
     <color name="notifnotSeen">#D7D7D7</color>
     <color name="spinnerLoad">#FFFFFF</color>
+    <color name="toolbarTransparent">#00FFFFFF</color>
+
 
 
 

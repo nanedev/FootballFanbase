@@ -5,10 +5,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.malikbisic.sportapp.R;
 import com.squareup.picasso.Picasso;
 
@@ -28,6 +30,7 @@ public class LivescoreMatchInfo extends AppCompatActivity {
     ImageView localTeamLogo;
     ImageView visitorTeamLogo;
     TextView scoreText;
+    String date;
 
     String fixturesID;
     int localTeamId;
@@ -35,6 +38,8 @@ public class LivescoreMatchInfo extends AppCompatActivity {
 
     Intent myIntent;
     Bundle bundle;
+
+    Toolbar matchInfoToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,10 @@ public class LivescoreMatchInfo extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.setCurrentItem(mViewPager.getCurrentItem());
         myIntent = getIntent();
+        matchInfoToolbar = (Toolbar) findViewById(R.id.def_toolbar);
+        setSupportActionBar(matchInfoToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         localTeam = (TextView) findViewById(R.id.localTeamNameMatchInfo);
         localTeamLogo = (ImageView) findViewById(R.id.localTeamLogoMatchInfo);
@@ -65,6 +74,7 @@ public class LivescoreMatchInfo extends AppCompatActivity {
         String score = myIntent.getStringExtra("score");
         String status = myIntent.getStringExtra("status");
         fixturesID = myIntent.getStringExtra("idFixtures");
+        date = myIntent.getStringExtra("dateMatch");
         localTeamId = myIntent.getIntExtra("localTeamId", 0);
         visitorTeamId = myIntent.getIntExtra("visitorTeamId", 0);
         bundle = new Bundle();
@@ -116,8 +126,8 @@ public class LivescoreMatchInfo extends AppCompatActivity {
                 startActivity(aboutCLub);
             }
         });
-        Picasso.with(this).load(homeTeamLogo).into(localTeamLogo);
-        Picasso.with(this).load(awayTeamLogo).into(visitorTeamLogo);
+        Glide.with(this).load(homeTeamLogo).into(localTeamLogo);
+        Glide.with(this).load(awayTeamLogo).into(visitorTeamLogo);
 
         if (status.equals("LIVE") || status.equals("HT") || status.equals("FT")){
             scoreText.setText(score);
@@ -126,12 +136,26 @@ public class LivescoreMatchInfo extends AppCompatActivity {
         }
         try {
             String dateStr = startTimeS;
-            SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+            SimpleDateFormat df = new SimpleDateFormat("HH:mm");
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date date2 = df.parse(dateStr);
             df.setTimeZone(TimeZone.getDefault());
             String formattedDate = df.format(date2);
-            startTime.setText(formattedDate);
+
+            String mytime = date;
+            SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    "yyyy-MM-dd");
+            Date myDate = null;
+            try {
+                myDate = dateFormat.parse(mytime);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            SimpleDateFormat timeFormat = new SimpleDateFormat("dd MMM");
+            String finalDate = timeFormat.format(myDate);
+            startTime.setText(finalDate + ", " + formattedDate);
 
 
         } catch (ParseException e) {

@@ -8,88 +8,127 @@
 
 
     <RelativeLayout
+        android:id="@+id/relativeLayout2"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="170dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="#323232"
-        android:id="@+id/relativeLayout2">
+        android:background="@drawable/stadium">
 
-        <ImageView
-            android:id="@+id/localTeamLogoMatchInfo"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_above="@+id/visitorTeamNameMatchInfo"
-            android:layout_alignEnd="@+id/localTeamNameMatchInfo"
-            android:layout_alignRight="@+id/localTeamNameMatchInfo"
-            android:layout_marginBottom="13dp"
-            app:srcCompat="@drawable/belgium" />
-
-        <TextView
-            android:id="@+id/localTeamNameMatchInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="30dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginStart="12dp"
-            android:text="Belgium"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/localTeamLogoMatchInfo"
-            android:layout_centerHorizontal="true"
-            android:text="- : -"
-            android:textColor="@color/white"
-            android:textSize="30dp" />
-
-        <ImageView
-            android:id="@+id/visitorTeamLogoMatchInfo"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignLeft="@+id/visitorTeamNameMatchInfo"
-            android:layout_alignStart="@+id/visitorTeamNameMatchInfo"
-            android:layout_alignTop="@+id/localTeamLogoMatchInfo"
-            android:layout_marginLeft="14dp"
-            android:layout_marginStart="14dp"
-            app:srcCompat="@drawable/bihflag" />
-
-        <TextView
-            android:id="@+id/visitorTeamNameMatchInfo"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/localTeamNameMatchInfo"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:text="Chelsea"
-            android:textColor="@color/white" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/def_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/toolbarTransparent"
+            android:minHeight="?attr/actionBarSize" />
 
         <TextView
             android:id="@+id/leagueNameMatchInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/visitorTeamLogoMatchInfo"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/def_toolbar"
+            android:gravity="center"
             android:text="TextView"
             android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/timeStartMatchInfo"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/leagueNameMatchInfo"
-            android:layout_alignStart="@+id/leagueNameMatchInfo"
-            android:layout_below="@+id/visitorTeamNameMatchInfo"
-            android:layout_marginLeft="10dp"
-            android:gravity="center_horizontal"
-            android:text="TextView"
-            android:textColor="@color/white" />
+            android:orientation="horizontal"
+            android:id="@+id/clubLogoLayout"
+            android:layout_below="@id/leagueNameMatchInfo">
+
+            <ImageView
+                android:id="@+id/localTeamLogoMatchInfo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/belgium" />
+
+            <TextView
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/visitorTeamNameMatchInfo"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="- : -"
+                android:textColor="@color/white"
+                android:textSize="30dp" />
+
+            <ImageView
+                android:id="@+id/visitorTeamLogoMatchInfo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/localTeamLogoMatchInfo"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/bihflag" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/clubNameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/clubLogoLayout"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/localTeamNameMatchInfo"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/localTeamLogoMatchInfo"
+                android:layout_alignStart="@+id/localTeamLogoMatchInfo"
+                android:layout_below="@+id/localTeamLogoMatchInfo"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:lines="2"
+                android:text="Belgium"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/timeStartMatchInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="11dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="TextView"
+                android:textColor="@color/white" />
+
+
+            <TextView
+                android:id="@+id/visitorTeamNameMatchInfo"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:lines="2"
+                android:text="Chelsea"
+                android:textColor="@color/white" />
+
+
+        </LinearLayout>
+
+
+
     </RelativeLayout>
 
     <RelativeLayout

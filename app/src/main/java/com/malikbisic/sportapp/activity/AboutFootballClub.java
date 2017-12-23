@@ -117,6 +117,16 @@ public class AboutFootballClub extends AppCompatActivity  {
 
                     nameCounry = getData.getString("name");
 
+                    if (nameCounry.equals("England")){
+                        flagImageView.setImageDrawable(getResources().getDrawable(R.drawable.england));
+                    } else if (nameCounry.equals("Northern Ireland")){
+                        flagImageView.setImageDrawable(getResources().getDrawable(R.drawable.northern_ireland));
+                    } else if (nameCounry.equals("Scotland")){
+                        flagImageView.setImageDrawable(getResources().getDrawable(R.drawable.scotland));
+                    } else if (nameCounry.equals("Wales")){
+                        flagImageView.setImageDrawable(getResources().getDrawable(R.drawable.welsh_flag));
+                    }
+
                     System.out.println("country name" + nameCounry);
                     String countryURL = "https://restcountries.eu/rest/v2/name/" + nameCounry;
 

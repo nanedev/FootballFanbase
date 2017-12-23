@@ -45,6 +45,9 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
   String countryName;
     SelectLeagueAdapter adapterLeague;
     SearchView mSearchView;
+    JSONObject extra;
+    int currentPage = 1;
+    LinearLayoutManager linearLayoutManager;
     public FragmentAllMatches() {
         // Required empty public constructor
     }
@@ -56,11 +59,12 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
         View view = inflater.inflate(R.layout.fragment_all_matches,container,false);
         selectLeagueRecyclerView = (RecyclerView) view.findViewById(R.id.search_league_recyclerview);
         selectLeaguelist = new ArrayList<>();
-        adapterLeague = new SelectLeagueAdapter(selectLeaguelist, view.getContext(), getActivity());
+        adapterLeague = new SelectLeagueAdapter(selectLeaguelist, view.getContext(), getActivity(), selectLeagueRecyclerView);
         selectLeagueRecyclerView.setAdapter(adapterLeague);
-        selectLeagueRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mSearchView = (SearchView) view.findViewById(R.id.search_for_league);
 
+        mSearchView = (SearchView) view.findViewById(R.id.search_for_league);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        selectLeagueRecyclerView.setLayoutManager(linearLayoutManager);
         setupSearchView();
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -83,8 +87,9 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
 
                     }
                 }
-                selectLeagueRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                adapterLeague = new SelectLeagueAdapter(newList, getActivity().getApplicationContext(), getActivity());
+
+                selectLeagueRecyclerView.setLayoutManager(linearLayoutManager);
+                adapterLeague = new SelectLeagueAdapter(newList, getActivity().getApplicationContext(), getActivity(), selectLeagueRecyclerView);
                 selectLeagueRecyclerView.setAdapter(adapterLeague);
                 adapterLeague.notifyDataSetChanged();
 
@@ -94,8 +99,21 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
 
             }
         });
+        loadData();
 
-        final String url = URL_BASE + URL_APIKEY + "&include=leagues";
+        adapterLeague.setOnLoadMore(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                currentPage++;
+                loadData();
+
+            }
+        });
+        return view;
+    }
+
+    public void loadData(){
+        final String url = URL_BASE + URL_APIKEY + "&include=leagues" + "&page=" + currentPage;
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -108,29 +126,33 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
 
                         JSONObject objectCountry = arrayCountry.getJSONObject(i);
 
-                   countryName    = objectCountry.getString("name");
+                        countryName    = objectCountry.getString("name");
                         String countryID = objectCountry.getString("id");
 
-                       JSONObject jsonObject = objectCountry.getJSONObject("leagues");
+                        JSONObject jsonObject = objectCountry.getJSONObject("leagues");
 
-                        JSONObject extra = objectCountry.getJSONObject("extra");
 
-                        String flag = extra.getString("flag");
 
-                       JSONArray jsonArray = jsonObject.getJSONArray("data");
 
-                       for (int j = 0; j < jsonArray.length(); j++) {
+                        JSONArray jsonArray = jsonObject.getJSONArray("data");
 
-                      JSONObject obj = jsonArray.getJSONObject(j);
+                        if (jsonArray.length() == 0){
+                            leagueName = "";
+                        }
 
-                           currentSeason = obj.getInt("current_season_id");
-                           leagueName = obj.getString("name");
-                       }
+                        for (int j = 0; j < jsonArray.length(); j++) {
+
+                            JSONObject obj = jsonArray.getJSONObject(j);
+
+                            currentSeason = obj.getInt("current_season_id");
+                            leagueName = obj.getString("name");
+                        }
 
                         LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName);
                         selectLeaguelist.add(model);
                         adapterLeague.notifyDataSetChanged();
-                       }
+                        adapterLeague.setIsLoading(false);
+                    }
 
                 } catch (JSONException e) {
                     Log.e("Excpetion JSON", "Err: " + e.getLocalizedMessage());
@@ -145,9 +167,6 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
         });
 
         Volley.newRequestQueue(getActivity()).add(request);
-
-
-        return view;
     }
 
     private void setupSearchView() {
