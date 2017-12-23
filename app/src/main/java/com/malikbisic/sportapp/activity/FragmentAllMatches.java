@@ -35,12 +35,14 @@ import java.util.ArrayList;
  * A simple {@link Fragment} subclass.
  */
 public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTextListener {
-    final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/leagues";
+    final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/countries";
     final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
 
     RecyclerView selectLeagueRecyclerView;
     ArrayList<LeagueModel> selectLeaguelist;
-
+    String leagueName;
+    int currentSeason;
+  String countryName;
     SelectLeagueAdapter adapterLeague;
     SearchView mSearchView;
     public FragmentAllMatches() {
@@ -93,58 +95,42 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
             }
         });
 
-        final String url = URL_BASE + URL_APIKEY;
+        final String url = URL_BASE + URL_APIKEY + "&include=leagues";
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(final JSONObject response) {
 
                 try {
-                    final JSONArray arrayLeague = response.getJSONArray("data");
+                    final JSONArray arrayCountry = response.getJSONArray("data");
 
-                    for (int i = 0; i < arrayLeague.length(); i++) {
+                    for (int i = 0; i < arrayCountry.length(); i++) {
 
-                        JSONObject objectLeague = arrayLeague.getJSONObject(i);
+                        JSONObject objectCountry = arrayCountry.getJSONObject(i);
 
-                        final String leagueName = objectLeague.getString("name");
-                        final String current_season_id = objectLeague.getString("current_season_id");
-                        String countryID = objectLeague.getString("country_id");
+                   countryName    = objectCountry.getString("name");
+                        String countryID = objectCountry.getString("id");
 
-                        String urlCountry = "https://soccer.sportmonks.com/api/v2.0/countries/"+countryID+URL_APIKEY;
+                       JSONObject jsonObject = objectCountry.getJSONObject("leagues");
 
-                        JsonObjectRequest requestCountry = new JsonObjectRequest(Request.Method.GET, urlCountry, null, new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response2) {
+                        JSONObject extra = objectCountry.getJSONObject("extra");
 
-                                try {
-                                    JSONObject countryObject = response2.getJSONObject("data");
+                        String flag = extra.getString("flag");
 
+                       JSONArray jsonArray = jsonObject.getJSONArray("data");
 
-                                    String countryName = countryObject.getString("name");
+                       for (int j = 0; j < jsonArray.length(); j++) {
 
-                                    LeagueModel model = new LeagueModel(leagueName, current_season_id, countryName);
-                                    selectLeaguelist.add(model);
-                                    adapterLeague.notifyDataSetChanged();
+                      JSONObject obj = jsonArray.getJSONObject(j);
 
+                           currentSeason = obj.getInt("current_season_id");
+                           leagueName = obj.getString("name");
+                       }
 
-                                } catch (JSONException e) {
-                                    Log.e("countryError", e.getLocalizedMessage());
-                                }
-
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-
-                            }
-                        });
-
-                        Volley.newRequestQueue(getActivity()).add(requestCountry);
-
-
-
-
-                    }
+                        LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName);
+                        selectLeaguelist.add(model);
+                        adapterLeague.notifyDataSetChanged();
+                       }
 
                 } catch (JSONException e) {
                     Log.e("Excpetion JSON", "Err: " + e.getLocalizedMessage());
@@ -197,13 +183,19 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
             vm = itemView;
             leagueName = (TextView) vm.findViewById(R.id.leagueNameInMatches);
             countryName = (TextView) vm.findViewById(R.id.countryNameInMatches);
+            vm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
             this.leagues = leagues;
         }
 
         public void updateUI(LeagueModel model){
 
             leagueName.setText(model.getName());
-            countryName.setText(model.getCountry_name());
+            countryName.setText(model.getCountry_name() + ":");
 
             Log.i("country: ", model.getCountry_name() + " , league: " + model.getName());
 

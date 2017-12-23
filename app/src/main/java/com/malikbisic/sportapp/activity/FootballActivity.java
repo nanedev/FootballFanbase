@@ -1,29 +1,13 @@
 package com.malikbisic.sportapp.activity;
 
 import android.content.Intent;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
 
 import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.adapter.ClubNameChatAdapter;
 
 public class FootballActivity extends AppCompatActivity {
     private ViewPager mViewPager;
@@ -50,9 +34,9 @@ public class FootballActivity extends AppCompatActivity {
     }
     private void setUpViewPager(ViewPager viewPager){
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new FragmentAllMatches(),"All matches");
-        adapter.addFragment(new FragmentMyClubMatches(),"My club matches");
-        adapter.addFragment(new FragmentAllFixtures(), "All fixtures");
+        adapter.addFragment(new FragmentAllMatches(),"League");
+        adapter.addFragment(new FragmentMyClubMatches(),"Live");
+        adapter.addFragment(new FragmentAllFixtures(), "Fixtures");
         viewPager.setAdapter(adapter);
 
     }

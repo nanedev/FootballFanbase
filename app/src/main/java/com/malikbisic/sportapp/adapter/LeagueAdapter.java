@@ -46,32 +46,16 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
     public void onBindViewHolder(final SelectLeagueActivity.LeagueViewHolder holder, int position) {
         final LeagueModel leagueModel = leagueModelArrayList.get(position);
         holder.updateUI(leagueModel);
-
-        holder.leagueName.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 Intent openClub = new Intent(ctx, SelectClubActivity.class);
                 openClub.putExtra("leagueID", leagueModel.getCurrent_season_id());
-                activity.startActivityForResult(openClub, OPEN_CLUB);
+             activity.startActivity(openClub);
             }
         });
 
-        holder.countryName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-
-
-                if (isOpened){
-                    holder.leagueName.setVisibility(View.GONE);
-                    isOpened = false;
-                } else {
-                    holder.leagueName.setVisibility(View.VISIBLE);
-                    isOpened = true;
-                }
-
-            }
-        });
     }
 
 
