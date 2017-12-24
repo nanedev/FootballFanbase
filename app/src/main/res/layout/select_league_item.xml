@@ -6,15 +6,31 @@
     app:cardBackgroundColor="#fff">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:id="@+id/containerinleaguitem">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:id="@+id/select_leagueitemlayout">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/zastavadrzave"/>
         <TextView
             android:id="@+id/countryNameInMatches"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="nesto"
-
+android:layout_toRightOf="@+id/zastavadrzave"
+            android:layout_toEndOf="@+id/zastavadrzave"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:textColor="@color/black"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/leagueNameInMatches"
@@ -26,8 +42,17 @@
             android:layout_marginStart="10dp"
             android:layout_centerVertical="true"
             android:textColor="@color/black"
+
+            android:textSize="18sp"
             android:text="nesto2" />
 
 
+
+    </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/select_leagueitemlayout"
+            android:background="@color/black"/>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

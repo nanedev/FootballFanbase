@@ -118,7 +118,7 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter {
         if (getViewType == ITEM_VIEW) {
             ((FragmentAllMatches.SelectLeagueViewHolder) holder).updateUI(leagueModel);
 
-            ((FragmentAllMatches.SelectLeagueViewHolder) holder).leagueName.setOnClickListener(new View.OnClickListener() {
+            ((FragmentAllMatches.SelectLeagueViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent openClub = new Intent(ctx, LeagueInfoActivity.class);
@@ -128,21 +128,7 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter {
 
                 }
             });
-            ((FragmentAllMatches.SelectLeagueViewHolder) holder).countryName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
-
-                    if (isOpened) {
-                        ((FragmentAllMatches.SelectLeagueViewHolder) holder).leagueName.setVisibility(View.GONE);
-                        isOpened = false;
-                    } else {
-                        ((FragmentAllMatches.SelectLeagueViewHolder) holder).leagueName.setVisibility(View.VISIBLE);
-                        isOpened = true;
-                    }
-
-                }
-            });
         } else if (getViewType == ITEM_LOADING) {
 
 
