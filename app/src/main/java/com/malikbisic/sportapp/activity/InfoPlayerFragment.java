@@ -208,11 +208,105 @@ Volley.newRequestQueue(getActivity()).add(teamRequest);
     }
 
     public void playerInfoFromMatchInfo(){
-        String fullUrl = URL_BASE + playerID + URL_API;
+        String fullUrl = URL_BASE + playerID + URL_API + URL_INCLUDES;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, fullUrl, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                try {
+                    JSONObject getData = response.getJSONObject("data");
+
+                    String birthday = getData.getString("birthdate");
+                    player_birth_textview.setText(birthday);
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat format = new SimpleDateFormat("dd/mm/yyyy", Locale.getDefault());
+                    try {
+                        calendar.setTime(format.parse(birthday));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    player_age_textview.setText(getAge(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
+                    String birth_place = getData.getString("birthplace");
+                    place_of_birth_textview.setText(birth_place);
+
+                    String country = getData.getString("nationality");
+                    country_name_textview.setText(country);
+                    String shirtNumber = getIntent.getStringExtra("numberShirt");
+                    shirt_number_textview.setText(shirtNumber);
+
+                    String height = getData.getString("height");
+                    String weight = getData.getString("weight");
+
+                    player_height_textview.setText(height);
+                    player_weight_textview.setText(weight);
+
+
+                    String urlPosition = URL_BASE + playerID + URL_API + "&include=position";
+
+                    JsonObjectRequest request1 = new JsonObjectRequest(Request.Method.GET, urlPosition, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONObject mainObject = response.getJSONObject("data");
+                                JSONObject posObject = mainObject.getJSONObject("position");
+                                JSONObject namePos = posObject.getJSONObject("data");
+
+                                String position = namePos.getString("name");
+                                position_player_textview.setText(position);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    });
+                    Volley.newRequestQueue(getActivity()).add(request1);
+
+
+                    JSONObject getTransferObj = getData.getJSONObject("transfers");
+                    JSONArray transferArray = getTransferObj.getJSONArray("data");
+                    for (int i =0; i< transferArray.length();i++){
+                        JSONObject object = transferArray.getJSONObject(i);
+
+                        String fromTeam = String.valueOf(object.getInt("from_team_id"));
+                        String toTeam = String.valueOf(object.getInt("to_team_id"));
+                        String seasonId = String.valueOf(object.getInt("season_id"));
+                        String transferDate = object.getString("date");
+                        if (!object.isNull("amount")){
+                            String amount = String.valueOf(object.getInt("amount"));
+                        }
+                        String fromTeamString = URL_TEAM + fromTeam + URL_API;
+                        JsonObjectRequest teamRequest = new JsonObjectRequest(Request.Method.GET, fromTeamString, null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    JSONObject getObj = response.getJSONObject("data");
+                                    String name = getObj.getString("name");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        });
+                        Volley.newRequestQueue(getActivity()).add(teamRequest);
+                        Log.d("tag",String.valueOf(fromTeam));
+                        Log.d("tag",toTeam);
+
+
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             }
         }, new Response.ErrorListener() {

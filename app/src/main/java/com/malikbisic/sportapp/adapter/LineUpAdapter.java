@@ -46,6 +46,7 @@ public class LineUpAdapter extends RecyclerView.Adapter<LineUpViewHolder> {
                 Intent infPlayer = new Intent(activity.getApplicationContext(), PlayerInfoActivity.class);
                 infPlayer.putExtra("playerID", model.getPlayerID());
                 infPlayer.putExtra("openMatchInfo", true);
+                infPlayer.putExtra("numberShirt", model.getNumber());
                 activity.startActivity(infPlayer);
             }
         });

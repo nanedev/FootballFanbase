@@ -12,8 +12,18 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.google.gson.JsonObject;
 import com.malikbisic.sportapp.R;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PlayerInfoActivity extends AppCompatActivity {
     private ViewPager mViewPager;
@@ -23,7 +33,6 @@ public class PlayerInfoActivity extends AppCompatActivity {
     ImageView player_image;
     TextView player_name;
     NestedScrollView nestedScrollView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +65,38 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
         Picasso.with(this).load(playerImage).into(player_image);
         player_name.setText(playerName);
+
+        if (fromMatch){
+
+            String url = "https://soccer.sportmonks.com/api/v2.0/players/"+playerID+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=stats";
+
+            JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    try {
+                        JSONObject mainObject = response.getJSONObject("data");
+
+                        String playerName = mainObject.getString("fullname");
+                        String playerImage = mainObject.getString("image_path");
+
+                        player_name.setText(playerName);
+                        Glide.with(PlayerInfoActivity.this).load(playerImage).into(player_image);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("errorRequest", error.getLocalizedMessage());
+                }
+            });
+            Volley.newRequestQueue(this).add(request);
+
+        }
 
     }
 
