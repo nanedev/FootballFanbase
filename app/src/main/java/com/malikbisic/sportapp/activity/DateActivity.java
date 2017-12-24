@@ -79,7 +79,7 @@ public class DateActivity extends AppCompatActivity {
 
 
         if (!isClickedDate) {
-            listView.smoothScrollToPosition(7);
+            listView.smoothScrollToPosition(11);
         } else {
             listView.smoothScrollToPosition(positionClicked);
         }

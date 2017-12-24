@@ -47,13 +47,21 @@ public class ListAdapter extends ArrayAdapter<String> {
             if (position == positionClicked) {
                 view.setBackgroundColor(R.color.black);
                 text.setTextColor(R.color.white);
+
             }
+            if (position == 7) {
+                text.setText("Today");
+                text.setTypeface(text.getTypeface(), Typeface.BOLD);
+                text.setTextSize(20);
+            }
+
         } else {
             if (position == 7) {
                 view.setBackgroundColor(R.color.black);
                 text.setTextColor(R.color.white);
                 text.setText("Today");
                 text.setTypeface(text.getTypeface(), Typeface.BOLD);
+                text.setTextSize(20);
             }
         }
         return view;
