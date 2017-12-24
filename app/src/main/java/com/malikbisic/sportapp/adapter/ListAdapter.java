@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Layout;
@@ -48,9 +49,11 @@ public class ListAdapter extends ArrayAdapter<String> {
                 text.setTextColor(R.color.white);
             }
         } else {
-            if (position == 15) {
+            if (position == 7) {
                 view.setBackgroundColor(R.color.black);
                 text.setTextColor(R.color.white);
+                text.setText("Today");
+                text.setTypeface(text.getTypeface(), Typeface.BOLD);
             }
         }
         return view;

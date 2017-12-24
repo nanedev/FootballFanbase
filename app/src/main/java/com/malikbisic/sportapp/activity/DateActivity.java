@@ -50,15 +50,16 @@ public class DateActivity extends AppCompatActivity {
         c = Calendar.getInstance();
 
 
-        getSupportActionBar().show();
+
         adapter = new ListAdapter(this, dateList);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 19) {
+                if (position == 7) {
                     view.requestFocus();
                     view.setSelected(true);
+
 
                 }
             }
@@ -66,19 +67,19 @@ public class DateActivity extends AppCompatActivity {
 
         DateTime today = new DateTime().withTimeAtStartOfDay();
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
-        for (int i = 15; i > 0; i--) {
+        for (int i = 7; i > 0; i--) {
             dateList.add(formatter.print(today.minusDays(i)));
             adapter.notifyDataSetChanged();
         }
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 8; i++) {
             dateList.add(formatter.print(today.plusDays(i)));
             adapter.notifyDataSetChanged();
         }
 
 
         if (!isClickedDate) {
-            listView.smoothScrollToPosition(19);
+            listView.smoothScrollToPosition(7);
         } else {
             listView.smoothScrollToPosition(positionClicked);
         }
