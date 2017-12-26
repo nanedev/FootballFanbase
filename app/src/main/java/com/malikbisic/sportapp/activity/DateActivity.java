@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,7 @@ public class DateActivity extends AppCompatActivity {
     ListView listView;
     public static boolean isClickedDate = false;
     public static int positionClicked;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +50,10 @@ public class DateActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.dateList);
         dateList = new ArrayList<String>();
         c = Calendar.getInstance();
+toolbar = (Toolbar) findViewById(R.id.toolbardatelist);
+setSupportActionBar(toolbar);
 
-
+getSupportActionBar().setTitle("Select date");
 
         adapter = new ListAdapter(this, dateList);
         listView.setAdapter(adapter);

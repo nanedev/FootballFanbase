@@ -12,7 +12,7 @@
         android:background="@color/primary"
         android:id="@+id/toolbarAllFixtures"
         app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        android:elevation="2dp"
+
         >
 
         <TextView
@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Today don't playing any match."
+        android:text="No matches"
         android:textSize="24sp"
         android:visibility="gone" />
 

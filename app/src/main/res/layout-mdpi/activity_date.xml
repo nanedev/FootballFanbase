@@ -7,18 +7,32 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     tools:context="com.malikbisic.sportapp.activity.DateActivity">
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:id="@+id/toolbardatelist"
+        app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+
+        >
+
+    </android.support.v7.widget.Toolbar>
+
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         app:cardCornerRadius="10dp"
-        app:cardBackgroundColor="@color/white">
+        android:layout_below="@+id/toolbardatelist"
+        app:cardBackgroundColor="@color/black"
+        >
 
         <ListView
             android:id="@+id/dateList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
 
             >
         </ListView>

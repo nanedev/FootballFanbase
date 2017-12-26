@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,7 +34,7 @@ public class ListAdapter extends ArrayAdapter<String> {
     }
 
 
-    @SuppressLint("ResourceAsColor")
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -45,20 +46,21 @@ public class ListAdapter extends ArrayAdapter<String> {
 
         if (DateActivity.isClickedDate) {
             if (position == positionClicked) {
-                view.setBackgroundColor(R.color.black);
-                text.setTextColor(R.color.white);
+                view.setBackgroundColor(Color.parseColor("#1b5e20"));
+                text.setTextColor(Color.parseColor("#ffffff"));
 
             }
             if (position == 7) {
                 text.setText("Today");
                 text.setTypeface(text.getTypeface(), Typeface.BOLD);
                 text.setTextSize(20);
+
             }
 
         } else {
             if (position == 7) {
-                view.setBackgroundColor(R.color.black);
-                text.setTextColor(R.color.white);
+                view.setBackgroundColor(Color.parseColor("#1b5e20"));
+                text.setTextColor(Color.parseColor("#ffffff"));
                 text.setText("Today");
                 text.setTypeface(text.getTypeface(), Typeface.BOLD);
                 text.setTextSize(20);

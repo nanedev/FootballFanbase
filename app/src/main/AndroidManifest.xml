@@ -208,7 +208,8 @@
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".activity.DateActivity"
-            android:theme="@style/AppTheme.Dark"
+android:theme="@style/AppTheme.Dark"
+            android:parentActivityName=".activity.FootballActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.LivescoreMatchInfo"

@@ -1,8 +1,10 @@
 package com.malikbisic.sportapp.viewHolder;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.malikbisic.sportapp.R;
@@ -22,6 +24,8 @@ public class AllFixturesViewHolder extends RecyclerView.ViewHolder {
     ImageView localTeamLogo;
     ImageView visitorTeamLogo;
     TextView league;
+    RelativeLayout leagueNameLayout;
+
 
     public AllFixturesViewHolder(View itemView) {
         super(itemView);
@@ -32,6 +36,8 @@ public class AllFixturesViewHolder extends RecyclerView.ViewHolder {
         localTeamLogo = (ImageView) itemView.findViewById(R.id.localTeamLogo);
         visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorTeamLogo);
         league = (TextView) itemView.findViewById(R.id.league);
+        leagueNameLayout = (RelativeLayout) itemView.findViewById(R.id.leaguenamefixtures);
+
     }
 
     public void updateUI(AllFixturesModel model) {
@@ -46,12 +52,14 @@ public class AllFixturesViewHolder extends RecyclerView.ViewHolder {
         String dtLabel = league.getText().toString();
 
         if (leagueName.equals("")){
-            league.setVisibility(View.GONE);
+        leagueNameLayout.setVisibility(View.GONE);
             league.setText("");
+
 
         } else {
             league.setVisibility(View.VISIBLE);
             league.setText(leagueName);
+
         }
 
 

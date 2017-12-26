@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content" android:background="@color/white">
+    android:layout_height="wrap_content" android:background="@color/white"
+    android:id="@+id/parentlayoutfordatelist"
+
+    >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/datelayoutitem"
-        android:padding="20dp">
+android:padding="20dp"
+       >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -15,14 +19,13 @@
             android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
-
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/black"
         android:id="@+id/view_id_for_list"
-        android:layout_below="@+id/datelayoutitem"
+        android:layout_alignBottom="@+id/datelayoutitem"
+
         />
 
 </RelativeLayout>

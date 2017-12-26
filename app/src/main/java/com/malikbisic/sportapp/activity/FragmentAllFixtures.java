@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -248,7 +249,7 @@ public class FragmentAllFixtures extends Fragment {
 
             String mytime = selectedDate;
             SimpleDateFormat dateFormat = new SimpleDateFormat(
-                    "yyyy-MM-dd");
+                    "yyyy-MM-dd", Locale.getDefault());
             Date myDate = null;
             try {
                 myDate = dateFormat.parse(mytime);
@@ -257,7 +258,7 @@ public class FragmentAllFixtures extends Fragment {
                 e.printStackTrace();
             }
 
-            SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
             String finalDate = timeFormat.format(myDate);
             titleToolbar.setText(finalDate);
 
