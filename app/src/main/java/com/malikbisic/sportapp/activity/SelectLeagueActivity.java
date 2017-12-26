@@ -93,8 +93,9 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
 
 
                                         String countryName = countryObject.getString("name");
+                                        int league_id = countryObject.getInt("id");
 
-                                        LeagueModel model = new LeagueModel(leagueName, leagueID, countryName);
+                                        LeagueModel model = new LeagueModel(leagueName, leagueID, countryName, league_id);
                                         arrayListLeague.add(model);
                                         adapterLeague.notifyDataSetChanged();
                                         mDialog.dismiss();

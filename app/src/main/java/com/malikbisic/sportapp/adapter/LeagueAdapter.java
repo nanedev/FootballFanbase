@@ -9,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.malikbisic.sportapp.model.LeagueModel;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.SelectClubActivity;
 import com.malikbisic.sportapp.activity.SelectLeagueActivity;
+import com.malikbisic.sportapp.model.LeagueModel;
 
 import java.util.ArrayList;
 
@@ -33,6 +33,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
         this.ctx = ctx;
         this.activity = activity;
     }
+
 
 
     @Override

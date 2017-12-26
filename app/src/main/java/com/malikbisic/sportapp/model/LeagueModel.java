@@ -9,14 +9,24 @@ public class LeagueModel {
     String name;
     String current_season_id;
     String country_name;
+    int league_id;
 
     public LeagueModel() {
     }
 
-    public LeagueModel(String name, String current_season_id, String country_name) {
+    public LeagueModel(String name, String current_season_id, String country_name, int league_id) {
         this.name = name;
         this.current_season_id = current_season_id;
         this.country_name = country_name;
+        this.league_id = league_id;
+    }
+
+    public int getLeague_id() {
+        return league_id;
+    }
+
+    public void setLeague_id(int league_id) {
+        this.league_id = league_id;
     }
 
     public String getName() {

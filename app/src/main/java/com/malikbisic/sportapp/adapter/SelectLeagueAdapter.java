@@ -15,8 +15,6 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.FragmentAllMatches;
 import com.malikbisic.sportapp.activity.LeagueInfoActivity;
 import com.malikbisic.sportapp.activity.OnLoadMoreListener;
-import com.malikbisic.sportapp.activity.SelectClubActivity;
-import com.malikbisic.sportapp.activity.SelectLeagueActivity;
 import com.malikbisic.sportapp.model.LeagueModel;
 
 import java.util.ArrayList;
@@ -124,6 +122,7 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter {
                     Intent openClub = new Intent(ctx, LeagueInfoActivity.class);
                     openClub.putExtra("leagueID", leagueModel.getCurrent_season_id());
                     openClub.putExtra("leagueName", leagueModel.getName());
+                    openClub.putExtra("league_id", leagueModel.getLeague_id());
                     activity.startActivity(openClub);
 
                 }

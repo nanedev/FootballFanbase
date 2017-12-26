@@ -1,6 +1,8 @@
 package com.malikbisic.sportapp.activity;
 
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -28,7 +31,6 @@ import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.adapter.LeagueAdapter;
 import com.malikbisic.sportapp.adapter.SelectLeagueAdapter;
 import com.malikbisic.sportapp.model.LeagueModel;
 import com.malikbisic.sportapp.model.SvgDrawableTranscoder;
@@ -54,12 +56,15 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
     ArrayList<LeagueModel> selectLeaguelist;
     String leagueName;
     int currentSeason;
-  String countryName;
+    String countryName;
+    int league_id;
     SelectLeagueAdapter adapterLeague;
     SearchView mSearchView;
     JSONObject extra;
     int currentPage = 1;
     LinearLayoutManager linearLayoutManager;
+    ProgressDialog progressBar;
+
     public FragmentAllMatches() {
         // Required empty public constructor
     }
@@ -68,7 +73,9 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_all_matches,container,false);
+        View view = inflater.inflate(R.layout.fragment_all_matches, container, false);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        progressBar = new ProgressDialog(getActivity());
         selectLeagueRecyclerView = (RecyclerView) view.findViewById(R.id.search_league_recyclerview);
         selectLeaguelist = new ArrayList<>();
         adapterLeague = new SelectLeagueAdapter(selectLeaguelist, view.getContext(), getActivity(), selectLeagueRecyclerView);
@@ -78,6 +85,9 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
         linearLayoutManager = new LinearLayoutManager(getActivity());
         selectLeagueRecyclerView.setLayoutManager(linearLayoutManager);
         setupSearchView();
+        progressBar.setMessage("Loading...");
+        progressBar.setIndeterminate(true);
+        progressBar.show();
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -124,7 +134,8 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
         return view;
     }
 
-    public void loadData(){
+    public void loadData() {
+
         final String url = URL_BASE + URL_APIKEY + "&include=leagues" + "&page=" + currentPage;
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -132,18 +143,18 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
             public void onResponse(final JSONObject response) {
 
                 try {
+
                     final JSONArray arrayCountry = response.getJSONArray("data");
 
                     for (int i = 0; i < arrayCountry.length(); i++) {
-
+                        progressBar.setMessage("Loadind...");
+                        progressBar.show();
                         JSONObject objectCountry = arrayCountry.getJSONObject(i);
 
-                        countryName    = objectCountry.getString("name");
+                        countryName = objectCountry.getString("name");
                         String countryID = objectCountry.getString("id");
 
                         JSONObject jsonObject = objectCountry.getJSONObject("leagues");
-
-
 
 
                         JSONArray jsonArray = jsonObject.getJSONArray("data");
@@ -153,39 +164,47 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
 
                             JSONObject obj = jsonArray.getJSONObject(j);
 
+                            league_id = obj.getInt("id");
                             currentSeason = obj.getInt("current_season_id");
                             leagueName = obj.getString("name");
-                            LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName);
+                            LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id);
                             selectLeaguelist.add(model);
-                            adapterLeague.notifyDataSetChanged();
                             adapterLeague.setIsLoading(false);
-                    }
+
+                        }
 
 
                     }
+                    adapterLeague.notifyDataSetChanged();
+                    progressBar.dismiss();
+                    mSearchView.clearFocus();
 
                 } catch (JSONException e) {
                     Log.e("Excpetion JSON", "Err: " + e.getLocalizedMessage());
+                    progressBar.dismiss();
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("LEAGUE", "Err: " + error.getLocalizedMessage());
+                progressBar.dismiss();
             }
         });
 
         Volley.newRequestQueue(getActivity()).add(request);
+
     }
 
     private void setupSearchView() {
 
-            mSearchView.setIconifiedByDefault(false);
-            mSearchView.setOnQueryTextListener(this);
-       getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-            mSearchView.clearFocus();
-            mSearchView.setQueryHint("Search league");
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnQueryTextListener(this);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
+        mSearchView.clearFocus();
+        mSearchView.setQueryHint("Search league");
 
     }
 
@@ -200,7 +219,7 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
     }
 
 
-    public static class SelectLeagueViewHolder extends RecyclerView.ViewHolder{
+    public static class SelectLeagueViewHolder extends RecyclerView.ViewHolder {
 
         public TextView leagueName;
         public TextView countryName;
@@ -223,20 +242,19 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
             this.leagues = leagues;
         }
 
-        public void updateUI(LeagueModel model){
+        public void updateUI(LeagueModel model) {
 
             leagueName.setText(model.getName().toUpperCase());
             countryName.setText(model.getCountry_name().toUpperCase() + ":");
 
 
-
-            if (model.getCountry_name().equals("England")){
+            if (model.getCountry_name().equals("England")) {
                 zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.england));
-            } else if (model.getCountry_name().equals("Northern Ireland")){
+            } else if (model.getCountry_name().equals("Northern Ireland")) {
                 zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.northern_ireland));
-            } else if (model.getCountry_name().equals("Scotland")){
+            } else if (model.getCountry_name().equals("Scotland")) {
                 zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.scotland));
-            } else if (model.getCountry_name().equals("Wales")){
+            } else if (model.getCountry_name().equals("Wales")) {
                 zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.welsh_flag));
             }
 

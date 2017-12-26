@@ -4,15 +4,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.widget.SearchView;
 
 import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.adapter.LeagueAdapter;
-import com.malikbisic.sportapp.adapter.SelectLeagueAdapter;
-import com.malikbisic.sportapp.model.LeagueModel;
-
-import java.util.ArrayList;
 
 public class LeagueInfoActivity extends AppCompatActivity {
     private ViewPager mViewPager;

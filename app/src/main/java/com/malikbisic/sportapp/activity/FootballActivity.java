@@ -1,11 +1,13 @@
 package com.malikbisic.sportapp.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 
 import com.malikbisic.sportapp.R;
 
@@ -13,6 +15,7 @@ public class FootballActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private SectionPageAdapter sectionPageAdapter;
 
+    ProgressDialog progressBar;
 
 
     @Override
@@ -25,6 +28,8 @@ public class FootballActivity extends AppCompatActivity {
         setUpViewPager(mViewPager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setOffscreenPageLimit(2);
+
 
 
         }

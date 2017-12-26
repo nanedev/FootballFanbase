@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -42,6 +43,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
     final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
     private String INCLUDE_IN_URL = "&include=standings.team";
     TextView leagueNameTextview;
+    ProgressDialog mDialog;
 
     public FragmentLeagueInfoStandings() {
         // Required empty public constructor
@@ -58,6 +60,10 @@ public class FragmentLeagueInfoStandings extends Fragment {
         tableRecyclerview = (RecyclerView) view.findViewById(R.id.league_info_recycler_view);
         tableRecyclerview.setLayoutManager(layoutManager);
         adapter = new TableAdapter(tableListStandings, getActivity().getApplicationContext(),getActivity());
+        mDialog = new ProgressDialog(getActivity());
+        mDialog.setIndeterminate(true);
+        mDialog.setMessage("Loading...");
+        mDialog.show();
 
 
         tableRecyclerview.setAdapter(adapter);
@@ -128,6 +134,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
                         }
 
                         adapter.notifyDataSetChanged();
+                        mDialog.dismiss();
                     }
 
                 } catch (JSONException e) {
