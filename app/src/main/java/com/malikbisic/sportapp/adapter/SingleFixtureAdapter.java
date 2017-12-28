@@ -37,11 +37,12 @@ public class SingleFixtureAdapter extends RecyclerView.Adapter<SingleFixtureView
 
     @Override
     public void onBindViewHolder(SingleFixtureViewHolder holder, int position) {
-
+        AllFixturesModel model = fixtureList.get(position);
+        holder.updateUi(model);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return fixtureList.size();
     }
 }

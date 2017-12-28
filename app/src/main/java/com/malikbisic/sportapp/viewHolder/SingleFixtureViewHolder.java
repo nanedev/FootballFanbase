@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.AllFixturesModel;
 
@@ -40,8 +41,32 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateUi(AllFixturesModel model){
+        localTeamName.setText(model.getLocalTeamName());
+        visitorTeamName.setText(model.getVisitorTeamName());
 
 
+        Glide.with(localTeamClubLogo.getContext()).load(model.getLocalTeamLogo()).into(localTeamClubLogo);
+        Glide.with(visitorTeamClubLogo.getContext()).load(model.getVisitorTeamLogo()).into(visitorTeamClubLogo);
 
+        String status = model.getStatus();
+
+        if (status.equals("FT") || status.equals("HT")) {
+            localTeamResult.setVisibility(View.VISIBLE);
+            visitorTeamResult.setVisibility(View.VISIBLE);
+            minutes.setVisibility(View.VISIBLE);
+            timeOfMatch.setVisibility(View.INVISIBLE);
+
+            minutes.setText("" + model.getMinutes());
+            localTeamResult.setText(model.getScore().substring(0, 1));
+            visitorTeamResult.setText(model.getScore().substring(3,5));
+        } else if (status.equals("NS")) {
+            localTeamResult.setVisibility(View.GONE);
+            visitorTeamResult.setVisibility(View.GONE);
+            minutes.setVisibility(View.VISIBLE);
+            timeOfMatch.setVisibility(View.VISIBLE);
+
+            minutes.setText("" + model.getMinutes());
+            timeOfMatch.setText(model.getTimeStart().substring(0, 5));
+        }
     }
 }

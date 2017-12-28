@@ -21,17 +21,28 @@ public class AllFixturesModel  {
     String idFixtures;
     int localTeamId;
     int visitorTeamId;
-    String id;
+    int minutes;
+
 
 
     public AllFixturesModel() {
     }
 
-    public <T extends AllFixturesModel> T withId(@NonNull final String id) {
-        this.id = id;
-        return (T) this;
+    public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String leagueName, String date, String status, String score, String idFixtures, int localTeamId, int visitorTeamId, int minutes) {
+        this.localTeamName = localTeamName;
+        this.localTeamLogo = localTeamLogo;
+        this.visitorTeamName = visitorTeamName;
+        this.visitorTeamLogo = visitorTeamLogo;
+        this.timeStart = timeStart;
+        this.leagueName = leagueName;
+        this.date = date;
+        this.status = status;
+        this.score = score;
+        this.idFixtures = idFixtures;
+        this.localTeamId = localTeamId;
+        this.visitorTeamId = visitorTeamId;
+        this.minutes = minutes;
     }
-
 
     public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String date, String status, String score, String idFixtures, int localTeamId, int visitorTeamId) {
         this.localTeamName = localTeamName;
@@ -46,6 +57,14 @@ public class AllFixturesModel  {
         this.idFixtures = idFixtures;
         this.localTeamId = localTeamId;
         this.visitorTeamId = visitorTeamId;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
     }
 
     public int getLocalTeamId() {
