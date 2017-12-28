@@ -11,14 +11,27 @@ public class LeagueModel {
     String country_name;
     int league_id;
 
-    public LeagueModel() {
-    }
+    int fixtureId;
+
+
 
     public LeagueModel(String name, String current_season_id, String country_name, int league_id) {
         this.name = name;
         this.current_season_id = current_season_id;
         this.country_name = country_name;
-        this.league_id = league_id;
+      this.league_id = league_id;
+        this.fixtureId = fixtureId;
+    }
+
+
+
+
+    public int getFixtureId() {
+        return fixtureId;
+    }
+
+    public void setFixtureId(int fixtureId) {
+        this.fixtureId = fixtureId;
     }
 
     public int getLeague_id() {
@@ -51,5 +64,35 @@ public class LeagueModel {
 
     public void setCountry_name(String country_name) {
         this.country_name = country_name;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LeagueModel other = (LeagueModel) obj;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (country_name == null) {
+            if (other.country_name != null)
+                return false;
+        } else if (!country_name.equals(other.country_name))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((country_name == null) ? 0 : country_name.hashCode());
+        return result;
     }
 }

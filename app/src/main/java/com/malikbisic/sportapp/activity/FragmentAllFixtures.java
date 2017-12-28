@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.activity;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -25,9 +27,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.AllFixturesAdapter;
+import com.malikbisic.sportapp.adapter.SelectLeagueAdapter;
 import com.malikbisic.sportapp.model.AllFixturesModel;
+import com.malikbisic.sportapp.model.LeagueModel;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -42,20 +47,38 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FragmentAllFixtures extends Fragment {
+    final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/countries/";
+    final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
 
 
-    private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/";
+
+  /*  String leagueName;*/
+    int currentSeason;
+    String countryName;
+    int league_id;
+    int countryId;
+    SearchView mSearchView;
+    JSONObject extra;
+    int currentPage = 1;
+    LinearLayoutManager linearLayoutManager;
+
+
+/*    private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/";
     private String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
-    private String URL_INCLUDES = "&include=localTeam,visitorTeam,league";
+    private String URL_INCLUDES = "&include=localTeam,visitorTeam,league";*/
     public static final int OPEN_NEW_DATE = 12345;
     private String dateFixtures;
-    ArrayList<AllFixturesModel> listFixtures = new ArrayList();
+    ArrayList<LeagueModel> listFixtures = new ArrayList();
     RecyclerView fixturesRec;
     AllFixturesAdapter adapter;
     TextView dontPlay;
@@ -98,8 +121,9 @@ public class FragmentAllFixtures extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_fragment_all_fixtures, container, false);
         setHasOptionsMenu(true);
-        adapter = new AllFixturesAdapter(listFixtures, getActivity());
+
         fixturesRec = (RecyclerView) view.findViewById(R.id.allFixtures_recView);
+        adapter = new AllFixturesAdapter(listFixtures, getActivity(),fixturesRec);
         titleToolbar = (TextView) view.findViewById(R.id.toolbar_title);
         fixturesRec.setLayoutManager(new LinearLayoutManager(getActivity()));
         fixturesRec.setAdapter(adapter);
@@ -110,16 +134,24 @@ public class FragmentAllFixtures extends Fragment {
 
         c = Calendar.getInstance();
 
+
         System.out.println("Current time => " + c.getTime());
 
-        df = new SimpleDateFormat("yyyy-MM-dd");
+        df = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
         formattedDate = df.format(c.getTime());
-        fixtures(formattedDate);
+/*        fixtures(formattedDate);*/
+        loadData(formattedDate);
+        adapter.setOnLoadMore(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                currentPage++;
+              // loadData();
 
-
+            }
+        });
         String mytime = formattedDate;
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd");
+                "yyyy-MM-dd",Locale.getDefault());
         Date myDate = null;
         try {
             myDate = dateFormat.parse(mytime);
@@ -128,14 +160,14 @@ public class FragmentAllFixtures extends Fragment {
             e.printStackTrace();
         }
 
-        SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
         String finalDate = timeFormat.format(myDate);
         titleToolbar.setText(finalDate);
 
 
         return view;
     }
-
+/*
     public void fixtures(String formattedDate) {
         String fullURL = URL_BASE + formattedDate + URL_APIKEY + URL_INCLUDES;
 
@@ -215,7 +247,7 @@ public class FragmentAllFixtures extends Fragment {
         });
 
         Volley.newRequestQueue(getActivity()).add(request);
-    }
+    }*/
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -241,11 +273,11 @@ public class FragmentAllFixtures extends Fragment {
         if (requestCode == OPEN_NEW_DATE && resultCode == Activity.RESULT_OK) {
 
             listFixtures.clear();
-            currentLeagueName = "";
-            prevLeagueName = "";
+
 
             String selectedDate = data.getStringExtra("newDate");
-            fixtures(selectedDate);
+         /*   fixtures(selectedDate);*/
+         loadData(selectedDate);
 
             String mytime = selectedDate;
             SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -263,5 +295,69 @@ public class FragmentAllFixtures extends Fragment {
             titleToolbar.setText(finalDate);
 
         }
+    }
+    public void loadData(String formattedDate) {
+
+      //  final String url = URL_BASE + URL_APIKEY + "&include=leagues" + "&page=" + currentPage;
+        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/" + formattedDate + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=league.country";
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(final JSONObject response) {
+
+                try {
+
+                    final JSONArray fixturesArray = response.getJSONArray("data");
+
+                    for (int i = 0; i < fixturesArray.length(); i++){
+                        JSONObject object = fixturesArray.getJSONObject(i);
+
+                        int fixturesId = object.getInt("id");
+                        JSONObject leagueObj = object.getJSONObject("league");
+                        JSONObject getLeagueObj = leagueObj.getJSONObject("data");
+                         league_id = getLeagueObj.getInt("id");
+                      countryId  = getLeagueObj.getInt("country_id");
+                       int current_season_id = getLeagueObj.getInt("current_season_id");
+                        leagueName = getLeagueObj.getString("name");
+
+                            JSONObject countryObj = getLeagueObj.getJSONObject("country");
+
+                            JSONObject getDataCountry = countryObj.getJSONObject("data");
+
+
+                            countryName = getDataCountry.getString("name");
+
+
+
+                        LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id);
+                        listFixtures.add(model);
+                        Set<LeagueModel> foo = new HashSet<LeagueModel>(listFixtures);
+                        listFixtures.clear();
+                        listFixtures.addAll(foo);
+
+                        adapter.setIsLoading(false);
+                    }
+
+
+                    adapter.notifyDataSetChanged();
+
+
+
+
+
+                } catch (JSONException e) {
+                    Log.e("Excpetion JSON", "Err: " + e.getLocalizedMessage());
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("LEAGUE", "Err: " + error.getLocalizedMessage());
+
+            }
+        });
+
+        Volley.newRequestQueue(getActivity()).add(request);
+
     }
 }
