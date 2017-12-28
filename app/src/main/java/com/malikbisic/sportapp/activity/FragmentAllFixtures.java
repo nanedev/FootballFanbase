@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -56,7 +57,7 @@ import java.util.Set;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentAllFixtures extends Fragment {
+public class FragmentAllFixtures extends Fragment implements SearchView.OnQueryTextListener{
     final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/countries/";
     final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
 
@@ -67,7 +68,7 @@ public class FragmentAllFixtures extends Fragment {
     String countryName;
     int league_id;
     int countryId;
-    SearchView mSearchView;
+
     JSONObject extra;
     int currentPage = 1;
     LinearLayoutManager linearLayoutManager;
@@ -109,6 +110,7 @@ public class FragmentAllFixtures extends Fragment {
 
     Toolbar fixturesToolbar;
     TextView titleToolbar;
+    SearchView mSearchView;
 
     public FragmentAllFixtures() {
         // Required empty public constructor
@@ -254,6 +256,10 @@ public class FragmentAllFixtures extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
 
         getActivity().getMenuInflater().inflate(R.menu.all_fixtures_menu, menu);
+
+        MenuItem search = menu.findItem(R.id.search_for_league);
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(search);
+        search(searchView);
     }
 
     @Override
@@ -296,10 +302,10 @@ public class FragmentAllFixtures extends Fragment {
 
         }
     }
-    public void loadData(String formattedDate) {
+    public void loadData(final String formattedDate) {
 
       //  final String url = URL_BASE + URL_APIKEY + "&include=leagues" + "&page=" + currentPage;
-        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/" + "2017-12-10" + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=league.country";
+        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/" + formattedDate + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=league.country";
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(final JSONObject response) {
@@ -328,7 +334,7 @@ public class FragmentAllFixtures extends Fragment {
 
 
 
-                        LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, fixturesId);
+                        LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, fixturesId,formattedDate);
                         listFixtures.add(model);
                         Set<LeagueModel> foo = new HashSet<LeagueModel>(listFixtures);
                         listFixtures.clear();
@@ -359,5 +365,49 @@ public class FragmentAllFixtures extends Fragment {
 
         Volley.newRequestQueue(getActivity()).add(request);
 
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+    private void search(SearchView searchView) {
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                newText = newText.toLowerCase();
+                ArrayList<LeagueModel> newList = new ArrayList<>();
+                for (LeagueModel leagueModel : listFixtures) {
+                    String name = leagueModel.getName().toLowerCase();
+                    if (name.contains(newText)) {
+
+                        newList.add(leagueModel);
+
+
+                    }
+                }
+                fixturesRec.setLayoutManager(new LinearLayoutManager(getActivity()));
+                adapter = new AllFixturesAdapter(newList,getActivity(),fixturesRec);
+                fixturesRec.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
+
+                return true;
+
+            }
+        });
     }
 }

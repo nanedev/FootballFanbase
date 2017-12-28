@@ -14,7 +14,7 @@ public class SingleFixtureActivity extends AppCompatActivity {
 Intent intent;
 String getCountryName;
 String getLeagueName;
-int fixtureID;
+String date;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,13 +25,13 @@ int fixtureID;
         getCountryName = intent.getStringExtra("countryName");
         getLeagueName = intent.getStringExtra("leagueName");
 
-        fixtureID = intent.getIntExtra("fixtureId", 0);
+      date = intent.getStringExtra("date");
         countryNameTextview.setText(getCountryName);
         leagueNameTextview.setText(getLeagueName);
 
-        Log.i("fixture", String.valueOf(fixtureID));
 
-        String url = " https://soccer.sportmonks.com/api/v2.0/fixtures/"+fixtureID+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+
+        String url = " https://soccer.sportmonks.com/api/v2.0/fixtures/"+date+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
 
 
     }

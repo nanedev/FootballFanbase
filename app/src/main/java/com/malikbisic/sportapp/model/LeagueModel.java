@@ -14,16 +14,18 @@ public class LeagueModel {
     int league_id;
 
     int fixtureId;
+    String date;
 
     public LeagueModel() {
     }
 
-    public LeagueModel(String name, String current_season_id, String country_name, int league_id, int fixtureId) {
+    public LeagueModel(String name, String current_season_id, String country_name, int league_id, int fixtureId,String date) {
         this.name = name;
         this.current_season_id = current_season_id;
         this.country_name = country_name;
         this.league_id = league_id;
         this.fixtureId = fixtureId;
+        this.date = date;
     }
 
     public LeagueModel(String name, String current_season_id, String country_name, int league_id) {
@@ -35,7 +37,13 @@ public class LeagueModel {
     }
 
 
+    public String getDate() {
+        return date;
+    }
 
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public int getFixtureId() {
         return fixtureId;
