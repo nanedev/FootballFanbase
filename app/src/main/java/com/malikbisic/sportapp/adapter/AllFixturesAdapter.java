@@ -107,7 +107,6 @@ public class AllFixturesAdapter extends RecyclerView.Adapter<AllFixturesViewHold
           activity.startActivity(intent);
 
           Log.i("tag", String.valueOf(model.getFixtureId()));
-            Toast.makeText(context,String.valueOf(model.getFixtureId()),Toast.LENGTH_LONG).show();
         }
     });
 

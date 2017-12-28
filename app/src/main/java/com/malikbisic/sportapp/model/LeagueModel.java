@@ -1,5 +1,7 @@
 package com.malikbisic.sportapp.model;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by korisnik on 01/08/2017.
  */
@@ -13,7 +15,16 @@ public class LeagueModel {
 
     int fixtureId;
 
+    public LeagueModel() {
+    }
 
+    public LeagueModel(String name, String current_season_id, String country_name, int league_id, int fixtureId) {
+        this.name = name;
+        this.current_season_id = current_season_id;
+        this.country_name = country_name;
+        this.league_id = league_id;
+        this.fixtureId = fixtureId;
+    }
 
     public LeagueModel(String name, String current_season_id, String country_name, int league_id) {
         this.name = name;

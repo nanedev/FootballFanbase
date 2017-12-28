@@ -299,7 +299,7 @@ public class FragmentAllFixtures extends Fragment {
     public void loadData(String formattedDate) {
 
       //  final String url = URL_BASE + URL_APIKEY + "&include=leagues" + "&page=" + currentPage;
-        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/" + formattedDate + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=league.country";
+        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/" + "2017-12-10" + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=league.country";
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(final JSONObject response) {
@@ -328,7 +328,7 @@ public class FragmentAllFixtures extends Fragment {
 
 
 
-                        LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id);
+                        LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, fixturesId);
                         listFixtures.add(model);
                         Set<LeagueModel> foo = new HashSet<LeagueModel>(listFixtures);
                         listFixtures.clear();
