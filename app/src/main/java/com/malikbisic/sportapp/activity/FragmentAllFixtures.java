@@ -162,7 +162,7 @@ public class FragmentAllFixtures extends Fragment implements SearchView.OnQueryT
             e.printStackTrace();
         }
 
-        SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("dd.MM.yyyy",Locale.getDefault());
         String finalDate = timeFormat.format(myDate);
         titleToolbar.setText(finalDate);
 
@@ -296,7 +296,7 @@ public class FragmentAllFixtures extends Fragment implements SearchView.OnQueryT
                 e.printStackTrace();
             }
 
-            SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
+            SimpleDateFormat timeFormat = new SimpleDateFormat("dd.MM.yyyy",Locale.getDefault());
             String finalDate = timeFormat.format(myDate);
             titleToolbar.setText(finalDate);
 

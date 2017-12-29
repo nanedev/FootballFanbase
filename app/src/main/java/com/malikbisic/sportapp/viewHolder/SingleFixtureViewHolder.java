@@ -23,7 +23,7 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
     TextView minutes;
     TextView localTeamResult;
     TextView visitorTeamResult;
-
+View viewResult;
 
 
 
@@ -38,11 +38,13 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
         minutes = (TextView) itemView.findViewById(R.id.singleFixtureMinutes);
         localTeamResult = (TextView) itemView.findViewById(R.id.localTeamResult);
         visitorTeamResult = (TextView) itemView.findViewById(R.id.visitorTeamResult);
+        viewResult = (View) itemView.findViewById(R.id.viewforresult);
     }
 
     public void updateUi(AllFixturesModel model){
         localTeamName.setText(model.getLocalTeamName());
         visitorTeamName.setText(model.getVisitorTeamName());
+
 
 
         Glide.with(localTeamClubLogo.getContext()).load(model.getLocalTeamLogo()).into(localTeamClubLogo);
@@ -55,6 +57,7 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
             visitorTeamResult.setVisibility(View.VISIBLE);
             minutes.setVisibility(View.VISIBLE);
             timeOfMatch.setVisibility(View.INVISIBLE);
+            viewResult.setVisibility(View.VISIBLE);
 
             minutes.setText("" + model.getMinutes());
             localTeamResult.setText(model.getScore().substring(0, 1));

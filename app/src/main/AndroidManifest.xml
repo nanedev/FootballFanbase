@@ -219,10 +219,15 @@
         <activity
             android:name=".activity.PlayerInfoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        </activity>
         <activity android:name=".activity.SingleFixtureActivity"
             android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:parentActivityName=".activity.FootballActivity">
+
+        </activity>
     </application>
 
 </manifest>

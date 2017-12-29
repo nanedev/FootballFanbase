@@ -70,7 +70,7 @@ getSupportActionBar().setTitle("Select date");
         });
 
         DateTime today = new DateTime().withTimeAtStartOfDay();
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
         for (int i = 7; i > 0; i--) {
             dateList.add(formatter.print(today.minusDays(i)));
             adapter.notifyDataSetChanged();
@@ -92,7 +92,7 @@ getSupportActionBar().setTitle("Select date");
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                df = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                df = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
                 String selected = String.valueOf(adapterView.getItemAtPosition(i));
                 isClickedDate = true;
                 positionClicked = i;
@@ -100,7 +100,7 @@ getSupportActionBar().setTitle("Select date");
 
                 String mytime = selected;
                 SimpleDateFormat dateFormat = new SimpleDateFormat(
-                        "dd-MM-yyyy", Locale.getDefault());
+                        "dd.MM.yyyy", Locale.getDefault());
                 Date myDate = null;
                 try {
                     myDate = dateFormat.parse(mytime);

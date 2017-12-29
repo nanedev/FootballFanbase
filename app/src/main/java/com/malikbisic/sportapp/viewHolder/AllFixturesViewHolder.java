@@ -49,7 +49,7 @@ public class AllFixturesViewHolder extends RecyclerView.ViewHolder {
     CircleImageView zastava;
     String idFixture;
 
-
+String countryImageForIntent;
 
     public AllFixturesViewHolder(View itemView) {
         super(itemView);
@@ -99,7 +99,6 @@ public class AllFixturesViewHolder extends RecyclerView.ViewHolder {
                         JSONObject object = response.getJSONObject(i);
                         String countryName = object.getString("name");
                         String countryImage = object.getString("flag");
-
                         System.out.println("country flag" + countryImage);
                         GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
