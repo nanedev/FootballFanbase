@@ -128,16 +128,16 @@
             android:layout_alignBottom="@+id/visitorLogo"/>
 
 
-
         <TextView
+            android:id="@+id/singleFixtureMinutes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/singleFixtureMinutes"
-           android:layout_toLeftOf="@+id/nekiView"
-            android:layout_toStartOf="@+id/nekiView"
-            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"
-            android:layout_centerVertical="true"/>
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/nekiView"
+            android:layout_toStartOf="@+id/nekiView"
+            android:textColor="@color/black" />
 
     </RelativeLayout>
 

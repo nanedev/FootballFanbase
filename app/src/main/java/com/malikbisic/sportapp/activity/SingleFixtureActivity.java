@@ -232,6 +232,7 @@ SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
                             leagueName = dataLeague.getString("name");
 
 
+                            Log.i("vrijeme", String.valueOf(minutes));
 
 
                             JSONObject scores = objectMain.getJSONObject("scores");
