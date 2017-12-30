@@ -1,6 +1,5 @@
 package com.malikbisic.sportapp.activity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,11 +28,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -44,9 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
 import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.model.CommentsInCommentsModel;
 import com.malikbisic.sportapp.model.UsersModel;
 import com.malikbisic.sportapp.model.Comments;
 import com.squareup.picasso.Picasso;
@@ -626,7 +618,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             mView = itemView;
 
             profileImageImg = (ImageView) mView.findViewById(R.id.profileComment);
-            commentsText = (TextView) mView.findViewById(R.id.textComment);
+            commentsText = (TextView) mView.findViewById(R.id.minuteText);
             downArrow = (ImageView) mView.findViewById(R.id.down_arrow_comments);
             usernameTxt = (TextView) mView.findViewById(R.id.username_comment_profile);
             likeComments = (TextView) mView.findViewById(R.id.like_comments_wall);

@@ -170,6 +170,7 @@ public class LivescoreMatchInfo extends AppCompatActivity {
         adapter.addFragment(new FragmentLineup(), "Lineup");
         adapter.addFragment(new FragmentChatAboutMatch(), "Chat");
         adapter.addFragment(new FragmentStats(), "Stats");
+        adapter.addFragment(new FragmentCommentsMatch(), "Commentary");
 
         FragmentOdds fragmentOdds = new FragmentOdds();
 

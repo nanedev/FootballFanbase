@@ -48,7 +48,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/textComment"
+            android:id="@+id/minuteText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/username_comment_profile"
@@ -62,9 +62,9 @@
             android:id="@+id/like_comments_wall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textComment"
-            android:layout_alignStart="@+id/textComment"
-            android:layout_below="@+id/textComment"
+            android:layout_alignLeft="@+id/minuteText"
+            android:layout_alignStart="@+id/minuteText"
+            android:layout_below="@+id/minuteText"
             android:layout_marginTop="10dp"
             android:text="Like"
             android:textColor="#1976d2" />
@@ -73,7 +73,7 @@
             android:id="@+id/dislike_comments_wall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textComment"
+            android:layout_below="@+id/minuteText"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
@@ -139,7 +139,7 @@
             android:id="@+id/comment_something_comments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textComment"
+            android:layout_below="@+id/minuteText"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
