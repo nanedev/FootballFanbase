@@ -104,6 +104,7 @@ public class AllFixturesAdapter extends RecyclerView.Adapter<AllFixturesViewHold
           intent.putExtra("countryName",model.getCountry_name());
           intent.putExtra("leagueName",model.getName());
           intent.putExtra("leagueID",model.getLeague_id());
+          intent.putExtra("seasonID",model.getCurrent_season_id());
           intent.putExtra("datum", model.getDate());
           activity.startActivity(intent);
 
