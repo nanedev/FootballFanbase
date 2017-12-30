@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.LeagueInfoActivity;
 import com.malikbisic.sportapp.activity.LivescoreMatchInfo;
 import com.malikbisic.sportapp.model.AllFixturesModel;
 import com.malikbisic.sportapp.viewHolder.SingleFixtureViewHolder;
@@ -76,9 +77,9 @@ public class SingleFixtureAdapter extends RecyclerView.Adapter {
             ((SingleFixtureViewHolder) holder).updateUi(model);
 
             if (position == getItemCount() -1){
-                ((SingleFixtureViewHolder) holder).dfss.setVisibility(View.VISIBLE);
+                ((SingleFixtureViewHolder) holder).seeTable.setVisibility(View.VISIBLE);
             } else {
-                ((SingleFixtureViewHolder) holder).dfss.setVisibility(View.GONE);
+                ((SingleFixtureViewHolder) holder).seeTable.setVisibility(View.GONE);
             }
 
             ((SingleFixtureViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +98,18 @@ public class SingleFixtureAdapter extends RecyclerView.Adapter {
                     openMatchInfo.putExtra("localTeamId", model.getLocalTeamId());
                     openMatchInfo.putExtra("visitorTeamId", model.getVisitorTeamId());
                     openMatchInfo.putExtra("dateMatch", model.getDate());
+
                     activity.startActivity(openMatchInfo);
+                }
+            });
+
+            ((SingleFixtureViewHolder) holder).seeTable.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(activity, LeagueInfoActivity.class);
+                    intent.putExtra("seasonId",String.valueOf(model.getSeasonId()));
+                    intent.putExtra("league_id",model.getLeagueId());
+                    activity.startActivity(intent);
                 }
             });
 
@@ -147,7 +159,7 @@ public class SingleFixtureAdapter extends RecyclerView.Adapter {
 
     public class SeeTableViewHolder extends RecyclerView.ViewHolder{
 
-        RelativeLayout seeTable;
+       public RelativeLayout seeTable;
         TextView dfss;
 
         public SeeTableViewHolder(View itemView) {

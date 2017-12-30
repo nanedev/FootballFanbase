@@ -120,7 +120,7 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View view) {
                     Intent openClub = new Intent(ctx, LeagueInfoActivity.class);
-                    openClub.putExtra("leagueID", leagueModel.getCurrent_season_id());
+                    openClub.putExtra("seasonId", leagueModel.getCurrent_season_id());
                     openClub.putExtra("leagueName", leagueModel.getName());
                     openClub.putExtra("league_id", leagueModel.getLeague_id());
                     activity.startActivity(openClub);

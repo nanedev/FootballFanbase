@@ -77,13 +77,14 @@ public class SingleFixtureActivity extends AppCompatActivity {
     String dateUrl;
     Toolbar toolbar;
     CircleImageView countryLogo;
-
+int getLeagueID;
     TextView titleInToolbar;
     TextView dateInToolbar;
     String formatedDate;
     int minutes;
     int localTeamScore;
     int visitorTeamScore;
+    int seasonID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +107,7 @@ public class SingleFixtureActivity extends AppCompatActivity {
 
 
         leagueID = intent.getIntExtra("leagueID", 0);
+        seasonID = intent.getIntExtra("seasonId" ,0);
         countryNameTextview.setText(getCountryName.toUpperCase() + ":");
         leagueNameTextview.setText(getLeagueName.toUpperCase());
         setSupportActionBar(toolbar);
@@ -203,7 +205,9 @@ SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
                         for (int i = 0; i < dataArray.length(); i++) {
                             JSONObject objectMain = dataArray.getJSONObject(i);
                             idFixtures = objectMain.getString("id");
+    getLeagueID = objectMain.getInt("league_id");
 
+    seasonID = objectMain.getInt("season_id");
                             JSONObject locTeam = objectMain.getJSONObject("localTeam");
                             JSONObject visTeam = objectMain.getJSONObject("visitorTeam");
                             JSONObject localTeamObj = locTeam.getJSONObject("data");
@@ -243,7 +247,7 @@ SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
 
                             ftScore = localScore + " - " + visitScore;
 
-                            AllFixturesModel model = new AllFixturesModel(homeTeamName, homeTeamLogo, awayTeamName, awayTeamLogo, mstartTime, leagueName, datum, statusS,ftScore, idFixtures, localTeamId, visitorTeamId,minutes);
+                            AllFixturesModel model = new AllFixturesModel(homeTeamName, homeTeamLogo, awayTeamName, awayTeamLogo, mstartTime, leagueName, datum, statusS,ftScore, idFixtures, localTeamId, visitorTeamId,minutes,leagueID,seasonID);
                             singleFixturesList.add(model);
                             adapter.notifyDataSetChanged();
                         }

@@ -70,7 +70,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
 
         intent = getActivity().getIntent();
-        currentSeasonId = intent.getStringExtra("leagueID");
+        currentSeasonId = intent.getStringExtra("seasonId");
         leagueName = intent.getStringExtra("leagueName");
         leagueNameTextview.setText(leagueName);
         finalUrl = URL_STANDINGS + currentSeasonId + URL_APIKEY + INCLUDE_IN_URL;

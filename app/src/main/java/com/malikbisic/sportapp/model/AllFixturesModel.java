@@ -19,6 +19,8 @@ public class AllFixturesModel  {
     String status;
     String score;
     String idFixtures;
+    int leagueId;
+    int seasonId;
     int localTeamId;
     int visitorTeamId;
     int minutes;
@@ -30,7 +32,7 @@ public class AllFixturesModel  {
     public AllFixturesModel() {
     }
 
-    public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String leagueName, String date, String status, String score, String idFixtures, int localTeamId, int visitorTeamId, int minutes) {
+    public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String leagueName, String date, String status, String score, String idFixtures, int localTeamId, int visitorTeamId, int minutes,int leagueId, int seasonId) {
         this.localTeamName = localTeamName;
         this.localTeamLogo = localTeamLogo;
         this.visitorTeamName = visitorTeamName;
@@ -44,6 +46,8 @@ public class AllFixturesModel  {
         this.localTeamId = localTeamId;
         this.visitorTeamId = visitorTeamId;
         this.minutes = minutes;
+        this.leagueId = leagueId;
+        this.seasonId = seasonId;
 
     }
 
@@ -60,6 +64,38 @@ public class AllFixturesModel  {
         this.idFixtures = idFixtures;
         this.localTeamId = localTeamId;
         this.visitorTeamId = visitorTeamId;
+    }
+
+    public int getLeagueId() {
+        return leagueId;
+    }
+
+    public void setLeagueId(int leagueId) {
+        this.leagueId = leagueId;
+    }
+
+    public int getSeasonId() {
+        return seasonId;
+    }
+
+    public void setSeasonId(int seasonId) {
+        this.seasonId = seasonId;
+    }
+
+    public int getLocalTeamScore() {
+        return localTeamScore;
+    }
+
+    public void setLocalTeamScore(int localTeamScore) {
+        this.localTeamScore = localTeamScore;
+    }
+
+    public int getVisitorTeamScore() {
+        return visitorTeamScore;
+    }
+
+    public void setVisitorTeamScore(int visitorTeamScore) {
+        this.visitorTeamScore = visitorTeamScore;
     }
 
     public int getMinutes() {

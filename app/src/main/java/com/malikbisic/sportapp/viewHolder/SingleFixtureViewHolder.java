@@ -3,6 +3,7 @@ package com.malikbisic.sportapp.viewHolder;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -25,7 +26,7 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
     TextView localTeamResult;
     TextView visitorTeamResult;
     View viewResult;
-    public TextView dfss;
+    public  RelativeLayout seeTable;
 
 
     public SingleFixtureViewHolder(View itemView) {
@@ -40,7 +41,7 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
         localTeamResult = (TextView) itemView.findViewById(R.id.localTeamResult);
         visitorTeamResult = (TextView) itemView.findViewById(R.id.visitorTeamResult);
         viewResult = (View) itemView.findViewById(R.id.viewforresult);
-        dfss = (TextView) itemView.findViewById(R.id.seetabletext);
+      seeTable = (RelativeLayout) itemView.findViewById(R.id.seeTableLay);
     }
 
     public void updateUi(AllFixturesModel model) {
