@@ -145,6 +145,25 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#9e9e9e"
-        android:layout_below="@+id/singleLayout"/>
+        android:layout_below="@+id/singleLayout"
+        android:id="@+id/view6" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/view6">
+
+        <TextView
+            android:id="@+id/seetabletext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/singleLayout"
+            android:text="SEE TABLE"
+            android:textColor="@color/black" />
+    </RelativeLayout>
 
 </RelativeLayout>

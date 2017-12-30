@@ -22,6 +22,8 @@ public class AllFixturesModel  {
     int localTeamId;
     int visitorTeamId;
     int minutes;
+    int localTeamScore;
+    int visitorTeamScore;
 
 
 
@@ -42,6 +44,7 @@ public class AllFixturesModel  {
         this.localTeamId = localTeamId;
         this.visitorTeamId = visitorTeamId;
         this.minutes = minutes;
+
     }
 
     public AllFixturesModel(String localTeamName, String localTeamLogo, String visitorTeamName, String visitorTeamLogo, String timeStart, String date, String status, String score, String idFixtures, int localTeamId, int visitorTeamId) {

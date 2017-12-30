@@ -82,6 +82,8 @@ public class SingleFixtureActivity extends AppCompatActivity {
     TextView dateInToolbar;
     String formatedDate;
     int minutes;
+    int localTeamScore;
+    int visitorTeamScore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

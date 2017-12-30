@@ -25,6 +25,7 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
     TextView localTeamResult;
     TextView visitorTeamResult;
     View viewResult;
+    public TextView dfss;
 
 
     public SingleFixtureViewHolder(View itemView) {
@@ -39,6 +40,7 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
         localTeamResult = (TextView) itemView.findViewById(R.id.localTeamResult);
         visitorTeamResult = (TextView) itemView.findViewById(R.id.visitorTeamResult);
         viewResult = (View) itemView.findViewById(R.id.viewforresult);
+        dfss = (TextView) itemView.findViewById(R.id.seetabletext);
     }
 
     public void updateUi(AllFixturesModel model) {
@@ -71,7 +73,18 @@ public class SingleFixtureViewHolder extends RecyclerView.ViewHolder {
             timeOfMatch.setVisibility(View.VISIBLE);
             minutes.setVisibility(View.GONE);
             timeOfMatch.setText(model.getTimeStart().substring(0, 5));
-        } else {
+
+        } else if (status.equals("LIVE")){
+            localTeamResult.setVisibility(View.VISIBLE);
+            visitorTeamResult.setVisibility(View.VISIBLE);
+            timeOfMatch.setVisibility(View.INVISIBLE);
+            viewResult.setVisibility(View.VISIBLE);
+            minutes.setVisibility(View.VISIBLE);
+
+            minutes.setText(minute);
+            localTeamResult.setText(model.getScore().substring(0, 1));
+            visitorTeamResult.setText(model.getScore().substring(3, 5));
+        }  else{
             localTeamResult.setVisibility(View.GONE);
             visitorTeamResult.setVisibility(View.GONE);
             timeOfMatch.setVisibility(View.VISIBLE);

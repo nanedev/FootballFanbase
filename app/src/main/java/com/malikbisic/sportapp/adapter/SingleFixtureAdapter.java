@@ -74,6 +74,13 @@ public class SingleFixtureAdapter extends RecyclerView.Adapter {
         final AllFixturesModel model = fixtureList.get(position);
         if (getViewType == SINGLE_FOXTURE_VIEW){
             ((SingleFixtureViewHolder) holder).updateUi(model);
+
+            if (position == getItemCount() -1){
+                ((SingleFixtureViewHolder) holder).dfss.setVisibility(View.VISIBLE);
+            } else {
+                ((SingleFixtureViewHolder) holder).dfss.setVisibility(View.GONE);
+            }
+
             ((SingleFixtureViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
