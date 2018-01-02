@@ -34,8 +34,10 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.TableAdapter;
+import com.malikbisic.sportapp.adapter.TopScorerAdapter;
 import com.malikbisic.sportapp.model.SvgDrawableTranscoder;
 import com.malikbisic.sportapp.model.TableModel;
+import com.malikbisic.sportapp.model.TopScorerModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,12 +59,16 @@ public class FragmentLeagueInfoStandings extends Fragment {
     String finalUrl;
     RecyclerView tableRecyclerview;
     TableAdapter adapter;
+    TopScorerAdapter scorerAdapter;
     ArrayList<TableModel> tableListStandings = new ArrayList<>();
+    ArrayList<TopScorerModel> topScorerList = new ArrayList<>();
     final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
     private String INCLUDE_IN_URL = "&include=standings.league.country%2Cstandings.team";
     TextView leagueNameTextview;
+    TextView topScorerTextview;
     ProgressDialog mDialog;
     RelativeLayout tableLayout;
+    RelativeLayout topscoresLayout;
     TextView tableTextview;
     Toolbar toolbar;
     TextView leagueNameInToolbar;
@@ -70,6 +76,11 @@ public class FragmentLeagueInfoStandings extends Fragment {
     TextView countryNameTextview;
     TableModel model;
     CircleImageView flag;
+
+    String namePlayer;
+    String imagePlayer;
+    int positionPlayer;
+    int goalScored;
 
     public FragmentLeagueInfoStandings() {
         // Required empty public constructor
@@ -87,22 +98,26 @@ public class FragmentLeagueInfoStandings extends Fragment {
         tableRecyclerview.setLayoutManager(layoutManager);
         countryNameTextview = (TextView) view.findViewById(R.id.countrynamestandings);
         flag = (CircleImageView) view.findViewById(R.id.country_image_standings);
-        adapter = new TableAdapter(tableListStandings, getActivity().getApplicationContext(), getActivity());
+
         mDialog = new ProgressDialog(getActivity());
         mDialog.setIndeterminate(true);
         mDialog.setMessage("Loading...");
         mDialog.show();
         tableLayout = (RelativeLayout) view.findViewById(R.id.tablefragmentlayout);
+        topscoresLayout = (RelativeLayout) view.findViewById(R.id.topscorefragmentlayout);
         tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
-        tableLayout.setActivated(true);
-        tableTextview.setTextColor(Color.parseColor("#ffffff"));
+        topScorerTextview = (TextView) view.findViewById(R.id.topscorerstextview);
+
         toolbar = (Toolbar) view.findViewById(R.id.toolbarLeagueInfo);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         leagueNameInToolbar = (TextView) view.findViewById(R.id.leaguenameinleagueinfotoolbar);
+        tableLayout.setActivated(true);
+        tableTextview.setTextColor(Color.parseColor("#ffffff"));
 
+        topscoresLayout.setActivated(false);
+        topScorerTextview.setTextColor(Color.parseColor("#000000"));
 
-        tableRecyclerview.setAdapter(adapter);
-
+        standingsTable();
 
         intent = getActivity().getIntent();
         currentSeasonId = intent.getStringExtra("seasonId");
@@ -110,8 +125,43 @@ public class FragmentLeagueInfoStandings extends Fragment {
         countryName = intent.getStringExtra("countryName");
         leagueNameTextview.setText(leagueName);
         countryNameTextview.setText(countryName);
-        finalUrl = URL_STANDINGS + currentSeasonId + URL_APIKEY + INCLUDE_IN_URL;
 
+        tableTextview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tableLayout.setActivated(true);
+                tableTextview.setTextColor(Color.parseColor("#ffffff"));
+
+                topscoresLayout.setActivated(false);
+                topScorerTextview.setTextColor(Color.parseColor("#000000"));
+
+                topScorerList.clear();
+                standingsTable();
+            }
+        });
+
+        topScorerTextview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tableLayout.setActivated(false);
+                tableTextview.setTextColor(Color.parseColor("#000000"));
+
+                topscoresLayout.setActivated(true);
+                topScorerTextview.setTextColor(Color.parseColor("#ffffff"));
+
+                tableListStandings.clear();
+                topScorer();
+            }
+        });
+
+        return view;
+    }
+
+    public void standingsTable() {
+        adapter = new TableAdapter(tableListStandings, getActivity().getApplicationContext(), getActivity());
+        tableRecyclerview.setAdapter(adapter);
+
+        finalUrl = URL_STANDINGS + currentSeasonId + URL_APIKEY + INCLUDE_IN_URL;
         JsonObjectRequest standingsRequest = new JsonObjectRequest(Request.Method.GET, finalUrl, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -257,9 +307,54 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
 
         Volley.newRequestQueue(getActivity()).add(standingsRequest);
+    }
+
+    public void topScorer(){
+        String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/"+currentSeasonId+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=goalscorers.player";
+        scorerAdapter = new TopScorerAdapter(topScorerList);
+        tableRecyclerview.setAdapter(scorerAdapter);
 
 
-        return view;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject mainObject = response.getJSONObject("data");
+                    JSONObject goalScoredObject = mainObject.getJSONObject("goalscorers");
+                    JSONArray dataArray = goalScoredObject.getJSONArray("data");
+
+                    for (int i = 0; i < dataArray.length(); i++){
+                        JSONObject dataObjct = dataArray.getJSONObject(i);
+
+                        positionPlayer = dataObjct.getInt("position");
+                        goalScored = dataObjct.getInt("goals");
+
+                        JSONObject playerObject = dataObjct.getJSONObject("player");
+                        JSONObject playerData = playerObject.getJSONObject("data");
+
+                        namePlayer = playerData.getString("common_name");
+                        imagePlayer = playerData.getString("image_path");
+
+                        TopScorerModel model = new TopScorerModel(namePlayer, imagePlayer, goalScored, positionPlayer);
+                        topScorerList.add(model);
+                        mDialog.dismiss();
+                        scorerAdapter.notifyDataSetChanged();
+
+
+                    }
+                } catch (JSONException e) {
+                   Log.e("err", e.getLocalizedMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("errorVolley", error.getLocalizedMessage());
+            }
+        });
+
+        Volley.newRequestQueue(getActivity()).add(request);
     }
 
 }
