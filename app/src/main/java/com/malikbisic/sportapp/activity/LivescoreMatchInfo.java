@@ -50,12 +50,14 @@ public class LivescoreMatchInfo extends AppCompatActivity {
         setUpViewPager(mViewPager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabsAboutFootball);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mViewPager.setCurrentItem(mViewPager.getCurrentItem());
         myIntent = getIntent();
         matchInfoToolbar = (Toolbar) findViewById(R.id.def_toolbar);
         setSupportActionBar(matchInfoToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+        mViewPager.setOffscreenPageLimit(4);
 
         localTeam = (TextView) findViewById(R.id.localTeamNameMatchInfo);
         localTeamLogo = (ImageView) findViewById(R.id.localTeamLogoMatchInfo);

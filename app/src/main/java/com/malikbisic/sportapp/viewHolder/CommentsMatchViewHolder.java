@@ -40,8 +40,8 @@ public class CommentsMatchViewHolder extends RecyclerView.ViewHolder {
         String yellow = "yellow card";
         String red = "red card";
 
-        minuteText.setText(min);
-        if (!comments.matches("[0-9]")) {
+        minuteText.setText(min + "'");
+        if (!parseInteger(comments)) {
             commentaryText.setText(comments);
         }
 
@@ -64,5 +64,15 @@ public class CommentsMatchViewHolder extends RecyclerView.ViewHolder {
             iconCommentary.setVisibility(View.INVISIBLE);
         }
 
+    }
+
+    boolean parseInteger(String s)
+    {
+        try {
+           int number = Integer.parseInt(s);
+            return true;
+        } catch(NumberFormatException e) {
+            return false;
+        }
     }
 }

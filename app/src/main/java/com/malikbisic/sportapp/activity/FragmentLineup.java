@@ -45,6 +45,7 @@ public class FragmentLineup extends Fragment {
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.setCurrentItem(mViewPager.getCurrentItem());
         mViewPager.setPagingEnabled(false);
+        mViewPager.setOffscreenPageLimit(1);
 
         homeTeam = getActivity().getIntent().getStringExtra("localTeamName");
         awayTeam = getActivity().getIntent().getStringExtra("visitorTeamName");

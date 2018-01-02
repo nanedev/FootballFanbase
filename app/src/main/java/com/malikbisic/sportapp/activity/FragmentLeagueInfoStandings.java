@@ -70,6 +70,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
     TextView countryNameTextview;
     TableModel model;
     CircleImageView flag;
+
     public FragmentLeagueInfoStandings() {
         // Required empty public constructor
     }
@@ -83,24 +84,21 @@ public class FragmentLeagueInfoStandings extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         leagueNameTextview = (TextView) view.findViewById(R.id.leaguenamestandings);
         tableRecyclerview = (RecyclerView) view.findViewById(R.id.league_info_recycler_view);
-       tableRecyclerview.setLayoutManager(layoutManager);
-       countryNameTextview = (TextView) view.findViewById(R.id.countrynamestandings);
-       flag = (CircleImageView)  view.findViewById(R.id.country_image_standings);
-        adapter = new TableAdapter(tableListStandings, getActivity().getApplicationContext(),getActivity());
+        tableRecyclerview.setLayoutManager(layoutManager);
+        countryNameTextview = (TextView) view.findViewById(R.id.countrynamestandings);
+        flag = (CircleImageView) view.findViewById(R.id.country_image_standings);
+        adapter = new TableAdapter(tableListStandings, getActivity().getApplicationContext(), getActivity());
         mDialog = new ProgressDialog(getActivity());
         mDialog.setIndeterminate(true);
         mDialog.setMessage("Loading...");
         mDialog.show();
         tableLayout = (RelativeLayout) view.findViewById(R.id.tablefragmentlayout);
-tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
+        tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
         tableLayout.setActivated(true);
         tableTextview.setTextColor(Color.parseColor("#ffffff"));
         toolbar = (Toolbar) view.findViewById(R.id.toolbarLeagueInfo);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         leagueNameInToolbar = (TextView) view.findViewById(R.id.leaguenameinleagueinfotoolbar);
-
-
-
 
 
         tableRecyclerview.setAdapter(adapter);
@@ -137,6 +135,7 @@ tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
                         JSONObject getObjectFromList = dataList.getJSONObject(i);
                         JSONObject standings = getObjectFromList.getJSONObject("standings");
                         JSONArray getDataList = standings.getJSONArray("data");
+                        tableListStandings.clear();
 
                         for (int x = 0; x < getDataList.length(); x++) {
 
@@ -169,11 +168,7 @@ tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
 
                             Log.i("pozicija", String.valueOf(position));
                             Log.i("poena", String.valueOf(points));
-
-                            Log.i("played", String.valueOf(played));
-                            Log.i("draws", String.valueOf(draws));
-                            Log.i("goaldif", String.valueOf(goalDif));
-                          model  = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points, logo,countryId,country);
+                            model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points, logo, countryId, country);
                             tableListStandings.add(model);
 
 
@@ -224,6 +219,8 @@ tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
                                                     .into(flag);
 
                                         }
+                                        adapter.notifyDataSetChanged();
+                                        mDialog.dismiss();
 
 
                                     } catch (JSONException e) {
@@ -239,8 +236,7 @@ tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
                             Volley.newRequestQueue(getActivity()).add(request);
                         }
 
-                        adapter.notifyDataSetChanged();
-                        mDialog.dismiss();
+
                     }
 
                 } catch (JSONException e) {
@@ -258,7 +254,6 @@ tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
 
 
         Volley.newRequestQueue(getActivity()).add(standingsRequest);
-
 
 
         return view;
