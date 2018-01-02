@@ -109,6 +109,8 @@ public class SingleFixtureAdapter extends RecyclerView.Adapter {
                     Intent intent = new Intent(activity, LeagueInfoActivity.class);
                     intent.putExtra("seasonId",String.valueOf(model.getSeasonId()));
                     intent.putExtra("league_id",model.getLeagueId());
+                    intent.putExtra("leagueName",model.getLeagueName());
+                    intent.putExtra("countryName",model.getCountryName());
                     activity.startActivity(intent);
                 }
             });

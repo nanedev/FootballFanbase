@@ -1,10 +1,156 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.malikbisic.sportapp.activity.FragmentLeagueInfoStandings">
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:padding="5dp"
+        android:id="@+id/leagueInfolayoutstandings">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/country_image_standings"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/countrynamestandings"
+            android:layout_toRightOf="@+id/country_image_standings"
+            android:layout_toEndOf="@+id/country_image_standings"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="bosna"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/leaguenamestandings"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/countrynamestandings"
+            android:layout_toEndOf="@+id/countrynamestandings"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:text="neka liga"
+            android:textColor="@color/white"/>
+
+
+    </RelativeLayout>
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:id="@+id/leagueseparator"
+        android:layout_below="@+id/leagueInfolayoutstandings"
+        android:background="@color/black"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/leagueseparator">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+   >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/leagueseparator"
+        android:layout_alignRight="@+id/verticalseparator"
+        android:layout_alignEnd="@+id/verticalseparator"
+        android:background="@drawable/shape_table"
+        android:id="@+id/tablefragmentlayout">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tableTextTextview"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:text="Table"
+            android:textStyle="bold"
+            />
+
+
+
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/verticalseparator"
+        android:layout_alignStart="@+id/verticalseparator"
+        android:background="@drawable/shape_table"
+        android:id="@+id/topscorefragmentlayout"
+        android:layout_below="@id/leagueseparator">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/black"
+            android:id="@+id/topscorerstextview"
+            android:text="Top Scorers"
+            />
+
+
+
+
+
+
+
+
+    </RelativeLayout>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="40dp"
+        android:background="@color/black"
+        android:layout_below="@+id/leagueInfolayoutstandings"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/verticalseparator"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        android:id="@+id/horizontallinestnadnigs"
+        android:layout_below="@+id/tablefragmentlayout"/>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/league_info_recycler_view"
+        android:layout_below="@+id/horizontallinestnadnigs"
+ >
+
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</RelativeLayout>
+
+    </ScrollView>
+
+
+
+
+<!--
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -83,5 +229,6 @@
     </android.support.v7.widget.RecyclerView>
 
 
+-->
 
 </RelativeLayout>

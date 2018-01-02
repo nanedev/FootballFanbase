@@ -85,6 +85,7 @@ int getLeagueID;
     int localTeamScore;
     int visitorTeamScore;
     int seasonID;
+    String countryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +193,7 @@ SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
 
 
 
-        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/"+dateUrl+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=localTeam,visitorTeam,league&leagues="+leagueID;
+        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/"+dateUrl+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=localTeam%2CvisitorTeam%2Cleague.country&leagues="+leagueID;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -234,6 +235,9 @@ SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
 
                             JSONObject leagueMain = objectMain.getJSONObject("league");
                             JSONObject dataLeague = leagueMain.getJSONObject("data");
+                            JSONObject getCountry = dataLeague.getJSONObject("country");
+                            JSONObject getCountryData = getCountry.getJSONObject("data");
+                            countryName = getCountryData.getString("name");
 
                             leagueName = dataLeague.getString("name");
 
@@ -247,7 +251,7 @@ SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
 
                             ftScore = localScore + " - " + visitScore;
 
-                            AllFixturesModel model = new AllFixturesModel(homeTeamName, homeTeamLogo, awayTeamName, awayTeamLogo, mstartTime, leagueName, datum, statusS,ftScore, idFixtures, localTeamId, visitorTeamId,minutes,leagueID,seasonID);
+                            AllFixturesModel model = new AllFixturesModel(homeTeamName, homeTeamLogo, awayTeamName, awayTeamLogo, mstartTime, leagueName, datum, statusS,ftScore, idFixtures, localTeamId, visitorTeamId,minutes,leagueID,seasonID,countryName);
                             singleFixturesList.add(model);
                             adapter.notifyDataSetChanged();
                         }

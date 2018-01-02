@@ -7,13 +7,37 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.malikbisic.sportapp.activity.LeagueInfoActivity">
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbarLeagueInfo"
+
+       >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ime lige"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:id="@+id/leaguenameinleagueinfotoolbar"
+        />
+
+
+
+    </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_anchor="@id/toolbarLeagueInfo"
+        app:layout_anchorGravity="bottom"
+        android:layout_gravity="bottom">
 
 
         <android.support.design.widget.TabLayout
@@ -30,8 +54,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
-    <include layout="@layout/activity_bottom_navigation"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent" />
+
 
 </android.support.design.widget.CoordinatorLayout>

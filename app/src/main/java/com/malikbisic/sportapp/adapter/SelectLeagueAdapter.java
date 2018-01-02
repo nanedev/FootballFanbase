@@ -123,6 +123,7 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter {
                     openClub.putExtra("seasonId", leagueModel.getCurrent_season_id());
                     openClub.putExtra("leagueName", leagueModel.getName());
                     openClub.putExtra("league_id", leagueModel.getLeague_id());
+                    openClub.putExtra("countryName",leagueModel.getCountry_name());
                     activity.startActivity(openClub);
 
                 }
