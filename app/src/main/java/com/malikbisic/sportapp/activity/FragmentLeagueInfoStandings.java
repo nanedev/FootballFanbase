@@ -128,6 +128,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
                 String goalDif = "";
                 String countryId = "";
                 int points = 0;
+                String result;
                 try {
                     JSONArray dataList = response.getJSONArray("data");
 
@@ -143,6 +144,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
                             position = getData.getInt("position");
                             teamId = getData.getInt("team_id");
                             teamName = getData.getString("team_name");
+                            result = getData.getString("result");
                             JSONObject overall = getData.getJSONObject("overall");
                             played = overall.getInt("games_played");
                             wins = overall.getInt("won");
@@ -150,6 +152,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
                             lost = overall.getInt("lost");
                             goalScored = overall.getInt("goals_scored");
                             goalConcided = overall.getInt("goals_against");
+
 
                             JSONObject total = getData.getJSONObject("total");
                             goalDif = total.getString("goal_difference");
@@ -168,7 +171,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
                             Log.i("pozicija", String.valueOf(position));
                             Log.i("poena", String.valueOf(points));
-                            model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points, logo, countryId, country);
+                            model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points, logo, countryId, country,result);
                             tableListStandings.add(model);
 
 

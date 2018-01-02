@@ -126,10 +126,76 @@
                 android:layout_below="@+id/tablefragmentlayout"
                 android:background="@color/black" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tableinfolayout"
+                android:padding="7dp"
+                android:background="#bdbdbd"
+                android:layout_below="@+id/horizontallinestnadnigs">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/position"
+                    android:text="Pos."
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/position"
+                    android:layout_toEndOf="@+id/position"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginStart="13dp"
+                    android:text="Club"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/points"
+                    android:text="Pts."
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/black"/>
+
+
+                <TextView
+                    android:id="@+id/goals"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/points"
+                    android:layout_toStartOf="@+id/points"
+                    android:text="Goals"
+                    android:textColor="#000" />
+
+
+                <TextView
+                    android:id="@+id/played"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/goals"
+                    android:layout_toStartOf="@+id/goals"
+                    android:text="Played"
+                    android:textColor="#000" />
+            </RelativeLayout>
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/horizontallinestnadnigs">
+                android:layout_below="@+id/tableinfolayout">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/league_info_recycler_view"
