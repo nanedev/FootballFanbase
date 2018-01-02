@@ -117,7 +117,6 @@ public class FragmentLeagueInfoStandings extends Fragment {
         topscoresLayout.setActivated(false);
         topScorerTextview.setTextColor(Color.parseColor("#000000"));
 
-        standingsTable();
 
         intent = getActivity().getIntent();
         currentSeasonId = intent.getStringExtra("seasonId");
@@ -125,7 +124,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
         countryName = intent.getStringExtra("countryName");
         leagueNameTextview.setText(leagueName);
         countryNameTextview.setText(countryName);
-
+        standingsTable();
         tableTextview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,7 +220,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
                             Log.i("pozicija", String.valueOf(position));
                             Log.i("poena", String.valueOf(points));
-                            model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points, logo, countryId, country,result);
+                            model = new TableModel(position, teamId, teamName, played, wins, draws, lost, goalScored, goalConcided, goalDif, points, logo, countryId, country, result);
                             tableListStandings.add(model);
 
 
@@ -233,8 +232,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
                                 flag.setImageDrawable(getResources().getDrawable(R.drawable.scotland));
                             } else if (model.getCountryName().equals("Wales")) {
                                 flag.setImageDrawable(getResources().getDrawable(R.drawable.welsh_flag));
-                            }
-
+                            } else {
 
                             String countryURL = "https://restcountries.eu/rest/v2/name/" + model.getCountryName();
 
@@ -271,10 +269,9 @@ public class FragmentLeagueInfoStandings extends Fragment {
                                                     .load(uri)
                                                     .into(flag);
 
-                                        }
-                                        adapter.notifyDataSetChanged();
-                                        mDialog.dismiss();
 
+
+                                        }
 
                                     } catch (JSONException e) {
                                         Log.v("json", e.getLocalizedMessage());
@@ -288,29 +285,40 @@ public class FragmentLeagueInfoStandings extends Fragment {
                             });
                             Volley.newRequestQueue(getActivity()).add(request);
                         }
-
-
+                            adapter.notifyDataSetChanged();
+                            mDialog.dismiss();
                     }
-
-                } catch (JSONException e) {
-                    Log.v("Excpetion JSON", "Err: " + e.getLocalizedMessage());
                 }
 
+            } catch(
+            JSONException e)
 
+            {
+                Log.v("Excpetion JSON", "Err: " + e.getLocalizedMessage());
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("LEAGUE", "Err: " + error.getLocalizedMessage());
-            }
-        });
 
 
-        Volley.newRequestQueue(getActivity()).add(standingsRequest);
+        }
+    },new Response.ErrorListener()
+
+    {
+        @Override
+        public void onErrorResponse (VolleyError error){
+        Log.e("LEAGUE", "Err: " + error.getLocalizedMessage());
     }
+    });
 
-    public void topScorer(){
-        String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/"+currentSeasonId+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=goalscorers.player";
+
+        Volley.newRequestQueue(
+
+    getActivity()).
+
+    add(standingsRequest);
+
+}
+
+    public void topScorer() {
+        String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/" + currentSeasonId + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=goalscorers.player";
         scorerAdapter = new TopScorerAdapter(topScorerList);
         tableRecyclerview.setAdapter(scorerAdapter);
 
@@ -323,7 +331,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
                     JSONObject goalScoredObject = mainObject.getJSONObject("goalscorers");
                     JSONArray dataArray = goalScoredObject.getJSONArray("data");
 
-                    for (int i = 0; i < dataArray.length(); i++){
+                    for (int i = 0; i < dataArray.length(); i++) {
                         JSONObject dataObjct = dataArray.getJSONObject(i);
 
                         positionPlayer = dataObjct.getInt("position");
@@ -343,7 +351,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
                     }
                 } catch (JSONException e) {
-                   Log.e("err", e.getLocalizedMessage());
+                    Log.e("err", e.getLocalizedMessage());
                 }
 
             }
