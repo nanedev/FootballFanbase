@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.viewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -22,6 +23,7 @@ public class TopScorerViewHolder extends RecyclerView.ViewHolder {
     TextView namePlayer;
     TextView goalScoredText;
     CircleImageView imagePlayer;
+    public Button vote;
 
     public TopScorerViewHolder(View itemView) {
         super(itemView);
@@ -30,6 +32,7 @@ public class TopScorerViewHolder extends RecyclerView.ViewHolder {
         namePlayer = (TextView) itemView.findViewById(R.id.name_player_score);
         goalScoredText = (TextView) itemView.findViewById(R.id.scoreNumber);
         imagePlayer = (CircleImageView) itemView.findViewById(R.id.image_player_score);
+        vote = (Button) itemView.findViewById(R.id.voteBtn);
     }
 
     public void updateUI(TopScorerModel model){

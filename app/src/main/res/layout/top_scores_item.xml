@@ -51,13 +51,13 @@
                 android:layout_centerHorizontal="false"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="18dp"
-                android:layout_toLeftOf="@+id/button5"
-                android:layout_toStartOf="@+id/button5"
+                android:layout_toLeftOf="@+id/voteBtn"
+                android:layout_toStartOf="@+id/voteBtn"
                 android:text="17"
                 android:textColor="@color/black" />
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/voteBtn"
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/scoreNumber"

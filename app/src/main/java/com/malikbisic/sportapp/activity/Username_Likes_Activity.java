@@ -49,19 +49,20 @@ public class Username_Likes_Activity extends AppCompatActivity {
     RecyclerView likesRec;
     Intent myIntent;
     FirebaseFirestore db;
-  FirestoreRecyclerAdapter adapter;
+    FirestoreRecyclerAdapter adapter;
     FirebaseAuth.AuthStateListener mAuthStateListener;
     Toolbar likeToolbar;
     String openActivity = "";
     String postKey = "";
     CollectionReference likesReferences;
     FirebaseAuth mAuth;
-   CollectionReference userReference;
-   List<UsersModel> list;
+    CollectionReference userReference;
+    List<UsersModel> list;
     Query query;
     String userId;
     UsersModel usersModel;
     String usernameUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +80,8 @@ public class Username_Likes_Activity extends AppCompatActivity {
         postKey = myIntent.getStringExtra("keyPost");
         String post_keyComments = myIntent.getStringExtra("post_keyComment");
         boolean isComment = myIntent.getBooleanExtra("isLikeComment", false);
-list = new ArrayList<>();
-        if (isComment){
+        list = new ArrayList<>();
+        if (isComment) {
             likesReferences = FirebaseFirestore.getInstance().collection("LikeComments").document(post_keyComments).collection("like-id");
         } else {
             likesReferences = FirebaseFirestore.getInstance().collection("Likes").document(post_key).collection("like-id");
@@ -99,90 +100,89 @@ list = new ArrayList<>();
             }
         };
 
-userId = mAuth.getCurrentUser().getUid();
+        userId = mAuth.getCurrentUser().getUid();
 
-         query = likesReferences;
+        query = likesReferences;
 
-                FirestoreRecyclerOptions<LikesUsernamePhoto> response = new FirestoreRecyclerOptions.Builder<LikesUsernamePhoto>()
-                .setQuery(query,LikesUsernamePhoto.class)
+        FirestoreRecyclerOptions<LikesUsernamePhoto> response = new FirestoreRecyclerOptions.Builder<LikesUsernamePhoto>()
+                .setQuery(query, LikesUsernamePhoto.class)
                 .build();
 
         adapter = new FirestoreRecyclerAdapter<LikesUsernamePhoto, LikesViewHolder>(response) {
             @Override
             public LikesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.username_likes_row,parent,false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.username_likes_row, parent, false);
 
                 return new LikesViewHolder(view);
             }
 
             @Override
             protected void onBindViewHolder(final LikesViewHolder holder, int position, final LikesUsernamePhoto model) {
-holder.setProfilePhoto(getApplicationContext(),model.getPhotoProfile());
-holder.setUsername(model.getUsername());
+                holder.setProfilePhoto(getApplicationContext(), model.getPhotoProfile());
+                holder.setUsername(model.getUsername());
 
-holder.mView.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        final String username = holder.usernameProfile.getText().toString().trim();
-        userReference = db.collection("Users");
-        userReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w("Fail", "Listen failed.", e);
-                    return;
-                }
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String username = holder.usernameProfile.getText().toString().trim();
+                        userReference = db.collection("Users");
+                        userReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                if (e != null) {
+                                    Log.w("Fail", "Listen failed.", e);
+                                    return;
+                                }
 
-                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()){
+                                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
 
-                    if (snapshot != null && snapshot.exists()) {
+                                    if (snapshot != null && snapshot.exists()) {
 
-                        String usernameFirestore = String.valueOf(snapshot.getData().get("username"));
-                       usersModel = snapshot.toObject(UsersModel.class);
+                                        String usernameFirestore = String.valueOf(snapshot.getData().get("username"));
+                                        usersModel = snapshot.toObject(UsersModel.class);
 
-if (username.equals(usernameFirestore)) {
-    final String uid = usersModel.getUserID();
-    FirebaseUser user1 = mAuth.getCurrentUser();
-    String myUID = user1.getUid();
-    Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
-                            if (uid.equals(myUID)){
-                                ProfileFragment profileFragment = new ProfileFragment();
+                                        if (username.equals(usernameFirestore)) {
+                                            final String uid = usersModel.getUserID();
+                                            FirebaseUser user1 = mAuth.getCurrentUser();
+                                            String myUID = user1.getUid();
+                                            Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
+                                            if (uid.equals(myUID)) {
+                                                ProfileFragment profileFragment = new ProfileFragment();
 
-                                FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+                                                FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
-                                manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                        R.anim.push_left_out, R.anim.push_left_out).replace(R.id.likes_layout, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                Log.i("tacno", "true");
-                            }
-                           else {
-                                userReference.document(usersModel.getUserID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
-                                        Intent openUserProfile = new Intent(Username_Likes_Activity.this, UserProfileActivity.class);
-                                        openUserProfile.putExtra("userID", uid);
-                                        startActivity(openUserProfile);
+                                                manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                        R.anim.push_left_out, R.anim.push_left_out).replace(R.id.likes_layout, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                                Log.i("tacno", "true");
+                                            } else {
+                                                userReference.document(usersModel.getUserID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
+                                                        Intent openUserProfile = new Intent(Username_Likes_Activity.this, UserProfileActivity.class);
+                                                        openUserProfile.putExtra("userID", uid);
+                                                        startActivity(openUserProfile);
+                                                    }
+                                                });
+                                            }
+                                        }
+
                                     }
-                                });
-                            }
+
+                                }
                             }
 
-                        }
+
+                        });
+
 
                     }
-                }
-
-
-        });
-
-
-    }
-});
+                });
             }
         };
 
-adapter.notifyDataSetChanged();
-likesRec.setAdapter(adapter);
-adapter.startListening();
+        adapter.notifyDataSetChanged();
+        likesRec.setAdapter(adapter);
+        adapter.startListening();
     }
 
     @Override
@@ -379,7 +379,7 @@ adapter.startListening();
         }
 
         public void setProfilePhoto(Context ctx, String photoProfile) {
-photo_image.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+            photo_image.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             Picasso.with(ctx).load(photoProfile).into(photo_image);
 
         }
@@ -395,8 +395,8 @@ photo_image.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
         super.onBackPressed();
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("result","nesto");
-        setResult(RESULT_OK,returnIntent);
+        returnIntent.putExtra("result", "nesto");
+        setResult(RESULT_OK, returnIntent);
         finish();
     }
 
@@ -405,11 +405,11 @@ photo_image.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
     public Intent getParentActivityIntent() {
 
 
-        if (openActivity.equals("mainPage")){
+        if (openActivity.equals("mainPage")) {
             Intent backMainPage = new Intent(Username_Likes_Activity.this, MainPage.class);
             startActivity(backMainPage);
             finish();
-        } else if (openActivity.equals("commentsActivity")){
+        } else if (openActivity.equals("commentsActivity")) {
             Intent backComments = new Intent(Username_Likes_Activity.this, CommentsActivity.class);
             backComments.putExtra("keyComment", postKey);
             startActivity(backComments);

@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity;
 
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -86,6 +88,8 @@ public class FragmentLeagueInfoStandings extends Fragment {
     TextView relegeationTextview;
     RelativeLayout infoAboutChampAndRel;
     RelativeLayout topscorersInfoLayout;
+
+    int myPointsVote = 50;
 
     public FragmentLeagueInfoStandings() {
         // Required empty public constructor
@@ -172,6 +176,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
         return view;
     }
+
 
     public void standingsTable() {
         adapter = new TableAdapter(tableListStandings, getActivity().getApplicationContext(), getActivity());
@@ -335,7 +340,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
     public void topScorer() {
         String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/" + currentSeasonId + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=goalscorers.player";
-        scorerAdapter = new TopScorerAdapter(topScorerList);
+        scorerAdapter = new TopScorerAdapter(topScorerList, getActivity());
         tableRecyclerview.setAdapter(scorerAdapter);
 
 
