@@ -81,10 +81,12 @@ public class FragmentLeagueInfoStandings extends Fragment {
     String imagePlayer;
     int positionPlayer;
     int goalScored;
-RelativeLayout tableInfoLay;
-TextView championLeagueTextview;
-TextView relegeationTextview;
-RelativeLayout infoAboutChampAndRel;
+    RelativeLayout tableInfoLay;
+    TextView championLeagueTextview;
+    TextView relegeationTextview;
+    RelativeLayout infoAboutChampAndRel;
+    RelativeLayout topscorersInfoLayout;
+
     public FragmentLeagueInfoStandings() {
         // Required empty public constructor
     }
@@ -101,9 +103,9 @@ RelativeLayout infoAboutChampAndRel;
         tableRecyclerview.setLayoutManager(layoutManager);
         countryNameTextview = (TextView) view.findViewById(R.id.countrynamestandings);
         flag = (CircleImageView) view.findViewById(R.id.country_image_standings);
-tableInfoLay = (RelativeLayout) view.findViewById(R.id.tableinfolayout);
-championLeagueTextview = (TextView) view.findViewById(R.id.textforchampionleague);
-relegeationTextview = (TextView) view.findViewById(R.id.textforrelegation);
+        tableInfoLay = (RelativeLayout) view.findViewById(R.id.tableinfolayout);
+        championLeagueTextview = (TextView) view.findViewById(R.id.textforchampionleague);
+        relegeationTextview = (TextView) view.findViewById(R.id.textforrelegation);
         mDialog = new ProgressDialog(getActivity());
         mDialog.setIndeterminate(true);
         mDialog.setMessage("Loading...");
@@ -112,7 +114,7 @@ relegeationTextview = (TextView) view.findViewById(R.id.textforrelegation);
         topscoresLayout = (RelativeLayout) view.findViewById(R.id.topscorefragmentlayout);
         tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
         topScorerTextview = (TextView) view.findViewById(R.id.topscorerstextview);
-infoAboutChampAndRel = (RelativeLayout) view.findViewById(R.id.infoaboutredandblue);
+        infoAboutChampAndRel = (RelativeLayout) view.findViewById(R.id.infoaboutredandblue);
         toolbar = (Toolbar) view.findViewById(R.id.toolbarLeagueInfo);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         leagueNameInToolbar = (TextView) view.findViewById(R.id.leaguenameinleagueinfotoolbar);
@@ -122,6 +124,8 @@ infoAboutChampAndRel = (RelativeLayout) view.findViewById(R.id.infoaboutredandbl
         topscoresLayout.setActivated(false);
         topScorerTextview.setTextColor(Color.parseColor("#ffffff"));
 
+        topscorersInfoLayout = (RelativeLayout) view.findViewById(R.id.topscoreinfolayout);
+
 
         intent = getActivity().getIntent();
         currentSeasonId = intent.getStringExtra("seasonId");
@@ -129,7 +133,7 @@ infoAboutChampAndRel = (RelativeLayout) view.findViewById(R.id.infoaboutredandbl
         countryName = intent.getStringExtra("countryName");
         leagueNameTextview.setText(leagueName.toUpperCase());
         countryNameTextview.setText(countryName.toUpperCase() + ":");
-        championLeagueTextview.setText(leagueName +" - " + " Champions Group ");
+        championLeagueTextview.setText(leagueName + " - " + " Champions Group ");
         relegeationTextview.setText(leagueName + " - " + " Relegation Group ");
 
         standingsTable();
@@ -138,8 +142,9 @@ infoAboutChampAndRel = (RelativeLayout) view.findViewById(R.id.infoaboutredandbl
             public void onClick(View v) {
                 tableLayout.setActivated(true);
                 tableTextview.setTextColor(Color.parseColor("#000000"));
-tableInfoLay.setVisibility(View.VISIBLE);
-infoAboutChampAndRel.setVisibility(View.VISIBLE);
+                tableInfoLay.setVisibility(View.VISIBLE);
+                infoAboutChampAndRel.setVisibility(View.VISIBLE);
+                topscorersInfoLayout.setVisibility(View.INVISIBLE);
                 topscoresLayout.setActivated(false);
                 topScorerTextview.setTextColor(Color.parseColor("#ffffff"));
 
@@ -151,12 +156,15 @@ infoAboutChampAndRel.setVisibility(View.VISIBLE);
         topscoresLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                tableInfoLay.setVisibility(View.INVISIBLE);
+                infoAboutChampAndRel.setVisibility(View.INVISIBLE);
+                topscorersInfoLayout.setVisibility(View.VISIBLE);
+
                 tableLayout.setActivated(false);
                 tableTextview.setTextColor(Color.parseColor("#ffffff"));
-tableInfoLay.setVisibility(View.GONE);
                 topscoresLayout.setActivated(true);
                 topScorerTextview.setTextColor(Color.parseColor("#000000"));
-infoAboutChampAndRel.setVisibility(View.GONE);
                 tableListStandings.clear();
                 topScorer();
             }
@@ -243,88 +251,87 @@ infoAboutChampAndRel.setVisibility(View.GONE);
                                 flag.setImageDrawable(getResources().getDrawable(R.drawable.welsh_flag));
                             } else {
 
-                            String countryURL = "https://restcountries.eu/rest/v2/name/" + model.getCountryName();
+                                String countryURL = "https://restcountries.eu/rest/v2/name/" + model.getCountryName();
 
-                            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
-                                @Override
-                                public void onResponse(JSONArray response) {
-                                    Log.i("json", response.toString());
-                                    try {
-                                        for (int i = 0; i < response.length(); i++) {
+                                JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
+                                    @Override
+                                    public void onResponse(JSONArray response) {
+                                        Log.i("json", response.toString());
+                                        try {
+                                            for (int i = 0; i < response.length(); i++) {
 
-                                            JSONObject object = response.getJSONObject(i);
-                                            String countryName = object.getString("name");
-                                            String countryImage = object.getString("flag");
-                                            System.out.println("country flag" + countryImage);
-                                            GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+                                                JSONObject object = response.getJSONObject(i);
+                                                String countryName = object.getString("name");
+                                                String countryImage = object.getString("flag");
+                                                System.out.println("country flag" + countryImage);
+                                                GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
-                                            requestBuilder = Glide
-                                                    .with(getActivity())
-                                                    .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
-                                                    .from(Uri.class)
-                                                    .as(SVG.class)
-                                                    .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-                                                    .sourceEncoder(new StreamEncoder())
-                                                    .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
-                                                    .decoder(new SearchableCountry.SvgDecoder())
-                                                    .animate(android.R.anim.fade_in);
-
-
-                                            Uri uri = Uri.parse(countryImage);
-
-                                            requestBuilder
-                                                    // SVG cannot be serialized so it's not worth to cache it
-                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                    .load(uri)
-                                                    .into(flag);
+                                                requestBuilder = Glide
+                                                        .with(getActivity())
+                                                        .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
+                                                        .from(Uri.class)
+                                                        .as(SVG.class)
+                                                        .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                                                        .sourceEncoder(new StreamEncoder())
+                                                        .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                                                        .decoder(new SearchableCountry.SvgDecoder())
+                                                        .animate(android.R.anim.fade_in);
 
 
+                                                Uri uri = Uri.parse(countryImage);
 
+                                                requestBuilder
+                                                        // SVG cannot be serialized so it's not worth to cache it
+                                                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                                        .load(uri)
+                                                        .into(flag);
+
+
+                                            }
+
+                                        } catch (JSONException e) {
+                                            Log.v("json", e.getLocalizedMessage());
                                         }
-
-                                    } catch (JSONException e) {
-                                        Log.v("json", e.getLocalizedMessage());
                                     }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    //Log.v("json", error.getLocalizedMessage());
-                                }
-                            });
-                            Volley.newRequestQueue(getActivity()).add(request);
-                        }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        //Log.v("json", error.getLocalizedMessage());
+                                    }
+                                });
+                                Volley.newRequestQueue(getActivity()).add(request);
+                            }
                             adapter.notifyDataSetChanged();
                             mDialog.dismiss();
+                        }
                     }
+
+                } catch (
+                        JSONException e)
+
+                {
+                    Log.v("Excpetion JSON", "Err: " + e.getLocalizedMessage());
                 }
 
-            } catch(
-            JSONException e)
 
-            {
-                Log.v("Excpetion JSON", "Err: " + e.getLocalizedMessage());
             }
+        }, new Response.ErrorListener()
 
-
-        }
-    },new Response.ErrorListener()
-
-    {
-        @Override
-        public void onErrorResponse (VolleyError error){
-        Log.e("LEAGUE", "Err: " + error.getLocalizedMessage());
-    }
-    });
+        {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("LEAGUE", "Err: " + error.getLocalizedMessage());
+            }
+        });
 
 
         Volley.newRequestQueue(
 
-    getActivity()).
+                getActivity()).
 
-    add(standingsRequest);
+                add(standingsRequest);
 
-}
+    }
 
     public void topScorer() {
         String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/" + currentSeasonId + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=goalscorers.player";

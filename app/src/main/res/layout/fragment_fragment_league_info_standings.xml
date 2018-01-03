@@ -133,6 +133,7 @@
                 android:id="@+id/tableinfolayout"
                 android:padding="7dp"
                 android:background="#bdbdbd"
+                android:visibility="invisible"
                 android:layout_below="@+id/horizontallinestnadnigs">
                 <TextView
                     android:layout_width="wrap_content"
@@ -191,6 +192,49 @@
                     android:layout_toStartOf="@+id/goals"
                     android:text="Played"
                     android:textColor="#000" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/topscoreinfolayout"
+                android:padding="7dp"
+                android:background="#bdbdbd"
+                android:layout_below="@+id/horizontallinestnadnigs">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/positionScore"
+                    android:text="Pos."
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="23dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_toEndOf="@+id/positionScore"
+                    android:layout_toRightOf="@+id/positionScore"
+                    android:text="Player Name"
+                    android:textColor="@color/black" />
+
+
+                <TextView
+                    android:id="@+id/goalsTopScores"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="88dp"
+                    android:layout_marginRight="88dp"
+                    android:text="Goals"
+                    android:textColor="#000" />
+
+
             </RelativeLayout>
 
             <FrameLayout
