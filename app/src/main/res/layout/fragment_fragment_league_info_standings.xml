@@ -9,14 +9,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:padding="5dp"
+        android:background="@color/white"
+        android:padding="10dp"
         android:id="@+id/leagueInfolayoutstandings">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:id="@+id/country_image_standings"
             android:layout_centerVertical="true"/>
 
@@ -30,7 +30,7 @@
             android:layout_marginStart="5dp"
             android:layout_centerVertical="true"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:text="bosna"/>
 
         <TextView
@@ -42,9 +42,9 @@
             android:layout_toEndOf="@+id/countrynamestandings"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:textStyle="bold"
+
             android:text="neka liga"
-            android:textColor="@color/white"/>
+            android:textColor="@color/black"/>
 
 
     </RelativeLayout>
@@ -105,6 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
+                    android:textStyle="bold"
                     android:text="Top Scorers"
                     android:textColor="@color/black" />
 
@@ -195,16 +196,72 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/recyclerviewframelayout"
                 android:layout_below="@+id/tableinfolayout">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/league_info_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="?attr/actionBarSize">
+               >
 
             </android.support.v7.widget.RecyclerView>
             </FrameLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/recyclerviewframelayout"
+                android:padding="5dp"
+                android:background="@color/white"
+                android:id="@+id/infoaboutredandblue"
+                android:layout_marginBottom="?attr/actionBarSize">
+
+                <RelativeLayout
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="#0d47a1"
+                    android:id="@+id/champiosnleague"
+                    >
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textforchampionleague"
+                    android:textColor="@color/black"
+                    android:layout_toRightOf="@+id/champiosnleague"
+                    android:layout_toEndOf="@+id/champiosnleague"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"/>
+
+                <RelativeLayout
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="#b71c1c"
+                    android:id="@+id/relagation"
+                android:layout_marginTop="5dp"
+                    android:layout_below="@+id/champiosnleague"
+                    android:layout_alignStart="@+id/champiosnleague"
+                    android:layout_alignLeft="@+id/champiosnleague">
+
+                </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textforrelegation"
+                    android:textColor="@color/black"
+                    android:layout_toRightOf="@+id/relagation"
+                    android:layout_toEndOf="@+id/relagation"
+                    android:layout_below="@+id/textforchampionleague"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"/>
+
+            </RelativeLayout>
+
+
 
 
         </RelativeLayout>

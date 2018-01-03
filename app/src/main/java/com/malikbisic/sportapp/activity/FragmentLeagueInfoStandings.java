@@ -81,7 +81,10 @@ public class FragmentLeagueInfoStandings extends Fragment {
     String imagePlayer;
     int positionPlayer;
     int goalScored;
-
+RelativeLayout tableInfoLay;
+TextView championLeagueTextview;
+TextView relegeationTextview;
+RelativeLayout infoAboutChampAndRel;
     public FragmentLeagueInfoStandings() {
         // Required empty public constructor
     }
@@ -98,7 +101,9 @@ public class FragmentLeagueInfoStandings extends Fragment {
         tableRecyclerview.setLayoutManager(layoutManager);
         countryNameTextview = (TextView) view.findViewById(R.id.countrynamestandings);
         flag = (CircleImageView) view.findViewById(R.id.country_image_standings);
-
+tableInfoLay = (RelativeLayout) view.findViewById(R.id.tableinfolayout);
+championLeagueTextview = (TextView) view.findViewById(R.id.textforchampionleague);
+relegeationTextview = (TextView) view.findViewById(R.id.textforrelegation);
         mDialog = new ProgressDialog(getActivity());
         mDialog.setIndeterminate(true);
         mDialog.setMessage("Loading...");
@@ -107,47 +112,51 @@ public class FragmentLeagueInfoStandings extends Fragment {
         topscoresLayout = (RelativeLayout) view.findViewById(R.id.topscorefragmentlayout);
         tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
         topScorerTextview = (TextView) view.findViewById(R.id.topscorerstextview);
-
+infoAboutChampAndRel = (RelativeLayout) view.findViewById(R.id.infoaboutredandblue);
         toolbar = (Toolbar) view.findViewById(R.id.toolbarLeagueInfo);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         leagueNameInToolbar = (TextView) view.findViewById(R.id.leaguenameinleagueinfotoolbar);
         tableLayout.setActivated(true);
-        tableTextview.setTextColor(Color.parseColor("#ffffff"));
+        tableTextview.setTextColor(Color.parseColor("#000000"));
 
         topscoresLayout.setActivated(false);
-        topScorerTextview.setTextColor(Color.parseColor("#000000"));
+        topScorerTextview.setTextColor(Color.parseColor("#ffffff"));
 
 
         intent = getActivity().getIntent();
         currentSeasonId = intent.getStringExtra("seasonId");
         leagueName = intent.getStringExtra("leagueName");
         countryName = intent.getStringExtra("countryName");
-        leagueNameTextview.setText(leagueName);
-        countryNameTextview.setText(countryName);
+        leagueNameTextview.setText(leagueName.toUpperCase());
+        countryNameTextview.setText(countryName.toUpperCase() + ":");
+        championLeagueTextview.setText(leagueName +" - " + " Champions Group ");
+        relegeationTextview.setText(leagueName + " - " + " Relegation Group ");
+
         standingsTable();
-        tableTextview.setOnClickListener(new View.OnClickListener() {
+        tableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tableLayout.setActivated(true);
-                tableTextview.setTextColor(Color.parseColor("#ffffff"));
-
+                tableTextview.setTextColor(Color.parseColor("#000000"));
+tableInfoLay.setVisibility(View.VISIBLE);
+infoAboutChampAndRel.setVisibility(View.VISIBLE);
                 topscoresLayout.setActivated(false);
-                topScorerTextview.setTextColor(Color.parseColor("#000000"));
+                topScorerTextview.setTextColor(Color.parseColor("#ffffff"));
 
                 topScorerList.clear();
                 standingsTable();
             }
         });
 
-        topScorerTextview.setOnClickListener(new View.OnClickListener() {
+        topscoresLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tableLayout.setActivated(false);
-                tableTextview.setTextColor(Color.parseColor("#000000"));
-
+                tableTextview.setTextColor(Color.parseColor("#ffffff"));
+tableInfoLay.setVisibility(View.GONE);
                 topscoresLayout.setActivated(true);
-                topScorerTextview.setTextColor(Color.parseColor("#ffffff"));
-
+                topScorerTextview.setTextColor(Color.parseColor("#000000"));
+infoAboutChampAndRel.setVisibility(View.GONE);
                 tableListStandings.clear();
                 topScorer();
             }

@@ -202,7 +202,8 @@
         <activity
             android:name=".activity.LeagueInfoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:parentActivityName=".activity.FootballActivity"/>
         <activity
             android:name=".activity.AboutFootballClub"
             android:screenOrientation="portrait"
