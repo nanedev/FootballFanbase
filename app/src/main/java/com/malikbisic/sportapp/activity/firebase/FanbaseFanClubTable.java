@@ -150,17 +150,20 @@ public class FanbaseFanClubTable extends AppCompatActivity {
         if (openActivity.equals("myProfile")){
 
             Bundle bundle = new Bundle();
-            bundle.putString("myUid", myUid);
-            bundle.putBoolean("openFromFanBaseTable", true);
 
-            ProfileFragment profileFragment = new ProfileFragment();
-            profileFragment.setArguments(bundle);
 
-            FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+            /* ProfileFragment profileFragment = new ProfileFragment();
 
-            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.clubTable_layout, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-            Log.i("tacno", "true");
+                                            FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
+
+                                            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                            Log.i("tacno", "true"); */
+
+            Intent intent = new Intent(FanbaseFanClubTable.this, ProfileFragment.class);
+            intent.putExtra("myUid", myUid);
+            intent.putExtra("openFromFanBaseTable", true);
+            startActivity(intent);
 
         } else if (openActivity.equals("commentsActivity")){
             Intent backComments = new Intent(FanbaseFanClubTable.this, CommentsActivity.class);

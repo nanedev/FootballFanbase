@@ -140,13 +140,16 @@ public class Username_Likes_Activity extends AppCompatActivity {
                                             String myUID = user1.getUid();
                                             Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
                                             if (uid.equals(myUID)) {
-                                                ProfileFragment profileFragment = new ProfileFragment();
+                                                 /* ProfileFragment profileFragment = new ProfileFragment();
 
-                                                FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+                                            FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
 
-                                                manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                                        R.anim.push_left_out, R.anim.push_left_out).replace(R.id.likes_layout, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                                Log.i("tacno", "true");
+                                            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                            Log.i("tacno", "true"); */
+
+                                                Intent intent = new Intent(Username_Likes_Activity.this, ProfileFragment.class);
+                                                startActivity(intent);
                                             } else {
                                                 userReference.document(usersModel.getUserID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                                     @Override

@@ -163,13 +163,16 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
 
                                         if (uid.equals(myUID)) {
 
-                                            ProfileFragment profileFragment = new ProfileFragment();
+                                             /* ProfileFragment profileFragment = new ProfileFragment();
 
-                                            FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+                                            FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
 
                                             manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.commenInCommenstLayout, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                            Log.i("tacno", "true");
+                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                            Log.i("tacno", "true"); */
+
+                                            Intent intent = new Intent(CommentsInComments.this, ProfileFragment.class);
+                                            startActivity(intent);
 
                                         } else {
 

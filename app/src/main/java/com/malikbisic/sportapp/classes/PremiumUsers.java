@@ -467,14 +467,16 @@ public class PremiumUsers {
                                                 Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
                                                 if (uid.equals(myUID)) {
+ /* ProfileFragment profileFragment = new ProfileFragment();
 
-                                                    ProfileFragment profileFragment = new ProfileFragment();
+                                            FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
 
-                                                    FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
+                                            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                            Log.i("tacno", "true"); */
 
-                                                    manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                                            R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                                    Log.i("tacno", "true");
+                                                    Intent intent = new Intent(activity, ProfileFragment.class);
+                                                    activity.startActivity(intent);
 
                                                 } else {
 
@@ -523,15 +525,16 @@ public class PremiumUsers {
                                                 Log.i("myUID: ", myUID + ", iz baze uid: " + uid);
 
                                                 if (uid.equals(myUID)) {
+ /* ProfileFragment profileFragment = new ProfileFragment();
 
-                                                    ProfileFragment profileFragment = new ProfileFragment();
+                                            FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
 
-                                                    FragmentTransaction manager = ((FragmentActivity) activity).getSupportFragmentManager().beginTransaction();
+                                            manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
+                                                    R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
+                                            Log.i("tacno", "true"); */
 
-                                                    manager.setCustomAnimations(R.anim.push_left_in, R.anim.push_left_in,
-                                                            R.anim.push_left_out, R.anim.push_left_out).replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag()).addToBackStack(null).commit();
-                                                    Log.i("tacno", "true");
-
+                                                    Intent intent = new Intent(activity, ProfileFragment.class);
+                                                    activity.startActivity(intent);
                                                 } else {
 
                                                     DocumentReference profileInfo = profileUsers.document(uid);

@@ -7,6 +7,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
+import com.yarolegovich.discretescrollview.DiscreteScrollView;
 
 
 /**
@@ -16,11 +17,16 @@ import com.squareup.picasso.Picasso;
 public class Application extends android.app.Application{
 
 
+    static Application instance;
+
+    public static Application getInstance() {
+        return instance;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-
+        instance = this;
 
 
         if (!FirebaseApp.getApps(this).isEmpty()) {

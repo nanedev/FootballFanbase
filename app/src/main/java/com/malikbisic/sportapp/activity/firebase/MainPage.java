@@ -823,7 +823,7 @@ public class MainPage extends AppCompatActivity
 
         if (id == R.id.nav_profile) {
             // Handle the camera action
-            ProfileFragment profileFragment = new ProfileFragment();
+  /*            ProfileFragment profileFragment = new ProfileFragment();
 
             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
@@ -831,7 +831,10 @@ public class MainPage extends AppCompatActivity
                     R.anim.push_left_out, R.anim.push_left_out).
                     replace(R.id.mainpage_fragment, profileFragment, profileFragment.getTag())
                     .addToBackStack(MainPage.class.getName())
-                    .commit();
+                    .commit(); */
+
+            Intent intent = new Intent(MainPage.this, ProfileFragment.class);
+            startActivity(intent);
         } else if (id == R.id.nav_message) {
 
             Intent intent = new Intent(MainPage.this, ChatActivity.class);

@@ -52,7 +52,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
             public void onClick(View v) {
                 Intent openClub = new Intent(ctx, SelectClubActivity.class);
                 openClub.putExtra("leagueID", leagueModel.getCurrent_season_id());
-             activity.startActivity(openClub);
+             activity.startActivityForResult(openClub, OPEN_CLUB);
             }
         });
 

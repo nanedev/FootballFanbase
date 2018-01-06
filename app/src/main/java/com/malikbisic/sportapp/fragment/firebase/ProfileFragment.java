@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -69,13 +70,20 @@ import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
+import com.malikbisic.sportapp.adapter.firebase.PlayerFirebaseAdapter;
 import com.malikbisic.sportapp.adapter.firebase.ProfileFragmentAdapter;
+import com.malikbisic.sportapp.model.FootballPlayer;
+import com.malikbisic.sportapp.model.api.PlayerModel;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+import com.yarolegovich.discretescrollview.DiscreteScrollView;
+import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
+import com.yarolegovich.discretescrollview.Orientation;
+import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -86,6 +94,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -99,7 +108,7 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileFragment extends Fragment implements View.OnKeyListener {
+public class ProfileFragment extends AppCompatActivity  implements DiscreteScrollView.OnItemChangedListener, View.OnKeyListener {
 
     private ImageView profile;
     private ImageView flag;
@@ -168,32 +177,49 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
     boolean firstImageClick = true;
     boolean secondImageClick = false;
 
+    List<PlayerModel> list;
+    FootballPlayer player;
+
+    private DiscreteScrollView itemPicker;
+    private InfiniteScrollAdapter infiniteAdapter;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
 
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         // Inflate the layout for this fragment
+        setContentView(R.layout.fragment_profile);
 
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getSupportActionBar().hide();
 
 
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        setHasOptionsMenu(true);
+        player = player.get();
+        list = player.getData();
+        itemPicker = (DiscreteScrollView) findViewById(R.id.picker);
+        itemPicker.setOrientation(Orientation.HORIZONTAL);
+        itemPicker.addOnItemChangedListener(this);
+        infiniteAdapter = InfiniteScrollAdapter.wrap(new PlayerFirebaseAdapter(list));
+        itemPicker.setAdapter(infiniteAdapter);
+        itemPicker.setItemTransformer(new ScaleTransformer.Builder()
+                .setMinScale(0.8f)
+                .build());
+        onItemChanged(list.get(0));
 
         mDatabase = FirebaseDatabase.getInstance();
         mReference = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
 
-        if (this.getArguments() != null) {
-            myUid = this.getArguments().getString("myUid");
-            checkOpenActivity = this.getArguments().getBoolean("openFromFanBaseTable", false);
-        }
+
+            myUid = getIntent().getStringExtra("myUid");
+            checkOpenActivity = getIntent().getBooleanExtra("openFromFanBaseTable", false);
+
 
         if (checkOpenActivity) {
             mReference2 = FirebaseFirestore.getInstance().collection("Users").document(myUid);
@@ -203,29 +229,29 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
         }
 
         Log.i("myUID", myUid + " |uid" + uid);
-        profile = (ImageView) view.findViewById(R.id.get_profile_image_id);
+        profile = (ImageView) findViewById(R.id.get_profile_image_id);
         //  name_surname = (TextView) view.findViewById(R.id.name_surname);
-        flag = (ImageView) view.findViewById(R.id.user_countryFlag);
-        username = (TextView) view.findViewById(R.id.user_username);
-        gender = (TextView) view.findViewById(R.id.user_gender);
-        birthday = (TextView) view.findViewById(R.id.user_date);
-        country = (TextView) view.findViewById(R.id.user_country);
-        showInfo = (RelativeLayout) view.findViewById(R.id.inforelative);
-        backarrow = (ImageView) view.findViewById(R.id.backarrow);
-        thisMonhtNumberLikes = (TextView) view.findViewById(R.id.likesinprofilefragment) ;
-        thisMonthNumberDislikes = (TextView) view.findViewById(R.id.dislikesinporiflefragment);
-        winnerImage = (RelativeLayout) view.findViewById(R.id.layoutForImageOFWinner);
-        pointsLayoutWinner = (RelativeLayout) view.findViewById(R.id.pointsofWinner);
-        usersLayoutWinner = (RelativeLayout) view.findViewById(R.id.usersOfWinner);
-        countryLayoutWinner = (RelativeLayout) view.findViewById(R.id.playerCountry);
-        clubLayoutWinner = (RelativeLayout) view.findViewById(R.id.playerTeam);
-        winnerImage = (RelativeLayout) view.findViewById(R.id.layoutForImageOFWinner);
-        winnerImage = (RelativeLayout) view.findViewById(R.id.layoutForImageOFWinner);
+        flag = (ImageView) findViewById(R.id.user_countryFlag);
+        username = (TextView) findViewById(R.id.user_username);
+        gender = (TextView) findViewById(R.id.user_gender);
+        birthday = (TextView) findViewById(R.id.user_date);
+        country = (TextView) findViewById(R.id.user_country);
+        showInfo = (RelativeLayout) findViewById(R.id.inforelative);
+        backarrow = (ImageView) findViewById(R.id.backarrow);
+        thisMonhtNumberLikes = (TextView) findViewById(R.id.likesinprofilefragment) ;
+        thisMonthNumberDislikes = (TextView) findViewById(R.id.dislikesinporiflefragment);
+        winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
+        pointsLayoutWinner = (RelativeLayout) findViewById(R.id.pointsofWinner);
+        usersLayoutWinner = (RelativeLayout) findViewById(R.id.usersOfWinner);
+        countryLayoutWinner = (RelativeLayout) findViewById(R.id.playerCountry);
+        clubLayoutWinner = (RelativeLayout) findViewById(R.id.playerTeam);
+        winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
+        winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
 
         backarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),MainPage.class);
+                Intent intent = new Intent(ProfileFragment.this,MainPage.class);
                 startActivity(intent);
             }
         });
@@ -265,22 +291,22 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
         });
 
 
-        //  club = (TextView) view.findViewById(R.id.user_club);
-        userPointsTextView = (TextView) view.findViewById(R.id.user_points_textview);
-        usersPoint(getActivity());
+        //  club = (TextView)  findViewById(R.id.user_club);
+        userPointsTextView = (TextView) findViewById(R.id.user_points_textview);
+        usersPoint(this);
 
-        editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
+        editProfilePicture = (TextView)  findViewById(R.id.edit_profile_image);
 
 
-        //logoClub = (ImageView) view.findViewById(R.id.club_logo_profile);
+        //logoClub = (ImageView)  findViewById(R.id.club_logo_profile);
 
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
-        dialog = new ProgressDialog(getContext());
-        loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);
-        premiumLinija = view.findViewById(R.id.sixthline);
-        genderImage = (ImageView) view.findViewById(R.id.gender_image);
-        //      rec = (RecyclerView) view.findViewById(R.id.hhhhhh);
+        dialog = new ProgressDialog(ProfileFragment.this);
+        loadProfile_image = (ProgressBar)  findViewById(R.id.loadingProfileImageProgressBar);
+        premiumLinija =  findViewById(R.id.sixthline);
+        genderImage = (ImageView)  findViewById(R.id.gender_image);
+        //      rec = (RecyclerView)  findViewById(R.id.hhhhhh);
         //    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
 //        rec.setLayoutManager(layoutManager);
         // adapter = new ProfileFragmentAdapter(getActivity());
@@ -292,7 +318,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
             @Override
             public void onClick(View v) {
                 final String[] items = {"Open gallery"};
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Dark_Dialog);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ProfileFragment.this, R.style.AppTheme_Dark_Dialog);
                 dialog.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -300,7 +326,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                         if (items[i].equals("Open gallery")) {
                             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
                             openGallery.setType("image/*");
-                            getActivity().startActivityForResult(openGallery, GALLERY_REQUEST);
+                           startActivityForResult(openGallery, GALLERY_REQUEST);
                         }
                     }
                 });
@@ -309,10 +335,10 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
             }
         });
 
-        Activity activity = getActivity();
+        Activity activity = ProfileFragment.this;
         if (activity != null) {
             loadProfile_image.getIndeterminateDrawable()
-                    .setColorFilter(ContextCompat.getColor(getContext(), R.color.redError), PorterDuff.Mode.SRC_IN);
+                    .setColorFilter(ContextCompat.getColor(ProfileFragment.this, R.color.redError), PorterDuff.Mode.SRC_IN);
             mReference2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
@@ -321,7 +347,8 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
 
 
                         profileImage = String.valueOf(value.get("profileImage"));
-                        Picasso.with(getActivity())
+                        profile.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        Picasso.with(ProfileFragment.this)
                                 .load(profileImage)
                                 .networkPolicy(NetworkPolicy.OFFLINE)
                                 .into(profile, new Callback() {
@@ -363,8 +390,8 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                         GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
                         requestBuilder = Glide
-                                .with(getActivity())
-                                .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
+                                .with(ProfileFragment.this)
+                                .using(Glide.buildStreamModelLoader(Uri.class, ProfileFragment.this), InputStream.class)
                                 .from(Uri.class)
                                 .as(SVG.class)
                                 .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
@@ -411,9 +438,6 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
             });
         }
 
-        return view;
-
-
     }
 
 
@@ -442,7 +466,11 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
         }
 
     };
+    private void onItemChanged(PlayerModel item) {
+        TextView namePlayer = (TextView) findViewById(R.id.playerName);
+        namePlayer.setText(item.getName());
 
+    }
 
     public void usersPoint(final Activity activity) {
 
@@ -540,7 +568,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
             CropImage.activity(imageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setCropShape(CropImageView.CropShape.OVAL)
-                    .start(getContext(), this);
+                    .start(ProfileFragment.this);
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -553,14 +581,14 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                     Log.i("imagePath", imagePath.getPath());
 
 
-                    Bitmap imageCompressBitmap = new Compressor(getActivity())
+                    Bitmap imageCompressBitmap = new Compressor(ProfileFragment.this)
                             .setMaxWidth(640)
                             .setMaxHeight(480)
                             .setQuality(75)
                             .compressToBitmap(imagePath);
 
 
-                    Picasso.with(getActivity()).load(String.valueOf(imageCompressBitmap))
+                    Picasso.with(ProfileFragment.this).load(String.valueOf(imageCompressBitmap))
                             .networkPolicy(NetworkPolicy.OFFLINE)
                             .resize(300, 300)
                             .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
@@ -607,16 +635,14 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
 
     }
 
-
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//kom
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.profile_menu, menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
         menu.clear();
 
-        super.onCreateOptionsMenu(menu, inflater);
+        return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -634,8 +660,8 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
     public void showAlertInfo(){
 
 
-        AlertDialog.Builder playerVoteDialogBuilder = new AlertDialog.Builder(getActivity());
-        View viewDialog = LayoutInflater.from(getActivity()).inflate(R.layout.user_info_alert_dialog, null);
+        AlertDialog.Builder playerVoteDialogBuilder = new AlertDialog.Builder(ProfileFragment.this);
+        View viewDialog = LayoutInflater.from(ProfileFragment.this).inflate(R.layout.user_info_alert_dialog, null);
         playerVoteDialogBuilder.setView(viewDialog);
 
         final CircleImageView fromImg = (CircleImageView) viewDialog.findViewById(R.id.fromimg);
@@ -661,7 +687,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                     logoClubUser = String.valueOf(value.get("favoriteClubLogo"));
                     logoClubImg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                     clubtextview.setText(String.valueOf(value.get("favoriteClub")));
-                    Picasso.with(ProfileFragment.this.getActivity()).load(logoClubUser).into(logoClubImg);
+                    Picasso.with(ProfileFragment.this).load(logoClubUser).into(logoClubImg);
                     genderText.setText(String.valueOf(value.get("gender")));
                     if (String.valueOf(value.get("gender")).equals("Male")) {
                         genderImg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -685,8 +711,8 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                     GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
                     requestBuilder = Glide
-                            .with(getActivity())
-                            .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
+                            .with(ProfileFragment.this)
+                            .using(Glide.buildStreamModelLoader(Uri.class, ProfileFragment.this), InputStream.class)
                             .from(Uri.class)
                             .as(SVG.class)
                             .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
@@ -730,11 +756,17 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 String cameback = "CameBack";
-                Intent intent = new Intent(getActivity(), MainPage.class);
+                Intent intent = new Intent(ProfileFragment.this, MainPage.class);
                 startActivity(intent);
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
+        int positionInDataSet = infiniteAdapter.getRealPosition(adapterPosition);
+        onItemChanged(list.get(positionInDataSet));
     }
 }
 
