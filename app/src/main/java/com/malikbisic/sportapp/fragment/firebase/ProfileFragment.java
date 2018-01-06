@@ -488,7 +488,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                                                 thisMonhtNumberLikes.setText(String.valueOf(totalLikes));
                                                 thisMonthNumberDislikes.setText(String.valueOf(totalDislikes));
                                                 pointsTotal = totalLikes - totalDislikes;
-                                                if (pointsTotal == 0){
+                                                if (pointsTotal <= 0){
                                                     userPointsTextView.setText("0");
                                                 }
                                                 if (pointsTotal > 0) {
