@@ -12,8 +12,10 @@ import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
@@ -21,6 +23,8 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -83,6 +87,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 
 import static android.app.Activity.RESULT_OK;
@@ -100,12 +105,14 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
     private TextView gender;
     private TextView birthday;
     private TextView country;
-    private TextView club;
+    //private TextView club;
     TextView addBackground;
     private TextView name_surname;
     ImageView genderImage;
-    TextView myPosts;
+    //TextView myPosts;
     Intent myIntent;
+    TextView thisMonhtNumberLikes;
+    TextView thisMonthNumberDislikes;
 
     private Calendar minAdultAge;
     private ProgressBar loadProfile_image;
@@ -131,15 +138,15 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
     Uri imageUri;
     Uri backgroundUri;
     ImageView backgroundImage;
-    ImageView logoClub;
+    //ImageView logoClub;
     String clubLogoFirebase;
-
+ImageView backarrow;
     View premiumLinija;
     RelativeLayout premiumLayout;
 
-    RecyclerView rec;
+    //RecyclerView rec;
     ProfileFragmentAdapter adapter;
-    RecyclerView.LayoutManager layoutManager;
+    //RecyclerView.LayoutManager layoutManager;
 
     String myUid;
     boolean checkOpenActivity;
@@ -149,6 +156,15 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
     int numberLikes;
     int numberDisliks;
     int totalLikes, totalDislikes, pointsTotal;
+    RelativeLayout showInfo;
+    TextView hideInfo;
+    RelativeLayout winnerImage;
+    RelativeLayout pointsLayoutWinner;
+    RelativeLayout usersLayoutWinner;
+    RelativeLayout countryLayoutWinner;
+    RelativeLayout clubLayoutWinner;
+    boolean firstImageClick = true;
+    boolean secondImageClick = false;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -190,16 +206,71 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
         flag = (ImageView) view.findViewById(R.id.user_countryFlag);
         username = (TextView) view.findViewById(R.id.user_username);
         gender = (TextView) view.findViewById(R.id.user_gender);
-        birthday = (TextView) view.findViewById(R.id.user_date);
+       birthday = (TextView) view.findViewById(R.id.user_date);
         country = (TextView) view.findViewById(R.id.user_country);
-        club = (TextView) view.findViewById(R.id.user_club);
+        showInfo = (RelativeLayout) view.findViewById(R.id.inforelative);
+        backarrow = (ImageView) view.findViewById(R.id.backarrow);
+        thisMonhtNumberLikes = (TextView) view.findViewById(R.id.likesinprofilefragment) ;
+        thisMonthNumberDislikes = (TextView) view.findViewById(R.id.dislikesinporiflefragment);
+winnerImage = (RelativeLayout) view.findViewById(R.id.layoutForImageOFWinner);
+pointsLayoutWinner = (RelativeLayout) view.findViewById(R.id.pointsofWinner);
+        usersLayoutWinner = (RelativeLayout) view.findViewById(R.id.usersOfWinner);
+        countryLayoutWinner = (RelativeLayout) view.findViewById(R.id.playerCountry);
+        clubLayoutWinner = (RelativeLayout) view.findViewById(R.id.playerTeam);
+        winnerImage = (RelativeLayout) view.findViewById(R.id.layoutForImageOFWinner);
+        winnerImage = (RelativeLayout) view.findViewById(R.id.layoutForImageOFWinner);
+
+        backarrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),MainPage.class);
+                startActivity(intent);
+            }
+        });
+
+
+
+        showInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+          showAlertInfo();
+            }
+        });
+
+
+winnerImage.setOnClickListener(new View.OnClickListener() {
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onClick(View v) {
+
+        if (firstImageClick) {
+            firstImageClick = false;
+            secondImageClick = true;
+            usersLayoutWinner.setVisibility(View.VISIBLE);
+            countryLayoutWinner.setVisibility(View.VISIBLE);
+            clubLayoutWinner.setVisibility(View.VISIBLE);
+            pointsLayoutWinner.setVisibility(View.VISIBLE);
+
+        }else  if (secondImageClick){
+            firstImageClick = true;
+            secondImageClick = false;
+            usersLayoutWinner.setVisibility(View.GONE);
+            countryLayoutWinner.setVisibility(View.GONE);
+            clubLayoutWinner.setVisibility(View.GONE);
+            pointsLayoutWinner.setVisibility(View.GONE);
+        }
+    }
+});
+
+
+      //  club = (TextView) view.findViewById(R.id.user_club);
         userPointsTextView = (TextView) view.findViewById(R.id.user_points_textview);
         usersPoint(getActivity());
 
         editProfilePicture = (TextView) view.findViewById(R.id.edit_profile_image);
 
 
-        logoClub = (ImageView) view.findViewById(R.id.club_logo_profile);
+        //logoClub = (ImageView) view.findViewById(R.id.club_logo_profile);
 
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
@@ -207,11 +278,11 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
         loadProfile_image = (ProgressBar) view.findViewById(R.id.loadingProfileImageProgressBar);
         premiumLinija = view.findViewById(R.id.sixthline);
         genderImage = (ImageView) view.findViewById(R.id.gender_image);
-        rec = (RecyclerView) view.findViewById(R.id.hhhhhh);
-        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        rec.setLayoutManager(layoutManager);
-        adapter = new ProfileFragmentAdapter(getActivity());
-        rec.setAdapter(adapter);
+  //      rec = (RecyclerView) view.findViewById(R.id.hhhhhh);
+    //    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+//        rec.setLayoutManager(layoutManager);
+       // adapter = new ProfileFragmentAdapter(getActivity());
+     //   rec.setAdapter(adapter);
 
 
         minAdultAge = new GregorianCalendar();
@@ -263,30 +334,30 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                                     }
                                 });
 
-                        name = value.get("name") + " " + value.get("surname");
-//                name_surname.setText(name);
+     //                   name = value.get("name") + " " + value.get("surname");
+       //         name_surname.setText(name);
                         username.setText(String.valueOf(value.get("username")));
-                        gender.setText(String.valueOf(value.get("gender")));
-                        if (String.valueOf(value.get("gender")).equals("Male")) {
-                            genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                            genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
-                        } else if (String.valueOf(value.get("gender")).equals("Female")) {
-                            genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                            genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
-                        }
+         //               gender.setText(String.valueOf(value.get("gender")));
+           //             if (String.valueOf(value.get("gender")).equals("Male")) {
+             //             genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+               //             genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
+                 //       } else if (String.valueOf(value.get("gender")).equals("Female")) {
+                   //         genderImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                     //      genderImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
+                       // }
 
 
-                        birthday.setText(String.valueOf(value.get("date")));
-                        club.setText(String.valueOf(value.get("favoriteClub")));
+                        //birthday.setText(String.valueOf(value.get("date")));
+                        //club.setText(String.valueOf(value.get("favoriteClub")));
 
 
                         flagImageFirebase = String.valueOf(value.get("flag"));
                         Log.i("flag uri", flagImageFirebase);
 
-                        clubLogoFirebase = String.valueOf(value.get("favoriteClubLogo"));
+
 
                         flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                        logoClub.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
                         GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
 
                         requestBuilder = Glide
@@ -309,7 +380,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                                 .into(flag);
 
 
-                        Picasso.with(ProfileFragment.this.getActivity()).load(clubLogoFirebase).into(logoClub);
+
 
                                /*Picasso.with(ProfileFragment.this.getActivity())
                         .load(flagImageFirebase)
@@ -331,7 +402,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                             }
                         });*/
 
-                        country.setText(String.valueOf(value.get("country")));
+//                        country.setText(String.valueOf(value.get("country")));
 
                     }
                 }
@@ -391,8 +462,10 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
                             @Override
                             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
+
                                 if (e == null) {
                                     numberLikes = documentSnapshots.size();
+
                                     totalLikes += numberLikes;
 
                                     CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
@@ -402,10 +475,21 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
 
                                             if (e == null) {
                                                 numberDisliks = documentSnapshots.size();
-                                                totalDislikes += numberDisliks;
 
+                                                totalDislikes += numberDisliks;
+                                                if (totalLikes == 0){
+                                                    thisMonhtNumberLikes.setText("0");
+                                                }
+                                                if (totalDislikes == 0){
+                                                    thisMonthNumberDislikes.setText("0");
+                                                }
+                                                thisMonhtNumberLikes.setText(String.valueOf(totalLikes));
+                                                thisMonthNumberDislikes.setText(String.valueOf(totalDislikes));
                                                 pointsTotal = totalLikes - totalDislikes;
-                                                if (pointsTotal >= 0) {
+                                                if (pointsTotal == 0){
+                                                    userPointsTextView.setText("0");
+                                                }
+                                                if (pointsTotal > 0) {
                                                     userPointsTextView.setText(String.valueOf(pointsTotal));
                                                 }
 
@@ -439,7 +523,7 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
         String myFormat = "dd/MMMM/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
 
-        birthday.setText(sdf.format(myCalendar.getTime()));
+     //   birthday.setText(sdf.format(myCalendar.getTime()));
     }
 
     @Override
@@ -543,6 +627,92 @@ public class ProfileFragment extends Fragment implements View.OnKeyListener {
         //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
 
+
+    }
+    public void showAlertInfo(){
+
+
+        AlertDialog.Builder playerVoteDialogBuilder = new AlertDialog.Builder(getActivity());
+        View viewDialog = LayoutInflater.from(getActivity()).inflate(R.layout.user_info_alert_dialog, null);
+        playerVoteDialogBuilder.setView(viewDialog);
+
+        final CircleImageView fromImg = (CircleImageView) viewDialog.findViewById(R.id.fromimg);
+        final ImageView genderImg = (ImageView) viewDialog.findViewById(R.id.gender_image);
+        final CircleImageView logoClubImg = (CircleImageView) viewDialog.findViewById(R.id.userClubLogo);
+        ImageView dateImg = (ImageView) viewDialog.findViewById(R.id.date_image);
+        fromImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_home_black_24dp));
+        dateImg.setImageDrawable(getResources().getDrawable(R.drawable.birthdayicon));
+        final TextView clubtextview = (TextView) viewDialog.findViewById(R.id.clubtext);
+
+        final TextView fromImgTextview = (TextView) viewDialog.findViewById(R.id.user_country);
+        final TextView genderText = (TextView) viewDialog.findViewById(R.id.user_gender);
+        final TextView dateText = (TextView) viewDialog.findViewById(R.id.user_date);
+
+        mReference2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Object> value = dataSnapshot.getData();
+                    String flagUser;
+                    String logoClubUser;
+                    flagUser = String.valueOf(value.get("flag"));
+                    logoClubUser = String.valueOf(value.get("favoriteClubLogo"));
+logoClubImg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+clubtextview.setText(String.valueOf(value.get("favoriteClub")));
+                    Picasso.with(ProfileFragment.this.getActivity()).load(logoClubUser).into(logoClubImg);
+                    genderText.setText(String.valueOf(value.get("gender")));
+                    if (String.valueOf(value.get("gender")).equals("Male")) {
+                        genderImg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        genderImg.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.maleicon, null));
+                    } else if (String.valueOf(value.get("gender")).equals("Female")) {
+                        genderImg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        genderImg.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.femaleicon, null));
+                    }
+
+
+                    dateText.setText(String.valueOf(value.get("date")));
+
+
+
+                    Log.i("flag uri", flagImageFirebase);
+
+
+
+                    fromImg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+                    GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+                    requestBuilder = Glide
+                            .with(getActivity())
+                            .using(Glide.buildStreamModelLoader(Uri.class, getActivity()), InputStream.class)
+                            .from(Uri.class)
+                            .as(SVG.class)
+                            .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                            .sourceEncoder(new StreamEncoder())
+                            .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                            .decoder(new SearchableCountry.SvgDecoder())
+                            .animate(android.R.anim.fade_in);
+
+
+                    Uri uri = Uri.parse(flagUser);
+                    requestBuilder
+                            // SVG cannot be serialized so it's not worth to cache it
+                            .diskCacheStrategy(SOURCE)
+                            .load(uri)
+                            .into(fromImg);
+
+
+
+                    fromImgTextview.setText(String.valueOf(value.get("country")));
+
+                }
+            }
+        });
+
+        playerVoteDialogBuilder.setNegativeButton("Back", null);
+
+        playerVoteDialogBuilder.create();
+        playerVoteDialogBuilder.show();
 
     }
 
