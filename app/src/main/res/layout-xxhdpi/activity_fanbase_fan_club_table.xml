@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/clubTable_layout"
     android:background="#fff"
-    tools:context="com.malikbisic.sportapp.activity.FanbaseFanClubTable">
+    tools:context="com.malikbisic.sportapp.activity.firebase.FanbaseFanClubTable">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

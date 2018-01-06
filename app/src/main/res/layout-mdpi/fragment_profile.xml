@@ -7,7 +7,7 @@
     android:clickable="true"
     android:fitsSystemWindows="true"
     android:focusable="true"
-    tools:context="com.malikbisic.sportapp.activity.ProfileFragment">
+    tools:context="com.malikbisic.sportapp.fragment.firebase.ProfileFragment">
 
     <RelativeLayout
         android:id="@+id/headerUserProfileLayout"

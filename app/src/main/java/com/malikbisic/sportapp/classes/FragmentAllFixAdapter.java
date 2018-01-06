@@ -1,26 +1,5 @@
 //package com.malikbisic.sportapp.adapter;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.activity.LivescoreMatchInfo;
-import com.malikbisic.sportapp.model.AllFixturesModel;
-import com.malikbisic.sportapp.model.LivescoreModel;
-import com.malikbisic.sportapp.viewHolder.AllFixturesViewHolder;
-import com.malikbisic.sportapp.viewHolder.LeagueNameViewHolder;
-import com.malikbisic.sportapp.viewHolder.LivescoreViewHolder;
-import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by korisnik on 23/10/2017.
  */

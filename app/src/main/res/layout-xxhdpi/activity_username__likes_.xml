@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/likes_layout"
     android:background="#fff"
-    tools:context="com.malikbisic.sportapp.activity.Username_Likes_Activity">
+    tools:context="com.malikbisic.sportapp.activity.firebase.Username_Likes_Activity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

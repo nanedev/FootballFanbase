@@ -8,7 +8,7 @@
     android:clickable="true"
     android:fitsSystemWindows="true"
     android:focusable="true"
-    tools:context="com.malikbisic.sportapp.activity.ProfileFragment"
+    tools:context="com.malikbisic.sportapp.fragment.firebase.ProfileFragment"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="81dp">
 

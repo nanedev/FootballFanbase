@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.malikbisic.sportapp.activity.AddPhotoOrVideo">
+    tools:context="com.malikbisic.sportapp.activity.firebase.AddPhotoOrVideo">
 
 
     <RelativeLayout
@@ -55,7 +55,7 @@
                 android:layout_below="@+id/tell_something_about_video_image"
                 android:scrollbarAlwaysDrawVerticalTrack="true">
 
-                <com.malikbisic.sportapp.activity.DynamicImageView
+                <com.malikbisic.sportapp.utils.DynamicImageView
                     android:id="@+id/post_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

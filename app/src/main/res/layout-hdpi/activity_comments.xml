@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/commentLayout"
 
-    tools:context="com.malikbisic.sportapp.activity.CommentsActivity">
+    tools:context="com.malikbisic.sportapp.activity.firebase.CommentsActivity">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

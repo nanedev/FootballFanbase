@@ -48,7 +48,7 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.firebase.LoginActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark">
@@ -71,23 +71,23 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity
-            android:name=".activity.RegisterActivity"
+            android:name=".activity.firebase.RegisterActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.ResetPasswordActivity"
+            android:name=".activity.firebase.ResetPasswordActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.EnterUsernameForApp"
+            android:name=".activity.firebase.EnterUsernameForApp"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.MainPage"
+            android:name=".activity.firebase.MainPage"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_main_page"
@@ -95,34 +95,34 @@
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
-            android:name=".activity.AddPhotoOrVideo"
+            android:name=".activity.firebase.AddPhotoOrVideo"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName=".activity.MainPage"
+            android:parentActivityName=".activity.firebase.MainPage"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.RecordAudio"
+            android:name=".activity.firebase.RecordAudio"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.Username_Likes_Activity"
+            android:name=".activity.firebase.Username_Likes_Activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.Username_Dislikes_Activity"
+            android:name=".activity.firebase.Username_Dislikes_Activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.FullScreenImage"
+            android:name=".activity.firebase.FullScreenImage"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.SinglePostViewActivity"
-            android:parentActivityName=".activity.MainPage"
+            android:name=".activity.firebase.SinglePostViewActivity"
+            android:parentActivityName=".activity.firebase.MainPage"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.CommentsActivity"
+            android:name=".activity.firebase.CommentsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark">
             <intent-filter>
@@ -132,23 +132,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SearchableCountry"
+            android:name=".activity.api.SearchableCountry"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.SelectLeagueActivity"
+            android:name=".activity.api.SelectLeagueActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.SelectClubActivity"
+            android:name=".activity.api.SelectClubActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.UserProfileActivity"
+            android:name=".activity.firebase.UserProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.CommentsInComments"
+            android:name=".activity.firebase.CommentsInComments"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark">
             <intent-filter>
@@ -158,7 +158,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SinglePostViewNotificationActivity"
+            android:name=".activity.firebase.SinglePostViewNotificationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark">
             <intent-filter>
@@ -168,65 +168,65 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MyPostsActivity"
+            android:name=".activity.firebase.MyPostsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.SeeUsersPostsActivity"
+            android:name=".activity.firebase.SeeUsersPostsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.WebViewNewsActivity"
+            android:name=".activity.firebase.WebViewNewsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.FootballActivity"
+            android:name=".activity.api.FootballActivity"
             android:label="@string/title_activity_football"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.ChatActivity"
+            android:name=".activity.api.ChatActivity"
             android:label="@string/title_activity_chat"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.ChatMessageActivity"
-            android:parentActivityName=".activity.ChatActivity"
+            android:name=".activity.firebase.ChatMessageActivity"
+            android:parentActivityName=".activity.api.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activity.FanbaseFanClubTable"
+            android:name=".activity.firebase.FanbaseFanClubTable"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.LeagueInfoActivity"
+            android:name=".activity.api.LeagueInfoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
-            android:parentActivityName=".activity.FootballActivity"/>
+            android:parentActivityName=".activity.api.FootballActivity"/>
         <activity
-            android:name=".activity.AboutFootballClub"
+            android:name=".activity.api.AboutFootballClub"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.DateActivity"
-            android:parentActivityName=".activity.FootballActivity"
+            android:name=".activity.api.DateActivity"
+            android:parentActivityName=".activity.api.FootballActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.LivescoreMatchInfo"
+            android:name=".activity.api.LivescoreMatchInfo"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".activity.PlayerInfoActivity"
+            android:name=".activity.api.PlayerInfoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         </activity>
-        <activity android:name=".activity.SingleFixtureActivity"
+        <activity android:name=".activity.api.SingleFixtureActivity"
             android:theme="@style/AppTheme.Dark"
             android:screenOrientation="portrait"
-            android:parentActivityName=".activity.FootballActivity">
+            android:parentActivityName=".activity.api.FootballActivity">
 
         </activity>
     </application>

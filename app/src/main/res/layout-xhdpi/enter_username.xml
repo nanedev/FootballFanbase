@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/primary"
     android:fitsSystemWindows="true"
-    tools:context="com.malikbisic.sportapp.activity.EnterUsernameForApp">
+    tools:context="com.malikbisic.sportapp.activity.firebase.EnterUsernameForApp">
 
     <RelativeLayout
         android:id="@+id/enter_username_container"

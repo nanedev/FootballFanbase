@@ -1,16 +1,3 @@
-
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.model.AllFixturesModel;
-import com.squareup.picasso.Picasso;
-import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
-
 /**
  * Created by korisnik on 23/10/2017.
  */
