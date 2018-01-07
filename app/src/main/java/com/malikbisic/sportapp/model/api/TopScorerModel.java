@@ -10,15 +10,25 @@ public class TopScorerModel {
     String imagePlayer;
     int goal;
     int position;
+    int playerID;
 
     public TopScorerModel() {
     }
 
-    public TopScorerModel(String name, String imagePlayer, int goal, int position) {
+    public TopScorerModel(String name, String imagePlayer, int goal, int position, int playerID) {
         this.name = name;
         this.imagePlayer = imagePlayer;
         this.goal = goal;
         this.position = position;
+        this.playerID = playerID;
+    }
+
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public void setPlayerID(int playerID) {
+        this.playerID = playerID;
     }
 
     public String getName() {

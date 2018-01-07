@@ -362,8 +362,9 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
                         namePlayer = playerData.getString("common_name");
                         imagePlayer = playerData.getString("image_path");
+                        int player_id = playerData.getInt("player_id");
 
-                        TopScorerModel model = new TopScorerModel(namePlayer, imagePlayer, goalScored, positionPlayer);
+                        TopScorerModel model = new TopScorerModel(namePlayer, imagePlayer, goalScored, positionPlayer, player_id);
                         topScorerList.add(model);
                         mDialog.dismiss();
                         scorerAdapter.notifyDataSetChanged();
