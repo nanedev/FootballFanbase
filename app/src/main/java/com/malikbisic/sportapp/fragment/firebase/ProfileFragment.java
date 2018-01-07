@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -51,8 +52,10 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 
 import com.caverock.androidsvg.SVG;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
@@ -70,6 +73,7 @@ import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
+import com.malikbisic.sportapp.activity.firebase.MyPostsActivity;
 import com.malikbisic.sportapp.adapter.firebase.PlayerFirebaseAdapter;
 import com.malikbisic.sportapp.adapter.firebase.ProfileFragmentAdapter;
 import com.malikbisic.sportapp.model.FootballPlayer;
@@ -176,10 +180,11 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
     RelativeLayout clubLayoutWinner;
     boolean firstImageClick = true;
     boolean secondImageClick = false;
-
+int number;
     List<PlayerModel> list;
     FootballPlayer player;
-
+    RelativeLayout postLayout;
+TextView postsNumber;
     private DiscreteScrollView itemPicker;
     private InfiniteScrollAdapter infiniteAdapter;
 
@@ -197,7 +202,7 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().hide();
-
+postsNumber = (TextView) findViewById(R.id.postsNumber);
 
         player = player.get();
         list = player.getData();
@@ -215,7 +220,7 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
         mReference = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
-
+usersPoint(ProfileFragment.this);
 
             myUid = getIntent().getStringExtra("myUid");
             checkOpenActivity = getIntent().getBooleanExtra("openFromFanBaseTable", false);
@@ -247,7 +252,7 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
         clubLayoutWinner = (RelativeLayout) findViewById(R.id.playerTeam);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
-
+postLayout = (RelativeLayout) findViewById(R.id.postlayout);
         backarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -290,7 +295,15 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
             }
         });
 
+numberPost();
 
+postLayout.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(ProfileFragment.this, MyPostsActivity.class);
+        startActivity(intent);
+    }
+});
         //  club = (TextView)  findViewById(R.id.user_club);
         userPointsTextView = (TextView) findViewById(R.id.user_points_textview);
         usersPoint(this);
@@ -348,6 +361,7 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
 
                         profileImage = String.valueOf(value.get("profileImage"));
                         profile.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        profile.setAlpha(0.9f);
                         Picasso.with(ProfileFragment.this)
                                 .load(profileImage)
                                 .networkPolicy(NetworkPolicy.OFFLINE)
@@ -355,6 +369,7 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
                                     @Override
                                     public void onSuccess() {
                                         loadProfile_image.setVisibility(View.GONE);
+                                        profile.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                                     }
 
                                     @Override
@@ -472,81 +487,6 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
 
     }
 
-    public void usersPoint(final Activity activity) {
-
-
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
-        usersPost.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                if (e == null) {
-
-                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
-                        final String postID = snapshot.getId();
-
-                        Log.i("postID", postID);
-
-                        CollectionReference likeNumber = db.collection("Likes").document(postID).collection("like-id");
-                        likeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
-                            @Override
-                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-
-                                if (e == null) {
-                                    numberLikes = documentSnapshots.size();
-
-                                    totalLikes += numberLikes;
-
-                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
-                                    dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-                                            if (e == null) {
-                                                numberDisliks = documentSnapshots.size();
-
-                                                totalDislikes += numberDisliks;
-                                                if (totalLikes == 0){
-                                                    thisMonhtNumberLikes.setText("0");
-                                                }
-                                                if (totalDislikes == 0){
-                                                    thisMonthNumberDislikes.setText("0");
-                                                }
-                                                thisMonhtNumberLikes.setText(String.valueOf(totalLikes));
-                                                thisMonthNumberDislikes.setText(String.valueOf(totalDislikes));
-                                                pointsTotal = totalLikes - totalDislikes;
-                                                if (pointsTotal <= 0){
-                                                    userPointsTextView.setText("0");
-                                                }
-                                                if (pointsTotal > 0) {
-                                                    userPointsTextView.setText(String.valueOf(pointsTotal));
-                                                }
-
-
-
-                                            }
-                                        }
-
-                                    });
-
-
-
-                                }
-                            }
-
-                        });
-
-
-
-                    }
-
-
-                }
-            }
-        });
-
-    }
 
     private void updateLabel() {
 
@@ -743,6 +683,43 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
         playerVoteDialogBuilder.show();
 
     }
+    public void numberPost() {
+        final CollectionReference numberPostRef = FirebaseFirestore.getInstance().collection("Posting");
+
+        final com.google.firebase.firestore.Query query = numberPostRef.whereEqualTo("uid",uid);
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                number = documentSnapshots.size();
+                postsNumber.setText(String.valueOf(number));
+            }
+        });
+
+   /*numberPostRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+       @Override
+       public void onComplete(@NonNull Task<QuerySnapshot> task) {
+           DocumentReference ref = numberPostRef.getDo
+      number = task.getResult().size();
+      numberSomething.setText("" + number);
+       }
+   });*/
+   /*     DatabaseReference numberPostRef = FirebaseDatabase.getInstance().getReference().child("Posting");
+        Query numberPostQuery = numberPostRef.orderByChild("uid").equalTo(uid);
+        numberPostQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                number  = (int) dataSnapshot.getChildrenCount();
+                numberSomething.setText(""+number);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
+    }
 
     @Override
     public void onPause() {
@@ -761,6 +738,95 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
                 return true;
         }
         return false;
+    }
+    public void usersPoint(final Activity activity) {
+
+
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference points = db.collection("Points").document(uid);
+        points.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                long likeNumber = task.getResult().getLong("currentMonthPoints.likePoints");
+                long dislikeNumber = task.getResult().getLong("currentMonthPoints.dislikePoints");
+                long totalNumber = task.getResult().getLong("currentMonthPoints.totalPoints");
+
+                if (likeNumber == 0){
+                    thisMonhtNumberLikes.setText("0");
+                }
+                if (dislikeNumber == 0){
+                    thisMonthNumberDislikes.setText("0");
+                }
+                thisMonhtNumberLikes.setText(String.valueOf(likeNumber));
+                thisMonthNumberDislikes.setText(String.valueOf(dislikeNumber));
+
+                if (totalNumber <= 0){
+                    userPointsTextView.setText("0");
+                }
+                if (totalNumber > 0) {
+                    userPointsTextView.setText(String.valueOf(totalNumber));
+                }
+
+
+
+            }
+        });
+        /*Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
+        usersPost.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+                if (e == null) {
+
+                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+                        final String postID = snapshot.getId();
+
+                        Log.i("postID", postID);
+
+                        CollectionReference likeNumber = db.collection("Likes").document(postID).collection("like-id");
+                        likeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+
+                                if (e == null) {
+                                    numberLikes = documentSnapshots.size();
+
+                                    totalLikes += numberLikes;
+
+                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
+                                    dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                                            if (e == null) {
+                                                numberDisliks = documentSnapshots.size();
+
+                                                totalDislikes += numberDisliks;
+
+
+
+                                            }
+                                        }
+
+                                    });
+
+
+
+                                }
+                            }
+
+                        });
+
+
+
+                    }
+
+
+                }
+            }
+        }); */
+
     }
 
     @Override

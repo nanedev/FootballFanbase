@@ -136,8 +136,8 @@ public class MyPostsActivity extends AppCompatActivity {
 
                     @Override
                     protected void onBindViewHolder(final PostViewHolder viewHolder, int position, Post model) {
-                        final String post_key = model.getKey();
 
+                        final String post_key = getSnapshots().getSnapshot(position).getId();
                         viewHolder.setDescForAudio(model.getDescForAudio());
                         viewHolder.setDescForPhoto(model.getDescForPhoto());
                         viewHolder.setDescVideo(model.getDescVideo());

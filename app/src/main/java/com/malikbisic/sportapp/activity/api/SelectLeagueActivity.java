@@ -152,7 +152,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
             backToEnterusername.putExtra("clubName", clubName);
             backToEnterusername.putExtra("clubLogo", clubLogo);
             setResult(Activity.RESULT_OK, backToEnterusername);
-            finish();
+finish();
         }
     }
 

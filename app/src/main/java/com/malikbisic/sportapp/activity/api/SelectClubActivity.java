@@ -70,7 +70,7 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
         mDialog.show();
 
 
-        String leagueID = URL_LEAGUEID + myIntent.getStringExtra("leagueID");
+        String leagueID = URL_LEAGUEID + myIntent.getStringExtra("seasonId");
 
         final String url = URL_BASE + leagueID + URL_APIKEY;
 

@@ -490,10 +490,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-android:visibility="gone"
+                    android:visibility="gone"
                     android:layout_toRightOf="@+id/layoutForImageOFWinner"
                     android:layout_toEndOf="@+id/layoutForImageOFWinner"
-                 >
+                    >
 
                     <TextView
                         android:id="@+id/pointsText"
@@ -667,12 +667,19 @@ android:visibility="gone"
 
             </RelativeLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/parentForWinner"
+                android:id="@+id/playerName"/>
+
 
             <com.yarolegovich.discretescrollview.DiscreteScrollView
                 android:id="@+id/picker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/parentForWinner"
+                android:layout_below="@+id/playerName"
+                android:layout_marginTop="10dp"
                 app:dsv_orientation="horizontal" />
 
 
