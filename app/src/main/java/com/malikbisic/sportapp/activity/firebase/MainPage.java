@@ -24,6 +24,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -199,7 +200,7 @@ public class MainPage extends AppCompatActivity
     DocumentSnapshot prevItemVisible;
     SwipeRefreshLayout swipeRefreshLayoutPost;
     int size;
-    String lastMonthUpdate = "noData";
+
     int numberLikes;
     int numberDisliks;
     int totalLikes, totalDislikes, pointsTotalCurrentMonth, pointsTotalPrevMonth;
@@ -207,6 +208,7 @@ public class MainPage extends AppCompatActivity
     int prevMonthScoreLike = 0;
     int currentScoreDisike = 0;
     int prevMonthScoreDisike = 0;
+    String lastMonthUpdate = "noData";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -333,7 +335,7 @@ public class MainPage extends AppCompatActivity
         //likesReference.keepSynced(true);
         //dislikeReference.keepSynced(true);
 
-usersPoint(MainPage.this);
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -460,7 +462,7 @@ usersPoint(MainPage.this);
             getSharedPreferences("check first time", MODE_PRIVATE).edit().putBoolean("isFirstTime", false).commit();
         }
 
-     //   usersPoint(this);
+        usersPoint(this);
 
 
     }
@@ -483,7 +485,7 @@ usersPoint(MainPage.this);
             @Override
             public void onComplete(@NonNull final Task<QuerySnapshot> task) {
 
-                if (task.getException() == null){
+            if (task.getException() == null){
 
                     for (final DocumentSnapshot snapshot : task.getResult()) {
                         final String postID = snapshot.getId();
@@ -495,135 +497,135 @@ usersPoint(MainPage.this);
                             @Override
                             public void onComplete(@Nullable Task<QuerySnapshot> task1) {
 
-                                DateFormat likeDateFormat = new SimpleDateFormat("MMMM");
-                                for (DocumentSnapshot snap : task1.getResult()) {
-                                    String documentuid = snap.getId();
-                                    if (snap.getDate("timestamp") != null) {
-                                        final Date likeDate = snap.getDate("timestamp");
-                                        String likeMonth = likeDateFormat.format(likeDate);
+                                    DateFormat likeDateFormat = new SimpleDateFormat("MMMM");
+                                    for (DocumentSnapshot snap : task1.getResult()) {
+                                        String documentuid = snap.getId();
+                                        if (snap.getDate("timestamp") != null) {
+                                            final Date likeDate = snap.getDate("timestamp");
+                                            String likeMonth = likeDateFormat.format(likeDate);
 
-                                        if (likeMonth.equals(currentMonth)) {
-                                            currentScoreLike++;
-                                        } else if (likeMonth.equals(prevMonth )) {
-                                            prevMonthScoreLike++;
+                                            if (likeMonth.equals(currentMonth) && !documentuid.equals(mAuth.getCurrentUser().getUid())) {
+                                                currentScoreLike++;
+                                            } else if (likeMonth.equals(prevMonth) && !documentuid.equals(mAuth.getCurrentUser().getUid())) {
+                                                prevMonthScoreLike++;
+                                            }
+
+
+                                        } else {
+                                            Log.i("null", postID + " " + snap.getId());
                                         }
-
-
-                                    } else {
-                                        Log.i("null", postID + " " + snap.getId());
                                     }
-                                }
-                                CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
-                                dislikeNumber.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@Nullable Task<QuerySnapshot> task2) {
+                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
+                                    dislikeNumber.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@Nullable Task<QuerySnapshot> task2) {
 
 
-                                        if (task2.getException() == null) {
-                                            numberDisliks = task2.getResult().size();
-                                            DateFormat dislikeFormatDate = new SimpleDateFormat("MMMM");
-                                            for (DocumentSnapshot snapshot1 : task2.getResult()) {
-                                                String docUID = snapshot1.getId();
-                                                if (snapshot1.getDate("timestamp") != null) {
-                                                    final Date dislikeDate = snapshot1.getDate("timestamp");
-                                                    String dislikeMonth = dislikeFormatDate.format(dislikeDate);
+                                            if (task2.getException() == null) {
+                                                numberDisliks = task2.getResult().size();
+                                                DateFormat dislikeFormatDate = new SimpleDateFormat("MMMM");
+                                                for (DocumentSnapshot snapshot1 : task2.getResult()) {
+                                                    String docUID = snapshot1.getId();
+                                                    if (snapshot1.getDate("timestamp") != null) {
+                                                        final Date dislikeDate = snapshot1.getDate("timestamp");
+                                                        String dislikeMonth = dislikeFormatDate.format(dislikeDate);
 
-                                                    if (dislikeMonth.equals(currentMonth)) {
-                                                        currentScoreDisike++;
-                                                    } else if (dislikeMonth.equals(prevMonth)) {
-                                                        prevMonthScoreDisike++;
-                                                    }
-                                                } else {
-                                                    Log.i("nullDIS", postID + " " + snapshot1.getId());
-                                                }
-                                            }
-
-
-                                            pointsTotalPrevMonth = prevMonthScoreLike - prevMonthScoreDisike;
-                                            pointsTotalCurrentMonth = currentScoreLike - currentScoreDisike;
-                                            if (pointsTotalPrevMonth < 0) {
-                                                pointsTotalPrevMonth = 0;
-                                            }
-
-                                            if (pointsTotalCurrentMonth < 0){
-                                                pointsTotalCurrentMonth = 0;
-                                            }
-                                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                                            Map<String, Object> currentPointsMap = new HashMap<>();
-                                            currentPointsMap.put("likePoints", currentScoreLike);
-                                            currentPointsMap.put("dislikePoints", currentScoreDisike);
-                                            currentPointsMap.put("totalPoints", pointsTotalCurrentMonth);
-
-                                            Map<String, Object> prevPointsMap = new HashMap<>();
-                                            prevPointsMap.put("likePoints", prevMonthScoreLike);
-                                            prevPointsMap.put("dislikePoints", prevMonthScoreDisike);
-                                            prevPointsMap.put("totalPoints", pointsTotalPrevMonth);
-
-                                            final Map<String, Object> pointsMap = new HashMap<>();
-                                            pointsMap.put("uid", mAuth.getCurrentUser().getUid());
-                                            pointsMap.put("prevMonthPoints", prevPointsMap);
-                                            pointsMap.put("currentMonthPoints", currentPointsMap);
-                                            pointsMap.put("prevMonthUpdate", prevMonth);
-
-                                            final Map<String, Object> pointsMapCurrentMonth = new HashMap<>();
-                                            pointsMapCurrentMonth.put("uid", mAuth.getCurrentUser().getUid());
-                                            pointsMapCurrentMonth.put("currentMonthPoints", currentPointsMap);
-
-                                            DocumentReference pointsColl = db.collection("Points").document(mAuth.getCurrentUser().getUid());
-                                            pointsColl.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task4) {
-                                                    if (task4.getResult().exists()) {
-                                                        lastMonthUpdate = String.valueOf(task4.getResult().get("prevMonthUpdate"));
-                                                    }
-                                                    if (!lastMonthUpdate.equals(prevMonth)) {
-
-                                                        if (task4.getResult().exists()) {
-                                                            DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
-                                                            ref.update(pointsMap).addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Log.e("errUpdate", e.getLocalizedMessage());
-                                                                }
-                                                            });
-                                                        } else {
-                                                            DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
-                                                            ref.set(pointsMap).addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Log.e("errSet", e.getLocalizedMessage());
-                                                                }
-                                                            });
+                                                        if (dislikeMonth.equals(currentMonth) && !docUID.equals(mAuth.getCurrentUser().getUid())) {
+                                                            currentScoreDisike++;
+                                                        } else if (dislikeMonth.equals(prevMonth) && !docUID.equals(mAuth.getCurrentUser().getUid())) {
+                                                            prevMonthScoreDisike++;
                                                         }
                                                     } else {
-                                                        DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
-                                                        ref.update(pointsMapCurrentMonth).addOnFailureListener(new OnFailureListener() {
-                                                            @Override
-                                                            public void onFailure(@NonNull Exception e) {
-                                                                Log.e("errUpdateCurr", e.getLocalizedMessage());
-                                                            }
-                                                        });
+                                                        Log.i("nullDIS", postID + " " + snapshot1.getId());
                                                     }
                                                 }
-                                            });
 
+
+                                                pointsTotalPrevMonth = prevMonthScoreLike - prevMonthScoreDisike;
+                                                pointsTotalCurrentMonth = currentScoreLike - currentScoreDisike;
+                                                if (pointsTotalPrevMonth < 0) {
+                                                    pointsTotalPrevMonth = 0;
+                                                }
+
+                                                if (pointsTotalCurrentMonth < 0){
+                                                    pointsTotalCurrentMonth = 0;
+                                                }
+                                                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                                                Map<String, Object> currentPointsMap = new HashMap<>();
+                                                currentPointsMap.put("likePoints", currentScoreLike);
+                                                currentPointsMap.put("dislikePoints", currentScoreDisike);
+                                                currentPointsMap.put("totalPoints", pointsTotalCurrentMonth);
+
+                                                Map<String, Object> prevPointsMap = new HashMap<>();
+                                                prevPointsMap.put("likePoints", prevMonthScoreLike);
+                                                prevPointsMap.put("dislikePoints", prevMonthScoreDisike);
+                                                prevPointsMap.put("totalPoints", pointsTotalPrevMonth);
+
+                                                final Map<String, Object> pointsMap = new HashMap<>();
+                                                pointsMap.put("uid", mAuth.getCurrentUser().getUid());
+                                                pointsMap.put("prevMonthPoints", prevPointsMap);
+                                                pointsMap.put("currentMonthPoints", currentPointsMap);
+                                                pointsMap.put("prevMonthUpdate", prevMonth);
+
+                                                final Map<String, Object> pointsMapCurrentMonth = new HashMap<>();
+                                                pointsMapCurrentMonth.put("uid", mAuth.getCurrentUser().getUid());
+                                                pointsMapCurrentMonth.put("currentMonthPoints", currentPointsMap);
+
+                                                DocumentReference pointsColl = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                                                pointsColl.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task4) {
+                                                        if (task4.getResult().exists()) {
+                                                            lastMonthUpdate = String.valueOf(task4.getResult().get("prevMonthUpdate"));
+                                                        }
+                                                            if (!lastMonthUpdate.equals(prevMonth)) {
+
+                                                                if (task4.getResult().exists()) {
+                                                                    DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                                                                    ref.update(pointsMap).addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Log.e("errUpdate", e.getLocalizedMessage());
+                                                                        }
+                                                                    });
+                                                                } else {
+                                                                    DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                                                                    ref.set(pointsMap).addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Log.e("errSet", e.getLocalizedMessage());
+                                                                        }
+                                                                    });
+                                                                }
+                                                            } else {
+                                                                DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                                                                ref.update(pointsMapCurrentMonth).addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Log.e("errUpdateCurr", e.getLocalizedMessage());
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                });
+
+                                            }
                                         }
-                                    }
 
                                 });
 
 
                             }
                         });
-                    }
-
-
                 }
-            }
-        });
 
-    }
+
+            }
+        }
+    });
+
+}
 
     public void setNumberClubFans() {
 
