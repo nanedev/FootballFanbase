@@ -6,12 +6,15 @@ package com.malikbisic.sportapp.model.api;
 
 public class PlayerModel {
 
-    private final int id;
-    private final String name;
+    private  int id;
+    private  String name;
 
-    private final int image;
+    private  String image;
 
-    public PlayerModel(int id, String name,  int image) {
+    public PlayerModel() {
+    }
+
+    public PlayerModel(int id, String name, String image) {
         this.id = id;
         this.name = name;
 
@@ -27,7 +30,7 @@ public class PlayerModel {
     }
 
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 

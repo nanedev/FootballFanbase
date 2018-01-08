@@ -89,7 +89,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         profileUsers = FirebaseFirestore.getInstance();
         postingDatabase = profileUsers.collection("Posting");
         //     notificationReference = mReference.collection("Notification");
-replyRef = FirebaseFirestore.getInstance();
+        replyRef = FirebaseFirestore.getInstance();
         likesReference = FirebaseFirestore.getInstance();
         dislikeReference = FirebaseFirestore.getInstance();
         mReference = FirebaseFirestore.getInstance();
@@ -276,15 +276,23 @@ replyRef = FirebaseFirestore.getInstance();
                                                             });
 
 
-                                                            replyRef.collection("CommentsInComments").document(key).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            replyRef.collection("CommentsInComments").document(post_key_comments).collection("reply-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                 @Override
-                                                                public void onSuccess(Void aVoid) {
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                    for (DocumentSnapshot snapshot : task.getResult()){
+                                                                        String id = snapshot.getId();
+                                                                        replyRef.collection("CommentsInComments").document(post_key_comments).collection("reply-id").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
 
-                                                                }
-                                                            }).addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-
+                                                                            }
+                                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Log.e("errorRepyELETE", e.getLocalizedMessage());
+                                                                            }
+                                                                        });
+                                                                    }
                                                                 }
                                                             });
 

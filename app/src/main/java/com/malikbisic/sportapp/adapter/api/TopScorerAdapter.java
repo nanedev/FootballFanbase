@@ -112,7 +112,7 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
             public void onClick(DialogInterface dialog, int which) {
                 String enterPoint = enterPointsVote.getText().toString().trim();
                 if (!TextUtils.isEmpty(enterPoint)) {
-                    final long points = Long.parseLong(enterPoint);
+                    final long points = Integer.parseInt(enterPoint);
 
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
                     DocumentReference myPointsGet = db.collection("Points").document(mAuth.getCurrentUser().getUid());

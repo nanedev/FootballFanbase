@@ -112,7 +112,7 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileFragment extends AppCompatActivity  implements DiscreteScrollView.OnItemChangedListener, View.OnKeyListener {
+public class ProfileFragment extends AppCompatActivity implements DiscreteScrollView.OnItemChangedListener, View.OnKeyListener {
 
     private ImageView profile;
     private ImageView flag;
@@ -180,14 +180,17 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
     RelativeLayout clubLayoutWinner;
     boolean firstImageClick = true;
     boolean secondImageClick = false;
-int number;
+    int number;
     List<PlayerModel> list;
-    TextView totalPointsTextview;
     FootballPlayer player;
     RelativeLayout postLayout;
-TextView postsNumber;
+    TextView postsNumber;
     private DiscreteScrollView itemPicker;
     private InfiniteScrollAdapter infiniteAdapter;
+
+    TextView totalPointsTextview;
+    int pos = 1;
+
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -203,10 +206,11 @@ TextView postsNumber;
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().hide();
-postsNumber = (TextView) findViewById(R.id.postsNumber);
-totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumber);
+        postsNumber = (TextView) findViewById(R.id.postsNumber);
+
         player = player.get();
-        list = player.getData();
+        list = new ArrayList<>();
+        updateListPlayer();
         itemPicker = (DiscreteScrollView) findViewById(R.id.picker);
         itemPicker.setOrientation(Orientation.HORIZONTAL);
         itemPicker.addOnItemChangedListener(this);
@@ -215,16 +219,16 @@ totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumber);
         itemPicker.setItemTransformer(new ScaleTransformer.Builder()
                 .setMinScale(0.8f)
                 .build());
-        onItemChanged(list.get(0));
+
 
         mDatabase = FirebaseDatabase.getInstance();
         mReference = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
-usersPoint(ProfileFragment.this);
+        usersPoint(ProfileFragment.this);
 
-            myUid = getIntent().getStringExtra("myUid");
-            checkOpenActivity = getIntent().getBooleanExtra("openFromFanBaseTable", false);
+        myUid = getIntent().getStringExtra("myUid");
+        checkOpenActivity = getIntent().getBooleanExtra("openFromFanBaseTable", false);
 
 
         if (checkOpenActivity) {
@@ -244,7 +248,7 @@ usersPoint(ProfileFragment.this);
         country = (TextView) findViewById(R.id.user_country);
         showInfo = (RelativeLayout) findViewById(R.id.inforelative);
         backarrow = (ImageView) findViewById(R.id.backarrow);
-        thisMonhtNumberLikes = (TextView) findViewById(R.id.likesinprofilefragment) ;
+        thisMonhtNumberLikes = (TextView) findViewById(R.id.likesinprofilefragment);
         thisMonthNumberDislikes = (TextView) findViewById(R.id.dislikesinporiflefragment);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
         pointsLayoutWinner = (RelativeLayout) findViewById(R.id.pointsofWinner);
@@ -253,15 +257,15 @@ usersPoint(ProfileFragment.this);
         clubLayoutWinner = (RelativeLayout) findViewById(R.id.playerTeam);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
-postLayout = (RelativeLayout) findViewById(R.id.postlayout);
+        totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumber);
+        postLayout = (RelativeLayout) findViewById(R.id.postlayout);
         backarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProfileFragment.this,MainPage.class);
+                Intent intent = new Intent(ProfileFragment.this, MainPage.class);
                 startActivity(intent);
             }
         });
-
 
 
         showInfo.setOnClickListener(new View.OnClickListener() {
@@ -285,7 +289,7 @@ postLayout = (RelativeLayout) findViewById(R.id.postlayout);
                     clubLayoutWinner.setVisibility(View.VISIBLE);
                     pointsLayoutWinner.setVisibility(View.VISIBLE);
 
-                }else  if (secondImageClick){
+                } else if (secondImageClick) {
                     firstImageClick = true;
                     secondImageClick = false;
                     usersLayoutWinner.setVisibility(View.GONE);
@@ -296,20 +300,20 @@ postLayout = (RelativeLayout) findViewById(R.id.postlayout);
             }
         });
 
-numberPost();
+        numberPost();
 
-postLayout.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(ProfileFragment.this, MyPostsActivity.class);
-        startActivity(intent);
-    }
-});
+        postLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileFragment.this, MyPostsActivity.class);
+                startActivity(intent);
+            }
+        });
         //  club = (TextView)  findViewById(R.id.user_club);
         userPointsTextView = (TextView) findViewById(R.id.user_points_textview);
         usersPoint(this);
 
-        editProfilePicture = (TextView)  findViewById(R.id.edit_profile_image);
+        editProfilePicture = (TextView) findViewById(R.id.edit_profile_image);
 
 
         //logoClub = (ImageView)  findViewById(R.id.club_logo_profile);
@@ -317,9 +321,9 @@ postLayout.setOnClickListener(new View.OnClickListener() {
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
         dialog = new ProgressDialog(ProfileFragment.this);
-        loadProfile_image = (ProgressBar)  findViewById(R.id.loadingProfileImageProgressBar);
-        premiumLinija =  findViewById(R.id.sixthline);
-        genderImage = (ImageView)  findViewById(R.id.gender_image);
+        loadProfile_image = (ProgressBar) findViewById(R.id.loadingProfileImageProgressBar);
+        premiumLinija = findViewById(R.id.sixthline);
+        genderImage = (ImageView) findViewById(R.id.gender_image);
         //      rec = (RecyclerView)  findViewById(R.id.hhhhhh);
         //    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
 //        rec.setLayoutManager(layoutManager);
@@ -340,7 +344,7 @@ postLayout.setOnClickListener(new View.OnClickListener() {
                         if (items[i].equals("Open gallery")) {
                             Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
                             openGallery.setType("image/*");
-                           startActivityForResult(openGallery, GALLERY_REQUEST);
+                            startActivityForResult(openGallery, GALLERY_REQUEST);
                         }
                     }
                 });
@@ -398,7 +402,6 @@ postLayout.setOnClickListener(new View.OnClickListener() {
 
                         flagImageFirebase = String.valueOf(value.get("flag"));
                         Log.i("flag uri", flagImageFirebase);
-
 
 
                         flag.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -482,9 +485,32 @@ postLayout.setOnClickListener(new View.OnClickListener() {
         }
 
     };
-    private void onItemChanged(PlayerModel item) {
+public void updateListPlayer(){
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final Query documentReference = db.collection("PlayerPoints").orderBy("playerPoints", Query.Direction.DESCENDING);
+    documentReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+            String playName;
+            String playerImage;
+            int id = 0;
+            for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
+                if (documentSnapshot.exists()) {
+                    id++;
+                    playName = documentSnapshot.getString("playerName");
+                    playerImage = documentSnapshot.getString("playerImage");
+                    list.add(new PlayerModel(id, playName, playerImage));
+                    pos++;
+                }
+                onItemChanged(list.get(0), 1);
+                infiniteAdapter.notifyDataSetChanged();
+            }
+        }
+    });
+}
+    private void onItemChanged(PlayerModel item, int id) {
         TextView namePlayer = (TextView) findViewById(R.id.playerName);
-        namePlayer.setText(item.getName());
+        namePlayer.setText(id +". " + item.getName());
 
     }
 
@@ -598,7 +624,8 @@ postLayout.setOnClickListener(new View.OnClickListener() {
 
 
     }
-    public void showAlertInfo(){
+
+    public void showAlertInfo() {
 
 
         AlertDialog.Builder playerVoteDialogBuilder = new AlertDialog.Builder(ProfileFragment.this);
@@ -642,9 +669,7 @@ postLayout.setOnClickListener(new View.OnClickListener() {
                     dateText.setText(String.valueOf(value.get("date")));
 
 
-
                     Log.i("flag uri", flagImageFirebase);
-
 
 
                     fromImg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -671,7 +696,6 @@ postLayout.setOnClickListener(new View.OnClickListener() {
                             .into(fromImg);
 
 
-
                     fromImgTextview.setText(String.valueOf(value.get("country")));
 
                 }
@@ -684,10 +708,11 @@ postLayout.setOnClickListener(new View.OnClickListener() {
         playerVoteDialogBuilder.show();
 
     }
+
     public void numberPost() {
         final CollectionReference numberPostRef = FirebaseFirestore.getInstance().collection("Posting");
 
-        final com.google.firebase.firestore.Query query = numberPostRef.whereEqualTo("uid",uid);
+        final com.google.firebase.firestore.Query query = numberPostRef.whereEqualTo("uid", uid);
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -740,12 +765,12 @@ postLayout.setOnClickListener(new View.OnClickListener() {
         }
         return false;
     }
+
     public void usersPoint(final Activity activity) {
 
 
-
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference points = db.collection("Points").document(uid);
+        final DocumentReference points = db.collection("Points").document(uid);
         points.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -753,16 +778,16 @@ postLayout.setOnClickListener(new View.OnClickListener() {
                 long dislikeNumber = task.getResult().getLong("currentMonthPoints.dislikePoints");
                 long totalNumber = task.getResult().getLong("currentMonthPoints.totalPoints");
 
-                if (likeNumber == 0){
+                if (likeNumber == 0) {
                     thisMonhtNumberLikes.setText("0");
                 }
-                if (dislikeNumber == 0){
+                if (dislikeNumber == 0) {
                     thisMonthNumberDislikes.setText("0");
                 }
                 thisMonhtNumberLikes.setText(String.valueOf(likeNumber));
                 thisMonthNumberDislikes.setText(String.valueOf(dislikeNumber));
 
-                if (totalNumber <= 0){
+                if (totalNumber <= 0) {
                     userPointsTextView.setText("0");
                 }
                 if (totalNumber > 0) {
@@ -770,9 +795,9 @@ postLayout.setOnClickListener(new View.OnClickListener() {
                 }
 
 
-
             }
         });
+
         Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
         usersPost.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -791,32 +816,29 @@ postLayout.setOnClickListener(new View.OnClickListener() {
 
 
                                 if (e == null) {
-                                    for (DocumentSnapshot snapshot1 : documentSnapshots.getDocuments()) {
-                                        numberLikes = documentSnapshots.size();
 
-                                        totalLikes++;
-                                    }
+                                    numberLikes = documentSnapshots.size();
+
+                                    totalLikes++;
+
                                     CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
                                     dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                                         @Override
                                         public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                                             if (e == null) {
-                                                for (DocumentSnapshot snapshot2 : documentSnapshots.getDocuments()) {
-                                                    numberDisliks = documentSnapshots.size();
+                                                numberDisliks = documentSnapshots.size();
 
-                                                    totalDislikes++;
-                                                }
+                                                totalDislikes++;
 
 
                                                 pointsTotal = totalLikes - totalDislikes;
-                                                if (pointsTotal == 0){
+                                                if (pointsTotal == 0) {
                                                     totalPointsTextview.setText("0");
                                                 }
                                                 if (pointsTotal > 0) {
                                                     totalPointsTextview.setText(String.valueOf(pointsTotal));
                                                 }
-
 
 
                                             }
@@ -825,12 +847,10 @@ postLayout.setOnClickListener(new View.OnClickListener() {
                                     });
 
 
-
                                 }
                             }
 
                         });
-
 
 
                     }
@@ -841,46 +861,11 @@ postLayout.setOnClickListener(new View.OnClickListener() {
         });
     }
 
-
-    public void previousMonthPoints(final Activity activity) {
-
-
-
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference points = db.collection("Points").document(uid);
-        points.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                long likeNumber = task.getResult().getLong("prevMonthPoints.likePoints");
-                long dislikeNumber = task.getResult().getLong("prevMonthPoints.dislikePoints");
-                long totalNumber = task.getResult().getLong("prevMonthPoints.totalPoints");
-
-                if (likeNumber == 0){
-                    thisMonhtNumberLikes.setText("0");
-                }
-                if (dislikeNumber == 0){
-                    thisMonthNumberDislikes.setText("0");
-                }
-                thisMonhtNumberLikes.setText(String.valueOf(likeNumber));
-                thisMonthNumberDislikes.setText(String.valueOf(dislikeNumber));
-
-                if (totalNumber <= 0){
-                    userPointsTextView.setText("0");
-                }
-                if (totalNumber > 0) {
-                    userPointsTextView.setText(String.valueOf(totalNumber));
-                }
-
-
-
-            }
-        });
-
-    }
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
+
         int positionInDataSet = infiniteAdapter.getRealPosition(adapterPosition);
-        onItemChanged(list.get(positionInDataSet));
+        onItemChanged(list.get(positionInDataSet), pos);
     }
 }
 
