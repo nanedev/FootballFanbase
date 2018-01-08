@@ -610,19 +610,45 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                     postingDatabaseProfile.collection("Posting").document(post_key).delete().addOnSuccessListener(activity, new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
+                                                            likesReference.collection("Likes").document(post_key).collection("like-id").document(mAuth.getCurrentUser().getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
 
+
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+
+                                                                }
+                                                            });
+
+                                                            dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(mAuth.getCurrentUser().getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+
+                                                                }
+                                                            });
                                                             int currentPosition = postList.indexOf(model);
                                                             postList.remove(currentPosition);
                                                             notifyItemRemoved(currentPosition);
                                                             Toast.makeText(activity.getApplicationContext(), "deleted", Toast.LENGTH_LONG).show();
 
                                                         }
+
+
                                                     }).addOnFailureListener(new OnFailureListener() {
                                                         @Override
                                                         public void onFailure(@NonNull Exception e) {
                                                             Toast.makeText(activity.getApplicationContext(), e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
                                                         }
                                                     });
+
                                                 } else if (items[i].equals("Cancel")) {
 
 

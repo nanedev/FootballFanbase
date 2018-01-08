@@ -25,6 +25,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -59,6 +60,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     FirebaseFirestore mReference;
     CollectionReference getCommentRef;
     CollectionReference postingDatabase, notificationReference;
+    FirebaseFirestore replyRef;
 
     public static String key;
     String keyNotif;
@@ -87,7 +89,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         profileUsers = FirebaseFirestore.getInstance();
         postingDatabase = profileUsers.collection("Posting");
         //     notificationReference = mReference.collection("Notification");
-
+replyRef = FirebaseFirestore.getInstance();
         likesReference = FirebaseFirestore.getInstance();
         dislikeReference = FirebaseFirestore.getInstance();
         mReference = FirebaseFirestore.getInstance();
@@ -247,6 +249,44 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                                     commentsUsers.collection("Comments").document(key).collection("comment-id").document(post_key_comments).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
+
+                                                            likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(auth.getCurrentUser().getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+
+                                                                }
+                                                            });
+
+
+                                                            dislikeReference.collection("DislikesComments").document(post_key_comments).collection("dislike-id").document(auth.getCurrentUser().getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+
+                                                                }
+                                                            });
+
+
+                                                        /*    replyRef.collection("CommentsInComments").document(post_key_comments).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+
+                                                                }
+                                                            });*/
 
                                                         }
                                                     }).addOnFailureListener(new OnFailureListener() {

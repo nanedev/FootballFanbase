@@ -182,6 +182,7 @@ public class ProfileFragment extends AppCompatActivity  implements DiscreteScrol
     boolean secondImageClick = false;
 int number;
     List<PlayerModel> list;
+    TextView totalPointsTextview;
     FootballPlayer player;
     RelativeLayout postLayout;
 TextView postsNumber;
@@ -203,7 +204,7 @@ TextView postsNumber;
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().hide();
 postsNumber = (TextView) findViewById(R.id.postsNumber);
-
+totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumber);
         player = player.get();
         list = player.getData();
         itemPicker = (DiscreteScrollView) findViewById(R.id.picker);
@@ -772,7 +773,7 @@ postLayout.setOnClickListener(new View.OnClickListener() {
 
             }
         });
-        /*Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
+        Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
         usersPost.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
@@ -790,19 +791,31 @@ postLayout.setOnClickListener(new View.OnClickListener() {
 
 
                                 if (e == null) {
-                                    numberLikes = documentSnapshots.size();
+                                    for (DocumentSnapshot snapshot1 : documentSnapshots.getDocuments()) {
+                                        numberLikes = documentSnapshots.size();
 
-                                    totalLikes += numberLikes;
-
+                                        totalLikes++;
+                                    }
                                     CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
                                     dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                                         @Override
                                         public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                                             if (e == null) {
-                                                numberDisliks = documentSnapshots.size();
+                                                for (DocumentSnapshot snapshot2 : documentSnapshots.getDocuments()) {
+                                                    numberDisliks = documentSnapshots.size();
 
-                                                totalDislikes += numberDisliks;
+                                                    totalDislikes++;
+                                                }
+
+
+                                                pointsTotal = totalLikes - totalDislikes;
+                                                if (pointsTotal == 0){
+                                                    totalPointsTextview.setText("0");
+                                                }
+                                                if (pointsTotal > 0) {
+                                                    totalPointsTextview.setText(String.valueOf(pointsTotal));
+                                                }
 
 
 
@@ -825,10 +838,45 @@ postLayout.setOnClickListener(new View.OnClickListener() {
 
                 }
             }
-        }); */
-
+        });
     }
 
+
+    public void previousMonthPoints(final Activity activity) {
+
+
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference points = db.collection("Points").document(uid);
+        points.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                long likeNumber = task.getResult().getLong("prevMonthPoints.likePoints");
+                long dislikeNumber = task.getResult().getLong("prevMonthPoints.dislikePoints");
+                long totalNumber = task.getResult().getLong("prevMonthPoints.totalPoints");
+
+                if (likeNumber == 0){
+                    thisMonhtNumberLikes.setText("0");
+                }
+                if (dislikeNumber == 0){
+                    thisMonthNumberDislikes.setText("0");
+                }
+                thisMonhtNumberLikes.setText(String.valueOf(likeNumber));
+                thisMonthNumberDislikes.setText(String.valueOf(dislikeNumber));
+
+                if (totalNumber <= 0){
+                    userPointsTextView.setText("0");
+                }
+                if (totalNumber > 0) {
+                    userPointsTextView.setText(String.valueOf(totalNumber));
+                }
+
+
+
+            }
+        });
+
+    }
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
         int positionInDataSet = infiniteAdapter.getRealPosition(adapterPosition);

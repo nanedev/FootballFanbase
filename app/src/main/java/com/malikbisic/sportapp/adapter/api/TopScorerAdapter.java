@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,8 +111,8 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String enterPoint = enterPointsVote.getText().toString().trim();
-                if (enterPoint != null) {
-                    final long points = Integer.parseInt(enterPoint);
+                if (!TextUtils.isEmpty(enterPoint)) {
+                    final long points = Long.parseLong(enterPoint);
 
                     final FirebaseFirestore db = FirebaseFirestore.getInstance();
                     DocumentReference myPointsGet = db.collection("Points").document(mAuth.getCurrentUser().getUid());
