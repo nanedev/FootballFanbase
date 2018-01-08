@@ -714,6 +714,29 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                             postList.remove(currentPosition);
                                                             notifyItemRemoved(currentPosition);
                                                             Toast.makeText(activity.getApplicationContext(), "deleted", Toast.LENGTH_LONG).show();
+                                                           /* likesReference.collection("Likes").document(post_key).collection("like-id").document(mAuth.getCurrentUser().getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.i("like", "deleted");
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.e("likeerror", e.getLocalizedMessage());
+                                                                }
+                                                            });
+
+                                                            dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(mAuth.getCurrentUser().getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.i("dislike", "deleted");
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.e("dislikeerror", e.getLocalizedMessage());
+                                                                }
+                                                            }); */
 
                                                         }
 

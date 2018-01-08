@@ -291,7 +291,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                                                             public void onFailure(@NonNull Exception e) {
                                                                                 Log.e("errorRepyELETE", e.getLocalizedMessage());
                                                                             }
-                                                                        });
+                                                                        }); //jjjnb
                                                                     }
                                                                 }
                                                             });
