@@ -130,6 +130,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     boolean isAllLoaded = false;
     FirebaseFirestore commentRef;
     FirebaseFirestore replyRef;
+    FirebaseFirestore likeCommentsRef;
+    FirebaseFirestore dislikeCommentsRef;
 
 
     public MainPageAdapter(final List<Post> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
@@ -219,6 +221,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         profileUsers = FirebaseFirestore.getInstance();
         commentRef = FirebaseFirestore.getInstance();
         replyRef = FirebaseFirestore.getInstance();
+        likeCommentsRef = FirebaseFirestore.getInstance();
+        dislikeCommentsRef = FirebaseFirestore.getInstance();
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null) {
@@ -661,18 +665,60 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                                                                                                         }
                                                                                                     });
+
+
                                                                                                 }
 
                                                                                             }
                                                                                         }
                                                                                     });
+
+                                                                                    likeCommentsRef.collection("LikeComments").document(docId).collection("like-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                                                            for (DocumentSnapshot snapshot : task.getResult()){
+                                                                                                String likeComId = snapshot.getId();
+                                                                                                likeCommentsRef.collection("LikeComments").document(docId).collection("like-id").document(likeComId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                    @Override
+                                                                                                    public void onSuccess(Void aVoid) {
+
+                                                                                                    }
+                                                                                                });
+
+                                                                                            }
+                                                                                        }
+                                                                                    });
+
+                                                                                    dislikeCommentsRef.collection("DislikesComments").document(docId).collection("dislike-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                                                            for (DocumentSnapshot snapshot : task.getResult()){
+                                                                                                String dislikeComId = snapshot.getId();
+                                                                                                dislikeCommentsRef.collection("DislikesComments").document(docId).collection("dislike-id").document(dislikeComId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                    @Override
+                                                                                                    public void onSuccess(Void aVoid) {
+
+                                                                                                    }
+                                                                                                });
+
+                                                                                            }
+                                                                                        }
+                                                                                    });
+
+
                                                                                 }
+
                                                                             }).addOnFailureListener(new OnFailureListener() {
                                                                                 @Override
                                                                                 public void onFailure(@NonNull Exception e) {
 
                                                                                 }
                                                                             });
+
+
+
                                                                         }
                                                                     }
 
