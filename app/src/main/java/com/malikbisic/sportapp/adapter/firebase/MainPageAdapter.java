@@ -96,7 +96,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     Activity activity;
     String uid;
     boolean value;
-
+    String docId;
     public static boolean photoSelected;
     public static String usernameInfo;
     public static String profielImage;
@@ -128,6 +128,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     LayoutInflater mLInflater;
     boolean isLoading;
     boolean isAllLoaded = false;
+    FirebaseFirestore commentRef;
+    FirebaseFirestore replyRef;
 
 
     public MainPageAdapter(final List<Post> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
@@ -215,6 +217,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         likesReference = FirebaseFirestore.getInstance(); //.getReference().child("Likes");
         dislikeReference = FirebaseFirestore.getInstance(); //.child("Dislikes");
         profileUsers = FirebaseFirestore.getInstance();
+        commentRef = FirebaseFirestore.getInstance();
+        replyRef = FirebaseFirestore.getInstance();
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null) {
@@ -634,6 +638,78 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                                                                 }
                                                             });
+
+                                                            commentRef.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                    if (task.isSuccessful()){
+                                                                        for (DocumentSnapshot snapshots : task.getResult()){
+                                                                        docId    = snapshots.getId();
+                                                                            commentRef.collection("Comments").document(post_key).collection("comment-id").document(docId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+                                                                                    replyRef.collection("CommentsInComments").document(docId).collection("reply-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                                                            if (task.isSuccessful()){
+                                                                                                for (DocumentSnapshot snapshot : task.getResult()){
+                                                                                                    String id = snapshot.getId();
+                                                                                                    replyRef.collection("CommentsInComments").document(docId).collection("reply-id").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                        @Override
+                                                                                                        public void onSuccess(Void aVoid) {
+
+                                                                                                        }
+                                                                                                    });
+                                                                                                }
+
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    }
+
+
+                                                                }
+                                                            });
+
+
+                                                       /*     replyRef.collection("CommentsInComments").document(post_key).collection("reply-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                    if (task.isSuccessful()){
+                                                                        for (DocumentSnapshot snapshot : task.getResult()){
+
+                                                                            String replyId = snapshot.getId();
+
+                                                                            replyRef.collection("CommentsInComments").document(post_key).collection("reply-id").document(replyId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+
+                                                                                }
+                                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+
+                                                                                }
+                                                                            });*/
+
+                                                             /*           }
+                                                                    }
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+
+                                                                }
+                                                            });*/
                                                             int currentPosition = postList.indexOf(model);
                                                             postList.remove(currentPosition);
                                                             notifyItemRemoved(currentPosition);

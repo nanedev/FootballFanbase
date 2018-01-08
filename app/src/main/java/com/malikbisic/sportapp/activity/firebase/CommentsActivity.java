@@ -276,7 +276,7 @@ replyRef = FirebaseFirestore.getInstance();
                                                             });
 
 
-                                                        /*    replyRef.collection("CommentsInComments").document(post_key_comments).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            replyRef.collection("CommentsInComments").document(key).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
 
@@ -286,7 +286,7 @@ replyRef = FirebaseFirestore.getInstance();
                                                                 public void onFailure(@NonNull Exception e) {
 
                                                                 }
-                                                            });*/
+                                                            });
 
                                                         }
                                                     }).addOnFailureListener(new OnFailureListener() {
