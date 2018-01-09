@@ -185,6 +185,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
     FootballPlayer player;
     RelativeLayout postLayout;
     TextView postsNumber;
+    String playerID;
     private DiscreteScrollView itemPicker;
     private InfiniteScrollAdapter infiniteAdapter;
 
@@ -497,10 +498,11 @@ public void updateListPlayer(){
             for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
                 if (documentSnapshot.exists()) {
                     id++;
+                    playerID = documentSnapshot.getId();
                     playName = documentSnapshot.getString("playerName");
                     playerImage = documentSnapshot.getString("playerImage");
                     playerPoints = documentSnapshot.getLong("playerPoints");
-                    list.add(new PlayerModel(id, playName, playerImage, playerPoints));
+                    list.add(new PlayerModel(id, playName, playerImage, playerPoints, playerID));
                     pos++;
                 }
                 onItemChanged(list.get(0), 1);

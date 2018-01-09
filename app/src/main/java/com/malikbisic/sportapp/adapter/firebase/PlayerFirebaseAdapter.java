@@ -113,7 +113,7 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
             }
         });
 
-        final DocumentReference documentReference = db.collection("PlayerPoints").document(String.valueOf(model.getId()));
+        final DocumentReference documentReference = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
@@ -154,7 +154,7 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
 
 
 
-                                DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getId()));
+                                DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
                                 playerVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -167,10 +167,10 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
                                             playerInfo.put("playerPoints", setPoints);
                                             playerInfo.put("timestamp", FieldValue.serverTimestamp());
 
-                                            DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getId()));
+                                            DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
                                             playerVote.update(playerInfo);
 
-                                            DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getId())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                            DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
 
                                             usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
@@ -179,10 +179,10 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
                                                     if (task.getResult().exists()){
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getId())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                         usersVote.update(usersInfo);
                                                     } else {
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getId())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                         usersVote.set(usersInfo);
                                                     }
                                                 }
@@ -196,10 +196,10 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
                                             playerInfo.put("playerPoints", points);
                                             playerInfo.put("timestamp", FieldValue.serverTimestamp());
 
-                                            DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getId()));
+                                            DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
                                             playerVote.set(playerInfo);
 
-                                            DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getId())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                            DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
 
                                             usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
@@ -208,10 +208,10 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
                                                     if (task.getResult().exists()){
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getId())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                         usersVote.update(usersInfo);
                                                     } else {
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getId())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                         usersVote.set(usersInfo);
                                                     }
                                                 }
