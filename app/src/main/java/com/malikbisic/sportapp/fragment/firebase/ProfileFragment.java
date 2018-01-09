@@ -513,7 +513,7 @@ public void updateListPlayer(){
 }
     private void onItemChanged(PlayerModel item, int id) {
         TextView namePlayer = (TextView) findViewById(R.id.playerName);
-        namePlayer.setText(id +". " + item.getName());
+        namePlayer.setText(item.getName());
 
     }
 

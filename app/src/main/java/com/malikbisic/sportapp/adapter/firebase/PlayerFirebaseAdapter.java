@@ -67,6 +67,7 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
                 .load(list.get(position).getImage())
                 .into(holder.image);
         holder.pointPlayer.setText("" +list.get(position).getPoints());
+        holder.playerPosition.setText(model.getId() + ".");
 
         holder.voteButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -16,11 +16,13 @@ public class PlayersInProfileViewHolder extends RecyclerView.ViewHolder {
     public ImageView image;
     public TextView pointPlayer;
     public Button voteButton;
+    public TextView playerPosition;
 
     public PlayersInProfileViewHolder(View itemView) {
         super(itemView);
         image = (ImageView) itemView.findViewById(R.id.image);
         pointPlayer = (TextView) itemView.findViewById(R.id.playerPoints);
         voteButton = (Button) itemView.findViewById(R.id.votebutton);
+        playerPosition = (TextView) itemView.findViewById(R.id.positionPlayer);
     }
 }
