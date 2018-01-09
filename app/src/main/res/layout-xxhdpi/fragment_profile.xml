@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:fitsSystemWindows="true"
+    android:background="@color/white"
     android:focusable="true"
     tools:context="com.malikbisic.sportapp.fragment.firebase.ProfileFragment">
 
@@ -669,19 +670,21 @@
 
             </RelativeLayout>
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+android:layout_centerHorizontal="true"
                 android:id="@+id/playerName"
+                android:textColor="@color/black"
                 android:layout_below="@+id/parentForWinner"/>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_below="@+id/playerName">
+                android:layout_below="@+id/playerName"
+               >
 
 
 
