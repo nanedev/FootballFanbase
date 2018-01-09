@@ -213,7 +213,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         itemPicker.setNestedScrollingEnabled(false);
         itemPicker.setOrientation(Orientation.HORIZONTAL);
         itemPicker.addOnItemChangedListener(this);
-        infiniteAdapter = InfiniteScrollAdapter.wrap(new PlayerFirebaseAdapter(list));
+        infiniteAdapter = InfiniteScrollAdapter.wrap(new PlayerFirebaseAdapter(list,ProfileFragment.this));
         itemPicker.setAdapter(infiniteAdapter);
         itemPicker.setItemTransformer(new ScaleTransformer.Builder()
                 .setMinScale(0.8f)
