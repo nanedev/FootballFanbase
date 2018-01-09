@@ -8,17 +8,25 @@ public class PlayerModel {
 
     private  int id;
     private  String name;
-
+    private  long points;
     private  String image;
 
     public PlayerModel() {
     }
 
-    public PlayerModel(int id, String name, String image) {
+    public PlayerModel(int id, String name, String image, long points) {
         this.id = id;
         this.name = name;
-
+        this.points = points;
         this.image = image;
+    }
+
+    public long getPoints() {
+        return points;
+    }
+
+    public void setPoints(long points) {
+        this.points = points;
     }
 
     public int getId() {

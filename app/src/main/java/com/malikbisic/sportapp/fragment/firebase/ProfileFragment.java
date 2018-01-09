@@ -492,13 +492,15 @@ public void updateListPlayer(){
         public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
             String playName;
             String playerImage;
+            long playerPoints;
             int id = 0;
             for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
                 if (documentSnapshot.exists()) {
                     id++;
                     playName = documentSnapshot.getString("playerName");
                     playerImage = documentSnapshot.getString("playerImage");
-                    list.add(new PlayerModel(id, playName, playerImage));
+                    playerPoints = documentSnapshot.getLong("playerPoints");
+                    list.add(new PlayerModel(id, playName, playerImage, playerPoints));
                     pos++;
                 }
                 onItemChanged(list.get(0), 1);

@@ -27,7 +27,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.FootballPlayer;
 import com.malikbisic.sportapp.model.api.PlayerModel;
-import com.malikbisic.sportapp.model.api.TopScorerModel;
 import com.malikbisic.sportapp.viewHolder.api.PlayersInProfileViewHolder;
 
 import java.util.HashMap;
@@ -46,9 +45,12 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
     Activity activity;
     FirebaseAuth mAuth;
     long myPointsVote;
-    public PlayerFirebaseAdapter(List<PlayerModel> list,Activity activity) {
+    long playerPoints;
+
+    public PlayerFirebaseAdapter(List<PlayerModel> list, Activity activity) {
         this.list = list;
         this.activity = activity;
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -59,17 +61,17 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
     }
 
     @Override
-    public void onBindViewHolder(PlayersInProfileViewHolder holder,  int position) {
-        mAuth = FirebaseAuth.getInstance();
+    public void onBindViewHolder(PlayersInProfileViewHolder holder, int position) {
         final PlayerModel model = list.get(position);
         Glide.with(holder.itemView.getContext())
                 .load(list.get(position).getImage())
                 .into(holder.image);
+        holder.pointPlayer.setText("" +list.get(position).getPoints());
 
         holder.voteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-votePlayer(model);
+                votePlayer(model);
             }
         });
     }
@@ -80,13 +82,13 @@ votePlayer(model);
         View viewDialog = LayoutInflater.from(activity).inflate(R.layout.vote_player_dialog, null);
         playerVoteDialogBuilder.setView(viewDialog);
 
-        TextView playerPoints = (TextView) viewDialog.findViewById(R.id.playerPointsVote);
+        final TextView playerPointsTextview = (TextView) viewDialog.findViewById(R.id.playerPointsVote);
         CircleImageView playerImage = (CircleImageView) viewDialog.findViewById(R.id.playerImageVote);
         TextView playerName = (TextView) viewDialog.findViewById(R.id.playerNameVote);
         final TextView myPoints = (TextView) viewDialog.findViewById(R.id.myPointsVote);
         final EditText enterPointsVote = (EditText) viewDialog.findViewById(R.id.enterPointsVote);
 
-        playerPoints.setText("Player points: 50");
+
         Glide.with(playerImage.getContext()).load(model.getImage()).into(playerImage);
         playerName.setText(model.getName());
 
@@ -108,6 +110,25 @@ votePlayer(model);
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.e("err", e.getLocalizedMessage());
+            }
+        });
+
+        final DocumentReference documentReference = db.collection("PlayerPoints").document(String.valueOf(model.getId()));
+        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+
+
+                if (documentSnapshot.exists()) {
+
+
+                    playerPoints = documentSnapshot.getLong("playerPoints");
+                    playerPointsTextview.setText("Player points: " + playerPoints);
+
+                } else {
+                    playerPointsTextview.setText("Player points: " + 0);
+                }
             }
         });
 

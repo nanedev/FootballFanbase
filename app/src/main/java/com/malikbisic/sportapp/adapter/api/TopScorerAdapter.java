@@ -20,9 +20,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.model.api.PlayerModel;
 import com.malikbisic.sportapp.model.api.TopScorerModel;
 import com.malikbisic.sportapp.viewHolder.api.TopScorerViewHolder;
 
@@ -41,6 +46,7 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
     ArrayList<TopScorerModel> topScorerModelArrayList;
     Activity activity;
     long myPointsVote;
+    long playerPoints;
     FirebaseAuth mAuth;
 
     public TopScorerAdapter(ArrayList<TopScorerModel> topScorerModelArrayList, Activity activity) {
@@ -76,13 +82,13 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
         View viewDialog = LayoutInflater.from(activity).inflate(R.layout.vote_player_dialog, null);
         playerVoteDialogBuilder.setView(viewDialog);
 
-        TextView playerPoints = (TextView) viewDialog.findViewById(R.id.playerPointsVote);
-        CircleImageView playerImage = (CircleImageView) viewDialog.findViewById(R.id.playerImageVote);
+        final TextView playerPointsTextview = (TextView) viewDialog.findViewById(R.id.playerPointsVote);
+        final CircleImageView playerImage = (CircleImageView) viewDialog.findViewById(R.id.playerImageVote);
         TextView playerName = (TextView) viewDialog.findViewById(R.id.playerNameVote);
         final TextView myPoints = (TextView) viewDialog.findViewById(R.id.myPointsVote);
         final EditText enterPointsVote = (EditText) viewDialog.findViewById(R.id.enterPointsVote);
 
-        playerPoints.setText("Player points: 50");
+
         Glide.with(playerImage.getContext()).load(model.getImagePlayer()).into(playerImage);
         playerName.setText(model.getName());
 
@@ -104,6 +110,25 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.e("err", e.getLocalizedMessage());
+            }
+        });
+
+        final DocumentReference documentReference = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
+        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+
+
+                    if (documentSnapshot.exists()) {
+
+
+                        playerPoints = documentSnapshot.getLong("playerPoints");
+                        playerPointsTextview.setText("Player points: " + playerPoints);
+
+                    } else {
+                        playerPointsTextview.setText("Player points: " + 0);
+                    }
             }
         });
 

@@ -57,7 +57,7 @@ public class FootballPlayer {
                         id++;
                         playName = documentSnapshot.getString("playerName");
                         playerImage = documentSnapshot.getString("playerImage");
-                        list.add(new PlayerModel(id, playName, playerImage));
+                       // list.add(new PlayerModel(id, playName, playerImage));
 
                     }
                 }
