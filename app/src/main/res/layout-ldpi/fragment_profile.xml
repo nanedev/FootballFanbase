@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/userprofilebackground"
+            android:src="@drawable/backgroundproba"
 
             />
 
@@ -254,9 +254,11 @@
 
     </RelativeLayout>
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_below="@+id/headerUserProfileLayout">
 
 
@@ -668,20 +670,41 @@
             </RelativeLayout>
 
 
-            <com.yarolegovich.discretescrollview.DiscreteScrollView
-                android:id="@+id/picker"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/parentForWinner"
-                app:dsv_orientation="horizontal" />
+
+                android:id="@+id/playerName"
+                android:layout_below="@+id/parentForWinner"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_below="@+id/playerName">
+
+
+
+
+                <com.yarolegovich.discretescrollview.DiscreteScrollView
+                    android:id="@+id/picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:dsv_orientation="horizontal" />
+            </LinearLayout>
+
+
+
+
 
 
 
 
 
         </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
 
-    </ScrollView>
 
 
     <!--<ScrollView
