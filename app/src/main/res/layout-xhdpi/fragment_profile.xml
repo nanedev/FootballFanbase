@@ -667,7 +667,7 @@
 
             </RelativeLayout>
 
-            <TextView
+        <!--    <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/parentForWinner"
@@ -681,7 +681,7 @@
                 android:layout_below="@+id/playerName"
                 android:layout_marginTop="10dp"
                 app:dsv_orientation="horizontal" />
-
+-->
 
 
 

@@ -204,14 +204,13 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         setContentView(R.layout.fragment_profile);
 
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        getSupportActionBar().hide();
         postsNumber = (TextView) findViewById(R.id.postsNumber);
 
         player = player.get();
         list = new ArrayList<>();
         updateListPlayer();
         itemPicker = (DiscreteScrollView) findViewById(R.id.picker);
+        itemPicker.setNestedScrollingEnabled(false);
         itemPicker.setOrientation(Orientation.HORIZONTAL);
         itemPicker.addOnItemChangedListener(this);
         infiniteAdapter = InfiniteScrollAdapter.wrap(new PlayerFirebaseAdapter(list));
@@ -503,7 +502,7 @@ public void updateListPlayer(){
                     pos++;
                 }
                 onItemChanged(list.get(0), 1);
-                infiniteAdapter.notifyDataSetChanged();
+                //infiniteAdapter.notifyDataSetChanged();
             }
         }
     });
