@@ -299,6 +299,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
 
         numberPost();
         totalUserPoints();
+        playerWinner();
 
         postLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -483,6 +484,39 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         }
 
     };
+
+    public void playerWinner(){
+        final TextView playerNameTextview = (TextView) findViewById(R.id.playernamewinner);
+        final ImageView playerImageImageview = (ImageView) findViewById(R.id.playerImageWinner);
+        final TextView playerPointsTextview = (TextView) findViewById(R.id.pointsNumber);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final Query documentReference = db.collection("PlayerPoints").orderBy("playerPoints", Query.Direction.DESCENDING).limit(1);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@Nullable Task<QuerySnapshot> task) {
+                String playName;
+                String playerImage;
+                long playerPoints;
+                for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                    if (documentSnapshot.exists()) {
+                        playerID = documentSnapshot.getId();
+                        playName = documentSnapshot.getString("playerName");
+                        playerImage = documentSnapshot.getString("playerImage");
+                        playerPoints = documentSnapshot.getLong("playerPoints");
+
+                        playerNameTextview.setText(playName);
+                        Glide.with(ProfileFragment.this).load(playerImage).into(playerImageImageview);
+                        playerPointsTextview.setText(String.valueOf(playerPoints));
+
+                    }
+
+
+                }
+            }
+        });
+    }
+
     public void updateListPlayer() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         final Query documentReference = db.collection("PlayerPoints").orderBy("playerPoints", Query.Direction.DESCENDING).limit(10);
