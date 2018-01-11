@@ -4,13 +4,14 @@
     android:layout_width="200dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="4dp"
-    app:cardBackgroundColor="@color/white">
+    app:cardCornerRadius="10dp"
+   >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:background="@drawable/player_list_shape">
 
 
         <TextView
@@ -36,16 +37,6 @@
             android:textColor="@color/black"
             android:textStyle="bold" />
 
-
-        <TextView
-            android:id="@+id/namePlayer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="10dp"
-            android:text="Ime igraca"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/image"

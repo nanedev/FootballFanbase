@@ -4,9 +4,9 @@
     android:id="@+id/profile_fragment_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:clickable="true"
     android:fitsSystemWindows="true"
-    android:background="@color/white"
     android:focusable="true"
     tools:context="com.malikbisic.sportapp.fragment.firebase.ProfileFragment">
 
@@ -259,8 +259,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_below="@+id/headerUserProfileLayout">
+        android:layout_below="@+id/headerUserProfileLayout"
+        android:orientation="vertical">
 
 
         <RelativeLayout
@@ -280,15 +280,18 @@
 
                 <RelativeLayout
                     android:id="@+id/postpositionpointslayout"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true">
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/seaparator1"
+                    android:layout_toStartOf="@+id/seaparator1">
 
                     <RelativeLayout
                         android:id="@+id/postlayout"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/seaparator1"
+                        android:layout_toStartOf="@+id/seaparator1"
                         android:padding="5dp">
 
                         <TextView
@@ -329,11 +332,9 @@
                         android:layout_height="70dp"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_toEndOf="@+id/postlayout"
-                        android:layout_toRightOf="@+id/postlayout"
+                        android:layout_toLeftOf="@+id/temalayout"
+                        android:layout_toStartOf="@+id/temalayout"
                         android:background="@color/black" />
 
 
@@ -341,8 +342,8 @@
                         android:id="@+id/temalayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@+id/seaparator1"
-                        android:layout_toRightOf="@+id/seaparator1"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
                         android:padding="5dp">
 
 
@@ -385,9 +386,7 @@
                         android:layout_width="1dp"
                         android:layout_height="70dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginEnd="10dp"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
                         android:layout_marginStart="10dp"
                         android:layout_toEndOf="@+id/temalayout"
                         android:layout_toRightOf="@+id/temalayout"
@@ -396,7 +395,7 @@
 
                     <RelativeLayout
                         android:id="@+id/totalpointslay"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@+id/seaparator2"
                         android:layout_toRightOf="@+id/seaparator2"
@@ -450,19 +449,28 @@
                 android:background="@color/black" />
 
             <RelativeLayout
+                android:id="@+id/parentForWinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/separator3"
-                android:background="#424242"
-                android:id="@+id/parentForWinner">
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/monthlywinnertext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="5dp"
+                    android:text="Last month winner by football fans"
+                    android:textColor="@color/black"
+                    android:textStyle="bold|italic" />
 
 
                 <RelativeLayout
                     android:id="@+id/layoutForImageOFWinner"
-                    android:layout_below="@+id/pointsofWinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:layout_below="@+id/monthlywinnertext"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="10dp">
@@ -471,243 +479,218 @@
                         android:id="@+id/playernamewinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
                         android:text="Ronaldinho Gaucho"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <TextView
+                        android:id="@+id/userVotesNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/users_votes_text"
+                        android:textColor="#0d47a1"
+                        android:textStyle="bold"/>
+
+                    <ImageView
                         android:id="@+id/playerImageWinner"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_centerHorizontal="true"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_below="@+id/playernamewinner"
-                        android:src="@drawable/bihflag"
-                        android:layout_marginTop="10dp"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/bihflag" />
 
 
-                </RelativeLayout>
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/usercountry"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_below="@+id/playerImageWinner"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_toEndOf="@+id/playerImageWinner"
+                        android:layout_toRightOf="@+id/playerImageWinner"
+                        android:background="@drawable/bihflag" />
 
 
-                <RelativeLayout
-                    android:id="@+id/pointsofWinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:visibility="gone"
-                    android:layout_toRightOf="@+id/layoutForImageOFWinner"
-                    android:layout_toEndOf="@+id/layoutForImageOFWinner"
-                    >
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/userClubLogo"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_below="@+id/playerImageWinner"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_toLeftOf="@+id/playerImageWinner"
+                        android:layout_toStartOf="@+id/playerImageWinner"
+                        android:background="@drawable/bihflag" />
+
 
                     <TextView
-                        android:id="@+id/pointsText"
+                        android:id="@+id/pointsNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:text="Points"
-                        android:textColor="#bdbdbd" />
+
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_alignParentBottom="true"
+                        android:text="50 pts."
+                        android:textColor="#0d47a1"
+                        android:textStyle="bold" />
+
 
                     <RelativeLayout
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/pointsText"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/oval_points_shape"
+                        android:id="@+id/goalslayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_toLeftOf="@+id/playerImageWinner"
+                        android:layout_toStartOf="@+id/playerImageWinner"
                         android:padding="5dp">
 
                         <TextView
-                            android:id="@+id/pointsNumber"
+                            android:id="@+id/goalstext"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
                             android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:text="15"
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
+                            android:text="Goals"
+                            android:textColor="#4dd0e1" />
+
+                        <RelativeLayout
+                            android:id="@+id/playerGoalsLayout"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_below="@+id/goalstext"
+                            android:background="@drawable/goals_assists_shape"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:id="@+id/goalsNumber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+
+                                android:text="15"
+                                android:textColor="#4dd0e1"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+
+                        </RelativeLayout>
 
                     </RelativeLayout>
 
-                </RelativeLayout>
-
-
-
-                <RelativeLayout
-                    android:id="@+id/usersOfWinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:visibility="gone"
-                    android:layout_toLeftOf="@+id/layoutForImageOFWinner"
-                    android:layout_toStartOf="@+id/layoutForImageOFWinner"
-                    >
-
-                    <TextView
-                        android:id="@+id/usersText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:text="Users voted"
-                        android:textColor="#bdbdbd" />
 
                     <RelativeLayout
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/usersText"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/oval_points_shape"
+                        android:id="@+id/assistslayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:layout_toEndOf="@+id/playerImageWinner"
+                        android:layout_toRightOf="@+id/playerImageWinner"
                         android:padding="5dp">
 
                         <TextView
-                            android:id="@+id/usersnumber"
+                            android:id="@+id/assiststext"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:text="15"
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
+                            android:text="Assists"
+                            android:textColor="#4dd0e1" />
+
+                        <RelativeLayout
+                            android:id="@+id/playerAssistslayout"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_below="@+id/assiststext"
+                            android:background="@drawable/goals_assists_shape"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:id="@+id/assistsNumber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+
+                                android:text="12"
+                                android:textColor="#4dd0e1"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+
+                        </RelativeLayout>
 
                     </RelativeLayout>
 
-                </RelativeLayout>
-
-
-
-                <RelativeLayout
-                    android:id="@+id/playerCountry"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:visibility="gone"
-                    android:layout_toLeftOf="@+id/layoutForImageOFWinner"
-                    android:layout_toStartOf="@+id/layoutForImageOFWinner"
-                    android:layout_below="@+id/layoutForImageOFWinner"
-                    >
-
-                    <TextView
-                        android:id="@+id/countryText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:text="Country"
-                        android:textColor="#bdbdbd" />
-
-
-
-
-                    <RelativeLayout
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/countryText"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/oval_points_shape"
-                        android:padding="5dp">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/usercountry"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:text="15"
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
-
-                    </RelativeLayout>
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:id="@+id/playerTeam"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:visibility="gone"
-                    android:layout_toRightOf="@+id/layoutForImageOFWinner"
-                    android:layout_toEndOf="@+id/layoutForImageOFWinner"
-                    android:layout_below="@+id/layoutForImageOFWinner"
-                    >
-
-                    <TextView
-                        android:id="@+id/clubtext"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:text="Club"
-                        android:textColor="#bdbdbd" />
-
-
-
-
-                    <RelativeLayout
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/clubtext"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/oval_points_shape"
-                        android:padding="5dp">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/playerClub"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:text="15"
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
-
-                    </RelativeLayout>
 
                 </RelativeLayout>
 
 
             </RelativeLayout>
 
+            <View
+                android:id="@+id/separator4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/parentForWinner"
+                android:background="@color/black" />
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/playerlisttext"
+                android:text="This month top 10 players"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/playerName"
+                android:textStyle="bold|italic"
+                android:layout_below="@+id/separator4"
                 android:textColor="@color/black"
-                android:layout_below="@+id/parentForWinner"/>
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/playerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/playerlisttext"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:id="@+id/layoutforlistplayerrecycler"
                 android:layout_below="@+id/playerName"
-                >
-
-
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
 
 
                 <com.yarolegovich.discretescrollview.DiscreteScrollView
                     android:id="@+id/picker"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     app:dsv_orientation="horizontal" />
             </LinearLayout>
 
 
-
-
-
-
-
-
-
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
-
 
 
     <!--<ScrollView

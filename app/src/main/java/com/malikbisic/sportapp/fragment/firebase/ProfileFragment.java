@@ -301,6 +301,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         });
 
         numberPost();
+        totalPointsUser(this);
 
         postLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -801,6 +802,10 @@ public void updateListPlayer(){
             }
         });
 
+    }
+
+    public void totalPointsUser(final Activity activity){
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
         Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
         usersPost.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -822,7 +827,7 @@ public void updateListPlayer(){
 
                                     numberLikes = documentSnapshots.size();
 
-                                    totalLikes++;
+                                    totalLikes += numberLikes;
 
                                     CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
                                     dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
@@ -832,7 +837,7 @@ public void updateListPlayer(){
                                             if (e == null) {
                                                 numberDisliks = documentSnapshots.size();
 
-                                                totalDislikes++;
+                                                totalDislikes+=numberDisliks;
 
 
                                                 pointsTotal = totalLikes - totalDislikes;

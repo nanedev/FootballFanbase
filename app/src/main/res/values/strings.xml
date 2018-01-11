@@ -66,4 +66,9 @@
     <string name="title_activity_football">FootballActivity</string>
     <string name="title_activity_chat">ChatActivity</string>
 
+    <string name="users_votes_text">
+        <u>120 votes</u>
+    </string>
+
+
 </resources>

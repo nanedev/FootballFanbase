@@ -852,6 +852,7 @@ public class MainPage extends AppCompatActivity
                     .commit(); */
 
             Intent intent = new Intent(MainPage.this, ProfileFragment.class);
+            usersPoint(this);
             startActivity(intent);
         } else if (id == R.id.nav_message) {
 
