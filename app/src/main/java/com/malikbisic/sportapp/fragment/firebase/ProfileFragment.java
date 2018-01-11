@@ -251,10 +251,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         thisMonhtNumberLikes = (TextView) findViewById(R.id.likesinprofilefragment);
         thisMonthNumberDislikes = (TextView) findViewById(R.id.dislikesinporiflefragment);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
-        pointsLayoutWinner = (RelativeLayout) findViewById(R.id.pointsofWinner);
-        usersLayoutWinner = (RelativeLayout) findViewById(R.id.usersOfWinner);
-        countryLayoutWinner = (RelativeLayout) findViewById(R.id.playerCountry);
-        clubLayoutWinner = (RelativeLayout) findViewById(R.id.playerTeam);
+
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
         totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumber);
