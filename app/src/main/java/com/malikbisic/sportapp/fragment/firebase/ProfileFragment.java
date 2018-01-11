@@ -298,7 +298,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         });
 
         numberPost();
-        totalPointsUser(this);
+        totalUserPoints();
 
         postLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -483,33 +483,34 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         }
 
     };
-public void updateListPlayer(){
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final Query documentReference = db.collection("PlayerPoints").orderBy("playerPoints", Query.Direction.DESCENDING);
-    documentReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-        @Override
-        public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-            String playName;
-            String playerImage;
-            long playerPoints;
-            int id = 0;
-            for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
-                if (documentSnapshot.exists()) {
-                    id++;
-                    playerID = documentSnapshot.getId();
-                    playName = documentSnapshot.getString("playerName");
-                    playerImage = documentSnapshot.getString("playerImage");
-                    playerPoints = documentSnapshot.getLong("playerPoints");
-                    list.add(new PlayerModel(id, playName, playerImage, playerPoints, playerID));
-                    pos++;
+    public void updateListPlayer() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final Query documentReference = db.collection("PlayerPoints").orderBy("playerPoints", Query.Direction.DESCENDING).limit(10);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@Nullable Task<QuerySnapshot> task) {
+                String playName;
+                String playerImage;
+                long playerPoints;
+                int id = 0;
+                for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                    if (documentSnapshot.exists()) {
+                        id++;
+                        playerID = documentSnapshot.getId();
+                        playName = documentSnapshot.getString("playerName");
+                        playerImage = documentSnapshot.getString("playerImage");
+                        playerPoints = documentSnapshot.getLong("playerPoints");
+                        list.add(new PlayerModel(id, playName, playerImage, playerPoints, playerID));
+                        pos++;
+                        infiniteAdapter.notifyDataSetChanged();
+                    }
+                    onItemChanged(list.get(0));
+
                 }
-                onItemChanged(list.get(0), 1);
-                //infiniteAdapter.notifyDataSetChanged();
             }
-        }
-    });
-}
-    private void onItemChanged(PlayerModel item, int id) {
+        });
+    }
+    private void onItemChanged(PlayerModel item) {
         TextView namePlayer = (TextView) findViewById(R.id.playerName);
         namePlayer.setText(item.getName());
 
@@ -801,38 +802,36 @@ public void updateListPlayer(){
 
     }
 
-    public void totalPointsUser(final Activity activity){
+    public void totalUserPoints() {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
-        usersPost.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        usersPost.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                if (e == null) {
+            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                if (task.getException() == null) {
 
-                    for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+                    for (DocumentSnapshot snapshot : task.getResult()) {
                         final String postID = snapshot.getId();
 
                         Log.i("postID", postID);
 
                         CollectionReference likeNumber = db.collection("Likes").document(postID).collection("like-id");
-                        likeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                        likeNumber.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
-                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                            public void onComplete(@NonNull Task<QuerySnapshot> task2) {
+                                if (task2.getException() == null) {
 
+                                    numberLikes = task2.getResult().size();
 
-                                if (e == null) {
-
-                                    numberLikes = documentSnapshots.size();
-
-                                    totalLikes += numberLikes;
+                                    totalLikes+=numberLikes;
 
                                     CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
-                                    dislikeNumber.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                                    dislikeNumber.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
-                                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task3) {
 
-                                            if (e == null) {
-                                                numberDisliks = documentSnapshots.size();
+                                            if (task3.getException() == null) {
+                                                numberDisliks = task3.getResult().size();
 
                                                 totalDislikes+=numberDisliks;
 
@@ -864,13 +863,14 @@ public void updateListPlayer(){
                 }
             }
         });
+
     }
 
     @Override
     public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
 
         int positionInDataSet = infiniteAdapter.getRealPosition(adapterPosition);
-        onItemChanged(list.get(positionInDataSet), pos);
+        onItemChanged(list.get(positionInDataSet));
     }
 }
 

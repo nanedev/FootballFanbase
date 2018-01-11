@@ -27,6 +27,7 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
+        debug
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -34,10 +35,11 @@ android {
     }
 }
 
-
-repositories {
-    mavenCentral()
-    google()
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+    }
 }
 
 
