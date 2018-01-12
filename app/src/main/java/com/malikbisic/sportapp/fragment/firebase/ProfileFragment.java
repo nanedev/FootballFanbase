@@ -89,13 +89,17 @@ import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
 import com.yarolegovich.discretescrollview.Orientation;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
+import org.joda.time.DateTime;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -225,6 +229,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         mReference = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
+        new MainPage().usersPoint(this, uid);
         usersPoint(ProfileFragment.this);
 
         myUid = getIntent().getStringExtra("myUid");
@@ -263,6 +268,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                 startActivity(intent);
             }
         });
+
 
 
         showInfo.setOnClickListener(new View.OnClickListener() {
@@ -489,9 +495,12 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         final TextView playerNameTextview = (TextView) findViewById(R.id.playernamewinner);
         final ImageView playerImageImageview = (ImageView) findViewById(R.id.playerImageWinner);
         final TextView playerPointsTextview = (TextView) findViewById(R.id.pointsNumber);
+        final TextView playerVoteTextview = (TextView) findViewById(R.id.userVotesNumber);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final Query documentReference = db.collection("PlayerPoints").orderBy("playerPoints", Query.Direction.DESCENDING).limit(1);
+        DateTime prevDate = new DateTime().minusMonths(1);
+        final String prevMonth = prevDate.toString("MMMM");
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final Query documentReference = db.collection("PlayerPoints").document(prevMonth).collection("player-id").orderBy("playerPoints", Query.Direction.DESCENDING).limit(1);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {
@@ -507,10 +516,19 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
 
                         playerNameTextview.setText(playName);
                         Glide.with(ProfileFragment.this).load(playerImage).into(playerImageImageview);
-                        playerPointsTextview.setText(String.valueOf(playerPoints));
+                        playerPointsTextview.setText(String.valueOf(playerPoints) + " pts");
 
                     }
+                    final Query usersVoteRef = db.collection("PlayerPoints").document(prevMonth).collection("player-id").document(playerID).collection("usersVote");
 
+                    usersVoteRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            long numberVotes = task.getResult().size();
+
+                            playerVoteTextview.setText(String.valueOf(numberVotes) + " votes");
+                        }
+                    });
 
                 }
             }
@@ -518,8 +536,12 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
     }
 
     public void updateListPlayer() {
+        DateFormat currentDateFormat = new SimpleDateFormat("MMMM");
+        final Date currentDate = new Date();
+
+        final String currentMonth = currentDateFormat.format(currentDate);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final Query documentReference = db.collection("PlayerPoints").orderBy("playerPoints", Query.Direction.DESCENDING).limit(10);
+        final Query documentReference = db.collection("PlayerPoints").document(currentMonth).collection("player-id").orderBy("playerPoints", Query.Direction.DESCENDING).limit(10);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {

@@ -31,7 +31,10 @@ import com.malikbisic.sportapp.model.api.PlayerModel;
 import com.malikbisic.sportapp.model.api.TopScorerModel;
 import com.malikbisic.sportapp.viewHolder.api.TopScorerViewHolder;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +80,10 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
     }
 
     public void votePlayer(final TopScorerModel model){
+        DateFormat currentDateFormat = new SimpleDateFormat("MMMM");
+        final Date currentDate = new Date();
+
+        final String currentMonth = currentDateFormat.format(currentDate);
 
         AlertDialog.Builder playerVoteDialogBuilder = new AlertDialog.Builder(activity);
         View viewDialog = LayoutInflater.from(activity).inflate(R.layout.vote_player_dialog, null);
@@ -166,10 +173,10 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
                                             playerInfo.put("playerPoints", setPoints);
                                             playerInfo.put("timestamp", FieldValue.serverTimestamp());
 
-                                            DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
+                                            DocumentReference playerVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID()));
                                             playerVote.update(playerInfo);
 
-                                            DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                            DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
 
                                             usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
@@ -178,10 +185,10 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
                                                     if (task.getResult().exists()){
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                         usersVote.update(usersInfo);
                                                     } else {
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                         usersVote.set(usersInfo);
                                                     }
                                                 }
@@ -195,10 +202,10 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
                                             playerInfo.put("playerPoints", points);
                                             playerInfo.put("timestamp", FieldValue.serverTimestamp());
 
-                                            DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
+                                            DocumentReference playerVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID()));
                                             playerVote.set(playerInfo);
 
-                                            DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                            DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
 
                                             usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
@@ -207,10 +214,10 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
                                                     if (task.getResult().exists()){
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                         usersVote.update(usersInfo);
                                                     } else {
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                         usersVote.set(usersInfo);
                                                     }
                                                 }

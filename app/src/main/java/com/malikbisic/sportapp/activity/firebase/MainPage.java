@@ -462,13 +462,19 @@ public class MainPage extends AppCompatActivity
             getSharedPreferences("check first time", MODE_PRIVATE).edit().putBoolean("isFirstTime", false).commit();
         }
 
-        usersPoint(this);
+        usersPoint(this,  mAuth.getCurrentUser().getUid());
 
 
     }
 
 
-    public void usersPoint(final Activity activity) {
+    public void usersPoint(final Activity activity, final String uid) {
+        currentScoreLike = 0;
+        currentScoreDisike = 0;
+        prevMonthScoreLike = 0;
+        prevMonthScoreDisike = 0;
+        pointsTotalCurrentMonth = 0;
+        pointsTotalPrevMonth = 0;
         DateFormat currentDateFormat = new SimpleDateFormat("MMMM");
         final Date currentDate = new Date();
         Log.i("Month", currentDateFormat.format(currentDate));
@@ -480,7 +486,7 @@ public class MainPage extends AppCompatActivity
 
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query usersPost = db.collection("Posting").whereEqualTo("uid", mAuth.getCurrentUser().getUid());
+        Query usersPost = db.collection("Posting").whereEqualTo("uid", uid);
         usersPost.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull final Task<QuerySnapshot> task) {
@@ -504,9 +510,9 @@ public class MainPage extends AppCompatActivity
                                             final Date likeDate = snap.getDate("timestamp");
                                             String likeMonth = likeDateFormat.format(likeDate);
 
-                                            if (likeMonth.equals(currentMonth) && !documentuid.equals(mAuth.getCurrentUser().getUid())) {
+                                            if (likeMonth.equals(currentMonth) && !documentuid.equals(uid)) {
                                                 currentScoreLike++;
-                                            } else if (likeMonth.equals(prevMonth) && !documentuid.equals(mAuth.getCurrentUser().getUid())) {
+                                            } else if (likeMonth.equals(prevMonth) && !documentuid.equals(uid)) {
                                                 prevMonthScoreLike++;
                                             }
 
@@ -530,9 +536,9 @@ public class MainPage extends AppCompatActivity
                                                         final Date dislikeDate = snapshot1.getDate("timestamp");
                                                         String dislikeMonth = dislikeFormatDate.format(dislikeDate);
 
-                                                        if (dislikeMonth.equals(currentMonth) && !docUID.equals(mAuth.getCurrentUser().getUid())) {
+                                                        if (dislikeMonth.equals(currentMonth) && !docUID.equals(uid)) {
                                                             currentScoreDisike++;
-                                                        } else if (dislikeMonth.equals(prevMonth) && !docUID.equals(mAuth.getCurrentUser().getUid())) {
+                                                        } else if (dislikeMonth.equals(prevMonth) && !docUID.equals(uid)) {
                                                             prevMonthScoreDisike++;
                                                         }
                                                     } else {
@@ -563,16 +569,16 @@ public class MainPage extends AppCompatActivity
                                                 prevPointsMap.put("totalPoints", pointsTotalPrevMonth);
 
                                                 final Map<String, Object> pointsMap = new HashMap<>();
-                                                pointsMap.put("uid", mAuth.getCurrentUser().getUid());
+                                                pointsMap.put("uid", uid);
                                                 pointsMap.put("prevMonthPoints", prevPointsMap);
                                                 pointsMap.put("currentMonthPoints", currentPointsMap);
                                                 pointsMap.put("prevMonthUpdate", prevMonth);
 
                                                 final Map<String, Object> pointsMapCurrentMonth = new HashMap<>();
-                                                pointsMapCurrentMonth.put("uid", mAuth.getCurrentUser().getUid());
+                                                pointsMapCurrentMonth.put("uid", uid);
                                                 pointsMapCurrentMonth.put("currentMonthPoints", currentPointsMap);
 
-                                                DocumentReference pointsColl = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                                                DocumentReference pointsColl = db.collection("Points").document(uid);
                                                 pointsColl.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task4) {
@@ -582,7 +588,7 @@ public class MainPage extends AppCompatActivity
                                                             if (!lastMonthUpdate.equals(prevMonth)) {
 
                                                                 if (task4.getResult().exists()) {
-                                                                    DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                                                                    DocumentReference ref = db.collection("Points").document(uid);
                                                                     ref.update(pointsMap).addOnFailureListener(new OnFailureListener() {
                                                                         @Override
                                                                         public void onFailure(@NonNull Exception e) {
@@ -590,7 +596,7 @@ public class MainPage extends AppCompatActivity
                                                                         }
                                                                     });
                                                                 } else {
-                                                                    DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                                                                    DocumentReference ref = db.collection("Points").document(uid);
                                                                     ref.set(pointsMap).addOnFailureListener(new OnFailureListener() {
                                                                         @Override
                                                                         public void onFailure(@NonNull Exception e) {
@@ -599,7 +605,7 @@ public class MainPage extends AppCompatActivity
                                                                     });
                                                                 }
                                                             } else {
-                                                                DocumentReference ref = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                                                                DocumentReference ref = db.collection("Points").document(uid);
                                                                 ref.update(pointsMapCurrentMonth).addOnFailureListener(new OnFailureListener() {
                                                                     @Override
                                                                     public void onFailure(@NonNull Exception e) {
@@ -852,7 +858,6 @@ public class MainPage extends AppCompatActivity
                     .commit(); */
 
             Intent intent = new Intent(MainPage.this, ProfileFragment.class);
-            usersPoint(this);
             startActivity(intent);
         } else if (id == R.id.nav_message) {
 
