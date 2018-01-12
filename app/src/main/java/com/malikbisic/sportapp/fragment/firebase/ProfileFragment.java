@@ -327,7 +327,6 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         mFilePath = FirebaseStorage.getInstance().getReference();
         dialog = new ProgressDialog(ProfileFragment.this);
         loadProfile_image = (ProgressBar) findViewById(R.id.loadingProfileImageProgressBar);
-        premiumLinija = findViewById(R.id.sixthline);
         genderImage = (ImageView) findViewById(R.id.gender_image);
         //      rec = (RecyclerView)  findViewById(R.id.hhhhhh);
         //    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -629,18 +628,31 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             final Uri downloadUri = taskSnapshot.getDownloadUrl();
+                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                            DocumentReference mDoc = mReference.collection("Users").document(uid);
+                            DocumentReference mDoc = db.collection("Users").document(uid);
                             if (downloadUri != null) {
-                                Map<String, Object> updateProfile = new HashMap<>();
+                                final Map<String, Object> updateProfile = new HashMap<>();
                                 updateProfile.put("profileImage", downloadUri.toString());
 
                                 mDoc.update(updateProfile);
 
-                                final DocumentReference postingImageUpdate = mReference.collection("Posting").document(uid);
+                                final Query postingImageUpdate = db.collection("Posting").whereEqualTo("uid", uid);
+                                postingImageUpdate.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        for (DocumentSnapshot snapshot : task.getResult()){
+                                            String postID = snapshot.getId();
+
+                                            DocumentReference changeprofilePost = db.collection("Posting").document(postID);
+                                            changeprofilePost.update(updateProfile);
+                                        }
+
+                                    }
+                                });
                                 //com.google.firebase.firestore.Query query = postingImageUpdate.whereEqualTo("uid",uid);
 
-                                postingImageUpdate.update(updateProfile);
+
                                 hasSetProfileImage = true;
 
                             }

@@ -86,7 +86,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 
-public class UserProfileActivity extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity implements DiscreteScrollView.OnItemChangedListener {
 
     private ImageView profile;
     private ImageView flag;
@@ -151,19 +151,13 @@ TextView totalPointsTextview;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-
+        list = new ArrayList<>();
         myIntent = getIntent();
         uid = myIntent.getStringExtra("userID");
         mReference = FirebaseFirestore.getInstance();
         profile = (ImageView) findViewById(R.id.get_profile_image_idUser);
-        flag = (ImageView) findViewById(R.id.user_countryFlagUser);
         username = (TextView) findViewById(R.id.user_usernameUser);
-        gender = (TextView) findViewById(R.id.user_genderUser);
-        birthday = (TextView) findViewById(R.id.user_dateUser);
-        country = (TextView) findViewById(R.id.user_countryUser);
-        club = (TextView) findViewById(R.id.user_clubUser);
         seeUserPosts = (RelativeLayout) findViewById(R.id.postlayoutUsers);
-        genderImageUser = (ImageView) findViewById(R.id.gender_imageUser);
         backgroundFlagUsers = (ImageView) findViewById(R.id.user_countryFlagUsersUsers);
 
         thisMonhtNumberLikes = (TextView) findViewById(R.id.likesinprofilefragmentUsers);
@@ -183,7 +177,6 @@ TextView totalPointsTextview;
     }
 });
 
-        logoClub = (CircleImageView) findViewById(R.id.club_logo_profileUser);
         usernameList = new ArrayList<>();
         mFilePath = FirebaseStorage.getInstance().getReference();
         dialog = new ProgressDialog(this);
@@ -198,7 +191,7 @@ TextView totalPointsTextview;
 showAlertInfo();
             }
         });
-
+        player = player.get();
         itemPicker = (DiscreteScrollView) findViewById(R.id.pickerUsers);
         itemPicker.setNestedScrollingEnabled(false);
         itemPicker.setOrientation(Orientation.HORIZONTAL);
@@ -219,8 +212,7 @@ showAlertInfo();
         Log.i("userID", uid);
 
 
-        player = player.get();
-        list = new ArrayList<>();
+
         updateListPlayer();
         loadProfile_image.getIndeterminateDrawable()
                 .setColorFilter(ContextCompat.getColor(this, R.color.redError), PorterDuff.Mode.SRC_IN );
@@ -231,22 +223,11 @@ showAlertInfo();
 
                 Map<String, Object> value = dataSnapshot.getData();
 
-
                 profileImage = String.valueOf(value.get("profileImage"));
-                Picasso.with(UserProfileActivity.this)
+                Glide.with(UserProfileActivity.this)
                         .load(profileImage)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(profile, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                loadProfile_image.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onError() {
-
-                            }
-                        });
+                        .into(profile);
+                    loadProfile_image.setVisibility(View.GONE);
 
                 username.setText(String.valueOf(value.get("username")));
             /*    gender.setText(String.valueOf(value.get("gender")));
@@ -565,7 +546,7 @@ showAlertInfo();
                                                     totalPointsTextview.setText("0");
                                                 }
                                                 if (pointsTotal > 0) {
-                                                    totalPointsTextview.setText(String.valueOf(pointsTotal));
+                                                    //totalPointsTextview.setText(String.valueOf(pointsTotal));
                                                 }
 
 
