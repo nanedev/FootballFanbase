@@ -1,100 +1,307 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.malikbisic.sportapp.activity.api.AboutFootballClub"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.malikbisic.sportapp.activity.api.AboutFootballClub">
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/containerSquad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-   <TextView
-       android:id="@+id/attacker"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:gravity="center_horizontal"
-       android:text="Attacker" />
+        <RelativeLayout
+            android:id="@+id/coachtextlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#757575"
+            android:padding="10dp">
 
-   <android.support.v7.widget.RecyclerView
-       android:id="@+id/team_recyclerview"
-       android:layout_width="match_parent"
-       android:layout_height="200dp"
-       android:layout_alignParentLeft="true"
-       android:layout_alignParentStart="true"
-       android:layout_below="@+id/attacker"
-       android:layout_marginTop="11dp">
 
-   </android.support.v7.widget.RecyclerView>
+            <TextView
+                android:id="@+id/coachtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Coach"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
-      <TextView
-          android:id="@+id/midfielder"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:layout_alignParentTop="true"
-          android:layout_below="@id/team_recyclerview"
-          android:layout_marginTop="10dp"
-          android:gravity="center_horizontal"
-          android:text="Midfielder" />
+        </RelativeLayout>
 
-   <android.support.v7.widget.RecyclerView
-       android:id="@+id/teamMid_recyclerview"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_alignParentLeft="true"
-       android:layout_alignParentStart="true"
-       android:layout_below="@+id/midfielder"
-       android:layout_marginTop="11dp">
+        <View
+            android:id="@+id/firstview"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/coachtextlayout"
+            android:background="@color/black" />
 
-   </android.support.v7.widget.RecyclerView>
+        <RelativeLayout
+            android:id="@+id/coachlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/firstview"
+            android:background="@color/white"
+            android:padding="5dp">
 
-      <TextView
-          android:id="@+id/defender"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:layout_alignParentTop="true"
-          android:layout_below="@id/team_recyclerview"
-          android:layout_marginTop="10dp"
-          android:gravity="center_horizontal"
-          android:text="Defender" />
 
-   <android.support.v7.widget.RecyclerView
-       android:id="@+id/teamDef_recyclerview"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_alignParentLeft="true"
-       android:layout_alignParentStart="true"
-       android:layout_below="@+id/defender"
-       android:layout_marginTop="11dp">
 
-   </android.support.v7.widget.RecyclerView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/coachname"
+                android:layout_toLeftOf="@+id/coachname"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="Coach:"
+                android:layout_centerVertical="true"
+                android:textColor="@color/black"/>
 
-      <TextView
-          android:id="@+id/goalkeeper"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:layout_alignParentTop="true"
-          android:layout_below="@id/team_recyclerview"
-          android:layout_marginTop="10dp"
-          android:gravity="center_horizontal"
-          android:text="Goalkeeper" />
+            <TextView
+                android:id="@+id/coachname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+                android:text="Zidane"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
 
-   <android.support.v7.widget.RecyclerView
-       android:id="@+id/teamGK_recyclerview"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_alignParentLeft="true"
-       android:layout_alignParentStart="true"
-       android:layout_below="@+id/goalkeeper"
-       android:layout_marginTop="11dp">
 
-   </android.support.v7.widget.RecyclerView>
-   </LinearLayout>
-</ScrollView>
+            <Button
+                android:id="@+id/votebuttonsquad"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/vote_player_button_shape"
+                android:text="VOTE"
+                android:textColor="@color/white" />
+
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/secondView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/coachlayout"
+            android:background="@color/black" />
+
+        <RelativeLayout
+            android:id="@+id/goalkeeperslayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/secondView">
+
+
+            <RelativeLayout
+                android:id="@+id/goalkeeperTxtlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#757575"
+                android:padding="5dp">
+
+                <TextView
+                    android:id="@+id/goalkeeper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="Goalkeepers"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/thirdView"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/goalkeeperTxtlayout"
+                android:background="@color/black" />
+
+
+            <RelativeLayout
+                android:id="@+id/recyclergklayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/thirdView">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/teamGK_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    >
+
+                </android.support.v7.widget.RecyclerView>
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+        <View
+            android:id="@+id/fourthView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/goalkeeperslayout"
+            android:background="@color/black" />
+
+        <RelativeLayout
+            android:id="@+id/defenderLayoutText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fourthView"
+            android:padding="5dp"
+            android:background="#757575">
+
+            <TextView
+                android:id="@+id/defender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Defenders"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            android:id="@+id/seventhView"
+            android:layout_below="@+id/defenderLayoutText"/>
+
+        <RelativeLayout
+            android:id="@+id/recyclerDefLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/seventhView">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/teamDef_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                >
+
+            </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/fifthview"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/recyclerDefLayout"
+            android:background="@color/black" />
+
+        <RelativeLayout
+            android:id="@+id/midfieldertextlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fifthview"
+            android:background="#757575"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/midfielder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Midfielders"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            android:id="@+id/eithview"
+            android:layout_below="@+id/midfieldertextlayout"/>
+
+        <RelativeLayout
+            android:id="@+id/recylcerMidLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/eithview">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/teamMid_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/midfielder"
+             >
+
+            </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+
+
+        <View
+            android:id="@+id/sixthView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/recylcerMidLayout"
+            android:background="@color/black" />
+
+
+        <RelativeLayout
+            android:id="@+id/atackertextlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sixthView"
+            android:background="#757575"
+            android:padding="5dp">
+
+
+            <TextView
+                android:id="@+id/attacker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Attackers"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            android:layout_below="@+id/atackertextlayout"
+            android:id="@+id/nineview"/>
+
+        <RelativeLayout
+            android:id="@+id/atackerRecyclerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nineview">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/team_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@+id/attacker">
+
+            </android.support.v7.widget.RecyclerView>
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

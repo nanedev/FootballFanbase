@@ -36,7 +36,7 @@ public class FragmentSquad extends Fragment {
     RecyclerView recyclerViewMid;
     RecyclerView recyclerViewDef;
     RecyclerView recyclerViewGK;
-
+TextView coachNameTextview;
     ArrayList<TeamModel> teamModelArrayList = new ArrayList<>();
     TeamAdapter adapter;
     TeamAdapterMid adapterMid;
@@ -50,7 +50,7 @@ String clubName;
 
     private final String API_KEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
     private final String URL = "https://soccer.sportmonks.com/api/v2.0/teams/";
-    private final String INCLUDES = "&include=squad.player.position";
+    private final String INCLUDES = "&include=squad.player.position,coach";
     String finalUrl;
 
     public FragmentSquad() {
@@ -71,13 +71,13 @@ String clubName;
         midfielderPosArray = new ArrayList<>();
         defenderPosArray = new ArrayList<>();
         goalkeeperPosArray = new ArrayList<>();
-
+coachNameTextview = (TextView) view.findViewById(R.id.coachname);
         intent = getActivity().getIntent();
         String teamIdfromAct = intent.getStringExtra("teamId");
         clubLogo = intent.getStringExtra("teamLogo");
         clubName = intent.getStringExtra("teamName");
         finalUrl = URL + teamIdfromAct + API_KEY + INCLUDES;
-        positionNameTextview = (TextView) view.findViewById(R.id.team_position);
+
        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(view.getContext());
         LinearLayoutManager layoutManager3 = new LinearLayoutManager(view.getContext());
@@ -120,7 +120,12 @@ String clubName;
                 String positionName = "";
                 try {
                     JSONObject getData = response.getJSONObject("data");
+
+
                     JSONObject getSquadObj = getData.getJSONObject("squad");
+                    JSONObject getCoachObj = getData.getJSONObject("coach");
+                    JSONObject getCoachData = getCoachObj.getJSONObject("data");
+                    coachName = getCoachData.getString("fullname");
                     JSONArray getDataArray = getSquadObj.getJSONArray("data");
 
                     for (int i = 0; i < getDataArray.length(); i++) {
@@ -159,7 +164,7 @@ String clubName;
                         height = getDataFromPlayer.getString("height");
                         weight = getDataFromPlayer.getString("weight");
                         playerImage = getDataFromPlayer.getString("image_path");
-                        TeamModel model = new TeamModel(playerId, positionId, numberId, countryId, commonName, fullName, firstName, lastName, nationality, birthDate, birthPlace, height, weight, playerImage, positionName,minutes, goals,appearances, assists, lineups, yellowCards, redCards, injured,substituteIn);
+                        TeamModel model = new TeamModel(playerId, positionId, numberId, countryId, commonName, fullName, firstName, lastName, nationality, birthDate, birthPlace, height, weight, playerImage, positionName,minutes, goals,appearances, assists, lineups, yellowCards, redCards, injured,substituteIn,coachName);
 
                         if (positionName.equals("Attacker")) {
                             teamModelArrayList.add(model);
@@ -171,6 +176,8 @@ String clubName;
                             goalkeeperPosArray.add(model);
                         }
 
+
+coachNameTextview.setText(coachName);
 
 
                     }

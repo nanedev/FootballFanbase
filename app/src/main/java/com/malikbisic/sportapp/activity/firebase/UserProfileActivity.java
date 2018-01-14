@@ -183,6 +183,7 @@ TextView totalPointsTextview;
         loadProfile_image = (ProgressBar) findViewById(R.id.loadingProfileImageProgressBarUser);
         minAdultAge = new GregorianCalendar();
         userPointsTextView = (TextView) findViewById(R.id.user_points_textview);
+        totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumberUsers);
         usersPoint(UserProfileActivity.this);
 
         showInfo.setOnClickListener(new View.OnClickListener() {
@@ -546,7 +547,7 @@ showAlertInfo();
                                                     totalPointsTextview.setText("0");
                                                 }
                                                 if (pointsTotal > 0) {
-                                                    //totalPointsTextview.setText(String.valueOf(pointsTotal));
+                                                    totalPointsTextview.setText(String.valueOf(pointsTotal));
                                                 }
 
 

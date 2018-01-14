@@ -78,7 +78,7 @@ public class AboutFootballClub extends AppCompatActivity  {
         flagImageView = (CircleImageView) findViewById(R.id.flag_about_football);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    getSupportActionBar().setTitle("");
         intent = getIntent();
         clubLogo = intent.getStringExtra("teamLogo");
         clubName = intent.getStringExtra("teamName");

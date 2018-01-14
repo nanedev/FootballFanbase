@@ -30,13 +30,14 @@ public class TeamModel {
     int redCards;
     boolean injured;
     int substituteIn;
+    String coachName;
 
 
     public TeamModel() {
     }
 
 
-    public TeamModel(int playerId, int positionId, int numberId, int countryId, String commonName, String fullName, String firstName, String lastName, String nationality, String birthDate, String birthPlace, String height, String weight, String playerImage, String positionName, int minutes, int goals, int appearances, int assists, int lineups, int yellowCards, int redCards, boolean injured,int substituteIn) {
+    public TeamModel(int playerId, int positionId, int numberId, int countryId, String commonName, String fullName, String firstName, String lastName, String nationality, String birthDate, String birthPlace, String height, String weight, String playerImage, String positionName, int minutes, int goals, int appearances, int assists, int lineups, int yellowCards, int redCards, boolean injured,int substituteIn,String coachName) {
         this.playerId = playerId;
         this.positionId = positionId;
         this.numberId = numberId;
@@ -61,8 +62,17 @@ public class TeamModel {
         this.injured = injured;
         this.minutes = minutes;
         this.substituteIn = substituteIn;
+        this.coachName = coachName;
 
 
+    }
+
+    public String getCoachName() {
+        return coachName;
+    }
+
+    public void setCoachName(String coachName) {
+        this.coachName = coachName;
     }
 
     public int getSubstituteIn() {
