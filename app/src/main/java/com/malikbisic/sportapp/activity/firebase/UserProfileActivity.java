@@ -28,8 +28,15 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
@@ -67,6 +74,9 @@ import com.yarolegovich.discretescrollview.Orientation;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -575,8 +585,10 @@ showAlertInfo();
     public void playerWinner(){
         final TextView playerNameTextview = (TextView) findViewById(R.id.playernamewinner);
         final ImageView playerImageImageview = (ImageView) findViewById(R.id.playerImageWinner);
-        final TextView playerPointsTextview = (TextView) findViewById(R.id.pointsNumber);
-        final TextView playerVoteTextview = (TextView) findViewById(R.id.userVotesNumber);
+        final TextView playerPointsTextview = (TextView) findViewById(R.id.pointsNumberWinner);
+        final TextView playerVoteTextview = (TextView) findViewById(R.id.userVotesNumberWinner);
+        final ImageView playerClubLogoImageview = (ImageView) findViewById(R.id.userClubLogo);
+        final ImageView playerCountryFlagImageview = (ImageView) findViewById(R.id.usercountry);
 
         DateTime prevDate = new DateTime().minusMonths(1);
         final String prevMonth = prevDate.toString("MMMM");
@@ -597,9 +609,95 @@ showAlertInfo();
 
                         playerNameTextview.setText(playName);
                         Glide.with(UserProfileActivity.this).load(playerImage).into(playerImageImageview);
-                        playerPointsTextview.setText(String.valueOf(playerPoints) + " pts");
+                        playerPointsTextview.setText(String.valueOf(playerPoints));
 
                     }
+
+                    String urlClubCountryPlayer = "https://soccer.sportmonks.com/api/v2.0/players/"+playerID+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=team";
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, urlClubCountryPlayer, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONObject data = response.getJSONObject("data");
+                                String country = data.getString("nationality");
+
+                                JSONObject teamObj = data.getJSONObject("team");
+                                JSONObject dataTeam = teamObj.getJSONObject("data");
+                                String clubLogo = dataTeam.getString("logo_path");
+                                Glide.with(UserProfileActivity.this).load(clubLogo).into(playerClubLogoImageview);
+
+                                if (country.equals("England")) {
+                                    playerCountryFlagImageview.setImageDrawable(getResources().getDrawable(R.drawable.england));
+                                } else if (country.equals("Northern Ireland")) {
+                                    playerCountryFlagImageview.setImageDrawable(getResources().getDrawable(R.drawable.northern_ireland));
+                                } else if (country.equals("Scotland")) {
+                                    playerCountryFlagImageview.setImageDrawable(getResources().getDrawable(R.drawable.scotland));
+                                } else if (country.equals("Wales")) {
+                                    playerCountryFlagImageview.setImageDrawable(getResources().getDrawable(R.drawable.welsh_flag));
+                                } else {
+
+                                    String countryURL = "https://restcountries.eu/rest/v2/name/" + country;
+
+                                    JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
+                                        @Override
+                                        public void onResponse(JSONArray response) {
+                                            Log.i("json", response.toString());
+                                            try {
+                                                for (int i = 0; i < response.length(); i++) {
+
+                                                    JSONObject object = response.getJSONObject(i);
+                                                    String countryName = object.getString("name");
+                                                    String countryImage = object.getString("flag");
+                                                    System.out.println("country flag" + countryImage);
+                                                    GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+                                                    requestBuilder = Glide
+                                                            .with(UserProfileActivity.this)
+                                                            .using(Glide.buildStreamModelLoader(Uri.class, UserProfileActivity.this), InputStream.class)
+                                                            .from(Uri.class)
+                                                            .as(SVG.class)
+                                                            .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                                                            .sourceEncoder(new StreamEncoder())
+                                                            .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                                                            .decoder(new SearchableCountry.SvgDecoder())
+                                                            .animate(android.R.anim.fade_in);
+
+
+                                                    Uri uri = Uri.parse(countryImage);
+
+                                                    requestBuilder
+                                                            // SVG cannot be serialized so it's not worth to cache it
+                                                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                                            .load(uri)
+                                                            .into(playerCountryFlagImageview);
+
+
+                                                }
+
+                                            } catch (JSONException e) {
+                                                Log.v("json", e.getLocalizedMessage());
+                                            }
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            //Log.v("json", error.getLocalizedMessage());
+                                        }
+                                    });
+                                    Volley.newRequestQueue(UserProfileActivity.this).add(request);
+                                }
+                            } catch (JSONException e) {
+                                Log.e("errJSOn", e.getLocalizedMessage());
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("vollError", error.getLocalizedMessage());
+                        }
+                    });
+                    Volley.newRequestQueue(UserProfileActivity.this).add(request);
+
                     final Query usersVoteRef = db.collection("PlayerPoints").document(prevMonth).collection("player-id").document(playerID).collection("usersVote");
 
                     usersVoteRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -607,7 +705,7 @@ showAlertInfo();
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             long numberVotes = task.getResult().size();
 
-                            playerVoteTextview.setText(String.valueOf(numberVotes) + " votes");
+                            playerVoteTextview.setText(String.valueOf(numberVotes));
                         }
                     });
 

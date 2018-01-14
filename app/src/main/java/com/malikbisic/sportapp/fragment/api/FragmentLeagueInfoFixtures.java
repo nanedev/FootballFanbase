@@ -45,9 +45,10 @@ public class FragmentLeagueInfoFixtures extends Fragment {
     private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/leagues/";
     private int URL_LEAGUE_ID;
     private String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
-    private String URL_INCLUDES = "&include=season.fixtures.localTeam,season.fixtures.visitorTeam";
+    private String URL_INCLUDES = "&include=season.upcoming.localTeam,season.upcoming.visitorTeam";
     RecyclerView leagueRecView;
     ArrayList<FixturesLeagueModel> modelArrayList = new ArrayList<>();
+    ArrayList<String> dateList = new ArrayList<>();
     FixturesLeagueAdapter adapter;
     LinearLayoutManager layoutManager;
 
@@ -82,7 +83,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_fragment_league_info_fixtures, container, false);
         leagueRecView = (RecyclerView) view.findViewById(R.id.league_fixtures_recView);
-        adapter = new FixturesLeagueAdapter(modelArrayList, getActivity());
+        adapter = new FixturesLeagueAdapter(modelArrayList, getActivity(), dateList);
         layoutManager = new LinearLayoutManager(getActivity());
         leagueRecView.setLayoutManager(layoutManager);
         leagueRecView.setAdapter(adapter);
@@ -97,7 +98,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
                     JSONObject mainObject = response.getJSONObject("data");
                     JSONObject seasonObject = mainObject.getJSONObject("season");
                     JSONObject dataSeason = seasonObject.getJSONObject("data");
-                    JSONObject fixturesObject = dataSeason.getJSONObject("fixtures");
+                    JSONObject fixturesObject = dataSeason.getJSONObject("upcoming");
                     JSONArray fixturesData = fixturesObject.getJSONArray("data");
 
                     for (int i = 0; i < 20; i++){
@@ -127,10 +128,8 @@ public class FragmentLeagueInfoFixtures extends Fragment {
 
                         currentDate = starting_at.getString("date");
 
-                        if (datum.equals(prevDate)) {
-                            currentDate = "";
-                        } else {
-                            currentDate = datum;
+                        if (!dateList.contains(currentDate)){
+                            dateList.add(currentDate);
                         }
 
 

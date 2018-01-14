@@ -80,7 +80,7 @@
             android:id="@+id/inforelativeUsers"
             android:layout_width="50dp"
             android:layout_height="50dp"
-       android:layout_below="@+id/layoutzapoene"
+            android:layout_below="@+id/layoutzapoene"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginTop="10dp"
@@ -466,66 +466,35 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/userVotesNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginStart="5dp"
-                        android:text="@string/users_votes_text"
-                        android:textColor="#0d47a1"
-                        android:textStyle="bold"/>
-
                     <ImageView
                         android:id="@+id/playerImageWinner"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_below="@+id/playernamewinner"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:src="@drawable/bihflag" />
+                        android:layout_marginTop="10dp" />
 
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/usercountry"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_below="@+id/playerImageWinner"
                         android:layout_marginLeft="5dp"
                         android:layout_marginStart="5dp"
                         android:layout_toEndOf="@+id/playerImageWinner"
-                        android:layout_toRightOf="@+id/playerImageWinner"
-                        android:background="@drawable/bihflag" />
+                        android:layout_toRightOf="@+id/playerImageWinner" />
 
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/userClubLogo"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_below="@+id/playerImageWinner"
                         android:layout_marginEnd="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_toLeftOf="@+id/playerImageWinner"
-                        android:layout_toStartOf="@+id/playerImageWinner"
-                        android:background="@drawable/bihflag" />
-
-
-                    <TextView
-                        android:id="@+id/pointsNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_alignParentBottom="true"
-                        android:text="50 pts."
-                        android:textColor="#0d47a1"
-                        android:textStyle="bold" />
+                        android:layout_toStartOf="@+id/playerImageWinner" />
 
 
                     <RelativeLayout
@@ -556,7 +525,7 @@
                             android:padding="5dp">
 
                             <TextView
-                                android:id="@+id/goalsNumber"
+                                android:id="@+id/userVotesNumberWinner"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
@@ -602,7 +571,7 @@
                             android:padding="5dp">
 
                             <TextView
-                                android:id="@+id/assistsNumber"
+                                android:id="@+id/pointsNumberWinner"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"

@@ -22,17 +22,17 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
     TextView visitorTeamNameTXT;
     ImageView localTeamLogo;
     ImageView visitorTeamLogo;
-    TextView league;
+    public TextView league;
 
     public FixtureLeagueViewHolder(View itemView) {
         super(itemView);
 
-        timeStart = (TextView) itemView.findViewById(R.id.timeStartMatch_league);
-        localTeamNameTXT = (TextView) itemView.findViewById(R.id.localTeamName_league);
-        visitorTeamNameTXT = (TextView) itemView.findViewById(R.id.visitorTeamName_league);
-        localTeamLogo = (ImageView) itemView.findViewById(R.id.localTeamLogo_league);
-        visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorTeamLogo_league);
-        league = (TextView) itemView.findViewById(R.id.league_league);
+        timeStart = (TextView) itemView.findViewById(R.id.gameTimeLeague);
+        localTeamNameTXT = (TextView) itemView.findViewById(R.id.localTeamId);
+        visitorTeamNameTXT = (TextView) itemView.findViewById(R.id.visitorTeamId);
+        localTeamLogo = (ImageView) itemView.findViewById(R.id.localLogoLeague);
+        visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorLogoLeague);
+       // league = (TextView) itemView.findViewById(R.id.league_league);
     }
 
     public void updateUI(FixturesLeagueModel model) {
@@ -45,17 +45,6 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
         Picasso.with(visitorTeamLogo.getContext()).load(model.getVisitorTeamLogo()).into(visitorTeamLogo);
 
 
-
-        if (leagueName.equals("")){
-            league.setVisibility(View.GONE);
-            league.setText("");
-
-        } else {
-            league.setVisibility(View.VISIBLE);
-            SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MM-yyyy");
-            String finalDate = timeFormat.format(model.getDate());
-            league.setText(finalDate);
-        }
 
 
         if (status.equals("FT") || status.equals("HT")) {
