@@ -37,7 +37,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
         android:id="@+id/about_football_rel_lay"
         android:background="@color/white"
         android:layout_below="@+id/toolbarAboutFootball">
@@ -83,19 +83,28 @@ android:layout_marginLeft="5dp"
 
 
     </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        android:id="@+id/layoutView"
+        android:layout_below="@+id/about_football_rel_lay"/>
 
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabsAboutFootball"
-            android:layout_below="@+id/about_football_rel_lay"
+            android:layout_below="@+id/layoutView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:tabBackground="@drawable/tab_color_selector"
+            app:tabSelectedTextColor="@color/black"
+            app:tabTextColor="@color/white"
+           />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/aboutFootballViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/tabsAboutFootball"
