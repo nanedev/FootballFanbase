@@ -36,12 +36,8 @@ public class FixturesLeagueAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (leagueFixturesList.get(position) instanceof FixturesLeagueModel) {
-            return ITEM_VIEW;
-        } else if (datePrint.get(position) instanceof String)  {
-            return ITEM_LEAGUE;
-        }
-        return -1;
+
+        return leagueFixturesList.get(position) != null ? ITEM_VIEW:ITEM_LEAGUE;
     }
 
     @Override

@@ -45,7 +45,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
     private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/leagues/";
     private int URL_LEAGUE_ID;
     private String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
-    private String URL_INCLUDES = "&include=season.upcoming.localTeam,season.upcoming.visitorTeam";
+    private String URL_INCLUDES = "&include=season.upcoming:order(starting_at|asc),season.upcoming.localTeam,season.upcoming.visitorTeam";
     RecyclerView leagueRecView;
     ArrayList<FixturesLeagueModel> modelArrayList = new ArrayList<>();
     ArrayList<String> dateList = new ArrayList<>();
