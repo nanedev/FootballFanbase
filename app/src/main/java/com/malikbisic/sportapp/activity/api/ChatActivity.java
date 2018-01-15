@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.fragment.firebase.FragmentChat;
-import com.malikbisic.sportapp.fragment.api.FragmentChatUsers;
+import com.malikbisic.sportapp.fragment.firebase.FragmentChatUsers;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
 import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
 

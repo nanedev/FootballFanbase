@@ -1,103 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:background="@color/white"
+    >
+    <TextView
+        android:id="@+id/leagueClub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="0dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/iron"
+        android:textColor="@color/black" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:id="@+id/singleLayout"
+        android:layout_below="@id/leagueClub"
+        >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+
+        </RelativeLayout>
+
 
         <TextView
-            android:id="@+id/leagueClub"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="false"
-            android:layout_centerVertical="false"
-            android:layout_marginTop="5dp"
-            android:background="@color/com_facebook_button_background_color_disabled"
-            android:gravity="center_horizontal"
-            android:textSize="18dp" />
+            android:id="@+id/gameTimeClub"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textColor="#9e9e9e"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/league"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
+            android:textColor="@color/black"
+            android:id="@+id/localTeamResultClub"
+            android:layout_alignBaseline="@+id/localTeamId"
+            android:layout_alignBottom="@+id/localTeamId"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="35dp"
+            android:layout_marginEnd="35dp"
+            android:visibility="gone"
+            />
 
-            <LinearLayout
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/localTeamLogoClub"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/belgium" />
+        <TextView
+            android:id="@+id/visitorTeamResultClub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/visitorTeamId"
+            android:layout_alignBottom="@+id/visitorTeamId"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="35dp"
+            android:layout_marginEnd="35dp"
+            android:textColor="@color/black"
+            android:visibility="gone"/>
 
-                <TextView
-                    android:id="@+id/localTeamNameClub"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:text="Belgium" />
+        <View
+            android:layout_width="20dp"
+            android:layout_height="1dp"
+            android:id="@+id/viewforresult"
+            android:background="@color/black"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            >
 
-            </LinearLayout>
+        </View>
 
-            <LinearLayout
-                android:layout_width="200dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="20dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+        <View
+            android:layout_width="1dp"
+            android:layout_height="80dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="80dp"
+            android:layout_marginEnd="80dp"
+            android:background="#9e9e9e"
+            android:layout_centerVertical="true"
+            android:id="@+id/nekiView"/>
 
-                <TextView
-                    android:id="@+id/dateStart"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:text="9.11.2017" />
 
-                <TextView
-                    android:id="@+id/timeStartMatchClub"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="20:45" />
-            </LinearLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:id="@+id/localLogoClub"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/localTeamId"
+            android:layout_toRightOf="@+id/localLogoClub"
+            android:layout_toEndOf="@+id/localLogoClub"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/black"
+            android:layout_alignBottom="@+id/localLogoClub"/>
 
-                <ImageView
-                    android:id="@+id/visitorTeamLogoClub"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/bihflag" />
 
-                <TextView
-                    android:id="@+id/visitorTeamNameClub"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:text="Chelsea" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/visitorLogoClub"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_below="@+id/localLogoClub"
+            android:layout_alignLeft="@+id/localLogoClub"
+            android:layout_alignStart="@+id/localLogoClub"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"/>
 
-            </LinearLayout>
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/visitorTeamId"
+            android:layout_toRightOf="@+id/visitorLogoClub"
+            android:layout_toEndOf="@+id/visitorLogoClub"
+
+            android:textColor="@color/black"
+            android:layout_alignStart="@+id/localTeamId"
+            android:layout_alignLeft="@+id/localTeamId"
+            android:layout_alignBottom="@+id/visitorLogoClub"/>
+
+
+        <TextView
+            android:id="@+id/singleFixtureMinutesLeague"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/nekiView"
+            android:layout_toStartOf="@+id/nekiView"
+            android:textColor="@color/black" />
+
     </RelativeLayout>
-</android.support.v7.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#9e9e9e"
+        android:layout_below="@+id/singleLayout"
+        android:id="@+id/view6" />
+
+
+</RelativeLayout>

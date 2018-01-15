@@ -31,13 +31,12 @@ public class ClubFixturesViewHolder extends RecyclerView.ViewHolder {
     public ClubFixturesViewHolder(View itemView) {
         super(itemView);
 
-        timeStart = (TextView) itemView.findViewById(R.id.timeStartMatchClub);
-        localTeamNameTXT = (TextView) itemView.findViewById(R.id.localTeamNameClub);
-        visitorTeamNameTXT = (TextView) itemView.findViewById(R.id.visitorTeamNameClub);
-        localTeamLogo = (ImageView) itemView.findViewById(R.id.localTeamLogoClub);
-        visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorTeamLogoClub);
+        timeStart = (TextView) itemView.findViewById(R.id.gameTimeClub);
+        localTeamNameTXT = (TextView) itemView.findViewById(R.id.localTeamId);
+        visitorTeamNameTXT = (TextView) itemView.findViewById(R.id.visitorTeamId);
+        localTeamLogo = (ImageView) itemView.findViewById(R.id.localLogoClub);
+        visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorLogoClub);
         league = (TextView) itemView.findViewById(R.id.leagueClub);
-        dateStart = (TextView) itemView.findViewById(R.id.dateStart);
     }
 
     public void updateUI(ClubFixturesModel model) {
@@ -50,7 +49,7 @@ public class ClubFixturesViewHolder extends RecyclerView.ViewHolder {
         Picasso.with(visitorTeamLogo.getContext()).load(model.getVisitorTeamLogo()).into(visitorTeamLogo);
 
 
-        league.setText(leagueName);
+       // league.setText(leagueName);
 
         timeStart.setText(model.getTimeStart().substring(0, 5));
 
@@ -67,7 +66,7 @@ public class ClubFixturesViewHolder extends RecyclerView.ViewHolder {
 
         SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MM-yyyy");
         String finalDate = timeFormat.format(myDate);
-        dateStart.setText(finalDate);
+        league.setText(finalDate);
 
 
     }
