@@ -126,10 +126,13 @@ public class FragmentLeagueInfoFixtures extends Fragment {
                         statusS = timeMain.getString("status");
 
 
-                        currentDate = starting_at.getString("date");
 
-                        if (!dateList.contains(currentDate)){
-                            dateList.add(currentDate);
+
+                        if (datum.equals(prevDate)){
+
+                            currentDate = "isti datum";
+                        } else {
+                            currentDate = starting_at.getString("date");
                         }
 
 

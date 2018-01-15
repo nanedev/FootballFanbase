@@ -66,7 +66,7 @@ public class FixturesLeagueAdapter extends RecyclerView.Adapter {
 
         } else {
             ((LeguenameViewHolder)holder).leagueName.setVisibility(View.VISIBLE);
-            ((LeguenameViewHolder)holder).leagueName.setText(model.getLeagueName());
+            ((LeguenameViewHolder)holder).leagueName.setText(model.getDate().toString());
         }
 
 

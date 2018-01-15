@@ -32,7 +32,7 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
         visitorTeamNameTXT = (TextView) itemView.findViewById(R.id.visitorTeamId);
         localTeamLogo = (ImageView) itemView.findViewById(R.id.localLogoLeague);
         visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorLogoLeague);
-       // league = (TextView) itemView.findViewById(R.id.league_league);
+        league = (TextView) itemView.findViewById(R.id.league_league);
     }
 
     public void updateUI(FixturesLeagueModel model) {
@@ -45,6 +45,12 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
         Picasso.with(visitorTeamLogo.getContext()).load(model.getVisitorTeamLogo()).into(visitorTeamLogo);
 
 
+        if (model.getLeagueName().equals("isti datum")){
+            league.setVisibility(View.GONE);
+        } else if (!model.getLeagueName().equals("isti datum")){
+            league.setVisibility(View.VISIBLE);
+            league.setText(model.getDate().toString());
+        }
 
 
         if (status.equals("FT") || status.equals("HT")) {
