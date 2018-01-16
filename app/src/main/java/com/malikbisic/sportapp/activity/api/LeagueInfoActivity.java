@@ -18,10 +18,11 @@ import com.malikbisic.sportapp.fragment.api.FragmentLeagueInfoStandings;
 public class LeagueInfoActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private SectionPageAdapter sectionPageAdapter;
-   Toolbar toolbar;
-   Intent intent;
-   String leagueName;
-   TextView leaguNameTextview;
+    Toolbar toolbar;
+    Intent intent;
+    String leagueName;
+    TextView leaguNameTextview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,18 +41,17 @@ public class LeagueInfoActivity extends AppCompatActivity {
         leagueName = intent.getStringExtra("leagueName");
         leaguNameTextview.setText(leagueName);
         getSupportActionBar().setTitle("");
-getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mViewPager.setOffscreenPageLimit(0);
 
 
     }
-    private void setUpViewPager(ViewPager viewPager){
+
+    private void setUpViewPager(ViewPager viewPager) {
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new FragmentLeagueInfoStandings(),"Standings");
-        adapter.addFragment(new FragmentLeagueInfoResults(),"Results");
-        adapter.addFragment(new FragmentLeagueInfoFixtures(),"Fixtures");
+        adapter.addFragment(new FragmentLeagueInfoStandings(), "Standings");
+        adapter.addFragment(new FragmentLeagueInfoResults(), "Results");
+        adapter.addFragment(new FragmentLeagueInfoFixtures(), "Fixtures");
         viewPager.setAdapter(adapter);
 
     }

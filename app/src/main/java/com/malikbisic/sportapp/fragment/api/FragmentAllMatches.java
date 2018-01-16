@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.fragment.api;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.PictureDrawable;
@@ -80,13 +81,16 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
         progressBar = new ProgressDialog(getActivity());
         selectLeagueRecyclerView = (RecyclerView) view.findViewById(R.id.search_league_recyclerview);
         selectLeaguelist = new ArrayList<>();
-        adapterLeague = new SelectLeagueAdapter(selectLeaguelist, view.getContext(), getActivity(), selectLeagueRecyclerView);
+        adapterLeague = new SelectLeagueAdapter(selectLeaguelist, getContext(), getActivity(), selectLeagueRecyclerView);
         selectLeagueRecyclerView.setAdapter(adapterLeague);
 
         mSearchView = (SearchView) view.findViewById(R.id.search_for_league);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         selectLeagueRecyclerView.setLayoutManager(linearLayoutManager);
         setupSearchView();
+
+        progressBar.setCancelable(false);
+        progressBar.setCanceledOnTouchOutside(false);
         progressBar.setMessage("Loading...");
         progressBar.setIndeterminate(true);
         progressBar.show();
@@ -149,42 +153,46 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
                     final JSONArray arrayCountry = response.getJSONArray("data");
 
                     for (int i = 0; i < arrayCountry.length(); i++) {
-                        progressBar.setMessage("Loadind...");
-                        progressBar.show();
-                        JSONObject objectCountry = arrayCountry.getJSONObject(i);
+                        if (!getActivity().isFinishing()) {
+                            progressBar.setMessage("Loadind...");
 
-                        countryName = objectCountry.getString("name");
-                        String countryID = objectCountry.getString("id");
+                            progressBar.show();
 
-                        JSONObject jsonObject = objectCountry.getJSONObject("leagues");
+                            JSONObject objectCountry = arrayCountry.getJSONObject(i);
+
+                            countryName = objectCountry.getString("name");
+                            String countryID = objectCountry.getString("id");
+
+                            JSONObject jsonObject = objectCountry.getJSONObject("leagues");
 
 
-                        JSONArray jsonArray = jsonObject.getJSONArray("data");
+                            JSONArray jsonArray = jsonObject.getJSONArray("data");
 
 
-                        for (int j = 0; j < jsonArray.length(); j++) {
+                            for (int j = 0; j < jsonArray.length(); j++) {
 
-                            JSONObject obj = jsonArray.getJSONObject(j);
+                                JSONObject obj = jsonArray.getJSONObject(j);
 
-                            league_id = obj.getInt("id");
-                            currentSeason = obj.getInt("current_season_id");
-                            leagueName = obj.getString("name");
-                            LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id);
-                            selectLeaguelist.add(model);
-                            adapterLeague.setIsLoading(false);
+                                league_id = obj.getInt("id");
+                                currentSeason = obj.getInt("current_season_id");
+                                leagueName = obj.getString("name");
+                                LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id);
+                                selectLeaguelist.add(model);
+                                adapterLeague.setIsLoading(false);
+
+                            }
+
 
                         }
-
-
+                        adapterLeague.notifyDataSetChanged();
+                        mSearchView.clearFocus();
                     }
-                    adapterLeague.notifyDataSetChanged();
-                    progressBar.dismiss();
-                    mSearchView.clearFocus();
 
                 } catch (JSONException e) {
                     Log.e("Excpetion JSON", "Err: " + e.getLocalizedMessage());
                     progressBar.dismiss();
                 }
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -244,76 +252,78 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
             this.leagues = leagues;
         }
 
-        public void updateUI(LeagueModel model) {
+        public void updateUI(LeagueModel model, final Activity ctx) {
 
-            leagueName.setText(model.getName().toUpperCase());
-            countryName.setText(model.getCountry_name().toUpperCase() + ":");
-
-
-            if (model.getCountry_name().equals("England")) {
-                zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.england));
-            } else if (model.getCountry_name().equals("Northern Ireland")) {
-                zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.northern_ireland));
-            } else if (model.getCountry_name().equals("Scotland")) {
-                zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.scotland));
-            } else if (model.getCountry_name().equals("Wales")) {
-                zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.welsh_flag));
-            }
+            if (!ctx.isFinishing()) {
+                leagueName.setText(model.getName().toUpperCase());
+                countryName.setText(model.getCountry_name().toUpperCase() + ":");
 
 
-            String countryURL = "https://restcountries.eu/rest/v2/name/" + model.getCountry_name();
-
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    Log.i("json", response.toString());
-                    try {
-                        for (int i = 0; i < response.length(); i++) {
-
-                            JSONObject object = response.getJSONObject(i);
-                            String countryName = object.getString("name");
-                            String countryImage = object.getString("flag");
-
-                            System.out.println("country flag" + countryImage);
-                            GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
-
-                            requestBuilder = Glide
-                                    .with(itemView.getContext())
-                                    .using(Glide.buildStreamModelLoader(Uri.class, itemView.getContext()), InputStream.class)
-                                    .from(Uri.class)
-                                    .as(SVG.class)
-                                    .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-                                    .sourceEncoder(new StreamEncoder())
-                                    .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
-                                    .decoder(new SearchableCountry.SvgDecoder())
-                                    .animate(android.R.anim.fade_in);
+                if (model.getCountry_name().equals("England")) {
+                    zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.england));
+                } else if (model.getCountry_name().equals("Northern Ireland")) {
+                    zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.northern_ireland));
+                } else if (model.getCountry_name().equals("Scotland")) {
+                    zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.scotland));
+                } else if (model.getCountry_name().equals("Wales")) {
+                    zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.welsh_flag));
+                }
 
 
-                            Uri uri = Uri.parse(countryImage);
+                String countryURL = "https://restcountries.eu/rest/v2/name/" + model.getCountry_name();
 
-                            requestBuilder
-                                    // SVG cannot be serialized so it's not worth to cache it
-                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                    .load(uri)
-                                    .into(zastava);
+                JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.i("json", response.toString());
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
 
+                                JSONObject object = response.getJSONObject(i);
+                                String countryName = object.getString("name");
+                                String countryImage = object.getString("flag");
+
+                                System.out.println("country flag" + countryImage);
+                                GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+                                requestBuilder = Glide
+                                        .with(ctx)
+                                        .using(Glide.buildStreamModelLoader(Uri.class, itemView.getContext()), InputStream.class)
+                                        .from(Uri.class)
+                                        .as(SVG.class)
+                                        .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                                        .sourceEncoder(new StreamEncoder())
+                                        .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                                        .decoder(new SearchableCountry.SvgDecoder())
+                                        .animate(android.R.anim.fade_in);
+
+
+                                Uri uri = Uri.parse(countryImage);
+
+                                requestBuilder
+                                        // SVG cannot be serialized so it's not worth to cache it
+                                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                        .load(uri)
+                                        .into(zastava);
+
+                            }
+
+
+                        } catch (JSONException e) {
+                            Log.v("json", e.getLocalizedMessage());
                         }
-
-
-                    } catch (JSONException e) {
-                        Log.v("json", e.getLocalizedMessage());
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    //Log.v("json", error.getLocalizedMessage());
-                }
-            });
-            Volley.newRequestQueue(itemView.getContext()).add(request);
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Log.v("json", error.getLocalizedMessage());
+                    }
+                });
+                Volley.newRequestQueue(itemView.getContext()).add(request);
 
-            Log.i("country: ", model.getCountry_name() + " , league: " + model.getName());
+                Log.i("country: ", model.getCountry_name() + " , league: " + model.getName());
 
+            }
         }
     }
 

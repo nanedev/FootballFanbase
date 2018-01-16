@@ -1,22 +1,21 @@
 package com.malikbisic.sportapp.viewHolder.api;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.model.api.FixturesLeagueModel;
+import com.malikbisic.sportapp.model.api.ResultsLeagueModel;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 /**
- * Created by korisnik on 25/12/2017.
+ * Created by malikbisic on 16/01/2018.
  */
 
-public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
+public class ResultsLeagueViewHolder extends ViewHolder {
+
     TextView leagueName;
     TextView timeStart;
     TextView localTeamNameTXT;
@@ -24,19 +23,19 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
     ImageView localTeamLogo;
     ImageView visitorTeamLogo;
     public TextView league;
-    String date;
-    public FixtureLeagueViewHolder(View itemView) {
+
+    public ResultsLeagueViewHolder(View itemView) {
         super(itemView);
 
-        timeStart = (TextView) itemView.findViewById(R.id.gameTimeLeague);
+        timeStart = (TextView) itemView.findViewById(R.id.gameTimeRes);
         localTeamNameTXT = (TextView) itemView.findViewById(R.id.localTeamId);
         visitorTeamNameTXT = (TextView) itemView.findViewById(R.id.visitorTeamId);
-        localTeamLogo = (ImageView) itemView.findViewById(R.id.localLogoLeague);
-        visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorLogoLeague);
-        league = (TextView) itemView.findViewById(R.id.league_league);
+        localTeamLogo = (ImageView) itemView.findViewById(R.id.localLogoRes);
+        visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorLogoRes);
+        league = (TextView) itemView.findViewById(R.id.leagueRes);
     }
 
-    public void updateUI(FixturesLeagueModel model) {
+    public void updateUI(ResultsLeagueModel model) {
         String status = model.getStatus();
         String leagueName = model.getLeagueName();
 
@@ -50,10 +49,7 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
             league.setVisibility(View.GONE);
         } else if (!model.getLeagueName().equals("isti datum")){
             league.setVisibility(View.VISIBLE);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-            date = simpleDateFormat.format(model.getDate());
-
-            league.setText(date);
+            league.setText(model.getLeagueName());
         }
 
 
@@ -64,5 +60,4 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
         }
 
     }
-
 }

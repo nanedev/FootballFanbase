@@ -90,9 +90,11 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
     int myPointsVote = 50;
 
+
     public FragmentLeagueInfoStandings() {
         // Required empty public constructor
     }
+
 
 
     @Override
@@ -112,7 +114,9 @@ public class FragmentLeagueInfoStandings extends Fragment {
         mDialog = new ProgressDialog(getActivity());
         mDialog.setIndeterminate(true);
         mDialog.setMessage("Loading...");
-        mDialog.show();
+        mDialog.setCancelable(false);
+        mDialog.setCanceledOnTouchOutside(false);
+
         tableLayout = (RelativeLayout) view.findViewById(R.id.tablefragmentlayout);
         topscoresLayout = (RelativeLayout) view.findViewById(R.id.topscorefragmentlayout);
         tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
@@ -181,6 +185,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
 
     public void standingsTable() {
+        mDialog.show();
         adapter = new TableAdapter(tableListStandings, getActivity().getApplicationContext(), getActivity());
         tableRecyclerview.setAdapter(adapter);
 
@@ -298,28 +303,28 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
                                         } catch (JSONException e) {
                                             Log.v("json", e.getLocalizedMessage());
+                                            mDialog.dismiss();
                                         }
                                     }
                                 }, new Response.ErrorListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
                                         //Log.v("json", error.getLocalizedMessage());
+                                        mDialog.dismiss();
                                     }
                                 });
                                 Volley.newRequestQueue(getActivity()).add(request);
                             }
                             adapter.notifyDataSetChanged();
-                            mDialog.dismiss();
+
                         }
                     }
 
-                } catch (
-                        JSONException e)
-
-                {
+                } catch (JSONException e) {
                     Log.v("Excpetion JSON", "Err: " + e.getLocalizedMessage());
+                    mDialog.dismiss();
                 }
-
+                mDialog.dismiss();
 
             }
         }, new Response.ErrorListener()
@@ -328,6 +333,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("LEAGUE", "Err: " + error.getLocalizedMessage());
+                mDialog.dismiss();
             }
         });
 
@@ -341,6 +347,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
     }
 
     public void topScorer() {
+        mDialog.show();
         String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/" + currentSeasonId + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=goalscorers.player";
         scorerAdapter = new TopScorerAdapter(topScorerList, getActivity());
         tableRecyclerview.setAdapter(scorerAdapter);
@@ -369,20 +376,22 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
                         TopScorerModel model = new TopScorerModel(namePlayer, imagePlayer, goalScored, positionPlayer, player_id);
                         topScorerList.add(model);
-                        mDialog.dismiss();
+
                         scorerAdapter.notifyDataSetChanged();
 
 
                     }
                 } catch (JSONException e) {
                     Log.e("err", e.getLocalizedMessage());
+                    mDialog.dismiss();
                 }
-
+                mDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("errorVolley", error.getLocalizedMessage());
+                mDialog.dismiss();
             }
         });
 

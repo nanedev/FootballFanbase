@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.fragment.api;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -41,6 +43,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
     public FragmentLeagueInfoFixtures() {
         // Required empty public constructor
     }
+
     //https://soccer.sportmonks.com/api/v2.0/leagues/501?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=season.fixtures.localTeam,season.fixtures.visitorTeam
     private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/leagues/";
     private int URL_LEAGUE_ID;
@@ -75,6 +78,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
     String prevDate = "";
     String currentDate = "";
 
+    ProgressBar mDialog;
 
 
     @Override
@@ -83,11 +87,28 @@ public class FragmentLeagueInfoFixtures extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_fragment_league_info_fixtures, container, false);
         leagueRecView = (RecyclerView) view.findViewById(R.id.league_fixtures_recView);
-        adapter = new FixturesLeagueAdapter(modelArrayList, getActivity(), dateList);
+        adapter = new FixturesLeagueAdapter(modelArrayList, getActivity());
         layoutManager = new LinearLayoutManager(getActivity());
         leagueRecView.setLayoutManager(layoutManager);
         leagueRecView.setAdapter(adapter);
         URL_LEAGUE_ID = getActivity().getIntent().getIntExtra("league_id", 0);
+        mDialog = (ProgressBar) view.findViewById(R.id.progressBarLeagueFix);
+
+
+        return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mDialog.setIndeterminate(true);
+
+        loadFixtures();
+    }
+
+    public void loadFixtures() {
+        mDialog.setVisibility(View.VISIBLE);
 
         String full_URL = URL_BASE + URL_LEAGUE_ID + URL_API + URL_INCLUDES;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, full_URL, null, new Response.Listener<JSONObject>() {
@@ -101,7 +122,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
                     JSONObject fixturesObject = dataSeason.getJSONObject("upcoming");
                     JSONArray fixturesData = fixturesObject.getJSONArray("data");
 
-                    for (int i = 0; i < 20; i++){
+                    for (int i = 0; i < fixturesData.length(); i++) {
 
                         JSONObject objectMain = fixturesData.getJSONObject(i);
                         idFixtures = objectMain.getString("id");
@@ -126,9 +147,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
                         statusS = timeMain.getString("status");
 
 
-
-
-                        if (datum.equals(prevDate)){
+                        if (datum.equals(prevDate)) {
 
                             currentDate = "isti datum";
                         } else {
@@ -159,27 +178,28 @@ public class FragmentLeagueInfoFixtures extends Fragment {
                         adapter.notifyDataSetChanged();
                         prevDate = datum;
                     }
-                    Collections.sort(modelArrayList, new Comparator<FixturesLeagueModel>() {
+                   /* Collections.sort(modelArrayList, new Comparator<FixturesLeagueModel>() {
 
-                        @Override public int compare(FixturesLeagueModel l, FixturesLeagueModel r) {
+                        @Override
+                        public int compare(FixturesLeagueModel l, FixturesLeagueModel r) {
                             return l.getDate().compareTo(r.getDate());
                         }
 
-                    });
+                    }); */
 
                 } catch (JSONException e) {
                     Log.e("responseErrorLeagFix", e.getLocalizedMessage());
+                    mDialog.setVisibility(View.GONE);
                 }
+                mDialog.setVisibility(View.GONE);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("errorFixturesLeague", error.getLocalizedMessage());
+                mDialog.setVisibility(View.GONE);
             }
         });
         Volley.newRequestQueue(getActivity()).add(request);
-
-        return view;
     }
-
 }
