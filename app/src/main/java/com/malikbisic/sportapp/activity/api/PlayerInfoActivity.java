@@ -25,6 +25,11 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class PlayerInfoActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private SectionPageAdapter sectionPageAdapter;
@@ -33,6 +38,9 @@ public class PlayerInfoActivity extends AppCompatActivity {
     ImageView player_image;
     TextView player_name;
     NestedScrollView nestedScrollView;
+    TextView playerAge;
+    TextView playerCLubName;
+    ImageView playerClubImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,19 +64,32 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
         player_image = (ImageView) findViewById(R.id.player_info_image);
         player_name = (TextView) findViewById(R.id.player_info_name);
+        playerAge = (TextView)  findViewById(R.id.yearsPLayer);
+        playerClubImage = (ImageView) findViewById(R.id.clubimageheader);
+        playerCLubName = (TextView) findViewById(R.id.clubName);
         myIntentm = getIntent();
         String playerName = myIntentm.getStringExtra("playerName");
         String playerImage = myIntentm.getStringExtra("playerImage");
-        int playerID = myIntentm.getIntExtra("playerID", 0);
+        String playerId = myIntentm.getStringExtra("playerId");
         boolean fromMatch = myIntentm.getBooleanExtra("openMatchInfo", false);
-
+        String playerDateOfBirth = myIntentm.getStringExtra("playerBirthDate");
 
         Picasso.with(this).load(playerImage).into(player_image);
         player_name.setText(playerName);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd/mm/yyyy", Locale.getDefault());
+        try {
+            calendar.setTime(format.parse(playerDateOfBirth));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        playerAge.setText("Age: " + getAge(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)) +"  " + "(" +playerDateOfBirth + ")");
 
-        if (fromMatch){
 
-            String url = "https://soccer.sportmonks.com/api/v2.0/players/"+playerID+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=stats";
+
+        if (!fromMatch){
+
+            String url = "https://soccer.sportmonks.com/api/v2.0/players/"+playerId+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=team";
 
             JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override
@@ -76,9 +97,17 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
                     try {
                         JSONObject mainObject = response.getJSONObject("data");
+                        JSONObject teamObj = mainObject.getJSONObject("team");
+                        JSONObject getDataTeam = teamObj.getJSONObject("data");
+
 
                         String playerName = mainObject.getString("fullname");
                         String playerImage = mainObject.getString("image_path");
+                        String clubName = getDataTeam.getString("name");
+                        String clubImage = getDataTeam.getString("logo_path");
+
+                        Picasso.with(PlayerInfoActivity.this).load(clubImage).into(playerClubImage);
+                        playerCLubName.setText(clubName);
 
                         player_name.setText(playerName);
                         Glide.with(PlayerInfoActivity.this).load(playerImage).into(player_image);
@@ -106,5 +135,22 @@ public class PlayerInfoActivity extends AppCompatActivity {
         adapter.addFragment(new PlayerStatsFragment(), "Stats");
         viewPager.setAdapter(adapter);
 
+    }
+    private String getAge(int year, int month, int day) {
+        Calendar dob = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+
+        dob.set(year, month, day);
+
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+
+        Integer ageInt = new Integer(age);
+        String ageS = ageInt.toString();
+
+        return ageS;
     }
 }

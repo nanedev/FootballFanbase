@@ -10,6 +10,7 @@ import com.malikbisic.sportapp.model.api.FixturesLeagueModel;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Created by korisnik on 25/12/2017.
@@ -24,6 +25,8 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
     ImageView visitorTeamLogo;
     public TextView league;
 
+    String date;
+
     public FixtureLeagueViewHolder(View itemView) {
         super(itemView);
 
@@ -33,6 +36,7 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
         localTeamLogo = (ImageView) itemView.findViewById(R.id.localLogoLeague);
         visitorTeamLogo = (ImageView) itemView.findViewById(R.id.visitorLogoLeague);
         league = (TextView) itemView.findViewById(R.id.league_league);
+
     }
 
     public void updateUI(FixturesLeagueModel model) {
@@ -49,7 +53,10 @@ public class FixtureLeagueViewHolder extends RecyclerView.ViewHolder {
             league.setVisibility(View.GONE);
         } else if (!model.getLeagueName().equals("isti datum")){
             league.setVisibility(View.VISIBLE);
-            league.setText(model.getDate().toString());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+            date = simpleDateFormat.format(model.getDate());
+
+            league.setText(date);
         }
 
 

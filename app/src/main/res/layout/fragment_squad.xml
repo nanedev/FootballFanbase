@@ -14,8 +14,8 @@
             android:id="@+id/coachtextlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#757575"
-            android:padding="10dp">
+            android:background="@color/iron"
+            android:padding="5dp">
 
 
             <TextView
@@ -25,7 +25,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="Coach"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/firstview"
             android:background="@color/white"
-            android:padding="5dp">
+            android:padding="10dp">
 
 
 
@@ -101,7 +101,7 @@
                 android:id="@+id/goalkeeperTxtlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#757575"
+                android:background="@color/iron"
                 android:padding="5dp">
 
                 <TextView
@@ -111,7 +111,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:text="Goalkeepers"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
 
@@ -159,7 +159,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/fourthView"
             android:padding="5dp"
-            android:background="#757575">
+            android:background="@color/iron">
 
             <TextView
                 android:id="@+id/defender"
@@ -168,7 +168,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="Defenders"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
 
@@ -210,7 +210,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/fifthview"
-            android:background="#757575"
+            android:background="@color/iron"
             android:padding="5dp">
 
             <TextView
@@ -220,7 +220,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="Midfielders"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -262,7 +262,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/sixthView"
-            android:background="#757575"
+            android:background="@color/iron"
             android:padding="5dp">
 
 
@@ -273,7 +273,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="Attackers"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
         </RelativeLayout>

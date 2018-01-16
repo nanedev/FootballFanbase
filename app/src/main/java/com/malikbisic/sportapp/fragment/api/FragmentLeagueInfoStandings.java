@@ -140,6 +140,9 @@ public class FragmentLeagueInfoStandings extends Fragment {
         relegeationTextview.setText(leagueName + " - " + " Relegation Group ");
 
         standingsTable();
+        tableInfoLay.setVisibility(View.VISIBLE);
+       topscorersInfoLayout.setVisibility(View.GONE);
+
         tableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

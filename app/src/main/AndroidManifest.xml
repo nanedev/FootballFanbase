@@ -223,7 +223,7 @@
         <activity
             android:name=".activity.api.PlayerInfoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/AppTheme.Dark">
 
         </activity>
         <activity android:name=".activity.api.SingleFixtureActivity"
