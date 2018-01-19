@@ -110,7 +110,7 @@ public class FragmentChatUsers extends Fragment {
                                         if (e != null){
                                             Log.e("erroruserInfo", e.getLocalizedMessage());
                                         }
-                                        username = String.valueOf(dataSnapshot.getString("username"));
+                                        username = String.valueOf(dataSnapshot.getString("username333s"));
                                         profileImage = String.valueOf(dataSnapshot.getString("profileImage"));
                                         flag = String.valueOf(dataSnapshot.getString("flag"));
 

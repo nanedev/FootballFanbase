@@ -104,14 +104,15 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
         myPointsGet.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().exists()) {
 
-                long totalNumber = task.getResult().getLong("prevMonthPoints.totalPoints");
+                    long totalNumber = task.getResult().getLong("prevMonthPoints.totalPoints");
 
-                Log.i("totalNumber", String.valueOf(totalNumber));
+                    Log.i("totalNumber", String.valueOf(totalNumber));
 
-                myPoints.setText("My points: " + totalNumber);
+                    myPoints.setText("My points: " + totalNumber);
 
-
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
