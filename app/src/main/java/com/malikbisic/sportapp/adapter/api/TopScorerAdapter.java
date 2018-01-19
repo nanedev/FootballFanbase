@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -79,15 +81,18 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
 
     }
 
-    public void votePlayer(final TopScorerModel model){
+    public void votePlayer(final TopScorerModel model) {
         DateFormat currentDateFormat = new SimpleDateFormat("MMMM");
         final Date currentDate = new Date();
 
         final String currentMonth = currentDateFormat.format(currentDate);
 
-        AlertDialog.Builder playerVoteDialogBuilder = new AlertDialog.Builder(activity);
         View viewDialog = LayoutInflater.from(activity).inflate(R.layout.vote_player_dialog, null);
-        playerVoteDialogBuilder.setView(viewDialog);
+        final AlertDialog playerVoteDialogBuilder = new AlertDialog.Builder(activity)
+                .setView(viewDialog)
+                .setPositiveButton("Vote", null) //Set to null. We override the onclick
+                .setNegativeButton("Cancel", null)
+                .create();
 
         final TextView playerPointsTextview = (TextView) viewDialog.findViewById(R.id.playerPointsVote);
         final CircleImageView playerImage = (CircleImageView) viewDialog.findViewById(R.id.playerImageVote);
@@ -127,122 +132,139 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
 
+                if (documentSnapshot.exists()) {
 
-                    if (documentSnapshot.exists()) {
 
+                    playerPoints = documentSnapshot.getLong("playerPoints");
+                    playerPointsTextview.setText("Player points: " + playerPoints);
 
-                        playerPoints = documentSnapshot.getLong("playerPoints");
-                        playerPointsTextview.setText("Player points: " + playerPoints);
-
-                    } else {
-                        playerPointsTextview.setText("Player points: " + 0);
-                    }
+                } else {
+                    playerPointsTextview.setText("Player points: " + 0);
+                }
             }
         });
 
-        playerVoteDialogBuilder.setPositiveButton("Vote", new DialogInterface.OnClickListener() {
+        playerVoteDialogBuilder.setOnShowListener(new DialogInterface.OnShowListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String enterPoint = enterPointsVote.getText().toString().trim();
-                if (!TextUtils.isEmpty(enterPoint)) {
-                    final long points = Integer.parseInt(enterPoint);
+            public void onShow(DialogInterface dialogInterface) {
 
-                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    DocumentReference myPointsGet = db.collection("Points").document(mAuth.getCurrentUser().getUid());
-                    myPointsGet.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Button button = ((AlertDialog) playerVoteDialogBuilder).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
 
-                            long totalNumber = task.getResult().getLong("prevMonthPoints.totalPoints");
-                            if (totalNumber >= 0) {
-                                myPointsVote = totalNumber - points;
+                    @Override
+                    public void onClick(View view) {
+                        // TODO Do something
 
-                                db.collection("Points").document(mAuth.getCurrentUser().getUid()).update("prevMonthPoints.totalPoints", myPointsVote);
+                        String enterPoint = enterPointsVote.getText().toString().trim();
+                        if (!TextUtils.isEmpty(enterPoint)) {
+                            final long points = Integer.parseInt(enterPoint);
+
+                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            DocumentReference myPointsGet = db.collection("Points").document(mAuth.getCurrentUser().getUid());
+                            myPointsGet.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.getResult().exists()) {
+
+                                        long totalNumber = task.getResult().getLong("prevMonthPoints.totalPoints");
+                                        if (totalNumber >= 0) {
+                                            myPointsVote = totalNumber - points;
+
+                                            if (myPointsVote >= 0) {
+                                                db.collection("Points").document(mAuth.getCurrentUser().getUid()).update("prevMonthPoints.totalPoints", myPointsVote);
 
 
+                                                DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
+                                                playerVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                        if (task.getResult().exists()) {
+                                                            long currentPointsPlayer = (long) task.getResult().get("playerPoints");
+                                                            long setPoints = currentPointsPlayer + points;
+                                                            Map<String, Object> playerInfo = new HashMap<>();
+                                                            playerInfo.put("playerName", model.getName());
+                                                            playerInfo.put("playerImage", model.getImagePlayer());
+                                                            playerInfo.put("playerPoints", setPoints);
+                                                            playerInfo.put("timestamp", FieldValue.serverTimestamp());
 
-                                DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
-                                playerVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.getResult().exists()) {
-                                            long currentPointsPlayer = (long) task.getResult().get("playerPoints");
-                                            long setPoints = currentPointsPlayer + points;
-                                            Map<String, Object> playerInfo = new HashMap<>();
-                                            playerInfo.put("playerName", model.getName());
-                                            playerInfo.put("playerImage", model.getImagePlayer());
-                                            playerInfo.put("playerPoints", setPoints);
-                                            playerInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                            DocumentReference playerVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID()));
+                                                            playerVote.update(playerInfo);
 
-                                            DocumentReference playerVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID()));
-                                            playerVote.update(playerInfo);
+                                                            DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
 
-                                            DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                            usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    Map<String, Object> usersInfo = new HashMap<>();
+                                                                    usersInfo.put("uid", mAuth.getCurrentUser().getUid());
+                                                                    usersInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                                    if (task.getResult().exists()) {
+                                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                                        usersVote.update(usersInfo);
+                                                                    } else {
+                                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                                        usersVote.set(usersInfo);
+                                                                    }
+                                                                }
+                                                            });
 
-                                            usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    Map<String, Object> usersInfo = new HashMap<>();
-                                                    usersInfo.put("uid", mAuth.getCurrentUser().getUid());
-                                                    usersInfo.put("timestamp", FieldValue.serverTimestamp());
-                                                    if (task.getResult().exists()){
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
-                                                        usersVote.update(usersInfo);
-                                                    } else {
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
-                                                        usersVote.set(usersInfo);
+
+                                                        } else {
+                                                            Map<String, Object> playerInfo = new HashMap<>();
+                                                            playerInfo.put("playerName", model.getName());
+                                                            playerInfo.put("playerImage", model.getImagePlayer());
+                                                            playerInfo.put("playerPoints", points);
+                                                            playerInfo.put("timestamp", FieldValue.serverTimestamp());
+
+                                                            DocumentReference playerVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID()));
+                                                            playerVote.set(playerInfo);
+
+                                                            DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+
+                                                            usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    Map<String, Object> usersInfo = new HashMap<>();
+                                                                    usersInfo.put("uid", mAuth.getCurrentUser().getUid());
+                                                                    usersInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                                    if (task.getResult().exists()) {
+                                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                                        usersVote.update(usersInfo);
+                                                                    } else {
+                                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                                        usersVote.set(usersInfo);
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
                                                     }
-                                                }
-                                            });
-
-
+                                                });
+                                                        playerVoteDialogBuilder.dismiss();
+                                            } else {
+                                                Toast.makeText(activity, "You dont have enough points", Toast.LENGTH_LONG).show();
+                                                playerVoteDialogBuilder.show();
+                                            }
                                         } else {
-                                            Map<String, Object> playerInfo = new HashMap<>();
-                                            playerInfo.put("playerName", model.getName());
-                                            playerInfo.put("playerImage", model.getImagePlayer());
-                                            playerInfo.put("playerPoints", points);
-                                            playerInfo.put("timestamp", FieldValue.serverTimestamp());
-
-                                            DocumentReference playerVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID()));
-                                            playerVote.set(playerInfo);
-
-                                            DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
-
-                                            usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    Map<String, Object> usersInfo = new HashMap<>();
-                                                    usersInfo.put("uid", mAuth.getCurrentUser().getUid());
-                                                    usersInfo.put("timestamp", FieldValue.serverTimestamp());
-                                                    if (task.getResult().exists()){
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
-                                                        usersVote.update(usersInfo);
-                                                    } else {
-                                                        DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
-                                                        usersVote.set(usersInfo);
-                                                    }
-                                                }
-                                            });
+                                            Toast.makeText(activity, "You dont have a points", Toast.LENGTH_LONG).show();
                                         }
+                                    } else {
+                                        Toast.makeText(activity, "You dont have a points", Toast.LENGTH_LONG).show();
                                     }
-                                });
-
-                            }
-
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("err", e.getLocalizedMessage());
+                                }
+                            });
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e("err", e.getLocalizedMessage());
-                        }
-                    });
-                }
+
+                    }
+                });
             }
-        })
+        });
 
-                .setNegativeButton("Cancel", null);
-
-        playerVoteDialogBuilder.create();
         playerVoteDialogBuilder.show();
 
     }
