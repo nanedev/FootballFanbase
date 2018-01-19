@@ -1016,7 +1016,7 @@ public class MainPage extends AppCompatActivity
                         public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException e) {
                             if (e == null) {
 
-                                if (querySnapshot2.size() != 0) {
+                                if (querySnapshot2.size() != 0 && !querySnapshot2.isEmpty()) {
 
                                     prevItemVisible = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
 
@@ -1060,56 +1060,57 @@ public class MainPage extends AppCompatActivity
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                model = task.getResult().toObject(UsersModel.class);
+                if (task.getResult().exists()) {
+                    model = task.getResult().toObject(UsersModel.class);
 
-                isPremium = model.isPremium();
-
-
-                if (isPremium) {
-
-                    loadPremium();
+                    isPremium = model.isPremium();
 
 
-                    adapter.setOnLoadMore(new OnLoadMoreListener() {
-                        @Override
-                        public void onLoadMore() {
+                    if (isPremium) {
+
+                        loadPremium();
 
 
-                            wallList.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    itemSize.add(null);
-                                    adapter.notifyItemInserted(itemSize.size() - 1);
-                                }
-                            });
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    premiumUsersLoadMore();
+                        adapter.setOnLoadMore(new OnLoadMoreListener() {
+                            @Override
+                            public void onLoadMore() {
 
 
-                                }
-                            }, 5000);
+                                wallList.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        itemSize.add(null);
+                                        adapter.notifyItemInserted(itemSize.size() - 1);
+                                    }
+                                });
 
-                        }
-                    });
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
 
-                    swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                        @Override
-                        public void onRefresh() {
-
-                            itemSize.clear();
-                            loadPremium();
-                        }
-                    });
+                                        premiumUsersLoadMore();
 
 
-                } else {
-                    freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
+                                    }
+                                }, 5000);
+
+                            }
+                        });
+
+                        swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                            @Override
+                            public void onRefresh() {
+
+                                itemSize.clear();
+                                loadPremium();
+                            }
+                        });
+
+
+                    } else {
+                        freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
+                    }
                 }
-
             }
         });
 

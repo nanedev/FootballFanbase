@@ -3,6 +3,8 @@ package com.malikbisic.sportapp.activity.api;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.PictureDrawable;
+import android.net.Uri;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,18 +22,29 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.GenericRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.caverock.androidsvg.SVG;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.firebase.EnterUsernameForApp;
 import com.malikbisic.sportapp.adapter.api.LeagueAdapter;
 import com.malikbisic.sportapp.model.api.LeagueModel;
+import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SelectLeagueActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -213,21 +226,85 @@ finish();
         public TextView countryName;
         ArrayList<LeagueModel> leagues = new ArrayList<>();
         View vm;
-
+public CircleImageView zastava;
         public LeagueViewHolder(View itemView, ArrayList<LeagueModel> leagues) {
             super(itemView);
             vm = itemView;
             leagueName = (TextView) vm.findViewById(R.id.leagueName);
             countryName = (TextView) vm.findViewById(R.id.countryName);
+            zastava = (CircleImageView) vm.findViewById(R.id.zastavadrzave2);
             this.leagues = leagues;
         }
 
         public void updateUI(LeagueModel model){
 
             leagueName.setText(model.getName());
-            countryName.setText(model.getCountry_name());
+            countryName.setText(model.getCountry_name() + ": ");
 
             Log.i("country: ", model.getCountry_name() + " , league: " + model.getName());
+
+
+            if (model.getCountry_name().equals("England")) {
+                zastava.setImageDrawable(vm.getContext().getResources().getDrawable(R.drawable.england));
+            } else if (model.getCountry_name().equals("Northern Ireland")) {
+                zastava.setImageDrawable(vm.getContext().getResources().getDrawable(R.drawable.northern_ireland));
+            } else if (model.getCountry_name().equals("Scotland")) {
+                zastava.setImageDrawable(vm.getContext().getResources().getDrawable(R.drawable.scotland));
+            } else if (model.getCountry_name().equals("Wales")) {
+                zastava.setImageDrawable(vm.getContext().getResources().getDrawable(R.drawable.welsh_flag));
+            }
+
+
+            String countryURL = "https://restcountries.eu/rest/v2/name/" + model.getCountry_name();
+
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Log.i("json", response.toString());
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+
+                            JSONObject object = response.getJSONObject(i);
+                            String countryName = object.getString("name");
+                            String countryImage = object.getString("flag");
+
+                            System.out.println("country flag" + countryImage);
+                            GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+
+                            requestBuilder = Glide
+                                    .with(vm.getContext())
+                                    .using(Glide.buildStreamModelLoader(Uri.class, vm.getContext()), InputStream.class)
+                                    .from(Uri.class)
+                                    .as(SVG.class)
+                                    .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
+                                    .sourceEncoder(new StreamEncoder())
+                                    .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
+                                    .decoder(new SearchableCountry.SvgDecoder())
+                                    .animate(android.R.anim.fade_in);
+
+
+                            Uri uri = Uri.parse(countryImage);
+
+                            requestBuilder
+                                    // SVG cannot be serialized so it's not worth to cache it
+                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                    .load(uri)
+                                    .into(zastava);
+
+                        }
+
+
+                    } catch (JSONException e) {
+                        Log.v("json", e.getLocalizedMessage());
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //Log.v("json", error.getLocalizedMessage());
+                }
+            });
+            Volley.newRequestQueue(vm.getContext()).add(request);
 
         }
     }

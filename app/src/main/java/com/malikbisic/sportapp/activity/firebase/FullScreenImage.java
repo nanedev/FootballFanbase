@@ -78,7 +78,7 @@ public class FullScreenImage extends AppCompatActivity {
         titleImage = (TextView) findViewById(R.id.textfromposttoimage);
         commentFullscreenImage = (ImageView) findViewById(R.id.commentFullscreenimage);
         image = (ImageView) findViewById(R.id.fullScreenImageView);
-        layoutImageTitle  = (RelativeLayout) findViewById(R.id.imagetitlelayout);
+        layoutImageTitle = (RelativeLayout) findViewById(R.id.imagetitlelayout);
         postingDatabase = FirebaseFirestore.getInstance();
         intent = getIntent();
         postKey = intent.getStringExtra("postKey");
@@ -418,18 +418,18 @@ public class FullScreenImage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-if (firstImageClick ){
-    firstImageClick = false;
-    secondImageClick = true;
-    parentLayout.setVisibility(View.GONE);
-    layoutImageTitle.setVisibility(View.GONE);
+                if (firstImageClick) {
+                    firstImageClick = false;
+                    secondImageClick = true;
+                    parentLayout.setVisibility(View.GONE);
+                    layoutImageTitle.setVisibility(View.GONE);
 
-}else if (secondImageClick){
-    firstImageClick = true;
-    secondImageClick = false;
-    parentLayout.setVisibility(View.VISIBLE);
-    layoutImageTitle.setVisibility(View.VISIBLE);
-}
+                } else if (secondImageClick) {
+                    firstImageClick = true;
+                    secondImageClick = false;
+                    parentLayout.setVisibility(View.VISIBLE);
+                    layoutImageTitle.setVisibility(View.VISIBLE);
+                }
 
             }
         });

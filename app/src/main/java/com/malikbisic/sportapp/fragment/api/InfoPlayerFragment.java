@@ -22,10 +22,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
-import com.malikbisic.sportapp.activity.api.AboutFootballClub;
-import com.malikbisic.sportapp.adapter.api.TransfersAdapter;
+
 import com.malikbisic.sportapp.classes.PlayerComments;
-import com.malikbisic.sportapp.model.api.Transfers;
+
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -53,8 +52,7 @@ public class InfoPlayerFragment extends Fragment {
     Intent getIntent;
 
 
-    ArrayList<Transfers> transfers;
-    TransfersAdapter adapter;
+
     TextView playerClubNameHeader;
     TextView playerYeardHeader;
     ImageView playerClubLogoHeader;

@@ -51,7 +51,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
             @Override
             public void onClick(View v) {
                 Intent openClub = new Intent(ctx, SelectClubActivity.class);
-                openClub.putExtra("leagueID", leagueModel.getCurrent_season_id());
+                openClub.putExtra("seasonId", leagueModel.getCurrent_season_id());
              activity.startActivityForResult(openClub, OPEN_CLUB);
             }
         });

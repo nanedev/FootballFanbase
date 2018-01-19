@@ -942,6 +942,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         points.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().exists()){
                 long likeNumber = task.getResult().getLong("currentMonthPoints.likePoints");
                 long dislikeNumber = task.getResult().getLong("currentMonthPoints.dislikePoints");
                 long totalNumber = task.getResult().getLong("currentMonthPoints.totalPoints");
@@ -963,7 +964,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                 }
 
 
-            }
+            }}
         });
 
     }
