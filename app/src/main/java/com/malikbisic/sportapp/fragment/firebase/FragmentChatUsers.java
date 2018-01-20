@@ -54,33 +54,17 @@ public class FragmentChatUsers extends Fragment {
     public static String online;
 
     public void getClubName() {
-
-
-    }
-
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat_users, container, false);
-        userRecylerView = (RecyclerView) view.findViewById(R.id.chatUserRecView);
-
-
-
-        Collections.sort(clubName, new OnlineNumber());
-
-
-        adapter = new ClubNameChatAdapter(clubName, getContext());
-        userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        userRecylerView.setAdapter(adapter);
-
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query userReference = db.collection("UsersChat");
-
-        userReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("UsersChat").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (final DocumentSnapshot snapshot : task.getResult()) {
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.e("error", e.getLocalizedMessage());
+                }
+
+                Log.i("club userchat", documentSnapshots.getDocuments().toString());
+
+                for (final DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
                     Log.i("club userchat", "otvoreno");
 
                     if (snapshot.exists()) {
@@ -93,7 +77,7 @@ public class FragmentChatUsers extends Fragment {
                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
                                 final List<UserChat> userChats = new ArrayList<UserChat>();
                                 numberOnline = 0;
-                                if (e != null){
+                                if (e != null) {
                                     Log.e("errorUsersChat", e.getLocalizedMessage());
                                 }
 
@@ -107,16 +91,17 @@ public class FragmentChatUsers extends Fragment {
                                     @Override
                                     public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                        if (e != null){
-                                            Log.e("erroruserInfo", e.getLocalizedMessage());
+                                        if (dataSnapshot.exists()) {
+                                            if (e != null) {
+                                                Log.e("erroruserInfo", e.getLocalizedMessage());
+                                            }
+                                            username = String.valueOf(dataSnapshot.getString("username"));
+                                            profileImage = String.valueOf(dataSnapshot.getString("profileImage"));
+                                            flag = String.valueOf(dataSnapshot.getString("flag"));
+
+                                             userChats.add(new UserChat(username, flag, profileImage, userUID, date, isOnline));
+                                            Collections.sort(userChats, new CheckOnline());
                                         }
-                                        username = String.valueOf(dataSnapshot.getString("username333s"));
-                                        profileImage = String.valueOf(dataSnapshot.getString("profileImage"));
-                                        flag = String.valueOf(dataSnapshot.getString("flag"));
-
-                                        // userChats.add(new UserChat(username, flag, profileImage, userUID, date, isOnline));
-                                        Collections.sort(userChats, new CheckOnline());
-
                                     }
                                 });
 
@@ -128,42 +113,49 @@ public class FragmentChatUsers extends Fragment {
                                 online = String.valueOf(FragmentChatUsers.numberOnline);
 
 
-
-
-
-
-                                userChats.add(new UserChat(FragmentChatUsers.username, FragmentChatUsers.flag, FragmentChatUsers.profileImage, FragmentChatUsers.userUID, FragmentChatUsers.date, isOnline));
+                               // userChats.add(new UserChat(FragmentChatUsers.username, FragmentChatUsers.flag, FragmentChatUsers.profileImage, FragmentChatUsers.userUID, FragmentChatUsers.date, isOnline));
 
                                 clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo, numberOnline));
+                                Collections.sort(clubName, new OnlineNumber());
+
+                                adapter = new ClubNameChatAdapter(clubName, getContext());
 
                                 adapter.notifyDataSetChanged();
 
                             }
                         });
-
-
                     }
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("err", e.getLocalizedMessage());
+
+
             }
         });
 
 
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_chat_users, container, false);
+        userRecylerView = (RecyclerView) view.findViewById(R.id.chatUserRecView);
+
+        userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        userRecylerView.setAdapter(adapter);
+
+        getClubName();
 
 
 
         return view;
     }
 
-    class OnlineNumber implements Comparator<UserChatGroup>{
+    class OnlineNumber implements Comparator<UserChatGroup> {
 
         @Override
         public int compare(UserChatGroup e1, UserChatGroup e2) {
-            if(e1.getNumberOnline() < e2.getNumberOnline()){
+            if (e1.getNumberOnline() < e2.getNumberOnline()) {
                 return 1;
             } else {
                 return -1;
@@ -171,11 +163,11 @@ public class FragmentChatUsers extends Fragment {
         }
     }
 
-    class CheckOnline implements Comparator<UserChat>{
+    class CheckOnline implements Comparator<UserChat> {
 
         @Override
         public int compare(UserChat e1, UserChat e2) {
-            if(e1.isIsonline()){
+            if (e1.isIsonline()) {
                 return 1;
             } else {
                 return -1;

@@ -210,6 +210,7 @@ public class MainPage extends AppCompatActivity
     int prevMonthScoreDisike = 0;
     String lastMonthUpdate = "noData";
 
+    String countryName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -370,6 +371,7 @@ public class MainPage extends AppCompatActivity
                                                 .into(userProfileImage);
 
                                         country = String.valueOf(value.get("flag"));
+                                        countryName = String.valueOf(value.get("country"));
                                         clubHeaderString = String.valueOf(value.get("favoriteClubLogo"));
                                         myClubName = String.valueOf(value.get("favoriteClub"));
                                         Picasso.with(getApplicationContext())
@@ -409,7 +411,7 @@ public class MainPage extends AppCompatActivity
                                         if (user != null)
                                             email.setText(user.getEmail());
                                         backgroundImage();
-
+                                        usersChatInfo();
 
                                     }
                                 }
@@ -464,9 +466,52 @@ public class MainPage extends AppCompatActivity
 
         usersPoint(this,  mAuth.getCurrentUser().getUid());
 
+        FirebaseFirestore iikkk = FirebaseFirestore.getInstance();
+        iikkk.collection("UsersChat").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                Log.i("clubID", String.valueOf(documentSnapshots.getDocuments().size()));
+                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()){
+                    Log.i("clubID", snapshot.getId());
+                }
+            }
+        });
+
 
     }
 
+    public void usersChatInfo(){
+      /*  final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+
+        Map<String,String> userChatInfo = new HashMap<>();
+        userChatInfo.put("username", usernameInfo);
+        userChatInfo.put("date", currentDate);
+            userChatInfo.put("profileImage", profielImage);
+        userChatInfo.put("country", countryName);
+        userChatInfo.put("flag", country);
+        userChatInfo.put("favoriteClub", myClubName);
+        userChatInfo.put("favoriteClubLogo", clubHeaderString);
+        userChatInfo.put("userID", uid);
+        userChatInfo.put("online", "true");
+
+        Map<String, Object> clubName = new HashMap<>();
+        clubName.put("clubName", myClubName);
+        FirebaseFirestore usersChat = FirebaseFirestore.getInstance();
+        usersChat.collection("UsersChat").document(myClubName).set(clubName);
+        usersChat.collection("UsersChat").document(myClubName).collection(uid).add(userChatInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+
+                Log.i("Successfully written",task.getResult().toString());
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i("Error",e.getLocalizedMessage());
+            }
+        });*/
+    }
 
     public void usersPoint(final Activity activity, final String uid) {
         currentScoreLike = 0;
