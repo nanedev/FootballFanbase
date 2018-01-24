@@ -29,6 +29,8 @@
                 android:layout_toEndOf="@+id/parent_club_logo"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:layout_centerVertical="true"
 

@@ -40,7 +40,7 @@ public class UsersChatViewHolder extends ChildViewHolder {
     CircleImageView flagUser;
     CircleImageView profileImageUser;
     public ImageView onlineImage;
-    FirebaseDatabase mDatabase;
+
     DatabaseReference mRef;
     FirebaseAuth mAuth;
     String currentUserDate;
@@ -55,8 +55,7 @@ public class UsersChatViewHolder extends ChildViewHolder {
         profileImageUser = (CircleImageView) view.findViewById(R.id.profileUsers);
         onlineImage = (ImageView) view.findViewById(R.id.onlineStatus);
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
-        mRef = mDatabase.getReference().child("UsersChat");
+
 
 
     }

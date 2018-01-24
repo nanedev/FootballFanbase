@@ -4,10 +4,30 @@
     android:layout_height="match_parent"
     android:background="#e0e0e0">
 
+
+    <SearchView
+        android:id="@+id/search_for_club_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:queryHint="Search club"
+        />
+
+    <View android:background="#ffffff"
+        android:layout_width = "match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/search_for_club_name"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:id="@+id/someview"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"/>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/chatUserRecView">
+        android:layout_height="wrap_content"
+        android:id="@+id/chatUserRecView"
+        android:layout_below="@+id/someview">
 
     </android.support.v7.widget.RecyclerView>
 

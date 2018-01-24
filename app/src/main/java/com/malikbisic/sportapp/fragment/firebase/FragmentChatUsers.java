@@ -1,11 +1,15 @@
 package com.malikbisic.sportapp.fragment.firebase;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +17,9 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,23 +30,26 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.api.ClubNameChatAdapter;
+import com.malikbisic.sportapp.adapter.api.SelectLeagueAdapter;
+import com.malikbisic.sportapp.model.api.LeagueModel;
 import com.malikbisic.sportapp.model.firebase.UserChat;
 import com.malikbisic.sportapp.model.firebase.UserChatGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.FormatFlagsConversionMismatchException;
 import java.util.List;
 
 /**
  * Created by Nane on 31.8.2017.
  */
 
-public class FragmentChatUsers extends Fragment {
+public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTextListener{
 
     RecyclerView userRecylerView;
     ClubNameChatAdapter adapter;
-    List<UserChatGroup> clubName = new ArrayList<UserChatGroup>();
+    List<UserChatGroup> clubName;
     FirebaseFirestore mReference;
     CollectionReference userReference;
     static String profileImage;
@@ -52,85 +61,69 @@ public class FragmentChatUsers extends Fragment {
     boolean isOnline;
     static int numberOnline;
     public static String online;
+    List<UserChat> userChats;
+    String clubNameString;
+    FirebaseAuth mauth;
+    SearchView searchView;
+
+    public FragmentChatUsers() {
+    }
 
     public void getClubName() {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("UsersChat").addSnapshotListener(new EventListener<QuerySnapshot>() {
+
+
+
+        userReference = FirebaseFirestore.getInstance().collection("UsersChat");
+
+
+        userReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.e("error", e.getLocalizedMessage());
-                }
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                clubName = new ArrayList<UserChatGroup>();
+                for (DocumentSnapshot documentSnapshot : documentSnapshots.getDocuments()){
 
-                Log.i("club userchat", documentSnapshots.getDocuments().toString());
+                    if (documentSnapshot.exists()){
 
-                for (final DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
-                    Log.i("club userchat", "otvoreno");
+                        final String  clubNameString = documentSnapshot.getId();
+                        final CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("UsersChat").document(clubNameString).collection("user-id");
 
-                    if (snapshot.exists()) {
-                        final String clubNameString = snapshot.getId();
-                        Log.i("clubName", clubNameString);
-
-                        final DocumentReference chatReference = db.collection("UsersChat").document(clubNameString);
-                        chatReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
-                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                            public void onSuccess(QuerySnapshot documentSnapshots) {
                                 final List<UserChat> userChats = new ArrayList<UserChat>();
                                 numberOnline = 0;
-                                if (e != null) {
-                                    Log.e("errorUsersChat", e.getLocalizedMessage());
+                                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()){
+
+
+                                    username = String.valueOf(snapshot.getString("username"));
+                                    profileImage = String.valueOf(snapshot.getString("profileImage"));
+                                    flag = String.valueOf(snapshot.getString("flag"));
+                                    clubNameLogo = String.valueOf(snapshot.getString("favoriteClubLogo"));
+                                    isOnline = Boolean.parseBoolean(snapshot.getString("online"));
+                                    userUID = String.valueOf(snapshot.getString("userID"));
+                                    date = String.valueOf(snapshot.getString("date"));
+                                    userChats.add(new UserChat(username, flag, profileImage, userUID,date,isOnline));
                                 }
-
-                                clubNameLogo = String.valueOf(dataSnapshot.getString("favoriteClubLogo"));
-                                isOnline = Boolean.parseBoolean(String.valueOf(dataSnapshot.getString("online")));
-                                userUID = String.valueOf(dataSnapshot.getString("userID"));
-                                date = String.valueOf(dataSnapshot.getString("date"));
-
-                                DocumentReference userInfo = db.collection("Users").document(userUID);
-                                userInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
-
-                                        if (dataSnapshot.exists()) {
-                                            if (e != null) {
-                                                Log.e("erroruserInfo", e.getLocalizedMessage());
-                                            }
-                                            username = String.valueOf(dataSnapshot.getString("username"));
-                                            profileImage = String.valueOf(dataSnapshot.getString("profileImage"));
-                                            flag = String.valueOf(dataSnapshot.getString("flag"));
-
-                                             userChats.add(new UserChat(username, flag, profileImage, userUID, date, isOnline));
-                                            Collections.sort(userChats, new CheckOnline());
-                                        }
-                                    }
-                                });
-
-
-                                if (isOnline) {
-                                    numberOnline++;
-                                }
-
-                                online = String.valueOf(FragmentChatUsers.numberOnline);
-
-
-                               // userChats.add(new UserChat(FragmentChatUsers.username, FragmentChatUsers.flag, FragmentChatUsers.profileImage, FragmentChatUsers.userUID, FragmentChatUsers.date, isOnline));
-
-                                clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo, numberOnline));
-                                Collections.sort(clubName, new OnlineNumber());
-
-                                adapter = new ClubNameChatAdapter(clubName, getContext());
+                                clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo,numberOnline));
+                                adapter = new ClubNameChatAdapter(clubName, getContext(),getActivity());
+                                userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                userRecylerView.setAdapter(adapter);
 
                                 adapter.notifyDataSetChanged();
-
                             }
                         });
-                    }
-                }
 
+                    }
+
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
             }
         });
-
 
     }
 
@@ -139,16 +132,68 @@ public class FragmentChatUsers extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_users, container, false);
+
         userRecylerView = (RecyclerView) view.findViewById(R.id.chatUserRecView);
-
-        userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        userRecylerView.setAdapter(adapter);
-
+        searchView = (android.widget.SearchView) view.findViewById(R.id.search_for_club_name);
         getClubName();
+        setupSearchView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
 
 
+                newText = newText.toLowerCase();
+                ArrayList<UserChatGroup> newList = new ArrayList<>();
+                for (UserChatGroup group : clubName) {
+                    String name = group.getTitle().toLowerCase();
+                    if (name.contains(newText)) {
+
+                        newList.add(group);
+
+
+                    }
+                }
+
+                userRecylerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                adapter = new ClubNameChatAdapter(newList, getActivity().getApplicationContext(), getActivity());
+                userRecylerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
+
+                return true;
+
+
+            }
+        });
 
         return view;
+    }
+
+    private void setupSearchView() {
+
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(this);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+        searchView.clearFocus();
+        searchView.setQueryHint("Search club");
+
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
     class OnlineNumber implements Comparator<UserChatGroup> {

@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.viewHolder.firebase;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.firebase.UserChat;
@@ -33,6 +35,7 @@ public class ClubNameViewHolder extends GroupViewHolder {
     View view;
     TextView clubName2;
     CircleImageView clubLogoImg;
+    Activity activity;
     public TextView onlineTexview;
     FirebaseDatabase mDatabase;
     int numberOnline;
@@ -58,14 +61,32 @@ public class ClubNameViewHolder extends GroupViewHolder {
                 Log.i(club.getTitle(), String.valueOf(((UserChatGroup) club).getNumberOnline()));
 
 
-
             }
         }
     }
 
-    public void setNumberOnline(final String title){
-        CollectionReference userReference = FirebaseFirestore.getInstance().collection("UsersChat");
+    public void setNumberOnline(final String title,Activity activity) {
+        final Query userReference = FirebaseFirestore.getInstance().collection("UsersChat").document(title).collection("user-id").whereEqualTo("online","true");
 
+        userReference.addSnapshotListener(activity,new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                if (!documentSnapshots.isEmpty()) {
+                    numberOnline = documentSnapshots.size();
+
+                    if (numberOnline == 0) {
+                        onlineTexview.setText("");
+                    } else {
+                        onlineTexview.setText(String.valueOf(numberOnline));
+                        view.setVisibility(View.VISIBLE);
+                    }
+
+
+                }
+            }
+        });
+
+/*
         userReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
@@ -107,6 +128,6 @@ public class ClubNameViewHolder extends GroupViewHolder {
                 }
 
             }
-        });
+        });*/
     }
 }

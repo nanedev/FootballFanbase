@@ -14,7 +14,7 @@ public class UserChatGroup extends ExpandableGroup {
     String online;
     int numberOnline;
 
-    public UserChatGroup(String title, List items, String clubLogo, int numberOnline) {
+    public UserChatGroup(String title, List<UserChat> items, String clubLogo, int numberOnline) {
         super(title, items);
 
         this.clubLogo = clubLogo;
