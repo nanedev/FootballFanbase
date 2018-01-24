@@ -36,6 +36,7 @@ import com.malikbisic.sportapp.model.firebase.UserChat;
 import com.malikbisic.sportapp.model.firebase.UserChatGroup;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.FormatFlagsConversionMismatchException;
@@ -103,8 +104,10 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
                                     userUID = String.valueOf(snapshot.getString("userID"));
                                     date = String.valueOf(snapshot.getString("date"));
                                     userChats.add(new UserChat(username, flag, profileImage, userUID,date,isOnline));
+                                    Collections.sort(userChats, new CheckOnline());
                                 }
                                 clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo,numberOnline));
+                                Collections.sort(clubName, new OnlineNumber());
                                 adapter = new ClubNameChatAdapter(clubName, getContext(),getActivity());
                                 userRecylerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                 userRecylerView.setAdapter(adapter);

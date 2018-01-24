@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -95,31 +96,33 @@ public class ClubNameViewHolder extends GroupViewHolder {
 
                     final String clubNameString = snapshot.getId();
 
-                    final DocumentReference chatReference = FirebaseFirestore.getInstance().collection("UsersChat").document(title);
-                    chatReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    final Query chatReference = FirebaseFirestore.getInstance().collection("UsersChat").document(title).collection("user-id");
+                    chatReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
-                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e1) {
+                        public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e1) {
                             final List<UserChat> userChats = new ArrayList<UserChat>();
                             numberOnline = 0;
                             String isOnline = "";
+                            for (DocumentSnapshot snap : dataSnapshot.getDocuments()) {
 
-                            if (dataSnapshot.contains("online"))
+                                if (snap.contains("online"))
 
-                                isOnline = dataSnapshot.getString("online");
+                                    isOnline = snap.getString("online");
 
-                            if (isOnline.equals("true")) {
-                                numberOnline++;
-                            }
+                                if (isOnline.equals("true")) {
+                                    numberOnline++;
+                                }
 
-                            online = String.valueOf(numberOnline);
+                                online = String.valueOf(numberOnline);
 
-                            onlineTexview.setText(online);
+                                onlineTexview.setText(online);
 
 
-                            if (numberOnline == 0) {
-                                view.setVisibility(View.GONE);
-                            } else {
-                                view.setVisibility(View.VISIBLE);
+                               /* if (numberOnline == 0) {
+                                    view.setVisibility(View.GONE);
+                                } else {
+                                    view.setVisibility(View.VISIBLE);
+                                }
                             }
                         }
                     });
