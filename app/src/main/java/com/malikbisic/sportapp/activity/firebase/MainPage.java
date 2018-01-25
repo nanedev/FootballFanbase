@@ -1058,10 +1058,10 @@ public class MainPage extends AppCompatActivity
                             .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING);
                     next.addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
-                        public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException e) {
+                        public void onEvent (@NonNull QuerySnapshot querySnapshot2, FirebaseFirestoreException e) {
                             if (e == null) {
 
-                                if (querySnapshot2.size() != 0 && !querySnapshot2.isEmpty()) {
+                                if (querySnapshot2.size() != 0 && !querySnapshot2.isEmpty() && querySnapshot2.size() >= 2) {
 
                                     prevItemVisible = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
 
@@ -1087,6 +1087,7 @@ public class MainPage extends AppCompatActivity
         });
     }
 
+    //bb
     @Override
     public void onStart() {
         super.onStart();

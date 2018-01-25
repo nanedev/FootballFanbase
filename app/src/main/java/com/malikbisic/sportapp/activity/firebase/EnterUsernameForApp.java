@@ -769,17 +769,18 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 userChatInfo.put("userID", uid);
                 userChatInfo.put("online", "true");
 
-                usersChat.collection("UsersChat").document(favoriteClubString).collection(uid).add(userChatInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                    public void onSuccess(Void aVoid) {
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("error Creg userschat", e.getLocalizedMessage());
+
                     }
                 });
+
 
 
 
