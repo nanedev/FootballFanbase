@@ -106,6 +106,9 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
                                     userChats.add(new UserChat(username, flag, profileImage, userUID,date,isOnline));
                                     Collections.sort(userChats, new CheckOnline());
                                 }
+                                if (isOnline){
+                                    numberOnline++;
+                                }
                                 clubName.add(new UserChatGroup(clubNameString, userChats, clubNameLogo,numberOnline));
                                 Collections.sort(clubName, new OnlineNumber());
                                 adapter = new ClubNameChatAdapter(clubName, getContext(),getActivity());
@@ -140,7 +143,7 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
         searchView = (android.widget.SearchView) view.findViewById(R.id.search_for_club_name);
         getClubName();
         setupSearchView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+       /* searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 return false;
@@ -172,7 +175,7 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
 
 
             }
-        });
+        }); */
 
         return view;
     }

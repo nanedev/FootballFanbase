@@ -1,12 +1,14 @@
 package com.malikbisic.sportapp.model.firebase;
 
+import java.util.Date;
+
 /**
  * Created by Nane on 11.9.2017.
  */
 
 public class Messages {
     private String message,type;
-    private long time;
+    private Date time;
     private boolean seen;
 
 
@@ -19,7 +21,7 @@ public class Messages {
         this.from = from;
     }
 
-    public Messages(String message, String type, boolean seen, long time) {
+    public Messages(String message, String type, boolean seen, Date time) {
         this.message = message;
         this.seen = seen;
         this.time = time;
@@ -36,11 +38,11 @@ public class Messages {
         this.message = message;
     }
 
-    public long getTime() {
+    public Date getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(Date time) {
         this.time = time;
     }
 

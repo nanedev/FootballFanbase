@@ -97,8 +97,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
         holder.messagetTextTexview.setText(messages.getMessage());
-        String time = DateUtils.formatDateTime(ctx, messages.getTime(), DateUtils.FORMAT_SHOW_TIME);
-        holder.timeTextView.setText(time);
+        if (messages.getTime() != null) {
+            String time = DateUtils.formatDateTime(ctx, messages.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+            holder.timeTextView.setText(time);
+        }
 
     }
 
