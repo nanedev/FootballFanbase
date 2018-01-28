@@ -1,5 +1,9 @@
 package com.malikbisic.sportapp.model.firebase;
 
+import android.support.annotation.NonNull;
+
+import com.google.firebase.firestore.Exclude;
+
 import java.util.Date;
 
 /**
@@ -13,21 +17,33 @@ public class Messages {
 
 
     private String from;
+    @Exclude
+    private String key;
 
     public Messages() {
     }
 
-    public Messages(String from) {
-        this.from = from;
-    }
 
-    public Messages(String message, String type, boolean seen, Date time) {
+    public Messages(String message, String type, boolean seen, Date time, String from, String key) {
         this.message = message;
         this.seen = seen;
         this.time = time;
         this.type = type;
+        this.from = from;
+        this.key = key;
+    }
 
+    public <T extends Messages> T withId(@NonNull final String id) {
+        this.key = id;
+        return (T) this;
+    }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getMessage() {

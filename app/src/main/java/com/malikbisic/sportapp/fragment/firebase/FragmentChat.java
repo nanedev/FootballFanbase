@@ -18,6 +18,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.firebase.ChatListAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
@@ -35,10 +43,11 @@ public class FragmentChat extends Fragment {
     List<Messages> messagesList = new ArrayList<>();
     ChatListAdapter mAdapter;
     FirebaseAuth mAuth;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat,container,false);
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
         mAuth = FirebaseAuth.getInstance();
         usersChatList = (RecyclerView) view.findViewById(R.id.recView_usersChat_list);
@@ -53,52 +62,32 @@ public class FragmentChat extends Fragment {
     }
 
     private void loadMessagesList() {
-        final DatabaseReference chat = FirebaseDatabase.getInstance().getReference().child("messages").child(mAuth.getCurrentUser().getUid());
-        chat.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        CollectionReference messageListQUERY = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user");
+        messageListQUERY.addSnapshotListener(new EventListener<QuerySnapshot>() {
+
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    String key = snapshot.getKey();
-                    Log.i("key", key);
-
-                    DatabaseReference usersInfo = chat.child(key);
-                    Query query = usersInfo.limitToLast(1);
-                    query.addChildEventListener(new ChildEventListener() {
+            public void onEvent(final QuerySnapshot documentSnapshot, FirebaseFirestoreException e) {
+                messagesList.clear();
+                for (DocumentSnapshot snap : documentSnapshot.getDocuments()) {
+                    final String toUserID = snap.getId();
+                    com.google.firebase.firestore.Query messageListRef = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user")
+                            .document(toUserID).collection("message");
+                    messageListRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                            Messages messages = dataSnapshot.getValue(Messages.class);
-                            messagesList.add(messages);
-                            mAdapter.notifyDataSetChanged();
-                        }
+                            for (DocumentChange snapshot : documentSnapshots.getDocumentChanges()) {
+                                if (snapshot.getType() == DocumentChange.Type.ADDED) {
+                                    Messages messages = snapshot.getDocument().toObject(Messages.class).withId(toUserID);
+                                    messagesList.add(messages);
 
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
+                                }
+                            }mAdapter.notifyDataSetChanged();
                         }
                     });
 
                 }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 

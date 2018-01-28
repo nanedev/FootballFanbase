@@ -1,17 +1,25 @@
 package com.malikbisic.sportapp.adapter.firebase;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.firebase.Messages;
 import com.squareup.picasso.Picasso;
@@ -27,6 +35,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>{
     List<Messages> listMessage;
     Context ctx;
+    FirebaseAuth mAuth;
 
     public ChatListAdapter(List<Messages> listMessage, Context ctx) {
         this.listMessage = listMessage;
@@ -42,25 +51,43 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     @Override
     public void onBindViewHolder(final ChatListViewHolder holder, int position) {
+        mAuth = FirebaseAuth.getInstance();
+        String myUID = mAuth.getCurrentUser().getUid();
         final Messages model = listMessage.get(position);
 
-        holder.lastMessageTxt.setText(model.getMessage());
+        String fromUID = model.getFrom();
 
-        DatabaseReference usersInfo = FirebaseDatabase.getInstance().getReference().child("Users").child(model.getFrom());
-        usersInfo.addValueEventListener(new ValueEventListener() {
+        if (myUID.equals(fromUID)){
+            holder.lastMessageTxt.setText("You: " +model.getMessage());
+        } else {
+            DocumentReference usersInfo = FirebaseFirestore.getInstance().collection("Users").document(fromUID);
+            usersInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                    String username = String.valueOf(documentSnapshot.getString("username"));
+                    holder.lastMessageTxt.setText(username + ": " +model.getMessage());
+
+                }
+            });
+
+            if (!model.isSeen()){
+                holder.lastMessageTxt.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+            } else {
+                holder.lastMessageTxt.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+            }
+        }
+
+
+
+        DocumentReference usersInfo = FirebaseFirestore.getInstance().collection("Users").document(model.getKey());
+        usersInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String username = String.valueOf(dataSnapshot.child("username").getValue());
-                String profileImage = String.valueOf(dataSnapshot.child("profileImage").getValue());
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                String username = String.valueOf(documentSnapshot.getString("username"));
+                String profileImage = String.valueOf(documentSnapshot.getString("profileImage"));
 
                 holder.usernameTxt.setText(username);
                 Picasso.with(ctx).load(profileImage).into(holder.profileImageImg);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 

@@ -54,27 +54,18 @@ public class PlayerAllTimeRankingViewHolder extends RecyclerView.ViewHolder {
     public void setNumbervotes(final PlayerModel model) {
 
 
-        FirebaseFirestore.getInstance().collection("PlayerPoints").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("PlayerPoints").document("AllTime").collection("player-id").document(model.getPlayerID()).collection("usersVote").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()){
-                    Log.i("proba",documentSnapshot.getId());
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                 db.collection("PlayerPoints").document(documentSnapshot.getId()).collection("player-id").document(model.getPlayerID()).collection("usersVote").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                            number = documentSnapshots.size();
-                            numberVotesRankingMonth.setText(String.valueOf(number));
-                        }
-                    });
-
-
-
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                number = 0;
+                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
+                    number++;
+                    numberVotesRankingMonth.setText(String.valueOf(number));
                 }
-
             }
         });
+
 
 
     }

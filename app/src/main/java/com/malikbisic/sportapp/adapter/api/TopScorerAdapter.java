@@ -175,7 +175,7 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
                                                 db.collection("Points").document(mAuth.getCurrentUser().getUid()).update("prevMonthPoints.totalPoints", myPointsVote);
 
 
-                                                DocumentReference playerVote = db.collection("PlayerPoints").document(String.valueOf(model.getPlayerID()));
+                                                DocumentReference playerVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID()));
                                                 playerVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -199,7 +199,7 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
                                                                     Map<String, Object> usersInfo = new HashMap<>();
                                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
-                                                                    if (task.getResult().exists()) {
+                                                                    if (task.getResult().exists()){
                                                                         DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                                         usersVote.update(usersInfo);
                                                                     } else {
@@ -228,7 +228,7 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
                                                                     Map<String, Object> usersInfo = new HashMap<>();
                                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
-                                                                    if (task.getResult().exists()) {
+                                                                    if (task.getResult().exists()){
                                                                         DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                                         usersVote.update(usersInfo);
                                                                     } else {
@@ -240,7 +240,75 @@ public class TopScorerAdapter extends RecyclerView.Adapter<TopScorerViewHolder> 
                                                         }
                                                     }
                                                 });
-                                                        playerVoteDialogBuilder.dismiss();
+
+                                                DocumentReference playerVoteAlltime = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID()));
+                                                playerVoteAlltime.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                        if (task.getResult().exists()) {
+                                                            long currentPointsPlayer = (long) task.getResult().get("playerPoints");
+                                                            long setPoints = currentPointsPlayer + points;
+                                                            Map<String, Object> playerInfo = new HashMap<>();
+                                                            playerInfo.put("playerName", model.getName());
+                                                            playerInfo.put("playerImage", model.getImagePlayer());
+                                                            playerInfo.put("playerPoints", setPoints);
+                                                            playerInfo.put("timestamp", FieldValue.serverTimestamp());
+
+                                                            DocumentReference playerVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID()));
+                                                            playerVote.update(playerInfo);
+
+                                                            DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+
+                                                            usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    Map<String, Object> usersInfo = new HashMap<>();
+                                                                    usersInfo.put("uid", mAuth.getCurrentUser().getUid());
+                                                                    usersInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                                    if (task.getResult().exists()){
+                                                                        DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                                        usersVote.update(usersInfo);
+                                                                    } else {
+                                                                        DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                                        usersVote.set(usersInfo);
+                                                                    }
+                                                                }
+                                                            });
+
+
+                                                        } else {
+                                                            Map<String, Object> playerInfo = new HashMap<>();
+                                                            playerInfo.put("playerName", model.getName());
+                                                            playerInfo.put("playerImage", model.getImagePlayer());
+                                                            playerInfo.put("playerPoints", points);
+                                                            playerInfo.put("timestamp", FieldValue.serverTimestamp());
+
+                                                            DocumentReference playerVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID()));
+                                                            playerVote.set(playerInfo);
+
+                                                            DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+
+                                                            usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    Map<String, Object> usersInfo = new HashMap<>();
+                                                                    usersInfo.put("uid", mAuth.getCurrentUser().getUid());
+                                                                    usersInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                                    if (task.getResult().exists()){
+                                                                        DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                                        usersVote.update(usersInfo);
+                                                                    } else {
+                                                                        DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                                        usersVote.set(usersInfo);
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+
+
+                                                playerVoteDialogBuilder.dismiss();
                                             } else {
                                                 Toast.makeText(activity, "You dont have enough points", Toast.LENGTH_LONG).show();
                                                 playerVoteDialogBuilder.show();

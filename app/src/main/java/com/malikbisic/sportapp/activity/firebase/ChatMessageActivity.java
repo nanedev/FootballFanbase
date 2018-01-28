@@ -27,6 +27,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.model.firebase.Message;
 import com.malikbisic.sportapp.utils.GetTimeAgo;
 import com.malikbisic.sportapp.adapter.firebase.MessageAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
@@ -66,8 +68,8 @@ public class ChatMessageActivity extends AppCompatActivity {
     private int mCurrentPage = 1;
     private SwipeRefreshLayout mRefreshLayout;
     boolean refreshing;
-    String lastkey = "";
-    String firstKey = "";
+    DocumentSnapshot lastkey;
+    DocumentSnapshot firstKey;
     int itemPos = 0;
     int loaditem = 0;
     @Override
@@ -100,10 +102,8 @@ public class ChatMessageActivity extends AppCompatActivity {
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_message_swipe_layout);
         mLinearLayout = new LinearLayoutManager(this);
-        mLinearLayout.setStackFromEnd(true);
-        mMessagesList.setHasFixedSize(true);
         mMessagesList.setLayoutManager(mLinearLayout);
-        mAdapter = new MessageAdapter(messagesList, getApplicationContext(),this);
+        mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this);
         mMessagesList.setAdapter(mAdapter);
 
         loadMessages();
@@ -141,11 +141,11 @@ public class ChatMessageActivity extends AppCompatActivity {
 
                 if (dataSnapshot.exists()) {
                     if (dataSnapshot.contains(mChatUser)) {
-                        Map<String,Object> chatAddMap = new HashMap<>();
+                        Map chatAddMap = new HashMap();
                         chatAddMap.put("seen", false);
                         chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
 
-                        Map<String,Object> chatUserMap = new HashMap<>();
+                        Map chatUserMap = new HashMap();
                         chatUserMap.put(mCurrentUserId + "/" + mChatUser, chatAddMap);
                         chatUserMap.put(mChatUser + "/" + mCurrentUserId, chatAddMap);
 
@@ -174,7 +174,7 @@ public class ChatMessageActivity extends AppCompatActivity {
                 mCurrentPage++;
 
                 itemPos = 0;
-                loadMoreMessages();
+               // loadMoreMessages();
 
             }
 
@@ -183,119 +183,77 @@ public class ChatMessageActivity extends AppCompatActivity {
 
     }
     private void loadMoreMessages() {
-        /*
 
-        final DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
-        Query messageQuery = messageRef.orderByKey().endAt(lastkey).limitToLast(10);
 
-        messageQuery.addChildEventListener(new ChildEventListener() {
+        final CollectionReference messageRef = mRootRef.collection("messages").document(mCurrentUserId).collection(mChatUser);
+        com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).endAt(lastkey).limit(10);
+        messageQuery.addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Messages message = dataSnapshot.getValue(Messages.class);
-                messagesList.add(itemPos++, message);
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
+                    Messages message = snapshot.toObject(Messages.class);
+                    messagesList.add(itemPos++, message);
 
-                if (itemPos == 1){
-                    String getLastKey = dataSnapshot.getKey();
-                    lastkey = getLastKey;
 
-                    if (lastkey.equals(firstKey)){
-                        mRefreshLayout.setEnabled(false);
-                    }
+                        DocumentSnapshot getLastKey = documentSnapshots.getDocuments()
+                                .get(documentSnapshots.size()-1);
+                        lastkey = getLastKey;
 
+                        if (lastkey.equals(firstKey)) {
+                            mRefreshLayout.setEnabled(false);
+                        }
+
+
+                    mAdapter.notifyDataSetChanged();
+                    mRefreshLayout.setRefreshing(false);
+                    mLinearLayout.scrollToPositionWithOffset(10, 0);
                 }
-
-
-
-                mAdapter.notifyDataSetChanged();
-                mRefreshLayout.setRefreshing(false);
-                mLinearLayout.scrollToPositionWithOffset(10, 0);
             }
+        });
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); */
     }
 
     private void checkAllLoaded(){
-/*
-        final DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
-        messageRef.addChildEventListener(new ChildEventListener() {
+
+        final CollectionReference messageRef = mRootRef.collection("messages").document(mCurrentUserId).collection(mChatUser);
+        messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException s) {
                 loaditem++;
                 if (loaditem == 1) {
-                    firstKey = dataSnapshot.getKey();
 
-                    Log.i("firstKey", firstKey);
+
+                    Log.i("firstKey", String.valueOf(firstKey));
                 }
-                    Log.i("firstLAST", lastkey);
+                Log.i("firstLAST", String.valueOf(lastkey));
 
 
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        }); */
+        });
 
     }
 
     private void loadMessages() {
 
 
-        final CollectionReference messageRef = mRootRef.collection("messages").document(mCurrentUserId).collection(mChatUser);
-        com.google.firebase.firestore.Query messageQuery = messageRef.limit(TOTAL_ITEMS_TO_LOAD).orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING);
-
-
-        messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
+        messageRef.limit(10).orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()){
-                    Messages message = snapshot.toObject(Messages.class);
 
-                    itemPos++;
-                    if (itemPos == 1){
-                        String getLastKey = snapshot.getId();
-                        lastkey = getLastKey;
+
+                for (DocumentChange snapshot : documentSnapshots.getDocumentChanges()) {
+
+                    if (snapshot.getType() == DocumentChange.Type.ADDED) {
+                        Messages message = snapshot.getDocument().toObject(Messages.class);
+
+                        messagesList.add(message);
+
+                        mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                        mAdapter.notifyDataSetChanged();
+                        mRefreshLayout.setRefreshing(false);
                     }
-                    messagesList.add(message);
-
-                    mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
-                    mAdapter.notifyDataSetChanged();
-                    mRefreshLayout.setRefreshing(false);
                 }
             }
         });
@@ -306,18 +264,20 @@ public class ChatMessageActivity extends AppCompatActivity {
     private void sendMessage() {
         String message = mChatMessageView.getText().toString();
         if (!TextUtils.isEmpty(message)) {
-            String current_user_ref = "messages/" + mCurrentUserId + "/" + mChatUser;
-            String chat_user_ref = "messages/" + mChatUser + "/" + mCurrentUserId;
 
-            Map<String,Object> messageMap = new HashMap<>();
+            Map messageMap = new HashMap();
             messageMap.put("message", message);
             messageMap.put("seen", false);
             messageMap.put("type", "text");
             messageMap.put("time", FieldValue.serverTimestamp());
+            messageMap.put("to", mChatUser);
             messageMap.put("from", mCurrentUserId);
 
-            mRootRef.collection("messages").document(mCurrentUserId).collection(mChatUser).add(messageMap);
-            mRootRef.collection("messages").document(mChatUser).collection(mCurrentUserId).add(messageMap);
+            mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message").add(messageMap);
+            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).collection("message").add(messageMap);
+
+            mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(mChatUser);
+            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mCurrentUserId);
 
             mChatMessageView.setText("");
 

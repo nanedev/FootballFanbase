@@ -126,44 +126,33 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
             }
         });
 
-        FirebaseFirestore.getInstance().collection("PlayerPoints").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        final Query documentReference = db.collection("PlayerPoints").document("AllTime").collection("player-id").orderBy("playerPoints", Query.Direction.DESCENDING);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@Nullable Task<QuerySnapshot> task) {
+                String playName;
+                String playerImage;
+                long playerPoints;
 
-                for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()){
-                    Log.i("proba",documentSnapshot.getId());
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    final Query documentReference = db.collection("PlayerPoints").document(documentSnapshot.getId()).collection("player-id").orderBy("playerPoints", Query.Direction.DESCENDING);
-                    documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@Nullable Task<QuerySnapshot> task) {
-                            String playName;
-                            String playerImage;
-                            long playerPoints;
+                int id = 0;
+                for (final DocumentSnapshot documentSnapshot : task.getResult()) {
+                    if (documentSnapshot.exists()) {
+                        id++;
+                        playerID = documentSnapshot.getId();
+                        playName = documentSnapshot.getString("playerName");
+                        playerImage = documentSnapshot.getString("playerImage");
+                        playerPoints = documentSnapshot.getLong("playerPoints");
+                        pos++;
+                        list.add(new PlayerModel(id, playName,playerImage, playerPoints,  playerID));
 
-                            int id = 0;
-                            for (final DocumentSnapshot documentSnapshot : task.getResult()) {
-                                if (documentSnapshot.exists()) {
-                                    id++;
-                                    playerID = documentSnapshot.getId();
-                                    playName = documentSnapshot.getString("playerName");
-                                    playerImage = documentSnapshot.getString("playerImage");
-                                    playerPoints = documentSnapshot.getLong("playerPoints");
+                        adapter.notifyDataSetChanged();
+                    }
 
-                                    list.add(new PlayerModel(id, playName,playerImage, playerPoints,  playerID));
-                                    pos++;
-                                    adapter.notifyDataSetChanged();
-                                }
-
-
-                            }
-                        }
-                    });
 
                 }
-
             }
         });
+
 
 
         final com.google.firebase.firestore.Query queryClub = clubReference.orderBy("numberClubFan", com.google.firebase.firestore.Query.Direction.DESCENDING);

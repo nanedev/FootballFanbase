@@ -227,6 +227,72 @@ public class PlayerFirebaseAdapter extends RecyclerView.Adapter<PlayersInProfile
                                     }
                                 });
 
+                                DocumentReference playerVoteAlltime = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID()));
+                                playerVoteAlltime.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.getResult().exists()) {
+                                            long currentPointsPlayer = (long) task.getResult().get("playerPoints");
+                                            long setPoints = currentPointsPlayer + points;
+                                            Map<String, Object> playerInfo = new HashMap<>();
+                                            playerInfo.put("playerName", model.getName());
+                                            playerInfo.put("playerImage", model.getImage());
+                                            playerInfo.put("playerPoints", setPoints);
+                                            playerInfo.put("timestamp", FieldValue.serverTimestamp());
+
+                                            DocumentReference playerVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID()));
+                                            playerVote.update(playerInfo);
+
+                                            DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+
+                                            usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    Map<String, Object> usersInfo = new HashMap<>();
+                                                    usersInfo.put("uid", mAuth.getCurrentUser().getUid());
+                                                    usersInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                    if (task.getResult().exists()){
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        usersVote.update(usersInfo);
+                                                    } else {
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        usersVote.set(usersInfo);
+                                                    }
+                                                }
+                                            });
+
+
+                                        } else {
+                                            Map<String, Object> playerInfo = new HashMap<>();
+                                            playerInfo.put("playerName", model.getName());
+                                            playerInfo.put("playerImage", model.getImage());
+                                            playerInfo.put("playerPoints", points);
+                                            playerInfo.put("timestamp", FieldValue.serverTimestamp());
+
+                                            DocumentReference playerVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID()));
+                                            playerVote.set(playerInfo);
+
+                                            DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+
+                                            usersVote.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    Map<String, Object> usersInfo = new HashMap<>();
+                                                    usersInfo.put("uid", mAuth.getCurrentUser().getUid());
+                                                    usersInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                    if (task.getResult().exists()){
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        usersVote.update(usersInfo);
+                                                    } else {
+                                                        DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
+                                                        usersVote.set(usersInfo);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+
                             }
 
                         }
