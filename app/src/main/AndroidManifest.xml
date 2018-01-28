@@ -66,9 +66,10 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
-        <activity android:name=".fragment.firebase.ProfileFragment"
+        <activity
+            android:name=".fragment.firebase.ProfileFragment"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"/>
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -204,9 +205,9 @@
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".activity.api.LeagueInfoActivity"
+            android:parentActivityName=".activity.api.FootballActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"
-            android:parentActivityName=".activity.api.FootballActivity"/>
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".activity.api.AboutFootballClub"
             android:screenOrientation="portrait"
@@ -223,15 +224,15 @@
         <activity
             android:name=".activity.api.PlayerInfoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark">
-
-        </activity>
-        <activity android:name=".activity.api.SingleFixtureActivity"
-            android:theme="@style/AppTheme.Dark"
+            android:theme="@style/AppTheme.Dark"></activity>
+        <activity
+            android:name=".activity.api.SingleFixtureActivity"
+            android:parentActivityName=".activity.api.FootballActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName=".activity.api.FootballActivity">
-
-        </activity>
+            android:theme="@style/AppTheme.Dark"></activity>
+        <activity android:name=".activity.firebase.RankingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark"></activity>
     </application>
 
 </manifest>

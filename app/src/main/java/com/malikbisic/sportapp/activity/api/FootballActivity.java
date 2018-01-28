@@ -16,7 +16,7 @@ import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
 
 public class FootballActivity extends AppCompatActivity {
     private ViewPager mViewPager;
-    private SectionPageAdapter sectionPageAdapter;
+ SectionPageAdapter sectionPageAdapter;
 
     ProgressDialog progressBar;
 

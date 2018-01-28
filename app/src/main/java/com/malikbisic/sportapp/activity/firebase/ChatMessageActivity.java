@@ -103,7 +103,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         mLinearLayout.setStackFromEnd(true);
         mMessagesList.setHasFixedSize(true);
         mMessagesList.setLayoutManager(mLinearLayout);
-        mAdapter = new MessageAdapter(messagesList, getApplicationContext());
+        mAdapter = new MessageAdapter(messagesList, getApplicationContext(),this);
         mMessagesList.setAdapter(mAdapter);
 
         loadMessages();
@@ -141,11 +141,11 @@ public class ChatMessageActivity extends AppCompatActivity {
 
                 if (dataSnapshot.exists()) {
                     if (dataSnapshot.contains(mChatUser)) {
-                        Map chatAddMap = new HashMap();
+                        Map<String,Object> chatAddMap = new HashMap<>();
                         chatAddMap.put("seen", false);
                         chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
 
-                        Map chatUserMap = new HashMap();
+                        Map<String,Object> chatUserMap = new HashMap<>();
                         chatUserMap.put(mCurrentUserId + "/" + mChatUser, chatAddMap);
                         chatUserMap.put(mChatUser + "/" + mCurrentUserId, chatAddMap);
 
@@ -277,7 +277,7 @@ public class ChatMessageActivity extends AppCompatActivity {
 
 
         final CollectionReference messageRef = mRootRef.collection("messages").document(mCurrentUserId).collection(mChatUser);
-        com.google.firebase.firestore.Query messageQuery = messageRef.limit(TOTAL_ITEMS_TO_LOAD);
+        com.google.firebase.firestore.Query messageQuery = messageRef.limit(TOTAL_ITEMS_TO_LOAD).orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING);
 
 
         messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -309,7 +309,7 @@ public class ChatMessageActivity extends AppCompatActivity {
             String current_user_ref = "messages/" + mCurrentUserId + "/" + mChatUser;
             String chat_user_ref = "messages/" + mChatUser + "/" + mCurrentUserId;
 
-            Map messageMap = new HashMap();
+            Map<String,Object> messageMap = new HashMap<>();
             messageMap.put("message", message);
             messageMap.put("seen", false);
             messageMap.put("type", "text");

@@ -11,8 +11,18 @@ public class PlayerModel {
     private  long points;
     private  String image;
     private String playerID;
+    private String numberVotes;
 
     public PlayerModel() {
+    }
+
+    public PlayerModel(int id, String name, long points, String image, String playerID, String numberVotes) {
+        this.id = id;
+        this.name = name;
+        this.points = points;
+        this.image = image;
+        this.playerID = playerID;
+        this.numberVotes = numberVotes;
     }
 
     public PlayerModel(int id, String name, String image, long points, String playerID) {
@@ -21,6 +31,14 @@ public class PlayerModel {
         this.points = points;
         this.image = image;
         this.playerID = playerID;
+    }
+
+    public String getNumberVotes() {
+        return numberVotes;
+    }
+
+    public void setNumbervotes(String numberVotes) {
+        this.numberVotes = numberVotes;
     }
 
     public String getPlayerID() {

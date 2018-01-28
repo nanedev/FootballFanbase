@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.adapter.firebase;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -19,6 +20,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.firebase.Messages;
 import com.malikbisic.sportapp.model.firebase.UserChat;
@@ -37,10 +42,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private List<Messages> mMessageList;
     FirebaseAuth mAutH;
     Context ctx;
+    Activity activity;
 
-    public MessageAdapter(List<Messages> mMessageList, Context ctx) {
+    public MessageAdapter(List<Messages> mMessageList, Context ctx, Activity activity) {
         this.mMessageList = mMessageList;
         this.ctx = ctx;
+        this.activity = activity;
+
     }
 
     @Override
@@ -75,21 +83,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
                 holder.profileImageImg.setVisibility(View.VISIBLE);
 
-                DatabaseReference displayImage = FirebaseDatabase.getInstance().getReference();
+                FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
 
-                displayImage.child("Users").child(from_user).addValueEventListener(new ValueEventListener() {
+                displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                        UserChat model2 = dataSnapshot.getValue(UserChat.class);
+                        UserChat model2 = dataSnapshot.toObject(UserChat.class);
                         String profileImage = model2.getProfileImage();
 
                         holder.setProfileImageImg(ctx, profileImage);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
             }

@@ -15,6 +15,10 @@
             android:id="@+id/nav_message"
             android:icon="@drawable/ic_message_black_24dp"
             android:title="Message" />
+
+        <item android:id="@+id/nav_rankings"
+            android:title="Rankings"
+            android:icon="@drawable/ranking"/>
         <item
             android:id="@+id/nav_notifications"
             android:icon="@drawable/ic_add_alert_black_24dp"

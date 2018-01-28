@@ -913,7 +913,13 @@ public class MainPage extends AppCompatActivity
             Intent intent = new Intent(MainPage.this, FootballActivity.class);
             startActivity(intent);
 
-        } else if (id == R.id.nav_notifications) {
+        }else if (id == R.id.nav_rankings){
+
+            Intent intent = new Intent(MainPage.this,RankingsActivity.class);
+            startActivity(intent);
+            
+
+        }else if (id == R.id.nav_notifications) {
             NotificationFragment notificationFragment = new NotificationFragment();
 
             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
