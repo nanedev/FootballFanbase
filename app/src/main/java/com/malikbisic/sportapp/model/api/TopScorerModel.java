@@ -11,6 +11,10 @@ public class TopScorerModel {
     int goal;
     int position;
     int playerID;
+    String countryImage;
+    String clubImage;
+    String countryName;
+    String clubName;
 
     public TopScorerModel() {
     }

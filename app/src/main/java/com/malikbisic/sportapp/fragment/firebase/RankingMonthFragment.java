@@ -2,17 +2,32 @@ package com.malikbisic.sportapp.fragment.firebase;
 
 
 import android.graphics.Color;
+import android.graphics.drawable.PictureDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.GenericRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.caverock.androidsvg.SVG;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -23,9 +38,16 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.adapter.firebase.PlayersRankingMonthAdapter;
 import com.malikbisic.sportapp.model.api.PlayerModel;
+import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,15 +60,12 @@ import java.util.Date;
 public class RankingMonthFragment extends Fragment {
 
     RelativeLayout playerRankLayout;
-    RelativeLayout clubRankLayout;
-    RelativeLayout fansRankLayout;
+
     TextView playerRankText1;
     TextView playerRankText2;
-    TextView clubRankText1;
-    TextView clubRankText2;
-    TextView fansRankText1;
-    TextView fansRankText2;
-    View linija;
+
+
+
     String playerID;
     int pos = 1;
     int numbeR;
@@ -59,8 +78,7 @@ public class RankingMonthFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ranking_month_fragment, container, false);
         playerRankLayout = (RelativeLayout) view.findViewById(R.id.rankingsLayoutplayer);
-        clubRankLayout = (RelativeLayout) view.findViewById(R.id.clubrankinglayout);
-        fansRankLayout = (RelativeLayout) view.findViewById(R.id.fansrankiniglayout);
+
         playerRankText1 = (TextView) view.findViewById(R.id.playersText);
         playerRankText2 = (TextView) view.findViewById(R.id.playerRankingText);
 
@@ -74,8 +92,6 @@ public class RankingMonthFragment extends Fragment {
 
 
         playerRankLayout.setActivated(true);
-        clubRankLayout.setActivated(false);
-        fansRankLayout.setActivated(false);
         playerRankText1.setTextColor(Color.parseColor("#000000"));
         playerRankText2.setTextColor(Color.parseColor("#000000"));
 
@@ -107,10 +123,10 @@ public class RankingMonthFragment extends Fragment {
                         playName = documentSnapshot.getString("playerName");
                         playerImage = documentSnapshot.getString("playerImage");
                         playerPoints = documentSnapshot.getLong("playerPoints");
-
                         list.add(new PlayerModel(id, playName,playerImage, playerPoints,  playerID));
                         pos++;
                         adapter.notifyDataSetChanged();
+
                     }
 
 

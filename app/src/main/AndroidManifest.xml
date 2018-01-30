@@ -224,15 +224,17 @@
         <activity
             android:name=".activity.api.PlayerInfoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".activity.api.SingleFixtureActivity"
             android:parentActivityName=".activity.api.FootballActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
-        <activity android:name=".activity.firebase.RankingsActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".activity.firebase.RankingsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.firebase.SeeUsersVotesActivity"></activity>
     </application>
 
 </manifest>

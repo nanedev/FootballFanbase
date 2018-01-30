@@ -1,97 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:id="@+id/itemcontainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/itemcontainer"
-        android:padding="5dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:padding="5dp">
 
         <TextView
+            android:id="@+id/nekitekst"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Number fans voted for this player:"
-            android:textColor="#81d4fa"
+            android:textColor="#81d4fa" />
 
-            android:id="@+id/nekitekst"/>
+        <TextView
+            android:id="@+id/playerRAnkingFansVotedNmbr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/nekitekst"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/nekitekst"
+            android:layout_toRightOf="@+id/nekitekst"
+            android:text="23"
+            android:textColor="#81d4fa"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/playerRAnkingFansVotedNmbr"
-            android:layout_toRightOf="@+id/nekitekst"
-            android:layout_alignBaseline="@+id/nekitekst"
-            android:layout_toEndOf="@+id/nekitekst"
-            android:layout_marginLeft="10dp"
-            android:text="23"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_marginStart="10dp"
-            android:textColor="#81d4fa"
-            />
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/nekitekst"
-    android:padding="5dp"
-    android:layout_marginTop="5dp">
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/playerRankingImage"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:text="SEE VOTES"
+            android:textColor="#81d4fa" />
 
-      />
+        <RelativeLayout
+            android:id="@+id/imagenamepointsposlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nekitekst"
+            android:layout_marginTop="5dp"
+            android:padding="5dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/playerRankingImage"
+                android:layout_width="80dp"
+
+                android:layout_height="80dp"
+                android:layout_below="@+id/playerRankingName"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/playerRankingName"
-        android:layout_toLeftOf="@+id/playerRankingImage"
-        android:layout_toStartOf="@+id/playerRankingImage"
-        android:layout_centerVertical="true"
-        android:textColor="@color/black"
-        android:layout_marginRight="10dp"
-        android:layout_marginEnd="10dp"/>
+                />
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1."
-        android:textSize="30sp"
-        android:layout_centerVertical="true"
-        android:textStyle="bold"
-        android:id="@+id/playerRankingposition"
-        android:textColor="@color/black"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/playerRankingClub"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                   android:layout_toLeftOf="@+id/playerRankingImage"
+                    android:layout_toStartOf="@+id/playerRankingImage"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_below="@+id/playerRankingName"
+                    android:layout_marginTop="20dp"/>
 
 
 
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="300 pts"
-        android:textSize="30sp"
-        android:layout_centerVertical="true"
-        android:textStyle="bold"
-        android:id="@+id/playerRankingPints"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
-        android:textColor="@color/black"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/playerRankingCOuntry"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_toRightOf="@+id/playerRankingImage"
+                    android:layout_toEndOf="@+id/playerRankingImage"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_below="@+id/playerRankingName"
+                    android:layout_marginTop="20dp"
 
 
-</RelativeLayout>
+                    />
 
 
+
+
+            <TextView
+                android:id="@+id/playerRankingName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/playerRankingposition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1."
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/playerRankingPints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:text="300 pts"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imagenamepointsposlayout"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:id="@+id/voteplayerButton"
+            android:background="@drawable/vote_player_button_shape"
+            android:text="VOTE"
+            android:textColor="@color/white" />
 
 
     </RelativeLayout>
@@ -99,8 +151,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/black"
-        android:layout_below="@+id/itemcontainer"/>
+        android:layout_below="@+id/itemcontainer"
+        android:background="@color/black" />
 
 
 </RelativeLayout>

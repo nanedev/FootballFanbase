@@ -238,7 +238,7 @@ public class ChatMessageActivity extends AppCompatActivity {
 
 
         CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
-        messageRef.limit(10).orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
+        messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).limit(10).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -253,8 +253,31 @@ public class ChatMessageActivity extends AppCompatActivity {
                         mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
                         mAdapter.notifyDataSetChanged();
                         mRefreshLayout.setRefreshing(false);
+
+                        //lastItem = documentSnapshots.getDocuments().get(documentSnapshots.size());
+
                     }
                 }
+
+               /* com.google.firebase.firestore.Query newitem = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
+                newitem.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).startAt(documentSnapshots.getDocuments()).limit(10);
+                newitem.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                        for (DocumentChange snapshot : documentSnapshots.getDocumentChanges()) {
+
+                            if (snapshot.getType() == DocumentChange.Type.ADDED) {
+                                Messages message = snapshot.getDocument().toObject(Messages.class);
+
+                                messagesList.add(message);
+
+                                mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                                mAdapter.notifyDataSetChanged();
+                                mRefreshLayout.setRefreshing(false);
+                            }
+                        }
+                    }
+                });*/
             }
         });
 
@@ -270,14 +293,17 @@ public class ChatMessageActivity extends AppCompatActivity {
             messageMap.put("seen", false);
             messageMap.put("type", "text");
             messageMap.put("time", FieldValue.serverTimestamp());
-            messageMap.put("to", mChatUser);
             messageMap.put("from", mCurrentUserId);
 
             mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message").add(messageMap);
             mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).collection("message").add(messageMap);
 
-            mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(mChatUser);
-            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mCurrentUserId);
+            Map chatUser = new HashMap();
+            chatUser.put("to", mChatUser);
+            Map mychatUser = new HashMap();
+            chatUser.put("to", mCurrentUserId);
+            mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
+            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
 
             mChatMessageView.setText("");
 

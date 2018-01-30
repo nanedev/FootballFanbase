@@ -44,7 +44,7 @@ public class FanbaseFanClubAdapter extends RecyclerView.Adapter<FanbaseFanClubTa
         viewHolder.positionClub.setText(pos + ".");
         viewHolder.clubName.setText(model.getClubName());
         Picasso.with(ctx).load(model.getClubLogo()).into(viewHolder.clubLogo);
-        viewHolder.numberFans.setText("" + model.getNumberClubFan());
+        viewHolder.numberFans.setText("Total fans: " + model.getNumberClubFan());
     }
 
     @Override
