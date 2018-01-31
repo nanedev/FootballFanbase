@@ -79,7 +79,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
 
 
-        DocumentReference usersInfo = FirebaseFirestore.getInstance().collection("Users").document(model.getKey());
+        DocumentReference usersInfo = FirebaseFirestore.getInstance().collection("Users").document(model.getTo());
         usersInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {

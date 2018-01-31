@@ -113,11 +113,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
 
-    public class MessageViewHolder extends RecyclerView.ViewHolder {
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
         public TextView messagetTextTexview;
         public CircleImageView profileImageImg;
         public RelativeLayout layout;
-        TextView timeTextView;
+        public TextView timeTextView;
 
         public MessageViewHolder(View itemView) {
             super(itemView);

@@ -11,39 +11,29 @@ import java.util.Date;
  */
 
 public class Messages {
-    private String message,type;
+    private String message;
+    private String type;
     private Date time;
     private boolean seen;
-
-
     private String from;
     @Exclude
-    private String key;
+    private String to;
+
+    public <T extends Messages> T withId(@NonNull final String id) {
+        this.to = id;
+        return (T) this;
+    }
 
     public Messages() {
     }
 
-
-    public Messages(String message, String type, boolean seen, Date time, String from, String key) {
+    public Messages(String message, String type, Date time, boolean seen, String from, String key) {
         this.message = message;
-        this.seen = seen;
-        this.time = time;
         this.type = type;
+        this.time = time;
+        this.seen = seen;
         this.from = from;
-        this.key = key;
-    }
-
-    public <T extends Messages> T withId(@NonNull final String id) {
-        this.key = id;
-        return (T) this;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
+        this.to = key;
     }
 
     public String getMessage() {
@@ -52,6 +42,14 @@ public class Messages {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Date getTime() {
@@ -70,19 +68,19 @@ public class Messages {
         this.seen = seen;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getFrom() {
         return from;
     }
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 }

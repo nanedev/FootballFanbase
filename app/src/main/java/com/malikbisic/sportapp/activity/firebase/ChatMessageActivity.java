@@ -1,6 +1,10 @@
 package com.malikbisic.sportapp.activity.firebase;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,14 +13,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +46,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.model.firebase.Message;
+import com.malikbisic.sportapp.model.firebase.UserChat;
 import com.malikbisic.sportapp.utils.GetTimeAgo;
 import com.malikbisic.sportapp.adapter.firebase.MessageAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
@@ -65,11 +76,12 @@ public class ChatMessageActivity extends AppCompatActivity {
     private LinearLayoutManager mLinearLayout;
     MessageAdapter mAdapter;
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
-    private int mCurrentPage = 1;
+    private int mCurrentPage = 10;
     private SwipeRefreshLayout mRefreshLayout;
     boolean refreshing;
-    DocumentSnapshot lastkey;
+    DocumentSnapshot lastItem;
     DocumentSnapshot firstKey;
+    DocumentSnapshot lastkey;
     int itemPos = 0;
     int loaditem = 0;
     @Override
@@ -102,11 +114,12 @@ public class ChatMessageActivity extends AppCompatActivity {
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_message_swipe_layout);
         mLinearLayout = new LinearLayoutManager(this);
+        mLinearLayout.setReverseLayout(true);
+
         mMessagesList.setLayoutManager(mLinearLayout);
         mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this);
-        mMessagesList.setAdapter(mAdapter);
 
-        loadMessages();
+        loadMessages(this);
         checkAllLoaded();
 
         mTitleView.setText(mChatUsername);
@@ -171,10 +184,10 @@ public class ChatMessageActivity extends AppCompatActivity {
             public void onRefresh() {
 
                 refreshing = true;
-                mCurrentPage++;
-
+                mCurrentPage = mCurrentPage + 10;
+                loadMessages(ChatMessageActivity.this);
                 itemPos = 0;
-               // loadMoreMessages();
+               // loadMoreMessages(ChatMessageActivity.this);
 
             }
 
@@ -182,34 +195,99 @@ public class ChatMessageActivity extends AppCompatActivity {
         });
 
     }
-    private void loadMoreMessages() {
+    private void loadMoreMessages(final Activity activity) {
 
 
-        final CollectionReference messageRef = mRootRef.collection("messages").document(mCurrentUserId).collection(mChatUser);
-        com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).endAt(lastkey).limit(10);
+
+
+        final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
+        final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).startAfter(lastkey).limit(10);
         messageQuery.addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
-                    Messages message = snapshot.toObject(Messages.class);
-                    messagesList.add(itemPos++, message);
 
-
-                        DocumentSnapshot getLastKey = documentSnapshots.getDocuments()
-                                .get(documentSnapshots.size()-1);
-                        lastkey = getLastKey;
-
-                        if (lastkey.equals(firstKey)) {
-                            mRefreshLayout.setEnabled(false);
-                        }
-
-
-                    mAdapter.notifyDataSetChanged();
-                    mRefreshLayout.setRefreshing(false);
-                    mLinearLayout.scrollToPositionWithOffset(10, 0);
-                }
             }
         });
+
+
+        final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
+                .setQuery(messageQuery, Messages.class).build();
+
+        FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder> adapter = new FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder>(options) {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            protected void onBindViewHolder(final MessageAdapter.MessageViewHolder holder, int position, Messages model) {
+                FirebaseAuth  mAutH = FirebaseAuth.getInstance();
+
+
+                messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                        lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+                    }
+                });
+                String current_user_id = mAutH.getCurrentUser().getUid();
+
+
+                String from_user = model.getFrom();
+                if (from_user != null) {
+
+                    if (from_user.equals(current_user_id)) {
+
+                        holder.messagetTextTexview.setBackgroundColor(Color.WHITE);
+                        holder.messagetTextTexview.setTextColor(R.color.black);
+                        holder.layout.setGravity(Gravity.RIGHT);
+                        holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+                        holder.profileImageImg.setVisibility(View.GONE);
+
+                    } else {
+                        holder.messagetTextTexview.setBackgroundResource(R.drawable.message_text_background);
+                        holder.messagetTextTexview.setTextColor(Color.WHITE);
+                        holder.layout.setGravity(Gravity.LEFT);
+                        holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+                        holder.profileImageImg.setVisibility(View.VISIBLE);
+
+                        FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
+
+                        displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                UserChat model2 = dataSnapshot.toObject(UserChat.class);
+                                String profileImage = model2.getProfileImage();
+
+                                holder.setProfileImageImg(activity, profileImage);
+                            }
+                        });
+                    }
+
+                    mRefreshLayout.setRefreshing(false);
+                    mLinearLayout.scrollToPositionWithOffset(10, 0);
+
+                }
+
+                holder.messagetTextTexview.setText(model.getMessage());
+                if (model.getTime() != null) {
+                    String time = DateUtils.formatDateTime(activity, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                    holder.timeTextView.setText(time);
+                }
+            }
+
+            @Override
+            public MessageAdapter.MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_single_layout, parent, false);
+                return new MessageAdapter.MessageViewHolder(v);
+            }
+
+            @Override
+            public void onError(FirebaseFirestoreException e) {
+                Log.e("error", e.getLocalizedMessage());
+            }
+        };
+
+        mMessagesList.setAdapter(adapter);
+
+        adapter.startListening();
 
 
     }
@@ -234,56 +312,89 @@ public class ChatMessageActivity extends AppCompatActivity {
 
     }
 
-    private void loadMessages() {
+    private void loadMessages(final Activity activity) {
 
 
-        CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
-        messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).limit(10).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
+        final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
+           final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(mCurrentPage);
+
+        final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
+                .setQuery(messageQuery, Messages.class).build();
+
+        FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder> adapter = new FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder>(options) {
+            @SuppressLint("ResourceAsColor")
             @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+            protected void onBindViewHolder(final MessageAdapter.MessageViewHolder holder, int position, Messages model) {
+             FirebaseAuth  mAutH = FirebaseAuth.getInstance();
 
 
-                for (DocumentChange snapshot : documentSnapshots.getDocumentChanges()) {
-
-                    if (snapshot.getType() == DocumentChange.Type.ADDED) {
-                        Messages message = snapshot.getDocument().toObject(Messages.class);
-
-                        messagesList.add(message);
-
-                        mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
-                        mAdapter.notifyDataSetChanged();
-                        mRefreshLayout.setRefreshing(false);
-
-                        //lastItem = documentSnapshots.getDocuments().get(documentSnapshots.size());
-
-                    }
-                }
-
-               /* com.google.firebase.firestore.Query newitem = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
-                newitem.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).startAt(documentSnapshots.getDocuments()).limit(10);
-                newitem.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        for (DocumentChange snapshot : documentSnapshots.getDocumentChanges()) {
-
-                            if (snapshot.getType() == DocumentChange.Type.ADDED) {
-                                Messages message = snapshot.getDocument().toObject(Messages.class);
-
-                                messagesList.add(message);
-
-                                mMessagesList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
-                                mAdapter.notifyDataSetChanged();
-                                mRefreshLayout.setRefreshing(false);
-                            }
-                        }
+                        lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
                     }
-                });*/
-            }
-        });
+                });
+                String current_user_id = mAutH.getCurrentUser().getUid();
 
+
+                String from_user = model.getFrom();
+                if (from_user != null) {
+
+                    if (from_user.equals(current_user_id)) {
+
+                        holder.messagetTextTexview.setBackgroundColor(Color.WHITE);
+                        holder.messagetTextTexview.setTextColor(R.color.black);
+                        holder.layout.setGravity(Gravity.RIGHT);
+                        holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+                        holder.profileImageImg.setVisibility(View.GONE);
+
+                    } else {
+                        holder.messagetTextTexview.setBackgroundResource(R.drawable.message_text_background);
+                        holder.messagetTextTexview.setTextColor(Color.WHITE);
+                        holder.layout.setGravity(Gravity.LEFT);
+                        holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+                        holder.profileImageImg.setVisibility(View.VISIBLE);
+
+                        FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
+
+                        displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                UserChat model2 = dataSnapshot.toObject(UserChat.class);
+                                String profileImage = model2.getProfileImage();
+
+                                holder.setProfileImageImg(activity, profileImage);
+                            }
+                        });
+                    }
+
+                    Log.i("position", String.valueOf(position));
+
+                    mRefreshLayout.setRefreshing(false);
+                   // mMessagesList.smoothScrollToPosition(0);
+
+                }
+
+                holder.messagetTextTexview.setText(model.getMessage());
+                if (model.getTime() != null) {
+                    String time = DateUtils.formatDateTime(activity, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                    holder.timeTextView.setText(time);
+                }
+            }
+
+            @Override
+            public MessageAdapter.MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_single_layout, parent, false);
+                return new MessageAdapter.MessageViewHolder(v);
+            }
+        };
+
+        mMessagesList.setAdapter(adapter);
+
+        adapter.startListening();
 
     }
-
     private void sendMessage() {
         String message = mChatMessageView.getText().toString();
         if (!TextUtils.isEmpty(message)) {
