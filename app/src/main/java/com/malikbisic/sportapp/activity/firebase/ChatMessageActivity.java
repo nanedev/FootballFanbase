@@ -24,6 +24,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 
+import com.firebase.ui.common.ChangeEventType;
+import com.firebase.ui.firestore.ChangeEventListener;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.FirebaseOptions;
@@ -77,6 +79,7 @@ public class ChatMessageActivity extends AppCompatActivity {
     MessageAdapter mAdapter;
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int mCurrentPage = 10;
+    private int scrollPosition = 0;
     private SwipeRefreshLayout mRefreshLayout;
     boolean refreshing;
     DocumentSnapshot lastItem;
@@ -185,7 +188,9 @@ public class ChatMessageActivity extends AppCompatActivity {
 
                 refreshing = true;
                 mCurrentPage = mCurrentPage + 10;
+                scrollPosition += 10;
                 loadMessages(ChatMessageActivity.this);
+
                 itemPos = 0;
                // loadMoreMessages(ChatMessageActivity.this);
 
@@ -260,9 +265,13 @@ public class ChatMessageActivity extends AppCompatActivity {
                             }
                         });
                     }
+                    if (mRefreshLayout.isRefreshing()){
 
+
+                    }
                     mRefreshLayout.setRefreshing(false);
-                    mLinearLayout.scrollToPositionWithOffset(10, 0);
+
+
 
                 }
 
@@ -298,14 +307,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException s) {
-                loaditem++;
-                if (loaditem == 1) {
-
-
-                    Log.i("firstKey", String.valueOf(firstKey));
-                }
-                Log.i("firstLAST", String.valueOf(lastkey));
-
+                loaditem = dataSnapshot.size();
 
             }
         });
@@ -321,17 +323,19 @@ public class ChatMessageActivity extends AppCompatActivity {
         final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
                 .setQuery(messageQuery, Messages.class).build();
 
-        FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder> adapter = new FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder>(options) {
+        final FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder> adapter = new FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder>(options) {
             @SuppressLint("ResourceAsColor")
             @Override
-            protected void onBindViewHolder(final MessageAdapter.MessageViewHolder holder, int position, Messages model) {
+            protected void onBindViewHolder(final MessageAdapter.MessageViewHolder holder, final int position, Messages model) {
              FirebaseAuth  mAutH = FirebaseAuth.getInstance();
 
 
                 messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+                        if (documentSnapshots.size() != 0) {
+                            lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+                        }
                     }
                 });
                 String current_user_id = mAutH.getCurrentUser().getUid();
@@ -369,10 +373,32 @@ public class ChatMessageActivity extends AppCompatActivity {
                         });
                     }
 
-                    Log.i("position", String.valueOf(position));
 
+
+                    Log.i("position", String.valueOf(position));
+                    if (mRefreshLayout.isRefreshing()) {
+                        mMessagesList.smoothScrollToPosition(getItemCount() - 6);
+                    }
+
+                    mMessagesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
+
+                         int totalItem = mLinearLayout.getItemCount();
+                         int lastVisible = mLinearLayout.findLastVisibleItemPosition();
+
+                            if(mRefreshLayout.isRefreshing()  && totalItem <= (lastVisible + 10) )
+                            {
+                                mMessagesList.smoothScrollToPosition(lastVisible + 15);
+                            }
+                        }
+                    });
                     mRefreshLayout.setRefreshing(false);
                    // mMessagesList.smoothScrollToPosition(0);
+
+
+
 
                 }
 
@@ -392,6 +418,23 @@ public class ChatMessageActivity extends AppCompatActivity {
 
         mMessagesList.setAdapter(adapter);
 
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int friendlyMessageCount = adapter.getItemCount();
+                int lastVisiblePosition =
+                         mLinearLayout.findFirstCompletelyVisibleItemPosition();
+                // If the recycler view is initially being loaded or the
+                // user is at the bottom of the list, scroll to the bottom
+                // of the list to show the newly added message.
+                if (lastVisiblePosition == 0 ||
+                        (positionStart >= (friendlyMessageCount - 1) &&
+                                lastVisiblePosition == (positionStart - 1))) {
+                    mMessagesList.scrollToPosition(positionStart);
+                }
+            }
+        });
         adapter.startListening();
 
     }
