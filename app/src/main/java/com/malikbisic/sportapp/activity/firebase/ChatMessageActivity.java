@@ -303,15 +303,6 @@ public class ChatMessageActivity extends AppCompatActivity {
 
     private void checkAllLoaded(){
 
-        final CollectionReference messageRef = mRootRef.collection("messages").document(mCurrentUserId).collection(mChatUser);
-        messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.ASCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException s) {
-                loaditem = dataSnapshot.size();
-
-            }
-        });
-
     }
 
     private void loadMessages(final Activity activity) {
@@ -322,7 +313,25 @@ public class ChatMessageActivity extends AppCompatActivity {
 
         final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
                 .setQuery(messageQuery, Messages.class).build();
+        messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                if (documentSnapshots.size() != 0) {
+                    lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
 
+                    CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
+                    messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException s) {
+                            lastItem = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);;
+                            if (lastkey.getId().equals(lastItem.getId())){
+                                mRefreshLayout.setEnabled(false);
+                            }
+                        }
+                    });
+                }
+            }
+        });
         final FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder> adapter = new FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder>(options) {
             @SuppressLint("ResourceAsColor")
             @Override
@@ -330,14 +339,9 @@ public class ChatMessageActivity extends AppCompatActivity {
              FirebaseAuth  mAutH = FirebaseAuth.getInstance();
 
 
-                messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        if (documentSnapshots.size() != 0) {
-                            lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
-                        }
-                    }
-                });
+
+
+
                 String current_user_id = mAutH.getCurrentUser().getUid();
 
 
