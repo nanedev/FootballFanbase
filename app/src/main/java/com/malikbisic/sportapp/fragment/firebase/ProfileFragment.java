@@ -977,7 +977,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
             public void onComplete(@NonNull final Task<QuerySnapshot> task) {
                 if (task.getException() == null) {
 
-                    for (DocumentSnapshot snapshot : task.getResult()) {
+                    for (final DocumentSnapshot snapshot : task.getResult()) {
                         final String postID = snapshot.getId();
 
                         Log.i("postID", postID);
@@ -985,12 +985,35 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                         CollectionReference likeNumber = db.collection("Likes").document(postID).collection("like-id");
                         likeNumber.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task2) {
+                            public void onComplete(@NonNull final Task<QuerySnapshot> task2) {
                                 if (task2.getException() == null) {
 
-                                    numberLikes = task2.getResult().size();
+                                    for (final DocumentSnapshot snapshot1 : task2.getResult()){
 
-                                    totalLikes+=numberLikes;
+                                        db.collection("Posting").document(postID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                                                String nekistring = String.valueOf(documentSnapshot.getData().get("uid"));
+
+                                                if (!snapshot1.getId().equals(nekistring)){
+                                                    Log.i("proba",snapshot1.getId());
+                                                    numberLikes = task2.getResult().size();
+
+                                                    totalLikes += numberLikes;
+
+                                                }
+                                            }
+                                        });
+
+
+                                    }
+
+
+
+
+
+
 
                                     CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
                                     dislikeNumber.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -998,9 +1021,11 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                                         public void onComplete(@NonNull Task<QuerySnapshot> task3) {
 
                                             if (task3.getException() == null) {
-                                                numberDisliks = task3.getResult().size();
+                                                if (!task3.getResult().getDocuments().toString().equals(uid)) {
+                                                    numberDisliks = task3.getResult().getDocuments().size();
 
-                                                totalDislikes+=numberDisliks;
+                                                    totalDislikes += numberDisliks;
+                                                }
 
 
                                                 pointsTotal = totalLikes - totalDislikes;

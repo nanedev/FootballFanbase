@@ -37,7 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ServerValue;
+
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -140,10 +140,10 @@ public class ChatMessageActivity extends AppCompatActivity {
                 mRootRef.collection("UsersChat").document(favoriteClubChat).collection("user-id").document(mChatUser).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e1) {
-                        String online = dataSnapshot.getString("online");
+                        boolean online = Boolean.parseBoolean(String.valueOf(dataSnapshot.getDate("online")));
                         String image = dataSnapshot.getString("profileImage");
 
-                        if (online.equals("true") && online != null) {
+                        if (online ) {
                             mLastSeenView.setText("Online");
                         } else {
                             Date onlineDate = dataSnapshot.getDate("online");
@@ -166,7 +166,7 @@ public class ChatMessageActivity extends AppCompatActivity {
                     if (dataSnapshot.contains(mChatUser)) {
                         Map chatAddMap = new HashMap();
                         chatAddMap.put("seen", false);
-                        chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
+                        chatAddMap.put("timestamp", FieldValue.serverTimestamp());
 
                         Map chatUserMap = new HashMap();
                         chatUserMap.put(mCurrentUserId + "/" + mChatUser, chatAddMap);
@@ -273,7 +273,7 @@ public class ChatMessageActivity extends AppCompatActivity {
                         });
                     }
                     if (mRefreshLayout.isRefreshing()){
-
+                        mMessagesList.smoothScrollToPosition(getItemCount() - 6);
 
                     }
                     mRefreshLayout.setRefreshing(false);

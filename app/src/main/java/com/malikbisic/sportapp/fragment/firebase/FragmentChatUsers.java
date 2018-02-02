@@ -103,7 +103,7 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
                                     flag = String.valueOf(snapshot.getString("flag"));
                                     clubNameLogo = String.valueOf(snapshot.getString("favoriteClubLogo"));
                                     if (snapshot.get("online") != null ) {
-                                        isOnline = (boolean) snapshot.get("online");
+                                        isOnline = Boolean.parseBoolean(snapshot.get("online").toString());
                                     }
                                     userUID = String.valueOf(snapshot.getString("userID"));
                                     date = String.valueOf(snapshot.getString("date"));
@@ -149,6 +149,7 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
         getActivity().startService(closeAPP);
         getClubName();
         setupSearchView();
+
        /* searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -219,6 +220,7 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
             }
         }
     }
+
 
     class CheckOnline implements Comparator<UserChat> {
 

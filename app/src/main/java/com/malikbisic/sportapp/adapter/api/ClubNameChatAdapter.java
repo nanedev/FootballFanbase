@@ -14,6 +14,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ServerTimestamp;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.firebase.ChatMessageActivity;
 import com.malikbisic.sportapp.model.firebase.UserChat;
@@ -85,13 +86,13 @@ Activity activity;
                 if (dataSnapshot.exists()) {
                     String usernameDatabase = String.valueOf(dataSnapshot.getString("username"));
                     String username = holder.usernameUser.getText().toString().trim();
-                    String isOnline = String.valueOf(dataSnapshot.getString("online"));
+                    boolean isOnline = Boolean.parseBoolean(String.valueOf(dataSnapshot.getDate("online")));
 
-                    if (isOnline.equals("true")) {
+                    if (isOnline) {
                         numberOnline++;
                     }
 
-                    if (isOnline.equals("true") && username.equals(usernameDatabase)) {
+                    if (isOnline && username.equals(usernameDatabase)) {
                         holder.onlineImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.online_shape));
 
                     } else {

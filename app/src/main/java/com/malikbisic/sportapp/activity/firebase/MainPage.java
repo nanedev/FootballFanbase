@@ -24,7 +24,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -82,9 +81,6 @@ import com.malikbisic.sportapp.model.firebase.UsersModel;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeParser;
-import org.joda.time.format.DateTimeParserBucket;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -259,6 +255,7 @@ public class MainPage extends AppCompatActivity
         wallList.setAdapter(adapter);
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
         itemSize.clear();
+
 
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -552,7 +549,7 @@ public class MainPage extends AppCompatActivity
                             @Override
                             public void onComplete(@Nullable Task<QuerySnapshot> task1) {
 
-                                    DateFormat likeDateFormat = new SimpleDateFormat("MMMM");
+                                    DateFormat likeDateFormat = new SimpleDateFormat("MMMM",Locale.getDefault());
                                     for (DocumentSnapshot snap : task1.getResult()) {
                                         String documentuid = snap.getId();
                                         if (snap.getDate("timestamp") != null) {

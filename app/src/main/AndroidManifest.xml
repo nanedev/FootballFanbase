@@ -236,6 +236,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
         <activity android:name=".activity.firebase.SeeUsersVotesActivity"></activity>
+
     </application>
 
 </manifest>
