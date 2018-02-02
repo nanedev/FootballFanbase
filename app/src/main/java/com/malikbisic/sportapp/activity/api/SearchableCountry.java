@@ -37,6 +37,7 @@ import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGExternalFileResolver;
 import com.caverock.androidsvg.SVGParseException;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.firebase.EnterUsernameForApp;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 import com.malikbisic.sportapp.adapter.api.CountryRecyclerAdapter;
@@ -67,6 +68,9 @@ SearchView searchView;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable_country);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         recyclerView = (RecyclerView) findViewById(R.id.rec_view_for_search_countries);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);

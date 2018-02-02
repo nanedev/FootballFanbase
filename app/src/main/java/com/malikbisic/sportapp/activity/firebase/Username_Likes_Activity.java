@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
 import com.malikbisic.sportapp.model.firebase.LikesUsernamePhoto;
@@ -60,6 +61,9 @@ public class Username_Likes_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_username__likes_);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         myIntent = getIntent();
         likeToolbar = (Toolbar) findViewById(R.id.like_toolbar);
         setSupportActionBar(likeToolbar);

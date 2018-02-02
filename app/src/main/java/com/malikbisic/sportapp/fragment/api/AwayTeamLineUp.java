@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.fragment.api;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.LineUpAdapter;
 import com.malikbisic.sportapp.model.api.LineUpModel;
 
@@ -49,6 +51,8 @@ public class AwayTeamLineUp extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_away_team_line_up, container, false);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
 
         fixturesID = getActivity().getIntent().getStringExtra("idFixtures");
 

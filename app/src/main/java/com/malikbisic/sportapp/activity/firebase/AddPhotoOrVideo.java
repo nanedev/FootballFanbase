@@ -37,6 +37,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -84,6 +85,9 @@ Toolbar addPhotoVideoToolbar;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_photo_or_video);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         myIntent = getIntent();
         mStorage = FirebaseStorage.getInstance();

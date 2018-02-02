@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.ListAdapter;
 
 import org.joda.time.DateTime;
@@ -40,7 +41,8 @@ public class DateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_date);
-
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
         listView = (ListView) findViewById(R.id.dateList);
         dateList = new ArrayList<String>();
         c = Calendar.getInstance();

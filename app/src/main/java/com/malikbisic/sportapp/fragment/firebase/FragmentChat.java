@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.fragment.firebase;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.firebase.ChatListAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
 
@@ -48,6 +50,8 @@ public class FragmentChat extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
 
         mAuth = FirebaseAuth.getInstance();
         usersChatList = (RecyclerView) view.findViewById(R.id.recView_usersChat_list);

@@ -66,6 +66,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.activity.BadgeServices;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.listener.EndlessRecyclerViewScrollListener;
 import com.malikbisic.sportapp.fragment.firebase.NotificationFragment;
 import com.malikbisic.sportapp.listener.OnLoadMoreListener;
@@ -218,6 +219,9 @@ public class MainPage extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         postingDatabase = FirebaseFirestore.getInstance();
         //postingDatabase.collection("Posting");

@@ -26,6 +26,7 @@ import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.SingleFixtureAdapter;
 import com.malikbisic.sportapp.model.api.AllFixturesModel;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
@@ -89,6 +90,9 @@ int getLeagueID;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fixture);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         countryNameTextview = (TextView) findViewById(R.id.imeDrzave);
         leagueNameTextview = (TextView) findViewById(R.id.nazivLige);
         countryLogo = (CircleImageView) findViewById(R.id.zastavaDrzave);

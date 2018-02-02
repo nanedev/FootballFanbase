@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.api.FragmentAllFixtures;
 import com.malikbisic.sportapp.fragment.api.FragmentAllMatches;
 import com.malikbisic.sportapp.fragment.api.FragmentMyClubMatches;
@@ -25,6 +26,8 @@ public class FootballActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_football);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.containerFootbalViewPager);

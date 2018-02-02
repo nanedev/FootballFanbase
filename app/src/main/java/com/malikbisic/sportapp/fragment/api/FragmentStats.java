@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.fragment.api;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,6 +87,8 @@ public class FragmentStats extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_fragment_stats, container, false);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
 
         fixturesID = getActivity().getIntent().getStringExtra("idFixtures");
         homeTeamId = getActivity().getIntent().getIntExtra("localTeamId", 0);

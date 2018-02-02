@@ -54,6 +54,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.model.firebase.Post;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
@@ -89,6 +90,9 @@ public class MyPostsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_posts);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         mAuth = FirebaseAuth.getInstance();
         myIntent = getIntent();
         mDatabase = FirebaseFirestore.getInstance();

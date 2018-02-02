@@ -32,6 +32,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +65,9 @@ public class RecordAudio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         postAudio = FirebaseFirestore.getInstance();
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         setContentView(R.layout.activity_record_audio);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         buttonStart = (Button) findViewById(R.id.button);

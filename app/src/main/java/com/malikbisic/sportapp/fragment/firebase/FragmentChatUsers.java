@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.fragment.firebase;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.ClubNameChatAdapter;
 import com.malikbisic.sportapp.adapter.api.SelectLeagueAdapter;
 import com.malikbisic.sportapp.model.api.LeagueModel;
@@ -100,7 +102,9 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
                                     profileImage = String.valueOf(snapshot.getString("profileImage"));
                                     flag = String.valueOf(snapshot.getString("flag"));
                                     clubNameLogo = String.valueOf(snapshot.getString("favoriteClubLogo"));
-                                    isOnline = Boolean.parseBoolean(snapshot.getString("online"));
+                                    if (snapshot.get("online") != null ) {
+                                        isOnline = (boolean) snapshot.get("online");
+                                    }
                                     userUID = String.valueOf(snapshot.getString("userID"));
                                     date = String.valueOf(snapshot.getString("date"));
                                     userChats.add(new UserChat(username, flag, profileImage, userUID,date,isOnline));
@@ -141,6 +145,8 @@ public class FragmentChatUsers extends Fragment implements SearchView.OnQueryTex
 
         userRecylerView = (RecyclerView) view.findViewById(R.id.chatUserRecView);
         searchView = (android.widget.SearchView) view.findViewById(R.id.search_for_club_name);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
         getClubName();
         setupSearchView();
        /* searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

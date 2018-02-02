@@ -33,6 +33,7 @@ import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.adapter.api.TableAdapter;
 import com.malikbisic.sportapp.adapter.api.TopScorerAdapter;
@@ -102,6 +103,8 @@ public class FragmentLeagueInfoStandings extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_fragment_league_info_standings, container, false);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         leagueNameTextview = (TextView) view.findViewById(R.id.leaguenamestandings);
         tableRecyclerview = (RecyclerView) view.findViewById(R.id.league_info_recycler_view);

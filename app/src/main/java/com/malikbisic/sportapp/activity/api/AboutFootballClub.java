@@ -28,6 +28,7 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.api.FixturesClubFragment;
 import com.malikbisic.sportapp.fragment.api.FragmentClubInfo;
 import com.malikbisic.sportapp.fragment.api.FragmentSquad;
@@ -66,6 +67,8 @@ public class AboutFootballClub extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_football_club);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
         sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.aboutFootballViewPager);
         setUpViewPager(mViewPager);

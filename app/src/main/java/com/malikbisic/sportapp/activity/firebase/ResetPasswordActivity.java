@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 
 public class ResetPasswordActivity extends AppCompatActivity {
     private EditText resetPwEmail;
@@ -27,6 +28,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         resetPwEmail = (EditText) findViewById(R.id.input_email_password_reset);
         resetPasswordBtn = (Button) findViewById(R.id.resetPasswordBtn);
         mAuth = FirebaseAuth.getInstance();

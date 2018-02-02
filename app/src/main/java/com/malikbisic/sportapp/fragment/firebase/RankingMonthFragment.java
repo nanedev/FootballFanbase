@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.fragment.firebase;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.adapter.firebase.PlayersRankingMonthAdapter;
 import com.malikbisic.sportapp.model.api.PlayerModel;
@@ -78,6 +80,8 @@ public class RankingMonthFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ranking_month_fragment, container, false);
         playerRankLayout = (RelativeLayout) view.findViewById(R.id.rankingsLayoutplayer);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
 
         playerRankText1 = (TextView) view.findViewById(R.id.playersText);
         playerRankText2 = (TextView) view.findViewById(R.id.playerRankingText);

@@ -56,6 +56,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.adapter.firebase.PlayerFirebaseAdapter;
 import com.malikbisic.sportapp.adapter.firebase.UserProfileAdapter;
@@ -160,6 +161,8 @@ TextView totalPointsTextview;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         list = new ArrayList<>();
         myIntent = getIntent();

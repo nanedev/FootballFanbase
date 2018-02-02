@@ -2,6 +2,7 @@
 package com.malikbisic.sportapp.fragment.api;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.ClubFixturesAdapter;
 import com.malikbisic.sportapp.model.api.ClubFixturesModel;
 
@@ -64,6 +66,9 @@ public class FixturesClubFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
+
         View v = inflater.inflate(R.layout.fragment_fixtures_club, container, false);
         recyclerView = (RecyclerView) v.findViewById(R.id.fixturesClub_recView);
         adapter = new ClubFixturesAdapter(clubFixturesModelArrayList, getActivity());

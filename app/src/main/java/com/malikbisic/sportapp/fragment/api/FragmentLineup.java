@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.fragment.api;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
 import com.malikbisic.sportapp.classes.CustomViewPager;
 
@@ -38,6 +40,8 @@ public class FragmentLineup extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_fragment_lineup, container, false);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
 
         sectionPageAdapter = new SectionPageAdapter(getActivity().getSupportFragmentManager());
         mViewPager = (CustomViewPager) v.findViewById(R.id.lineUp);

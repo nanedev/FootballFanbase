@@ -23,6 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
 
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.classes.PlayerComments;
 
 import com.squareup.picasso.Picasso;
@@ -83,7 +84,8 @@ public class InfoPlayerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_info_player, container, false);
         // Inflate the layout for this fragment
-
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
         position_player_textview = (TextView) v.findViewById(R.id.player_info_position);
 
         shirt_number_textview = (TextView) v.findViewById(R.id.player_shirt_number);

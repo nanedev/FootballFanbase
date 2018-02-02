@@ -3,6 +3,7 @@ package com.malikbisic.sportapp.activity.firebase;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -47,6 +48,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.model.firebase.Message;
 import com.malikbisic.sportapp.model.firebase.UserChat;
 import com.malikbisic.sportapp.utils.GetTimeAgo;
@@ -54,6 +56,7 @@ import com.malikbisic.sportapp.adapter.firebase.MessageAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +94,9 @@ public class ChatMessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_message);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         mRootRef = FirebaseFirestore.getInstance();
         mChatToolbar = (Toolbar) findViewById(R.id.chat_toolbar);
         setSupportActionBar(mChatToolbar);
@@ -137,11 +143,12 @@ public class ChatMessageActivity extends AppCompatActivity {
                         String online = dataSnapshot.getString("online");
                         String image = dataSnapshot.getString("profileImage");
 
-                        if (online.equals("true")) {
+                        if (online.equals("true") && online != null) {
                             mLastSeenView.setText("Online");
                         } else {
+                            Date onlineDate = dataSnapshot.getDate("online");
                             GetTimeAgo getTimeAgo = new GetTimeAgo();
-                            long lastTime = Long.parseLong(online);
+                            long lastTime = onlineDate.getTime();
                             String lastStringTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
                             mLastSeenView.setText(lastStringTime);
                         }
@@ -432,6 +439,7 @@ public class ChatMessageActivity extends AppCompatActivity {
                 // If the recycler view is initially being loaded or the
                 // user is at the bottom of the list, scroll to the bottom
                 // of the list to show the newly added message.
+                Log.i("newItem", String.valueOf(itemCount));
                 if (lastVisiblePosition == 0 ||
                         (positionStart >= (friendlyMessageCount - 1) &&
                                 lastVisiblePosition == (positionStart - 1))) {

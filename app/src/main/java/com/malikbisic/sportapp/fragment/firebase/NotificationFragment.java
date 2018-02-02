@@ -38,6 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.utils.GetTimeAgo;
 import com.malikbisic.sportapp.activity.firebase.SinglePostViewNotificationActivity;
 import com.malikbisic.sportapp.activity.firebase.CommentsActivity;
@@ -81,6 +82,9 @@ public class NotificationFragment extends Fragment {
         setHasOptionsMenu(true);
 
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
+
         auth = FirebaseAuth.getInstance();
         notificationRecView = (RecyclerView) view.findViewById(R.id.notification_recView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

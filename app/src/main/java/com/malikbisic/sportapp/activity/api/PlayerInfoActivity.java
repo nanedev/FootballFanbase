@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
 import com.malikbisic.sportapp.fragment.api.InfoPlayerFragment;
 import com.squareup.picasso.Picasso;
@@ -44,6 +45,8 @@ public class PlayerInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_info);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.playerInfoViewPager);

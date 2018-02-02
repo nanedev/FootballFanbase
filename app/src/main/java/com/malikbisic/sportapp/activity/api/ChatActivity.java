@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.firebase.FragmentChat;
 import com.malikbisic.sportapp.fragment.firebase.FragmentChatUsers;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
@@ -23,6 +24,8 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
         sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.containerChatViewPager);
         setUpViewPager(mViewPager);

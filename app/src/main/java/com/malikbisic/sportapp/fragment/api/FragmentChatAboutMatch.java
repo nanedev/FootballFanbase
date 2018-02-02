@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.fragment.api;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 
 
 public class FragmentChatAboutMatch extends Fragment {
@@ -24,6 +26,8 @@ public class FragmentChatAboutMatch extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
         return inflater.inflate(R.layout.fragment_fragment_chat_about_match, container, false);
     }
 

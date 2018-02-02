@@ -40,6 +40,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.firebase.NotificationFragment;
 import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
@@ -79,6 +80,9 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         auth = FirebaseAuth.getInstance();
         myIntent = getIntent();
         key = myIntent.getStringExtra("keyComment");

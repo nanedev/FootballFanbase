@@ -38,6 +38,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".activity.StopAppServices"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

@@ -51,6 +51,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.model.firebase.Post;
@@ -140,6 +141,8 @@ ArrayList<Post> postList = new ArrayList<>();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_post_view_notification);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         play_button = (Button) findViewById(R.id.play_buttonSinglePost);
         pause_button = (Button) findViewById(R.id.pause_buttonSinglePost);

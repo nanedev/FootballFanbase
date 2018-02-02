@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
 import com.malikbisic.sportapp.fragment.api.FragmentLeagueInfoFixtures;
 import com.malikbisic.sportapp.fragment.api.FragmentLeagueInfoResults;
@@ -27,7 +28,8 @@ public class LeagueInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_league_info);
-
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.containerLeagueInfoViewPager);

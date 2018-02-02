@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.ClubAdapter;
 import com.malikbisic.sportapp.model.api.ClubModel;
 import com.squareup.picasso.Picasso;
@@ -53,7 +54,8 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_club);
         myIntent = getIntent();
-
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         adapter = new ClubAdapter(club, this, this);
         clubRecView = (RecyclerView) findViewById(R.id.rec_view_favoriteClub);

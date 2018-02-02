@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.firebase.FanbaseFanClubAdapter;
 import com.malikbisic.sportapp.adapter.firebase.PlayersRankingAllTimeAdapter;
 import com.malikbisic.sportapp.adapter.firebase.PlayersRankingMonthAdapter;
@@ -70,6 +71,8 @@ public class RankingAllTimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.ranking_all_time_fragment,container,false);
 playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
         list = new ArrayList<>();
         playerRankingRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new PlayersRankingAllTimeAdapter(list,getActivity());

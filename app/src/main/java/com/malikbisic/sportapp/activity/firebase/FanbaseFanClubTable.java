@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 import com.malikbisic.sportapp.adapter.firebase.FanbaseFanClubAdapter;
 import com.malikbisic.sportapp.model.api.ClubTable;
@@ -48,6 +49,8 @@ public class FanbaseFanClubTable extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fanbase_fan_club_table);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         likeToolbar = (Toolbar) findViewById(R.id.clubTable_toolbar);
         setSupportActionBar(likeToolbar);

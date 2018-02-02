@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
 import com.malikbisic.sportapp.model.firebase.DislikeUsernamPhoto;
@@ -54,6 +55,9 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_username__dislikes_);
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
+
         dislikesReferences = FirebaseFirestore.getInstance();
         myIntent = getIntent();
         dislikeToolbar = (Toolbar) findViewById(R.id.dislike_toolbar);

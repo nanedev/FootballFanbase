@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.TeamAdapter;
 import com.malikbisic.sportapp.adapter.api.TeamAdapterDef;
 import com.malikbisic.sportapp.adapter.api.TeamAdapterGK;
@@ -67,6 +68,9 @@ public class FragmentSquad extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_squad, container, false);
+        Intent closeAPP = new Intent(getContext(), StopAppServices.class);
+        getActivity().startService(closeAPP);
+
         recyclerView = (RecyclerView) view.findViewById(R.id.team_recyclerview);
         recyclerViewMid = (RecyclerView) view.findViewById(R.id.teamMid_recyclerview);
         recyclerViewDef = (RecyclerView) view.findViewById(R.id.teamDef_recyclerview);

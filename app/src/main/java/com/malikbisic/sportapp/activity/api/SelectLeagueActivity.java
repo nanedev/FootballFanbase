@@ -32,6 +32,7 @@ import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.firebase.EnterUsernameForApp;
 import com.malikbisic.sportapp.adapter.api.LeagueAdapter;
 import com.malikbisic.sportapp.model.api.LeagueModel;
@@ -65,6 +66,8 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearchLeague);
         setSupportActionBar(toolbar);
       getSupportActionBar().setTitle("Search league");
+        Intent closeAPP = new Intent(this, StopAppServices.class);
+        startService(closeAPP);
 
         leagueListView = (RecyclerView) findViewById(R.id.league_list);
         arrayListLeague = new ArrayList<>();
