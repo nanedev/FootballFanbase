@@ -31,10 +31,11 @@ import java.util.List;
 
 public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameViewHolder, UsersChatViewHolder> {
     Context ctx;
-Activity activity;
+    Activity activity;
     int numberOnline = 0;
+    boolean isOnline;
 
-    public ClubNameChatAdapter(List<? extends ExpandableGroup> groups, Context ctx,Activity activity) {
+    public ClubNameChatAdapter(List<? extends ExpandableGroup> groups, Context ctx, Activity activity) {
         super(groups);
         this.ctx = ctx;
         this.activity = activity;
@@ -69,11 +70,11 @@ Activity activity;
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(ctx,ChatMessageActivity.class);
-                intent.putExtra("userId",userChat.getUserID());
-                intent.putExtra("username",userChat.getUsername());
-                intent.putExtra("flag",userChat.getFlag());
-                intent.putExtra("date",userChat.getDate());
+                Intent intent = new Intent(ctx, ChatMessageActivity.class);
+                intent.putExtra("userId", userChat.getUserID());
+                intent.putExtra("username", userChat.getUsername());
+                intent.putExtra("flag", userChat.getFlag());
+                intent.putExtra("date", userChat.getDate());
                 ctx.startActivity(intent);
             }
         });
@@ -86,7 +87,11 @@ Activity activity;
                 if (dataSnapshot.exists()) {
                     String usernameDatabase = String.valueOf(dataSnapshot.getString("username"));
                     String username = holder.usernameUser.getText().toString().trim();
-                    boolean isOnline = Boolean.parseBoolean(String.valueOf(dataSnapshot.getDate("online")));
+                    if (dataSnapshot.get("online") instanceof String) {
+                        isOnline = Boolean.parseBoolean(String.valueOf(dataSnapshot.getString("online")));
+                    } else {
+                        isOnline = Boolean.parseBoolean(String.valueOf(dataSnapshot.getDate("online")));
+                    }
 
                     if (isOnline) {
                         numberOnline++;
@@ -108,7 +113,7 @@ Activity activity;
     @Override
     public void onBindGroupViewHolder(ClubNameViewHolder holder, int flatPosition, ExpandableGroup group) {
         holder.setClubTitle(group);
-        holder.setNumberOnline(group.getTitle(),activity);
+        holder.setNumberOnline(group.getTitle(), activity);
 
 
     }

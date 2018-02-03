@@ -90,6 +90,8 @@ public class ChatMessageActivity extends AppCompatActivity {
     DocumentSnapshot lastkey;
     int itemPos = 0;
     int loaditem = 0;
+    boolean online;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,10 +142,15 @@ public class ChatMessageActivity extends AppCompatActivity {
                 mRootRef.collection("UsersChat").document(favoriteClubChat).collection("user-id").document(mChatUser).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e1) {
-                        boolean online = Boolean.parseBoolean(String.valueOf(dataSnapshot.getDate("online")));
+
+                        if (dataSnapshot.get("online") instanceof String) {
+                            online = Boolean.parseBoolean(String.valueOf(dataSnapshot.getString("online")));
+                        } else {
+                            online = Boolean.parseBoolean(String.valueOf(dataSnapshot.getDate("online")));
+                        }
                         String image = dataSnapshot.getString("profileImage");
 
-                        if (online ) {
+                        if (online) {
                             mLastSeenView.setText("Online");
                         } else {
                             Date onlineDate = dataSnapshot.getDate("online");
@@ -199,7 +206,7 @@ public class ChatMessageActivity extends AppCompatActivity {
                 loadMessages(ChatMessageActivity.this);
 
                 itemPos = 0;
-               // loadMoreMessages(ChatMessageActivity.this);
+                // loadMoreMessages(ChatMessageActivity.this);
 
             }
 
@@ -207,9 +214,8 @@ public class ChatMessageActivity extends AppCompatActivity {
         });
 
     }
+
     private void loadMoreMessages(final Activity activity) {
-
-
 
 
         final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
@@ -229,7 +235,7 @@ public class ChatMessageActivity extends AppCompatActivity {
             @SuppressLint("ResourceAsColor")
             @Override
             protected void onBindViewHolder(final MessageAdapter.MessageViewHolder holder, int position, Messages model) {
-                FirebaseAuth  mAutH = FirebaseAuth.getInstance();
+                FirebaseAuth mAutH = FirebaseAuth.getInstance();
 
 
                 messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -272,12 +278,11 @@ public class ChatMessageActivity extends AppCompatActivity {
                             }
                         });
                     }
-                    if (mRefreshLayout.isRefreshing()){
+                    if (mRefreshLayout.isRefreshing()) {
                         mMessagesList.smoothScrollToPosition(getItemCount() - 6);
 
                     }
                     mRefreshLayout.setRefreshing(false);
-
 
 
                 }
@@ -308,7 +313,7 @@ public class ChatMessageActivity extends AppCompatActivity {
 
     }
 
-    private void checkAllLoaded(){
+    private void checkAllLoaded() {
 
     }
 
@@ -316,7 +321,7 @@ public class ChatMessageActivity extends AppCompatActivity {
 
 
         final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
-           final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(mCurrentPage);
+        final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(mCurrentPage);
 
         final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
                 .setQuery(messageQuery, Messages.class).build();
@@ -330,8 +335,9 @@ public class ChatMessageActivity extends AppCompatActivity {
                     messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException s) {
-                            lastItem = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);;
-                            if (lastkey.getId().equals(lastItem.getId())){
+                            lastItem = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
+                            ;
+                            if (lastkey.getId().equals(lastItem.getId())) {
                                 mRefreshLayout.setEnabled(false);
                             }
                         }
@@ -343,10 +349,7 @@ public class ChatMessageActivity extends AppCompatActivity {
             @SuppressLint("ResourceAsColor")
             @Override
             protected void onBindViewHolder(final MessageAdapter.MessageViewHolder holder, final int position, Messages model) {
-             FirebaseAuth  mAutH = FirebaseAuth.getInstance();
-
-
-
+                FirebaseAuth mAutH = FirebaseAuth.getInstance();
 
 
                 String current_user_id = mAutH.getCurrentUser().getUid();
@@ -385,7 +388,6 @@ public class ChatMessageActivity extends AppCompatActivity {
                     }
 
 
-
                     Log.i("position", String.valueOf(position));
                     if (mRefreshLayout.isRefreshing()) {
                         mMessagesList.smoothScrollToPosition(getItemCount() - 6);
@@ -396,19 +398,16 @@ public class ChatMessageActivity extends AppCompatActivity {
                         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                             super.onScrolled(recyclerView, dx, dy);
 
-                         int totalItem = mLinearLayout.getItemCount();
-                         int lastVisible = mLinearLayout.findLastVisibleItemPosition();
+                            int totalItem = mLinearLayout.getItemCount();
+                            int lastVisible = mLinearLayout.findLastVisibleItemPosition();
 
-                            if(mRefreshLayout.isRefreshing()  && totalItem <= (lastVisible + 10) )
-                            {
+                            if (mRefreshLayout.isRefreshing() && totalItem <= (lastVisible + 10)) {
                                 mMessagesList.smoothScrollToPosition(lastVisible + 15);
                             }
                         }
                     });
                     mRefreshLayout.setRefreshing(false);
-                   // mMessagesList.smoothScrollToPosition(0);
-
-
+                    // mMessagesList.smoothScrollToPosition(0);
 
 
                 }
@@ -435,11 +434,11 @@ public class ChatMessageActivity extends AppCompatActivity {
                 super.onItemRangeInserted(positionStart, itemCount);
                 int friendlyMessageCount = adapter.getItemCount();
                 int lastVisiblePosition =
-                         mLinearLayout.findFirstCompletelyVisibleItemPosition();
+                        mLinearLayout.findFirstCompletelyVisibleItemPosition();
                 // If the recycler view is initially being loaded or the
                 // user is at the bottom of the list, scroll to the bottom
                 // of the list to show the newly added message.
-                Log.i("newItem", String.valueOf(itemCount));
+                Log.i("newItem", String.valueOf(positionStart));
                 if (lastVisiblePosition == 0 ||
                         (positionStart >= (friendlyMessageCount - 1) &&
                                 lastVisiblePosition == (positionStart - 1))) {
@@ -450,6 +449,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         adapter.startListening();
 
     }
+
     private void sendMessage() {
         String message = mChatMessageView.getText().toString();
         if (!TextUtils.isEmpty(message)) {
