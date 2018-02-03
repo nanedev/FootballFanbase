@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.activity.firebase;
 
 import android.annotation.SuppressLint;
 import android.app.*;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -46,6 +47,7 @@ import android.widget.TextView;
 import com.caverock.androidsvg.SVG;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -66,6 +68,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.activity.BadgeServices;
 import com.malikbisic.sportapp.activity.StopAppServices;
+import com.malikbisic.sportapp.application.*;
 import com.malikbisic.sportapp.listener.EndlessRecyclerViewScrollListener;
 import com.malikbisic.sportapp.fragment.firebase.NotificationFragment;
 import com.malikbisic.sportapp.listener.OnLoadMoreListener;
@@ -389,8 +392,10 @@ public class MainPage extends AppCompatActivity
 
                                         Map onlie = new HashMap();
                                         onlie.put("online", true);
-                                        FirebaseFirestore setOfline = FirebaseFirestore.getInstance();
-                                        setOfline.collection("UsersChat").document(myClubName).collection(uid).document().update(onlie);
+
+
+                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        db.collection("UsersChat").document(myClubName).collection("user-id").document(uid).update("online", "true");
 
 
                                         calendar.add(Calendar.DAY_OF_MONTH, 15);
@@ -426,7 +431,8 @@ public class MainPage extends AppCompatActivity
         };
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -479,6 +485,20 @@ public class MainPage extends AppCompatActivity
         });
 
 
+    }
+
+    public static boolean isAppRunning(final Context context, final String packageName) {
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
+        if (procInfos != null)
+        {
+            for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
+                if (processInfo.processName.equals(packageName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void usersChatInfo(){

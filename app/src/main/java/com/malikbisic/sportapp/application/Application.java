@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.application;
 
+import android.app.ActivityManager;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,8 @@ import com.malikbisic.sportapp.activity.StopAppServices;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
+
+import java.util.List;
 
 
 /**
@@ -50,6 +53,7 @@ public class Application extends android.app.Application{
         }
 
 
+
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttpDownloader(this, Integer.MAX_VALUE));
         Picasso built = builder.build();
@@ -60,6 +64,8 @@ public class Application extends android.app.Application{
 
 
     }
+
+
 
     @Override
     public void onTrimMemory(int level) {
