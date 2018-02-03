@@ -45,35 +45,43 @@
         android:background="@color/white"
         android:orientation="horizontal"
         android:padding="5dp"
+
         android:weightSum="10">
 
         <ImageButton
             android:id="@+id/plus_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/galerija_shape"
             android:layout_weight="1"
-            android:src="@drawable/ic_plus" />
+            android:src="@drawable/galerija"
+         />
 
         <EditText
             android:id="@+id/chat_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="12dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="16dp"
-            android:layout_weight="8"
+            android:background="@drawable/edittextshape"
+            android:layout_weight="9"
+            android:padding="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:drawableRight="@drawable/smajlic"
+            android:drawableEnd="@drawable/smajlic"
            android:hint="Enter message"
             android:textCursorDrawable="@null"
             android:textColor="#000" />
 
         <ImageButton
             android:id="@+id/send_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/galerija_shape"
+            android:src="@drawable/sendmsg"
             android:layout_weight="1"
-            android:padding="10dp"
-            android:src="@drawable/ic_send_black_24dp" />
+           />
 
     </LinearLayout>
 
