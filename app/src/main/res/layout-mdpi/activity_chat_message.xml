@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.malikbisic.sportapp.activity.firebase.ChatMessageActivity"
-    android:background="#cccccc">
+    android:background="#cccccc"
+    tools:context="com.malikbisic.sportapp.activity.firebase.ChatMessageActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:id="@+id/appBarLayout">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/chat_toolbar"
@@ -23,67 +24,90 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_message_swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/swipe_message_swipe_layout"
         android:layout_below="@+id/appBarLayout"
-        android:layout_above="@+id/bottom_chat_layout">
+        android:layout_above="@+id/chatdole">
+
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/messageList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/appBarLayout"
-            android:id="@+id/messageList"
-            android:layout_above="@+id/bottom_chat_layout">
+            android:layout_above="@+id/bottom_chat_layout"
+            android:layout_below="@+id/appBarLayout">
 
         </android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.SwipeRefreshLayout>
-    <LinearLayout
-        android:id="@+id/bottom_chat_layout"
+
+    <RelativeLayout
+        android:id="@+id/chatdole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:padding="5dp"
+        >
 
-        android:weightSum="10">
-
-        <ImageButton
-            android:id="@+id/plus_btn"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/galerija_shape"
-            android:layout_weight="1"
-            android:src="@drawable/galerija"
-            />
-
-        <EditText
-            android:id="@+id/chat_text"
+        <LinearLayout
+            android:id="@+id/bottom_chat_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/edittextshape"
-            android:layout_weight="9"
-            android:padding="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:drawableRight="@drawable/smajlic"
-            android:drawableEnd="@drawable/smajlic"
-            android:hint="Enter message"
-            android:textCursorDrawable="@null"
-            android:textColor="#000" />
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:weightSum="10">
 
-        <ImageButton
-            android:id="@+id/send_message"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/galerija_shape"
-            android:src="@drawable/sendmsg"
-            android:layout_weight="1"
-            />
+            <ImageButton
+                android:id="@+id/plus_btn"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/galerija_shape"
+                android:src="@drawable/galerija" />
 
-    </LinearLayout>
+            <com.rockerhieu.emojicon.EmojiconEditText
+                android:id="@+id/chat_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                emojicon:emojiconSize="28sp"
+                android:layout_weight="9"
+                android:background="@drawable/edittextshape"
+                android:drawableEnd="@drawable/smajlic"
+                android:drawableRight="@drawable/smajlic"
+                android:hint="Enter message"
+                android:padding="10dp"
+                android:textColor="#000"
+                android:textCursorDrawable="@null" />
+
+
+            <ImageButton
+                android:id="@+id/send_message"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/galerija_shape"
+                android:src="@drawable/sendmsg" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/emojicons"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/bottom_chat_layout"
+            android:visibility="gone"
+            android:background="@color/white">
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+
 
 
 </RelativeLayout>

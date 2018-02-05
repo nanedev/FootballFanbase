@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:padding="10dp">
 
     <RelativeLayout
@@ -30,11 +31,14 @@
             android:layout_toEndOf="@+id/message_image"
             android:layout_toRightOf="@+id/message_image">
 
-            <TextView
+            <com.rockerhieu.emojicon.EmojiconTextView
                 android:id="@+id/message_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                emojicon:emojiconAlignment="baseline"
+                emojicon:emojiconSize="28sp"
+                android:textColor="@color/black"
                 android:background="@drawable/message_text_background"
                 android:padding="10dp"
                 android:textStyle="bold" />

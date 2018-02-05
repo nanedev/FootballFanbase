@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,16 +14,26 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.firebase.ui.common.ChangeEventType;
@@ -47,6 +58,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.model.firebase.Message;
@@ -54,6 +66,10 @@ import com.malikbisic.sportapp.model.firebase.UserChat;
 import com.malikbisic.sportapp.utils.GetTimeAgo;
 import com.malikbisic.sportapp.adapter.firebase.MessageAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
+import com.rockerhieu.emojicon.EmojiconEditText;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
+import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,7 +79,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatMessageActivity extends AppCompatActivity {
+public class ChatMessageActivity extends AppCompatActivity implements EmojiconGridFragment.OnEmojiconClickedListener,EmojiconsFragment.OnEmojiconBackspaceClickedListener{
     private String mChatUser;
     private Toolbar mChatToolbar;
     private FirebaseFirestore mRootRef;
@@ -73,9 +89,10 @@ public class ChatMessageActivity extends AppCompatActivity {
     CircleImageView mProfileImg;
     FirebaseAuth mAuth;
     private String mCurrentUserId;
+
     ImageButton mChatAddBtn;
     ImageButton mChatSendBtn;
-    EditText mChatMessageView;
+    EmojiconEditText mChatMessageView;
     RecyclerView mMessagesList;
     private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayout;
@@ -91,7 +108,12 @@ public class ChatMessageActivity extends AppCompatActivity {
     int itemPos = 0;
     int loaditem = 0;
     boolean online;
-
+ImageButton galleryBtn;
+ImageView proba;
+FrameLayout emoticons;
+RelativeLayout botomChatLay;
+    boolean firstImageClick = true;
+    boolean secondImageClick = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +129,9 @@ public class ChatMessageActivity extends AppCompatActivity {
         actionBar.setDisplayShowCustomEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();
-
+        galleryBtn = (ImageButton) findViewById(R.id.plus_btn);
+        emoticons = (FrameLayout) findViewById(R.id.emojicons);
+botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
         // getSupportActionBar().setTitle(mChatUsername);
@@ -119,13 +143,21 @@ public class ChatMessageActivity extends AppCompatActivity {
         mTitleView = (TextView) findViewById(R.id.chat_username);
         mLastSeenView = (TextView) findViewById(R.id.chat_last_seen);
         mProfileImg = (CircleImageView) findViewById(R.id.chat_imageview_id);
-        mChatAddBtn = (ImageButton) findViewById(R.id.plus_btn);
+
         mChatSendBtn = (ImageButton) findViewById(R.id.send_message);
-        mChatMessageView = (EditText) findViewById(R.id.chat_text);
+        mChatMessageView = (EmojiconEditText) findViewById(R.id.chat_text);
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_message_swipe_layout);
         mLinearLayout = new LinearLayoutManager(this);
         mLinearLayout.setReverseLayout(true);
+
+        mChatMessageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emoticons.setVisibility(View.GONE);
+                mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlic, 0);
+            }
+        });
 
         mMessagesList.setLayoutManager(mLinearLayout);
         mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this);
@@ -133,6 +165,91 @@ public class ChatMessageActivity extends AppCompatActivity {
         loadMessages(this);
         checkAllLoaded();
 
+        mChatMessageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if (firstImageClick) {
+
+                    if(event.getAction() == MotionEvent.ACTION_UP) {
+                        firstImageClick = false;
+                        secondImageClick = true;
+                        if(event.getRawX() >= (mChatMessageView.getRight() - mChatMessageView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            // your action here
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+
+                            emoticons.setVisibility(View.VISIBLE);
+                            mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlicpopunjeni2, 0);
+                            Toast.makeText(ChatMessageActivity.this,"clicked",Toast.LENGTH_LONG).show();
+                            return true;
+                        }
+                    }
+
+                } else if (secondImageClick) {
+
+                    if(event.getAction() == MotionEvent.ACTION_UP) {
+                        firstImageClick = true;
+                        secondImageClick = false;
+
+                        if(event.getRawX() >= (mChatMessageView.getRight() - mChatMessageView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            // your action here
+                            InputMethodManager imm = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                            emoticons.setVisibility(View.GONE);
+                            mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlic, 0);
+                            Toast.makeText(ChatMessageActivity.this,"clicked",Toast.LENGTH_LONG).show();
+                            return true;
+                        }
+                    }
+                }
+
+
+
+                return false;
+            }
+        });
+        mChatMessageView.addTextChangedListener(new TextWatcher() {
+
+            /**
+             * This notify that, within s,
+             * the count characters beginning at start are about to be replaced by new text with length
+             * @param s
+             * @param start
+             * @param count
+             * @param after
+             */
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            /**
+             * This notify that, somewhere within s, the text has been changed.
+             * @param s
+             */
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            /**
+             * This notify that, within s, the count characters beginning at start have just
+             * replaced old text that had length
+             * @param s
+             * @param start
+             * @param before
+             * @param count
+             */
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+            }
+        });
+
+        setEmojiconFragment(false);
         mTitleView.setText(mChatUsername);
         mRootRef.collection("Users").document(mChatUser).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -212,7 +329,24 @@ public class ChatMessageActivity extends AppCompatActivity {
 
 
         });
+galleryBtn.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        if (Build.VERSION.SDK_INT < 19) {
+            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
 
+            openGallery.setType("image/*");
+            startActivityForResult(openGallery, 1);
+        } else {
+
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            startActivityForResult(intent, 2);
+
+        }
+    }
+});
     }
 
     private void loadMoreMessages(final Activity activity) {
@@ -476,4 +610,50 @@ public class ChatMessageActivity extends AppCompatActivity {
 
         }
     }
+
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //some code....
+                break;
+            case MotionEvent.ACTION_UP:
+                v.performClick();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+    /**
+     * Set the Emoticons in Fragment.
+     * @param useSystemDefault
+     */
+    private void setEmojiconFragment(boolean useSystemDefault) {
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.emojicons, EmojiconsFragment.newInstance(useSystemDefault))
+                .commit();
+    }
+
+    /**
+     * It called, when click on icon of Emoticons.
+     * @param emojicon
+     */
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+
+        EmojiconsFragment.input(mChatMessageView, emojicon);
+    }
+
+    /**
+     * It called, when backspace button of Emoticons pressed
+     * @param view
+     */
+    @Override
+    public void onEmojiconBackspaceClicked(View view) {
+
+        EmojiconsFragment.backspace(mChatMessageView);
+    }
+
 }
