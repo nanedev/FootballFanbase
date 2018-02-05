@@ -7,13 +7,16 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -66,6 +69,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         Messages messages = mMessageList.get(position);
         String from_user = messages.getFrom();
+        String type = messages.getType();
         if (from_user != null) {
 
             if (from_user.equals(current_user_id)) {
@@ -99,7 +103,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         }
 
-        holder.messagetTextTexview.setText(messages.getMessage());
+        Log.i("typeMessage", type);
+
+        if (type.equals("text")) {
+            holder.messagetTextTexview.setVisibility(View.VISIBLE);
+            holder.messagetTextTexview.setText(messages.getMessage());
+            holder.messageImageView.setVisibility(View.INVISIBLE);
+        } else if (type.equals("image")){
+            holder.messageImageView.setVisibility(View.VISIBLE);
+            Glide.with(ctx).load(messages.getMessage()).into(holder.messageImageView);
+            holder.messagetTextTexview.setVisibility(View.INVISIBLE);
+        }
         if (messages.getTime() != null) {
             String time = DateUtils.formatDateTime(ctx, messages.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
             holder.timeTextView.setText(time);
@@ -118,6 +132,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         public CircleImageView profileImageImg;
         public RelativeLayout layout;
         public TextView timeTextView;
+        public ImageView messageImageView;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
@@ -126,6 +141,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             profileImageImg = (CircleImageView) itemView.findViewById(R.id.message_image);
             layout = (RelativeLayout) itemView.findViewById(R.id.message_single_layout);
             timeTextView = (TextView) itemView.findViewById(R.id.timeMessage);
+            messageImageView = (ImageView) itemView.findViewById(R.id.message_image_sender);
 
         }
 

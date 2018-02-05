@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.common.ChangeEventType;
 import com.firebase.ui.firestore.ChangeEventListener;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -313,6 +314,17 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
             }
         });
 
+        mChatAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent openImageSend = new Intent(ChatMessageActivity.this, SendImageChatActivity.class);
+                openImageSend.putExtra("myUID", mCurrentUserId);
+                openImageSend.putExtra("userID", mChatUser);
+                startActivityForResult(openImageSend, 1);
+            }
+        });
+
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -490,6 +502,7 @@ galleryBtn.setOnClickListener(new View.OnClickListener() {
 
 
                 String from_user = model.getFrom();
+                String type = model.getType();
                 if (from_user != null) {
 
                     if (from_user.equals(current_user_id)) {
@@ -546,7 +559,16 @@ galleryBtn.setOnClickListener(new View.OnClickListener() {
 
                 }
 
-                holder.messagetTextTexview.setText(model.getMessage());
+                if (type.equals("text")) {
+                    holder.messagetTextTexview.setVisibility(View.VISIBLE);
+                    holder.messagetTextTexview.setText(model.getMessage());
+                    holder.messageImageView.setVisibility(View.GONE);
+                } else if (type.equals("image")){
+                    holder.messageImageView.setVisibility(View.VISIBLE);
+                    Glide.with(activity).load(model.getMessage()).into(holder.messageImageView);
+                    holder.messagetTextTexview.setVisibility(View.GONE);
+                }
+
                 if (model.getTime() != null) {
                     String time = DateUtils.formatDateTime(activity, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                     holder.timeTextView.setText(time);

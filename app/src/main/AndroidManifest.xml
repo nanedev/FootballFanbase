@@ -38,7 +38,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".activity.StopAppServices"/>
+        <service android:name=".activity.StopAppServices" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -235,8 +235,10 @@
             android:name=".activity.firebase.RankingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.firebase.SeeUsersVotesActivity"></activity>
-
+        <activity android:name=".activity.firebase.SeeUsersVotesActivity" />
+        <activity android:name=".activity.firebase.SendImageChatActivity"
+            android:theme="@style/AppTheme.Dark"
+            android:parentActivityName=".activity.firebase.ChatMessageActivity"></activity>
     </application>
 
 </manifest>
