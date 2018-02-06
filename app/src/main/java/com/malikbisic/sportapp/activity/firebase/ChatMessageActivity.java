@@ -62,11 +62,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
+import com.malikbisic.sportapp.adapter.firebase.ImageAlbumAdapter;
 import com.malikbisic.sportapp.model.firebase.Message;
 import com.malikbisic.sportapp.model.firebase.UserChat;
 import com.malikbisic.sportapp.utils.GetTimeAgo;
 import com.malikbisic.sportapp.adapter.firebase.MessageAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
+import com.malikbisic.sportapp.utils.ImageAlbumName;
 import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
@@ -80,7 +82,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatMessageActivity extends AppCompatActivity implements EmojiconGridFragment.OnEmojiconClickedListener,EmojiconsFragment.OnEmojiconBackspaceClickedListener{
+public class ChatMessageActivity extends AppCompatActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
     private String mChatUser;
     private Toolbar mChatToolbar;
     private FirebaseFirestore mRootRef;
@@ -109,12 +111,19 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     int itemPos = 0;
     int loaditem = 0;
     boolean online;
-ImageButton galleryBtn;
-ImageView proba;
-FrameLayout emoticons;
-RelativeLayout botomChatLay;
+
+    private ImageAlbumName utils;
+    private ArrayList<String> imagePaths = new ArrayList<String>();
+    private ImageAlbumAdapter adapter;
+    private RecyclerView recyclerViewAlbum;
+
+
+    ImageView proba;
+    FrameLayout emoticons;
+    RelativeLayout botomChatLay;
     boolean firstImageClick = true;
     boolean secondImageClick = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,11 +139,25 @@ RelativeLayout botomChatLay;
         actionBar.setDisplayShowCustomEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();
-        galleryBtn = (ImageButton) findViewById(R.id.plus_btn);
+        recyclerViewAlbum = (RecyclerView) findViewById(R.id.album);
         emoticons = (FrameLayout) findViewById(R.id.emojicons);
-botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
+        botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
+
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
+        recyclerViewAlbum = (RecyclerView) findViewById(R.id.album);
+
+        utils = new ImageAlbumName(this);
+
+        imagePaths = utils.getFilePaths();
+
+        // Gridview adapter
+        adapter = new ImageAlbumAdapter(ChatMessageActivity.this, imagePaths, mAuth.getCurrentUser().getUid(), mChatUser);
+
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerViewAlbum.setLayoutManager(manager);
+        recyclerViewAlbum.setAdapter(adapter);
         // getSupportActionBar().setTitle(mChatUsername);
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -151,6 +174,9 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_message_swipe_layout);
         mLinearLayout = new LinearLayoutManager(this);
         mLinearLayout.setReverseLayout(true);
+
+
+
 
         mChatMessageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,39 +203,38 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
 
                 if (firstImageClick) {
 
-                    if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
                         firstImageClick = false;
                         secondImageClick = true;
-                        if(event.getRawX() >= (mChatMessageView.getRight() - mChatMessageView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        if (event.getRawX() >= (mChatMessageView.getRight() - mChatMessageView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
                             // your action here
-                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
 
                             emoticons.setVisibility(View.VISIBLE);
                             mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlicpopunjeni2, 0);
-                            Toast.makeText(ChatMessageActivity.this,"clicked",Toast.LENGTH_LONG).show();
+                            Toast.makeText(ChatMessageActivity.this, "clicked", Toast.LENGTH_LONG).show();
                             return true;
                         }
                     }
 
                 } else if (secondImageClick) {
 
-                    if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
                         firstImageClick = true;
                         secondImageClick = false;
 
-                        if(event.getRawX() >= (mChatMessageView.getRight() - mChatMessageView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        if (event.getRawX() >= (mChatMessageView.getRight() - mChatMessageView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
                             // your action here
-                            InputMethodManager imm = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                             emoticons.setVisibility(View.GONE);
                             mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlic, 0);
-                            Toast.makeText(ChatMessageActivity.this,"clicked",Toast.LENGTH_LONG).show();
+                            Toast.makeText(ChatMessageActivity.this, "clicked", Toast.LENGTH_LONG).show();
                             return true;
                         }
                     }
                 }
-
 
 
                 return false;
@@ -226,14 +251,16 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
              * @param after
              */
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             /**
              * This notify that, somewhere within s, the text has been changed.
              * @param s
              */
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             /**
              * This notify that, within s, the count characters beginning at start have just
@@ -317,11 +344,17 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         mChatAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (firstImageClick){
+                    firstImageClick = false;
+                    secondImageClick = true;
+                    recyclerViewAlbum.setVisibility(View.VISIBLE);
+                }else if (secondImageClick){
+                    firstImageClick = true;
+                    secondImageClick = false;
+                    recyclerViewAlbum.setVisibility(View.GONE);
+                }
 
-                Intent openImageSend = new Intent(ChatMessageActivity.this, SendImageChatActivity.class);
-                openImageSend.putExtra("myUID", mCurrentUserId);
-                openImageSend.putExtra("userID", mChatUser);
-                startActivityForResult(openImageSend, 1);
+
             }
         });
 
@@ -348,8 +381,8 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1){
-            if (requestCode == RESULT_OK){
+        if (requestCode == 1) {
+            if (requestCode == RESULT_OK) {
                 mChatUser = data.getStringExtra("userId");
             }
         }
@@ -557,7 +590,7 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
                     holder.messagetTextTexview.setVisibility(View.VISIBLE);
                     holder.messagetTextTexview.setText(model.getMessage());
                     holder.messageImageView.setVisibility(View.GONE);
-                } else if (type.equals("image")){
+                } else if (type.equals("image")) {
                     holder.messageImageView.setVisibility(View.VISIBLE);
                     Glide.with(activity).load(model.getMessage()).into(holder.messageImageView);
                     holder.messagetTextTexview.setVisibility(View.GONE);
@@ -640,8 +673,10 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         }
         return true;
     }
+
     /**
      * Set the Emoticons in Fragment.
+     *
      * @param useSystemDefault
      */
     private void setEmojiconFragment(boolean useSystemDefault) {
@@ -654,6 +689,7 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
 
     /**
      * It called, when click on icon of Emoticons.
+     *
      * @param emojicon
      */
     @Override
@@ -664,6 +700,7 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
 
     /**
      * It called, when backspace button of Emoticons pressed
+     *
      * @param view
      */
     @Override

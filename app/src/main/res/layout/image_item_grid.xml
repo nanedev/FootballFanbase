@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+ android:paddingRight="1dp"
+    android:paddingEnd="1dp"
+    android:background="@color/white">
 
 
     <ImageView
         android:id="@+id/imageGrid"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="6dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="6dp"
         android:scaleType="centerCrop"
         android:src="@drawable/calendar" />
 
@@ -23,12 +22,8 @@
         android:id="@+id/sendImageGrid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageGrid"
-        android:layout_alignStart="@+id/imageGrid"
-        android:layout_alignTop="@+id/imageGrid"
-        android:layout_marginLeft="23dp"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="28dp"
-        android:visibility="visible"
+     android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_send_black_24dp" />
 </RelativeLayout>
