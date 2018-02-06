@@ -182,6 +182,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
             @Override
             public void onClick(View v) {
                 emoticons.setVisibility(View.GONE);
+                recyclerViewAlbum.setVisibility(View.GONE);
                 mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlic, 0);
             }
         });
@@ -210,7 +211,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             // your action here
                             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
-
+                            recyclerViewAlbum.setVisibility(View.GONE);
                             emoticons.setVisibility(View.VISIBLE);
                             mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlicpopunjeni2, 0);
                             Toast.makeText(ChatMessageActivity.this, "clicked", Toast.LENGTH_LONG).show();
@@ -229,6 +230,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                             emoticons.setVisibility(View.GONE);
+                            recyclerViewAlbum.setVisibility(View.GONE);
                             mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlic, 0);
                             Toast.makeText(ChatMessageActivity.this, "clicked", Toast.LENGTH_LONG).show();
                             return true;
@@ -347,11 +349,16 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 if (firstImageClick){
                     firstImageClick = false;
                     secondImageClick = true;
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
                     recyclerViewAlbum.setVisibility(View.VISIBLE);
                 }else if (secondImageClick){
+
                     firstImageClick = true;
                     secondImageClick = false;
                     recyclerViewAlbum.setVisibility(View.GONE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
                 }
 
 

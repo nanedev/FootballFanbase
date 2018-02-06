@@ -54,7 +54,8 @@ public class ImageAlbumAdapter extends  RecyclerView.Adapter<ImageAlbumAdapter.I
     private Activity _activity;
     private ArrayList<String> _filePaths = new ArrayList<String>();
     boolean[] opened;
-
+boolean firstime;
+boolean secondtime;
     String myUID;
     String userID;
 
@@ -75,10 +76,23 @@ public class ImageAlbumAdapter extends  RecyclerView.Adapter<ImageAlbumAdapter.I
     }
 
     @Override
-    public void onBindViewHolder(ImageViewHolder holder, int position) {
+    public void onBindViewHolder(final ImageViewHolder holder, final int position) {
         String image = _filePaths.get(position);
         Glide.with(_activity).load(image).into(holder.image);
 
+holder.sendButton.setVisibility(View.GONE);
+holder.image.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        holder.sendButton.setVisibility(View.VISIBLE);
+        holder.sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendImage(position);
+            }
+        });
+    }
+});
     }
 
     @Override
@@ -219,7 +233,7 @@ public class ImageAlbumAdapter extends  RecyclerView.Adapter<ImageAlbumAdapter.I
         }
 
     }
-
+*/
     public void sendImage(int position) {
         try {
 
@@ -283,7 +297,7 @@ public class ImageAlbumAdapter extends  RecyclerView.Adapter<ImageAlbumAdapter.I
             e.printStackTrace();
         }
     }
-
+/*
     public static Bitmap decodeFile(String filePath, int WIDTH, int HIGHT) {
         try {
 
@@ -310,8 +324,8 @@ public class ImageAlbumAdapter extends  RecyclerView.Adapter<ImageAlbumAdapter.I
     } */
 
    public static class ImageViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        static ImageButton sendButton;
+      public   ImageView image;
+      public   ImageButton sendButton;
 
        public ImageViewHolder(View itemView) {
            super(itemView);

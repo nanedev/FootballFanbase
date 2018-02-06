@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
         android:layout_above="@+id/album"
+        android:background="#cccccc"
        >
 
         <LinearLayout
@@ -74,17 +75,18 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginStart="5dp"
-                emojicon:emojiconSize="28sp"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
                 android:layout_weight="9"
                 android:background="@drawable/edittextshape"
                 android:drawableEnd="@drawable/smajlic"
                 android:drawableRight="@drawable/smajlic"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:hint="Enter message"
                 android:padding="10dp"
+                android:textAllCaps="false"
                 android:textColor="#000"
-                android:textCursorDrawable="@null" />
+                android:textCursorDrawable="@null"
+                emojicon:emojiconSize="28sp" />
 
 
             <ImageButton

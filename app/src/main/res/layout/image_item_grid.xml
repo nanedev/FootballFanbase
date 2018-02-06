@@ -20,10 +20,12 @@
 
     <ImageButton
         android:id="@+id/sendImageGrid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
      android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_send_black_24dp" />
+        android:rotation="270"
+        android:visibility="visible"
+        android:background="@drawable/shape_for_send"
+        app:srcCompat="@drawable/ic_send_white_24dp" />
 </RelativeLayout>
