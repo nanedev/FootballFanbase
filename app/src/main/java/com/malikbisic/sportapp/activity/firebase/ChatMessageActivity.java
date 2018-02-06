@@ -144,7 +144,7 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         mTitleView = (TextView) findViewById(R.id.chat_username);
         mLastSeenView = (TextView) findViewById(R.id.chat_last_seen);
         mProfileImg = (CircleImageView) findViewById(R.id.chat_imageview_id);
-
+        mChatAddBtn = (ImageButton) findViewById(R.id.plus_btn);
         mChatSendBtn = (ImageButton) findViewById(R.id.send_message);
         mChatMessageView = (EmojiconEditText) findViewById(R.id.chat_text);
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
@@ -341,24 +341,18 @@ botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
 
 
         });
-galleryBtn.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        if (Build.VERSION.SDK_INT < 19) {
-            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
 
-            openGallery.setType("image/*");
-            startActivityForResult(openGallery, 1);
-        } else {
-
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-            startActivityForResult(intent, 2);
-
-        }
     }
-});
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1){
+            if (requestCode == RESULT_OK){
+                mChatUser = data.getStringExtra("userId");
+            }
+        }
     }
 
     private void loadMoreMessages(final Activity activity) {

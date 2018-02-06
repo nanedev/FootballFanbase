@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.adapter.firebase;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,8 +8,10 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -47,10 +50,47 @@ import id.zelory.compressor.Compressor;
  * Created by malikbisic on 05/02/2018.
  */
 
-public class ImageAlbumAdapter extends BaseAdapter {
+public class ImageAlbumAdapter extends  RecyclerView.Adapter<ImageAlbumAdapter.ImageViewHolder>{
+    private Activity _activity;
+    private ArrayList<String> _filePaths = new ArrayList<String>();
+    boolean[] opened;
+
+    String myUID;
+    String userID;
+
+
+    public ImageAlbumAdapter(Activity _activity, ArrayList<String> _filePaths, String myUID, String userID) {
+        this._activity = _activity;
+        this._filePaths = _filePaths;
+        this.opened = opened;
+
+        this.myUID = myUID;
+        this.userID = userID;
+    }
+
+    @Override
+    public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_item_grid, parent, false);
+        return new ImageViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(ImageViewHolder holder, int position) {
+        String image = _filePaths.get(position);
+        Glide.with(_activity).load(image).into(holder.image);
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return _filePaths.size();
+    }
+
+/*public class ImageAlbumAdapter extends BaseAdapter {
 
     private Activity _activity;
     private ArrayList<String> _filePaths = new ArrayList<String>();
+    boolean[] opened;
     private int imageWidth;
     String myUID;
     String userID;
@@ -80,8 +120,9 @@ public class ImageAlbumAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ImageViewHolder holder = null;
 
@@ -101,16 +142,39 @@ public class ImageAlbumAdapter extends BaseAdapter {
 
         // get screen dimensions
         String image = _filePaths.get(position);
+        holder.sendButton.setTag("zatvoreno");
+        //holder.sendButton.setVisibility(View.GONE);
 
 
         Glide.with(_activity).load(image).into(holder.image);
+        holder.sendButton.setId(position);
+        holder.image.setId(position);
+        opened = new boolean[getCount()];
+        opened[position] = false;
 
         // image view click listener
-        holder.image.setOnClickListener(new OnImageClickListener(position));
-        holder.sendButton.setOnClickListener(new OnSendImageClickListener(position));
-        holder.sendButton.setVisibility(View.INVISIBLE);
+        final ImageViewHolder finalHolder = holder;
+        holder.image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int id = ImageViewHolder.sendButton.getId();
 
-        holder.sendButton.setTag("zatvoreno");
+                if (finalHolder.sendButton.getVisibility() == View.GONE) {
+                    finalHolder.sendButton.setVisibility(View.VISIBLE);
+                    // ImageViewHolder.sendButton.setTag("otvoreno");
+                    Log.i("button", "otvori");
+                    opened[id] = true;
+
+                } else {
+                    finalHolder.sendButton.setVisibility(View.GONE);
+                    Log.i("button", "zatvori");
+                    opened[id] = false;
+                }
+            }
+        });
+        holder.sendButton.setOnClickListener(new OnSendImageClickListener(position));
+
+
 
         return view;
     }
@@ -138,6 +202,7 @@ public class ImageAlbumAdapter extends BaseAdapter {
     class OnImageClickListener implements View.OnClickListener {
 
         int _postion;
+        String tag = (String) ImageViewHolder.sendButton.getTag();
 
         // constructor
         public OnImageClickListener(int position) {
@@ -146,16 +211,9 @@ public class ImageAlbumAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            String tag = (String) ImageViewHolder.sendButton.getTag();
             ;
 
-            if (tag.equals("zatvoreno")) {
-                ImageViewHolder.sendButton.setVisibility(View.VISIBLE);
-                ImageViewHolder.sendButton.setTag("otvoreno");
 
-            } else if (tag.equals("otvoreno")) ;
-            ImageViewHolder.sendButton.setVisibility(View.INVISIBLE);
-            ImageViewHolder.sendButton.setTag("zatvoreno");
 
 
         }
@@ -226,9 +284,6 @@ public class ImageAlbumAdapter extends BaseAdapter {
         }
     }
 
-    /*
-     * Resizing image size
-     */
     public static Bitmap decodeFile(String filePath, int WIDTH, int HIGHT) {
         try {
 
@@ -252,11 +307,18 @@ public class ImageAlbumAdapter extends BaseAdapter {
             e.printStackTrace();
         }
         return null;
-    }
+    } */
 
-    static class ImageViewHolder {
+   public static class ImageViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         static ImageButton sendButton;
-    }
+
+       public ImageViewHolder(View itemView) {
+           super(itemView);
+
+           image = (ImageView) itemView.findViewById(R.id.imageGrid);
+           sendButton = (ImageButton) itemView.findViewById(R.id.sendImageGrid);
+       }
+   }
 
 }

@@ -1,12 +1,16 @@
 package com.malikbisic.sportapp.activity.firebase;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.widget.GridView;
 
 import com.malikbisic.sportapp.R;
@@ -22,7 +26,7 @@ public class SendImageChatActivity extends AppCompatActivity {
     private ImageAlbumName utils;
     private ArrayList<String> imagePaths = new ArrayList<String>();
     private ImageAlbumAdapter adapter;
-    private GridView gridView;
+    private RecyclerView gridView;
     private int columnWidth;
 
     Intent myIntent;
@@ -44,38 +48,40 @@ public class SendImageChatActivity extends AppCompatActivity {
         myUID = myIntent.getStringExtra("myUID");
         userID = myIntent.getStringExtra("userID");
 
-        gridView = (GridView) findViewById(R.id.grid_view);
+        gridView = (RecyclerView) findViewById(R.id.grid_view);
 
         utils = new ImageAlbumName(this);
 
-        // Initilizing Grid View
-        InitilizeGridLayout();
 
         // loading all image paths from SD card
         imagePaths = utils.getFilePaths();
 
         // Gridview adapter
-        adapter = new ImageAlbumAdapter(SendImageChatActivity.this, imagePaths,
-                columnWidth, myUID, userID);
+        adapter = new ImageAlbumAdapter(SendImageChatActivity.this, imagePaths, myUID, userID);
 
         // setting grid view adapter
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        gridView.setLayoutManager(manager);
         gridView.setAdapter(adapter);
     }
 
-    private void InitilizeGridLayout() {
-        Resources r = getResources();
-        float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                ImageConstant.GRID_PADDING, r.getDisplayMetrics());
 
-        columnWidth = (int) ((utils.getScreenWidth() - ((ImageConstant.NUM_OF_COLUMNS + 1) * padding)) / ImageConstant.NUM_OF_COLUMNS);
 
-        gridView.setNumColumns(ImageConstant.NUM_OF_COLUMNS);
-        gridView.setColumnWidth(columnWidth);
-        gridView.setStretchMode(GridView.NO_STRETCH);
-        gridView.setPadding((int) padding, (int) padding, (int) padding,
-                (int) padding);
-        gridView.setHorizontalSpacing((int) padding);
-        gridView.setVerticalSpacing((int) padding);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                Intent backToChat = new Intent(SendImageChatActivity.this, ChatMessageActivity.class);
+                backToChat.putExtra("userId", userID);
+                setResult(Activity.RESULT_OK, backToChat);
+                finish();
+                return true;
+
+                default:
+                    return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override
