@@ -99,7 +99,7 @@ holder.image.setOnClickListener(new View.OnClickListener() {
     public int getItemCount() {
         return _filePaths.size();
     }
-
+//neki kom
 /*public class ImageAlbumAdapter extends BaseAdapter {
 
     private Activity _activity;

@@ -242,6 +242,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 return false;
             }
         });
+        //neki kom
         mChatMessageView.addTextChangedListener(new TextWatcher() {
 
             /**
