@@ -46,58 +46,116 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_above="@+id/album"
-        android:background="#cccccc"
+        android:background="@color/white"
         >
-
-        <LinearLayout
-            android:id="@+id/bottom_chat_layout"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="horizontal"
+            android:id="@+id/layoutzagornjiidonji">
 
-            android:padding="5dp"
-            android:weightSum="10">
-
-            <ImageButton
-                android:id="@+id/plus_btn"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/galerija_shape"
-                android:src="@drawable/galerija" />
-
-            <com.rockerhieu.emojicon.EmojiconEditText
-                android:id="@+id/chat_text"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="5dp"
-                android:layout_marginLeft="5dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/gornjidiochata"
                 android:layout_marginRight="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_weight="9"
-                android:background="@drawable/edittextshape"
-                android:drawableEnd="@drawable/smajlic"
-                android:drawableRight="@drawable/smajlic"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:hint="Enter message"
-                android:padding="10dp"
-                android:textAllCaps="false"
-                android:textColor="#000"
-                android:textCursorDrawable="@null"
-                emojicon:emojiconSize="28sp" />
+                android:layout_marginEnd="5dp"
+                android:padding="3dp"
+                android:layout_toLeftOf="@+id/send_message"
+                android:layout_toStartOf="@+id/send_message">
 
+
+                <com.rockerhieu.emojicon.EmojiconEditText
+                    android:id="@+id/chat_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_chat_shaoe"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="Enter message"
+                    android:padding="10dp"
+                    android:textAllCaps="false"
+                    android:textColor="#000"
+                    android:textCursorDrawable="@null"
+                    emojicon:emojiconSize="28sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/donjidiochata"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:padding="3dp"
+                android:background="@color/white"
+                android:layout_toLeftOf="@+id/send_message"
+                android:layout_toStartOf="@+id/send_message"
+                android:layout_below="@+id/send_message">
+
+                <ImageButton
+                    android:id="@+id/plus_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/send_message_shape"
+                    android:src="@drawable/galleryff" />
+
+                <ImageButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_toRightOf="@+id/plus_btn"
+                    android:layout_toEndOf="@+id/plus_btn"
+                    android:id="@+id/smileImage"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/send_message_shape"
+                    android:src="@drawable/smileff"/>
+
+                <ImageButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_toRightOf="@+id/smileImage"
+                    android:layout_toEndOf="@+id/smileImage"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:src="@drawable/cameraff"
+                    android:background="@drawable/send_message_shape"
+                    android:id="@+id/cameraImage"/>
+
+                <ImageButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_toRightOf="@+id/cameraImage"
+                    android:layout_toEndOf="@+id/cameraImage"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:src="@drawable/microphoneff"
+                    android:background="@drawable/send_message_shape"
+                    android:id="@+id/microphoneImage"/>
+
+
+
+            </RelativeLayout>
 
             <ImageButton
                 android:id="@+id/send_message"
                 android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/galerija_shape"
-                android:src="@drawable/sendmsg" />
+                android:layout_height="60dp"
+                android:background="@drawable/send_message_shape"
+                android:src="@drawable/ic_send_white_24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"/>
 
-        </LinearLayout>
+        </RelativeLayout>
+
+
 
         <FrameLayout
             android:id="@+id/emojicons"
@@ -105,7 +163,7 @@
             android:layout_height="300dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/bottom_chat_layout"
+            android:layout_below="@+id/layoutzagornjiidonji"
             android:visibility="gone"
             android:background="@color/white">
 
@@ -116,7 +174,7 @@
             android:id="@+id/album"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_below="@+id/bottom_chat_layout"
+            android:layout_below="@+id/layoutzagornjiidonji"
             android:orientation="horizontal"
             android:visibility="gone">
 

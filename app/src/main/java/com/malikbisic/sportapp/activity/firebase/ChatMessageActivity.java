@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -93,7 +95,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     FirebaseAuth mAuth;
     private String mCurrentUserId;
 
-    ImageButton mChatAddBtn;
+    ImageView mChatAddBtn;
     ImageButton mChatSendBtn;
     EmojiconEditText mChatMessageView;
     RecyclerView mMessagesList;
@@ -123,14 +125,16 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     RelativeLayout botomChatLay;
     boolean firstImageClick = true;
     boolean secondImageClick = false;
-
+    ImageView smajlic;
+    Animation slideUpAnimation;
+    Animation slideDownAnimation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_message);
         Intent closeAPP = new Intent(this, StopAppServices.class);
         startService(closeAPP);
-
+smajlic = (ImageView) findViewById(R.id.smileImage);
         mRootRef = FirebaseFirestore.getInstance();
         mChatToolbar = (Toolbar) findViewById(R.id.chat_toolbar);
         setSupportActionBar(mChatToolbar);
@@ -146,6 +150,11 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
         recyclerViewAlbum = (RecyclerView) findViewById(R.id.album);
+        slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.anmation_drom_down_to_top);
+
+        slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation_from_top_to_bottom);
+
 
         utils = new ImageAlbumName(this);
 
@@ -167,7 +176,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         mTitleView = (TextView) findViewById(R.id.chat_username);
         mLastSeenView = (TextView) findViewById(R.id.chat_last_seen);
         mProfileImg = (CircleImageView) findViewById(R.id.chat_imageview_id);
-        mChatAddBtn = (ImageButton) findViewById(R.id.plus_btn);
+        mChatAddBtn = (ImageView) findViewById(R.id.plus_btn);
         mChatSendBtn = (ImageButton) findViewById(R.id.send_message);
         mChatMessageView = (EmojiconEditText) findViewById(R.id.chat_text);
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
@@ -175,7 +184,34 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         mLinearLayout = new LinearLayoutManager(this);
         mLinearLayout.setReverseLayout(true);
 
+smajlic.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        if (firstImageClick) {
+            firstImageClick = false;
+            secondImageClick = true;
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+            recyclerViewAlbum.setVisibility(View.GONE);
 
+            emoticons.startAnimation(slideUpAnimation);
+            emoticons.setVisibility(View.VISIBLE);
+
+        }
+        else if (secondImageClick){
+            firstImageClick = true;
+            secondImageClick = false;
+          /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+            emoticons.setVisibility(View.GONE);
+            recyclerViewAlbum.setVisibility(View.GONE);
+
+
+        }
+    }
+});
 
 
         mChatMessageView.setOnClickListener(new View.OnClickListener() {
@@ -183,7 +219,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
             public void onClick(View v) {
                 emoticons.setVisibility(View.GONE);
                 recyclerViewAlbum.setVisibility(View.GONE);
-                mChatMessageView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.smajlic, 0);
+
             }
         });
 
@@ -193,7 +229,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         loadMessages(this);
         checkAllLoaded();
 
-        mChatMessageView.setOnTouchListener(new View.OnTouchListener() {
+       /* mChatMessageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -241,7 +277,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
                 return false;
             }
-        });
+        });*/
         //neki kom
         mChatMessageView.addTextChangedListener(new TextWatcher() {
 
