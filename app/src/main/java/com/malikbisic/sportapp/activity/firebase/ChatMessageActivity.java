@@ -127,16 +127,20 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     boolean secondClickGallery = false;
     boolean firstClickSmile = true;
     boolean secondClickSmile = false;
+    boolean firstTimeEnterMessageClicked = true;
+    boolean secondTimeEnterMessageClicked = false;
     ImageView smajlic;
     Animation slideUpAnimation;
     Animation slideDownAnimation;
+SwipeRefreshLayout layout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_message);
         Intent closeAPP = new Intent(this, StopAppServices.class);
         startService(closeAPP);
-smajlic = (ImageView) findViewById(R.id.smileImage);
+        smajlic = (ImageView) findViewById(R.id.smileImage);
         mRootRef = FirebaseFirestore.getInstance();
         mChatToolbar = (Toolbar) findViewById(R.id.chat_toolbar);
         setSupportActionBar(mChatToolbar);
@@ -155,7 +159,7 @@ smajlic = (ImageView) findViewById(R.id.smileImage);
         slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.anmation_drom_down_to_top);
 
-        slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation_from_top_to_bottom);
+        slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_from_top_to_bottom);
 
 
         utils = new ImageAlbumName(this);
@@ -182,60 +186,65 @@ smajlic = (ImageView) findViewById(R.id.smileImage);
         mChatSendBtn = (ImageButton) findViewById(R.id.send_message);
         mChatMessageView = (EmojiconEditText) findViewById(R.id.chat_text);
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
+
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_message_swipe_layout);
         mLinearLayout = new LinearLayoutManager(this);
         mLinearLayout.setReverseLayout(true);
+        mMessagesList.setLayoutManager(mLinearLayout);
+        mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this);
 
-smajlic.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        if (firstClickSmile) {
-            firstClickSmile = false;
-            secondClickSmile = true;
-            firstClickGallery = true;
-            secondClickGallery = false;
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+        loadMessages(this);
+        checkAllLoaded();
+
+        smajlic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (firstClickSmile) {
+                    firstClickSmile = false;
+                    secondClickSmile = true;
+                    firstClickGallery = true;
+                    secondClickGallery = false;
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
 
 
-            emoticons.startAnimation(slideUpAnimation);
-            emoticons.setVisibility(View.VISIBLE);
-            recyclerViewAlbum.setVisibility(View.GONE);
-        }
-        else if (secondClickSmile){
-            firstClickSmile = true;
-            secondClickSmile = false;
-            firstClickGallery = true;
-            secondClickGallery = false;
+                    emoticons.startAnimation(slideUpAnimation);
+                    emoticons.setVisibility(View.VISIBLE);
+                    recyclerViewAlbum.setVisibility(View.GONE);
+                } else if (secondClickSmile) {
+                    firstClickSmile = true;
+                    secondClickSmile = false;
+                    firstClickGallery = true;
+                    secondClickGallery = false;
           /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
-            emoticons.setVisibility(View.GONE);
-            recyclerViewAlbum.setVisibility(View.GONE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+                    emoticons.setVisibility(View.GONE);
+                    recyclerViewAlbum.setVisibility(View.GONE);
 
 
-        }
-    }
-});
+                }
+            }
+        });
         mChatAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (firstClickGallery){
+                if (firstClickGallery) {
                     firstClickGallery = false;
                     secondClickGallery = true;
                     firstClickSmile = true;
-                    secondClickSmile =false;
+                    secondClickSmile = false;
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
                     recyclerViewAlbum.setVisibility(View.VISIBLE);
                     emoticons.setVisibility(View.GONE);
-                }else if (secondClickGallery){
+                } else if (secondClickGallery) {
 
                     firstClickGallery = true;
                     secondClickGallery = false;
                     firstClickSmile = true;
-                    secondClickSmile =false;
+                    secondClickSmile = false;
                     recyclerViewAlbum.setVisibility(View.GONE);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
@@ -251,16 +260,23 @@ smajlic.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 emoticons.setVisibility(View.GONE);
                 recyclerViewAlbum.setVisibility(View.GONE);
+                firstClickSmile = true;
+                firstClickGallery = true;
 
             }
         });
 
-        mMessagesList.setLayoutManager(mLinearLayout);
-        mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this);
 
-        loadMessages(this);
-        checkAllLoaded();
-
+        mMessagesList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emoticons.setVisibility(View.GONE);
+                recyclerViewAlbum.setVisibility(View.GONE);
+                Toast.makeText(ChatMessageActivity.this,"desavaliseista",Toast.LENGTH_LONG).show();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+            }
+        });
        /* mChatMessageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -411,7 +427,6 @@ smajlic.setOnClickListener(new View.OnClickListener() {
                 sendMessage();
             }
         });
-
 
 
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
