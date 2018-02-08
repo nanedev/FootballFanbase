@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -133,6 +135,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     Animation slideUpAnimation;
     Animation slideDownAnimation;
 SwipeRefreshLayout layout;
+ImageButton captureImage;
+public  static int CAMERA_REQUEST = 45;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +156,7 @@ SwipeRefreshLayout layout;
         recyclerViewAlbum = (RecyclerView) findViewById(R.id.album);
         emoticons = (FrameLayout) findViewById(R.id.emojicons);
         botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
+        captureImage = (ImageButton) findViewById(R.id.cameraImage);
 
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
@@ -162,6 +167,13 @@ SwipeRefreshLayout layout;
         slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_from_top_to_bottom);
 
 
+        captureImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+        });
         utils = new ImageAlbumName(this);
 
         imagePaths = utils.getFilePaths();
@@ -266,17 +278,9 @@ SwipeRefreshLayout layout;
             }
         });
 
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relChat);
 
-        mMessagesList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                emoticons.setVisibility(View.GONE);
-                recyclerViewAlbum.setVisibility(View.GONE);
-                Toast.makeText(ChatMessageActivity.this,"desavaliseista",Toast.LENGTH_LONG).show();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
-            }
-        });
+
        /* mChatMessageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -455,6 +459,20 @@ SwipeRefreshLayout layout;
         if (requestCode == 1) {
             if (requestCode == RESULT_OK) {
                 mChatUser = data.getStringExtra("userId");
+            }
+        }
+
+        if (requestCode == CAMERA_REQUEST){
+            Bitmap image = null;
+            Uri imageData = null;
+            if (resultCode == RESULT_OK){
+                image = (Bitmap) data.getExtras().get("data");
+                imageData = data.getData();
+                Intent openCameraSend = new Intent(ChatMessageActivity.this, CaptureImageSendChatActivity.class);
+                openCameraSend.setData(imageData);
+                openCameraSend.putExtra("imagedata", image);
+                openCameraSend.putExtra("userID", mChatUser);
+                startActivityForResult(openCameraSend, 1);
             }
         }
     }
@@ -671,6 +689,17 @@ SwipeRefreshLayout layout;
                     String time = DateUtils.formatDateTime(activity, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                     holder.timeTextView.setText(time);
                 }
+                mMessagesList.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        emoticons.setVisibility(View.GONE);
+                        recyclerViewAlbum.setVisibility(View.GONE);
+                        Toast.makeText(ChatMessageActivity.this,"desavaliseista",Toast.LENGTH_LONG).show();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+
+                    }
+                });
             }
 
             @Override

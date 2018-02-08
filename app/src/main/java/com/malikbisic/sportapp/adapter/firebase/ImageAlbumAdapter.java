@@ -254,7 +254,7 @@ holder.image.setOnClickListener(new View.OnClickListener() {
             imageCompressBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             final byte[] data = baos.toByteArray();
             StorageReference mFilePath = FirebaseStorage.getInstance().getReference();
-            StorageReference photoPost = mFilePath.child("Post_Photo").child(imagePath.getName());
+            StorageReference photoPost = mFilePath.child("Chat_Image").child(imagePath.getName());
             UploadTask uploadTask = photoPost.putBytes(data);
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
