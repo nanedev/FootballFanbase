@@ -6,15 +6,19 @@ import android.content.res.Resources;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
 
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.firebase.ImageAlbumAdapter;
+import com.malikbisic.sportapp.adapter.firebase.MultiSelectImageAdapter;
 import com.malikbisic.sportapp.utils.ImageAlbumName;
 import com.malikbisic.sportapp.utils.ImageConstant;
 
@@ -25,7 +29,7 @@ public class SendImageChatActivity extends AppCompatActivity {
     Toolbar mChatToolbar;
     private ImageAlbumName utils;
     private ArrayList<String> imagePaths = new ArrayList<String>();
-    private ImageAlbumAdapter adapter;
+    private MultiSelectImageAdapter adapter;
     private RecyclerView gridView;
     private int columnWidth;
 
@@ -57,16 +61,21 @@ public class SendImageChatActivity extends AppCompatActivity {
         imagePaths = utils.getFilePaths();
 
         // Gridview adapter
-        adapter = new ImageAlbumAdapter(SendImageChatActivity.this, imagePaths, myUID, userID);
+        adapter = new MultiSelectImageAdapter(SendImageChatActivity.this, imagePaths, myUID, userID);
 
         // setting grid view adapter
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
+
         gridView.setLayoutManager(manager);
         gridView.setAdapter(adapter);
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.image_send, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -77,6 +86,8 @@ public class SendImageChatActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK, backToChat);
                 finish();
                 return true;
+            case R.id.send_images:
+                Log.i("imageForSend", String.valueOf(adapter.checkedPath));
 
                 default:
                     return super.onOptionsItemSelected(item);
