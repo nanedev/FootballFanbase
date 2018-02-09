@@ -73,10 +73,12 @@ import com.malikbisic.sportapp.utils.GetTimeAgo;
 import com.malikbisic.sportapp.adapter.firebase.MessageAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
 import com.malikbisic.sportapp.utils.ImageAlbumName;
+import com.malikbisic.sportapp.utils.RoundedTransformation;
 import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -278,7 +280,7 @@ public  static int CAMERA_REQUEST = 45;
             }
         });
 
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relChat);
+
 
 
        /* mChatMessageView.setOnTouchListener(new View.OnTouchListener() {
@@ -477,7 +479,7 @@ public  static int CAMERA_REQUEST = 45;
         }
     }
 
-    private void loadMoreMessages(final Activity activity) {
+ /*   private void loadMoreMessages(final Activity activity) {
 
 
         final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
@@ -573,7 +575,7 @@ public  static int CAMERA_REQUEST = 45;
         adapter.startListening();
 
 
-    }
+    }*/
 
     private void checkAllLoaded() {
 
@@ -622,19 +624,65 @@ public  static int CAMERA_REQUEST = 45;
                 if (from_user != null) {
 
                     if (from_user.equals(current_user_id)) {
+                        holder.layoutToUser.setVisibility(View.VISIBLE);
+                        holder.layoutFromUser.setVisibility(View.GONE);
+                        holder.layoutImageFromUser.setVisibility(View.GONE);
 
-                        holder.messagetTextTexview.setBackgroundColor(Color.WHITE);
-                        holder.messagetTextTexview.setTextColor(R.color.black);
-                        holder.layout.setGravity(Gravity.RIGHT);
-                        holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
-                        holder.profileImageImg.setVisibility(View.GONE);
+                        if (type.equals("text")) {
+                            holder.layoutToUser.setVisibility(View.VISIBLE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.messageTextTOUser.setText(model.getMessage());
+                            if (model.getTime() != null) {
+                                String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                                holder.timeTextViewToUser.setText(time);
+                            }
+                        } else if (type.equals("image")){
+                            holder.layoutImageToUser.setVisibility(View.VISIBLE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
+                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(30,0)).into(holder.messageImageViewToUser);
+
+                            if (model.getTime() != null) {
+                                String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                                holder.timeImageTOUser.setText(time);
+                            }
+                        }
 
                     } else {
-                        holder.messagetTextTexview.setBackgroundResource(R.drawable.message_text_background);
-                        holder.messagetTextTexview.setTextColor(Color.WHITE);
-                        holder.layout.setGravity(Gravity.LEFT);
-                        holder.messagetTextTexview.setTypeface(holder.messagetTextTexview.getTypeface(), Typeface.BOLD);
+                        holder.layoutFromUser.setVisibility(View.VISIBLE);
                         holder.profileImageImg.setVisibility(View.VISIBLE);
+                        holder.layoutToUser.setVisibility(View.GONE);
+                        holder.layoutImageToUser.setVisibility(View.GONE);
+                        holder.layoutImageFromUser.setVisibility(View.GONE);
+
+                        if (type.equals("text")) {
+                            holder.layoutFromUser.setVisibility(View.VISIBLE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.messageTextFromUser.setText(model.getMessage());
+                            if (model.getTime() != null) {
+                                String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                                holder.timeTextViewFromUser.setText(time);
+                            }
+                        } else if (type.equals("image")){
+                            holder.layoutImageFromUser.setVisibility(View.VISIBLE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
+                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(30,0)).into(holder.messageImageViewFromUser);
+
+                            if (model.getTime() != null) {
+                                String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                                holder.timeImageFromUser.setText(time);
+                            }
+                        }
+
 
                         FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
 
@@ -675,20 +723,7 @@ public  static int CAMERA_REQUEST = 45;
 
                 }
 
-                if (type.equals("text")) {
-                    holder.messagetTextTexview.setVisibility(View.VISIBLE);
-                    holder.messagetTextTexview.setText(model.getMessage());
-                    holder.messageImageView.setVisibility(View.GONE);
-                } else if (type.equals("image")) {
-                    holder.messageImageView.setVisibility(View.VISIBLE);
-                    Glide.with(activity).load(model.getMessage()).into(holder.messageImageView);
-                    holder.messagetTextTexview.setVisibility(View.GONE);
-                }
 
-                if (model.getTime() != null) {
-                    String time = DateUtils.formatDateTime(activity, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
-                    holder.timeTextView.setText(time);
-                }
                 mMessagesList.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -76,7 +76,7 @@ boolean secondtime;
     }
 
     @Override
-    public void onBindViewHolder(final ImageViewHolder holder, final int position) {
+    public void onBindViewHolder(final ImageViewHolder holder,  int position) {
         String image = _filePaths.get(position);
         Glide.with(_activity).load(image).into(holder.image);
 
@@ -88,7 +88,7 @@ holder.image.setOnClickListener(new View.OnClickListener() {
         holder.sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendImage(position);
+                sendImage(holder.getAdapterPosition());
             }
         });
     }
@@ -262,7 +262,7 @@ holder.image.setOnClickListener(new View.OnClickListener() {
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
 
 
-                    Map messageMap = new HashMap();
+                    Map<String,Object> messageMap = new HashMap<>();
                     messageMap.put("message", downloadUri.toString());
                     messageMap.put("seen", false);
                     messageMap.put("type", "image");
@@ -273,16 +273,16 @@ holder.image.setOnClickListener(new View.OnClickListener() {
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).collection("message").add(messageMap);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).collection("message").add(messageMap);
 
-                    Map chatUser = new HashMap();
+                    Map<String,Object> chatUser = new HashMap<>();
                     chatUser.put("to", userID);
-                    Map mychatUser = new HashMap();
+                    Map<String,Object> mychatUser = new HashMap<>();
                     chatUser.put("to", myUID);
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
 
-                    Intent goToMain = new Intent(_activity, SendImageChatActivity.class);
+                 /*   Intent goToMain = new Intent(_activity, SendImageChatActivity.class);
                     goToMain.putExtra("userId", userID);
-                    _activity.startActivity(goToMain);
+                    _activity.startActivity(goToMain);*/
 
 
                 }

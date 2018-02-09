@@ -4,65 +4,233 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:layout_margin="10dp"
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp">
+    >
 
     <RelativeLayout
-        android:id="@+id/message_image_and_text_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp">
+        android:id="@+id/message_from_user"
+        android:padding="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:visibility="gone"
+        >
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/message_image"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true" />
-
+            android:id="@+id/message_image"
+            android:layout_centerVertical="true"/>
         <RelativeLayout
-            android:id="@+id/message_text_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="7dp"
-            android:layout_marginStart="7dp"
+            android:id="@+id/text_and_time_from_user"
+            android:layout_toRightOf="@+id/message_image"
             android:layout_toEndOf="@+id/message_image"
-            android:layout_toRightOf="@+id/message_image">
-
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:padding="10dp"
+            android:background="@drawable/message_shape">
             <com.rockerhieu.emojicon.EmojiconTextView
-                android:id="@+id/message_text"
+                android:id="@+id/message_textFromUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 emojicon:emojiconAlignment="baseline"
                 emojicon:emojiconSize="28sp"
-                android:textColor="@color/black"
-                android:background="@drawable/message_text_background"
-                android:padding="10dp"
-                android:visibility="invisible"
+                android:textColor="@color/white"
+                android:visibility="visible"
                 android:textStyle="bold" />
-            <ImageView
-                android:id="@+id/message_image_sender"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/timeMessageFromUser"
+                android:text="00:00"
+                android:layout_toEndOf="@+id/message_textFromUser"
+                android:layout_toRightOf="@+id/message_textFromUser"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:visibility="invisible"/>
+                android:textColor="#bdbdbd"
+                android:textStyle="bold"/>
+
         </RelativeLayout>
+
+
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/message_layout_to_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/message_shape_to"
+        android:padding="10dp"
+        android:visibility="visible">
+
+
+        <com.rockerhieu.emojicon.EmojiconTextView
+            android:id="@+id/message_textToUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:visibility="visible"
+            emojicon:emojiconAlignment="baseline"
+            emojicon:emojiconSize="28sp" />
+
+        <TextView
+            android:id="@+id/timeMessageToUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/message_textToUser"
+            android:layout_toEndOf="@+id/message_textToUser"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="00:00"
+            android:textColor="#bdbdbd"
+            android:textStyle="bold" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:id="@+id/messageimagelayoutFromUser"
+        android:background="@drawable/message_shape"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="gone"
+
+        >
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:id="@+id/imageMessageFromUser"
+
+            android:layout_centerVertical="true"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/timeMessage"
-            android:layout_alignRight="@+id/message_text_layout"
-            android:layout_alignEnd="@+id/message_text_layout"
-            android:layout_below="@+id/message_text_layout"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="00:00"
-            android:textColor="#000"/>
+            android:id="@+id/timemessageImageFromUser"
+            android:layout_below="@+id/imageMessageFromUser"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
+
     </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:id="@+id/messageimagelayoutToUser"
+        android:background="@drawable/message_shape_to_image"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+
+        >
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:id="@+id/imageMessageToUser"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/timemessageImageToUser"
+            android:layout_below="@+id/imageMessageToUser"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+    </RelativeLayout>
+
+    <!--
+        <RelativeLayout
+            android:id="@+id/message_image_and_text_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/message_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true" />
+
+            <RelativeLayout
+                android:id="@+id/message_text_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+                android:layout_marginStart="7dp"
+                android:layout_toEndOf="@+id/message_image"
+                android:layout_toRightOf="@+id/message_image">
+
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    android:id="@+id/message_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    emojicon:emojiconAlignment="baseline"
+                    emojicon:emojiconSize="28sp"
+                    android:textColor="@color/black"
+                    android:background="@drawable/message_text_background"
+                    android:padding="10dp"
+                    android:visibility="invisible"
+                    android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/message_image_sender"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:visibility="invisible"/>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/timeMessage"
+                android:layout_alignRight="@+id/message_text_layout"
+                android:layout_alignEnd="@+id/message_text_layout"
+                android:layout_below="@+id/message_text_layout"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="00:00"
+                android:textColor="#000"/>
+        </RelativeLayout>-->
 
 </RelativeLayout>
