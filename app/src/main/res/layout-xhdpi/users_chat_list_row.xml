@@ -30,6 +30,7 @@
         android:layout_alignLeft="@+id/username_chatList"
         android:layout_alignStart="@+id/username_chatList"
         android:textSize="13dp"
+        android:singleLine="true"
         android:textStyle="italic" />
 
 

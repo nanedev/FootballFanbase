@@ -2,13 +2,16 @@ package com.malikbisic.sportapp.activity.firebase;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -80,7 +83,10 @@ import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -735,6 +741,72 @@ public  static int CAMERA_REQUEST = 45;
 
                     }
                 });
+
+                holder.messageImageViewFromUser.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        final String[] items = {"Save Image to Gallery",  "Cancel"};
+                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+
+                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                if (items[i].equals("Save Image to Gallery")) {
+
+                                    ProgressDialog dialog1 = new ProgressDialog(activity);
+                                    dialog1.setMessage("Saving...");
+                                    dialog1.show();
+                                    holder.messageImageViewFromUser.buildDrawingCache();
+                                    Bitmap imageChat = holder.messageImageViewFromUser.getDrawingCache();
+                                    saveFile(imageChat);
+                                    dialog1.dismiss();
+                                }  else if (items[i].equals("Cancel")) {
+
+
+                                }
+                            }
+                        });
+
+                        dialog.create();
+                        dialog.show();
+
+                        return true;
+                    }
+                });
+
+                holder.messageImageViewToUser.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        final String[] items = {"Save Image to Gallery",  "Cancel"};
+                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+
+                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                if (items[i].equals("Save Image to Gallery")) {
+
+                                    ProgressDialog dialog1 = new ProgressDialog(activity);
+                                    dialog1.setMessage("Saving...");
+                                    dialog1.show();
+                                    holder.messageImageViewToUser.buildDrawingCache();
+                                    Bitmap imageChat = holder.messageImageViewToUser.getDrawingCache();
+                                    saveFile(imageChat);
+                                    dialog1.dismiss();
+                                }  else if (items[i].equals("Cancel")) {
+
+
+                                }
+                            }
+                        });
+
+                        dialog.create();
+                        dialog.show();
+
+                        return true;
+                    }
+                });
             }
 
             @Override
@@ -764,8 +836,46 @@ public  static int CAMERA_REQUEST = 45;
                 }
             }
         });
+
         adapter.startListening();
 
+    }
+    public  void saveFile(Bitmap b){
+        try {
+
+            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/FootballFanBase/");
+
+            if (!storageDir.exists()) {
+                storageDir.mkdirs();
+            }
+
+            File imageFile = File.createTempFile(
+                    String.valueOf(Calendar.getInstance().getTimeInMillis()),
+                    ".jpeg",                     /* suffix */
+                    storageDir                   /* directory */
+            );
+
+
+            FileOutputStream writeStream = new FileOutputStream(imageFile);
+
+            b.compress(Bitmap.CompressFormat.JPEG, 100, writeStream);
+            writeStream.flush();
+            writeStream.close();
+
+            addPicToGallery(imageFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    public void addPicToGallery(File imageFile)
+    {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+
+        Uri contentUri = Uri.fromFile(imageFile);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
     }
 
     private void sendMessage() {

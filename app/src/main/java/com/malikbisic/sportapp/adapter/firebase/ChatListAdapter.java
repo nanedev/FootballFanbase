@@ -56,16 +56,25 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         final Messages model = listMessage.get(position);
 
         String fromUID = model.getFrom();
+        final String type = model.getType();
 
         if (myUID.equals(fromUID)){
-            holder.lastMessageTxt.setText("You: " +model.getMessage());
+            if (type.equals("image")){
+                holder.lastMessageTxt.setText("You: " + "Sent image");
+            }else {
+                holder.lastMessageTxt.setText("You: " + model.getMessage());
+            }
         } else {
             DocumentReference usersInfo = FirebaseFirestore.getInstance().collection("Users").document(fromUID);
             usersInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                     String username = String.valueOf(documentSnapshot.getString("username"));
-                    holder.lastMessageTxt.setText(username + ": " +model.getMessage());
+                    if (type.equals("image")){
+                        holder.lastMessageTxt.setText(username + ": " + "Sent image");
+                    }else {
+                        holder.lastMessageTxt.setText(username + ": " + model.getMessage());
+                    }
 
                 }
             });
