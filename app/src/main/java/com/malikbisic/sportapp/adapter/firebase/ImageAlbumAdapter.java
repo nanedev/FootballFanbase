@@ -81,14 +81,24 @@ boolean secondtime;
         Glide.with(_activity).load(image).into(holder.image);
 
 holder.sendButton.setVisibility(View.GONE);
+holder.gridView.setVisibility(View.GONE);
 holder.image.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
         holder.sendButton.setVisibility(View.VISIBLE);
+        holder.gridView.setVisibility(View.VISIBLE);
         holder.sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendImage(holder.getAdapterPosition());
+            }
+        });
+
+        holder.gridView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(_activity,SendImageChatActivity.class);
+                _activity.startActivity(intent);
             }
         });
     }
@@ -326,12 +336,14 @@ holder.image.setOnClickListener(new View.OnClickListener() {
    public static class ImageViewHolder extends RecyclerView.ViewHolder {
       public   ImageView image;
       public   ImageButton sendButton;
+      public  ImageView gridView;
 
        public ImageViewHolder(View itemView) {
            super(itemView);
 
            image = (ImageView) itemView.findViewById(R.id.imageGrid);
            sendButton = (ImageButton) itemView.findViewById(R.id.sendImageGrid);
+           gridView = (ImageView) itemView.findViewById(R.id.gotogrid);
        }
    }
 

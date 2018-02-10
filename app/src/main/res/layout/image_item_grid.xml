@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
  android:paddingRight="1dp"
     android:paddingEnd="1dp"
+    android:id="@+id/nekiid"
     android:background="@color/white">
 
 
@@ -28,4 +29,14 @@
         android:visibility="visible"
         android:background="@drawable/shape_for_send"
         app:srcCompat="@drawable/ic_send_white_24dp" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/grididcon"
+        android:id="@+id/gotogrid"
+        android:background="@android:color/transparent"
+        android:layout_alignParentBottom="true"
+        android:layout_margin = "20dp"
+        />
 </RelativeLayout>

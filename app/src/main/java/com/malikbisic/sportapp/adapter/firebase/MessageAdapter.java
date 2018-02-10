@@ -96,7 +96,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     holder.layoutImageFromUser.setVisibility(View.GONE);
                   holder.layoutToUser.setVisibility(View.GONE);
                     Picasso.with(ctx).setIndicatorsEnabled(false);
-                    Picasso.with(ctx).load(messages.getMessage()).transform(new RoundedTransformation(30, 0)).into(holder.messageImageViewToUser);
+                    Picasso.with(ctx).load(messages.getMessage()).transform(new RoundedTransformation(20,3)).fit().centerCrop().into(holder.messageImageViewToUser);
 
                     if (messages.getTime() != null) {
                         String time = DateUtils.formatDateTime(ctx, messages.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -113,11 +113,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.layoutImageToUser.setVisibility(View.GONE);
                 holder.layoutImageFromUser.setVisibility(View.GONE);
 
+
                 if (type.equals("text")) {
                     holder.layoutFromUser.setVisibility(View.VISIBLE);
                     holder.layoutToUser.setVisibility(View.GONE);
                     holder.layoutImageToUser.setVisibility(View.GONE);
                     holder.layoutImageFromUser.setVisibility(View.GONE);
+                    holder.userProfileForIMage.setVisibility(View.GONE);
                     holder.messageTextFromUser.setText(messages.getMessage());
                     if (messages.getTime() != null) {
                         String time = DateUtils.formatDateTime(ctx, messages.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -127,14 +129,27 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     holder.layoutImageFromUser.setVisibility(View.VISIBLE);
                     holder.layoutToUser.setVisibility(View.GONE);
                     holder.layoutImageToUser.setVisibility(View.GONE);
+                    holder.userProfileForIMage.setVisibility(View.VISIBLE);
                holder.layoutFromUser.setVisibility(View.GONE);
                     Picasso.with(ctx).setIndicatorsEnabled(false);
-                    Picasso.with(ctx).load(messages.getMessage()).transform(new RoundedTransformation(30, 0)).into(holder.messageImageViewFromUser);
+                    Picasso.with(ctx).load(messages.getMessage()).transform(new RoundedTransformation(20,3)).fit().centerCrop().into(holder.messageImageViewFromUser);
 
                     if (messages.getTime() != null) {
                         String time = DateUtils.formatDateTime(ctx, messages.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                         holder.timeImageFromUser.setText(time);
                     }
+                    FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
+
+                    displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                            UserChat model2 = dataSnapshot.toObject(UserChat.class);
+                            String profileImage = model2.getProfileImage();
+
+                            holder.setProfileImageForImage(ctx, profileImage);
+                        }
+                    });
                 }
 
 
@@ -180,6 +195,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         public RelativeLayout layoutImageToUser;
         public TextView timeImageTOUser;
         public TextView timeImageFromUser;
+        public CircleImageView userProfileForIMage;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
@@ -197,13 +213,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             timeImageTOUser = (TextView) itemView.findViewById(R.id.timemessageImageToUser);
             messageImageViewFromUser = (ImageView) itemView.findViewById(R.id.imageMessageFromUser);
             messageImageViewToUser = (ImageView) itemView.findViewById(R.id.imageMessageToUser);
+            userProfileForIMage = (CircleImageView) itemView.findViewById(R.id.message_imageImageFrom);
 
         }
 
         public void setProfileImageImg(Context ctx, String profileImage) {
             Picasso.with(ctx).load(profileImage).into(profileImageImg);
         }
-
+        public void setProfileImageForImage(Context ctx, String profileImage) {
+            Picasso.with(ctx).load(profileImage).into(userProfileForIMage);
+        }
     }
 
 }

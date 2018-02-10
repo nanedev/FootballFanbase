@@ -649,8 +649,9 @@ public  static int CAMERA_REQUEST = 45;
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.layoutToUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
-                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(30,0)).into(holder.messageImageViewToUser);
+                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20,3)).fit().centerCrop().into(holder.messageImageViewToUser);
 
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -664,29 +665,45 @@ public  static int CAMERA_REQUEST = 45;
                         holder.layoutToUser.setVisibility(View.GONE);
                         holder.layoutImageToUser.setVisibility(View.GONE);
                         holder.layoutImageFromUser.setVisibility(View.GONE);
+                        holder.userProfileForIMage.setVisibility(View.GONE);
 
                         if (type.equals("text")) {
                             holder.layoutFromUser.setVisibility(View.VISIBLE);
                             holder.layoutToUser.setVisibility(View.GONE);
                             holder.layoutImageToUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
                             holder.messageTextFromUser.setText(model.getMessage());
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeTextViewFromUser.setText(time);
                             }
                         } else if (type.equals("image")){
+                            holder.userProfileForIMage.setVisibility(View.VISIBLE);
                             holder.layoutImageFromUser.setVisibility(View.VISIBLE);
                             holder.layoutToUser.setVisibility(View.GONE);
                             holder.layoutImageToUser.setVisibility(View.GONE);
                             holder.layoutFromUser.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
-                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(30,0)).into(holder.messageImageViewFromUser);
+                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20,3)).fit().centerCrop().into(holder.messageImageViewFromUser);
 
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeImageFromUser.setText(time);
                             }
+
+                            FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
+
+                            displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                                @Override
+                                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                    UserChat model2 = dataSnapshot.toObject(UserChat.class);
+                                    String profileImage = model2.getProfileImage();
+
+                                    holder.setProfileImageForImage(activity, profileImage);
+                                }
+                            });
                         }
 
 
