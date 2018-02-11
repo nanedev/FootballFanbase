@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -70,6 +71,7 @@ import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.firebase.ImageAlbumAdapter;
+import com.malikbisic.sportapp.listener.OnLoadMoreListener;
 import com.malikbisic.sportapp.model.firebase.Message;
 import com.malikbisic.sportapp.model.firebase.UserChat;
 import com.malikbisic.sportapp.utils.GetTimeAgo;
@@ -107,7 +109,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
     ImageView mChatAddBtn;
     ImageButton mChatSendBtn;
-    EmojiconEditText mChatMessageView;
+    public static EmojiconEditText mChatMessageView;
     RecyclerView mMessagesList;
     private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayout;
@@ -127,11 +129,11 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     private ImageAlbumName utils;
     private ArrayList<String> imagePaths = new ArrayList<String>();
     private ImageAlbumAdapter adapter;
-    private RecyclerView recyclerViewAlbum;
+    public static RecyclerView recyclerViewAlbum;
 
 
     ImageView proba;
-    FrameLayout emoticons;
+    public static FrameLayout emoticons;
     RelativeLayout botomChatLay;
     boolean firstClickGallery = true;
     boolean secondClickGallery = false;
@@ -142,9 +144,9 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     ImageView smajlic;
     Animation slideUpAnimation;
     Animation slideDownAnimation;
-SwipeRefreshLayout layout;
-ImageButton captureImage;
-public  static int CAMERA_REQUEST = 45;
+    SwipeRefreshLayout layout;
+    ImageButton captureImage;
+    public static int CAMERA_REQUEST = 45;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,11 +212,14 @@ public  static int CAMERA_REQUEST = 45;
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_message_swipe_layout);
         mLinearLayout = new LinearLayoutManager(this);
         mLinearLayout.setReverseLayout(true);
+        mLinearLayout.setStackFromEnd(true);
         mMessagesList.setLayoutManager(mLinearLayout);
-        mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this);
+        mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this, mMessagesList);
+        mMessagesList.setAdapter(mAdapter);
 
         loadMessages(this);
         checkAllLoaded();
+
 
         smajlic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -448,10 +453,10 @@ public  static int CAMERA_REQUEST = 45;
                 refreshing = true;
                 mCurrentPage = mCurrentPage + 10;
                 scrollPosition += 10;
-                loadMessages(ChatMessageActivity.this);
+
 
                 itemPos = 0;
-                // loadMoreMessages(ChatMessageActivity.this);
+                 loadMoreMessages(ChatMessageActivity.this);
 
             }
 
@@ -470,10 +475,10 @@ public  static int CAMERA_REQUEST = 45;
             }
         }
 
-        if (requestCode == CAMERA_REQUEST){
+        if (requestCode == CAMERA_REQUEST) {
             Bitmap image = null;
             Uri imageData = null;
-            if (resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 image = (Bitmap) data.getExtras().get("data");
                 imageData = data.getData();
                 Intent openCameraSend = new Intent(ChatMessageActivity.this, CaptureImageSendChatActivity.class);
@@ -485,19 +490,53 @@ public  static int CAMERA_REQUEST = 45;
         }
     }
 
- /*   private void loadMoreMessages(final Activity activity) {
+    private void loadMoreMessages(final Activity activity) {
 
+        final CollectionReference messageRef2 = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
+        final com.google.firebase.firestore.Query messageQuery2 = messageRef2.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).startAfter(lastkey).limit(10);
+
+        messageQuery2.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                if (documentSnapshots.size() != 0) {
+                    final DocumentSnapshot lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+
+                    CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
+                    messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException s) {
+                            lastItem = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
+                            ;
+                            if (lastkey.getId().equals(lastItem.getId())) {
+
+                                if (lastkey.getId().equals(lastItem.getId())) {
+                                    mAdapter.isFullLoaded(true);
+                                } else {
+                                    mAdapter.isFullLoaded(false);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
         final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
         final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).startAfter(lastkey).limit(10);
         messageQuery.addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-            }
+                for (DocumentSnapshot snapshot : documentSnapshots){
+                    Messages model = snapshot.toObject(Messages.class);
+                    messagesList.add(model);
+                    mAdapter.notifyDataSetChanged();
+                    lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() -1);
+                    mAdapter.setIsLoading(false);
+                }
+                           }
         });
 
-
+/*
         final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
                 .setQuery(messageQuery, Messages.class).build();
 
@@ -582,8 +621,41 @@ public  static int CAMERA_REQUEST = 45;
 
 
     }*/
+    }
 
     private void checkAllLoaded() {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mAdapter.setOnLoadMore(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+
+
+                mMessagesList.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        messagesList.add(null);
+                        mAdapter.notifyItemInserted(messagesList.size() - 1);
+                    }
+                });
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        loadMoreMessages(ChatMessageActivity.this);
+
+
+                    }
+                }, 5000);
+
+            }
+        });
 
     }
 
@@ -591,7 +663,7 @@ public  static int CAMERA_REQUEST = 45;
 
 
         final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
-        final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(mCurrentPage);
+        final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10);
 
         final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
                 .setQuery(messageQuery, Messages.class).build();
@@ -599,7 +671,7 @@ public  static int CAMERA_REQUEST = 45;
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 if (documentSnapshots.size() != 0) {
-                    lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+                   final DocumentSnapshot lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
 
                     CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
                     messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
@@ -608,13 +680,35 @@ public  static int CAMERA_REQUEST = 45;
                             lastItem = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
                             ;
                             if (lastkey.getId().equals(lastItem.getId())) {
-                                mRefreshLayout.setEnabled(false);
+
+                                if (lastkey.getId().equals(lastItem.getId())) {
+                                    mAdapter.isFullLoaded(true);
+                                } else {
+                                    mAdapter.isFullLoaded(false);
+                                }
                             }
                         }
                     });
                 }
             }
         });
+
+        messageQuery.addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+
+                for (DocumentSnapshot snapshot : querySnapshot){
+                    Messages model = snapshot.toObject(Messages.class);
+                    messagesList.add(model);
+                }
+                mAdapter.notifyDataSetChanged();
+                lastkey = querySnapshot.getDocuments().get(querySnapshot.size() -1);
+                mMessagesList.smoothScrollToPosition(0);
+
+            }
+        });
+
+        /*
         final FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder> adapter = new FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder>(options) {
             @SuppressLint("ResourceAsColor")
             @Override
@@ -644,14 +738,14 @@ public  static int CAMERA_REQUEST = 45;
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeTextViewToUser.setText(time);
                             }
-                        } else if (type.equals("image")){
+                        } else if (type.equals("image")) {
                             holder.layoutImageToUser.setVisibility(View.VISIBLE);
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.layoutToUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
-                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20,3)).fit().centerCrop().into(holder.messageImageViewToUser);
+                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewToUser);
 
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -678,14 +772,14 @@ public  static int CAMERA_REQUEST = 45;
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeTextViewFromUser.setText(time);
                             }
-                        } else if (type.equals("image")){
+                        } else if (type.equals("image")) {
                             holder.userProfileForIMage.setVisibility(View.VISIBLE);
                             holder.layoutImageFromUser.setVisibility(View.VISIBLE);
                             holder.layoutToUser.setVisibility(View.GONE);
                             holder.layoutImageToUser.setVisibility(View.GONE);
                             holder.layoutFromUser.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
-                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20,3)).fit().centerCrop().into(holder.messageImageViewFromUser);
+                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewFromUser);
 
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -752,7 +846,7 @@ public  static int CAMERA_REQUEST = 45;
                     public void onClick(View v) {
                         emoticons.setVisibility(View.GONE);
                         recyclerViewAlbum.setVisibility(View.GONE);
-                        Toast.makeText(ChatMessageActivity.this,"desavaliseista",Toast.LENGTH_LONG).show();
+                        Toast.makeText(ChatMessageActivity.this, "desavaliseista", Toast.LENGTH_LONG).show();
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
 
@@ -762,8 +856,8 @@ public  static int CAMERA_REQUEST = 45;
                 holder.messageImageViewFromUser.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        final String[] items = {"Save Image to Gallery",  "Cancel"};
-                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+                        final String[] items = {"Save Image to Gallery", "Cancel"};
+                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity, R.style.AppTheme_Dark_Dialog);
 
                         dialog.setItems(items, new DialogInterface.OnClickListener() {
                             @Override
@@ -778,7 +872,7 @@ public  static int CAMERA_REQUEST = 45;
                                     Bitmap imageChat = holder.messageImageViewFromUser.getDrawingCache();
                                     saveFile(imageChat);
                                     dialog1.dismiss();
-                                }  else if (items[i].equals("Cancel")) {
+                                } else if (items[i].equals("Cancel")) {
 
 
                                 }
@@ -795,8 +889,8 @@ public  static int CAMERA_REQUEST = 45;
                 holder.messageImageViewToUser.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        final String[] items = {"Save Image to Gallery",  "Cancel"};
-                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+                        final String[] items = {"Save Image to Gallery", "Cancel"};
+                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity, R.style.AppTheme_Dark_Dialog);
 
                         dialog.setItems(items, new DialogInterface.OnClickListener() {
                             @Override
@@ -811,7 +905,7 @@ public  static int CAMERA_REQUEST = 45;
                                     Bitmap imageChat = holder.messageImageViewToUser.getDrawingCache();
                                     saveFile(imageChat);
                                     dialog1.dismiss();
-                                }  else if (items[i].equals("Cancel")) {
+                                } else if (items[i].equals("Cancel")) {
 
 
                                 }
@@ -854,10 +948,10 @@ public  static int CAMERA_REQUEST = 45;
             }
         });
 
-        adapter.startListening();
-
+        adapter.startListening();*/
     }
-    public  void saveFile(Bitmap b){
+
+    public void saveFile(Bitmap b) {
         try {
 
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/FootballFanBase/");
@@ -886,8 +980,7 @@ public  static int CAMERA_REQUEST = 45;
         }
     }
 
-    public void addPicToGallery(File imageFile)
-    {
+    public void addPicToGallery(File imageFile) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 
         Uri contentUri = Uri.fromFile(imageFile);

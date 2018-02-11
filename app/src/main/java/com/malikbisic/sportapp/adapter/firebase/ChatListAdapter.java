@@ -111,9 +111,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
     public static class ChatListViewHolder extends RecyclerView.ViewHolder {
 
         View view;
-        CircleImageView profileImageImg;
-        TextView usernameTxt;
-        TextView lastMessageTxt;
+        public CircleImageView profileImageImg;
+        public TextView usernameTxt;
+        public TextView lastMessageTxt;
 
         public ChatListViewHolder(View itemView) {
             super(itemView);
