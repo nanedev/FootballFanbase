@@ -234,7 +234,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
         mRefreshLayout.setEnabled(false);
 
-        mMessagesList.smoothScrollToPosition(0);
+
 
         smajlic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -544,7 +544,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 for (DocumentChange snap : task.getResult().getDocumentChanges()){
                     if (snap.getType() == DocumentChange.Type.ADDED){
                         Messages model = snap.getDocument().toObject(Messages.class);
-                        messagesList.add(model);
+                        messagesList.add(0, model);
                         mAdapter.notifyDataSetChanged();
                         lastkey = task.getResult().getDocuments().get(task.getResult().size() -1);
                         mAdapter.setIsLoading(false);
@@ -648,7 +648,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     protected void onStart() {
         super.onStart();
 
-        mAdapter.setOnLoadMore(new OnLoadMoreListener() {
+       /* mAdapter.setOnLoadMore(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
 
@@ -672,7 +672,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 }, 5000);
 
             }
-        });
+        }); */
 
     }
 
@@ -680,7 +680,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
 
         final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
-        final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10);
+        final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(400);
 
         final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
                 .setQuery(messageQuery, Messages.class).build();
@@ -718,11 +718,12 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                     if (snapshot.getType() == DocumentChange.Type.ADDED) {
                         Messages model = snapshot.getDocument().toObject(Messages.class);
                         messagesList.add(model);
-                        mAdapter.notifyDataSetChanged();
+
                     }
                 }
-
+                mAdapter.notifyDataSetChanged();
                 lastkey = querySnapshot.getDocuments().get(querySnapshot.size() -1);
+
 
 
             }
