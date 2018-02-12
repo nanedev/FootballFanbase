@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +50,8 @@ import com.firebase.ui.common.ChangeEventType;
 import com.firebase.ui.firestore.ChangeEventListener;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -210,16 +213,28 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         mMessagesList = (RecyclerView) findViewById(R.id.messageList);
 
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_message_swipe_layout);
-        mLinearLayout = new LinearLayoutManager(this);
-        mLinearLayout.setReverseLayout(true);
-        mLinearLayout.setStackFromEnd(true);
+        mLinearLayout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+        mLinearLayout.setStackFromEnd(false);
         mMessagesList.setLayoutManager(mLinearLayout);
         mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this, mMessagesList);
         mMessagesList.setAdapter(mAdapter);
 
-        loadMessages(this);
+        final Handler handler = new Handler();
+        final int delay = 1000; //milliseconds
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+
+
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
+        loadMessages(ChatMessageActivity.this);
         checkAllLoaded();
 
+        mRefreshLayout.setEnabled(false);
+
+        mMessagesList.smoothScrollToPosition(0);
 
         smajlic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -523,17 +538,19 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
         final CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
         final com.google.firebase.firestore.Query messageQuery = messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).startAfter(lastkey).limit(10);
-        messageQuery.addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
+        messageQuery.get().addOnCompleteListener(ChatMessageActivity.this, new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                for (DocumentSnapshot snapshot : documentSnapshots){
-                    Messages model = snapshot.toObject(Messages.class);
-                    messagesList.add(model);
-                    mAdapter.notifyDataSetChanged();
-                    lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() -1);
-                    mAdapter.setIsLoading(false);
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (DocumentChange snap : task.getResult().getDocumentChanges()){
+                    if (snap.getType() == DocumentChange.Type.ADDED){
+                        Messages model = snap.getDocument().toObject(Messages.class);
+                        messagesList.add(model);
+                        mAdapter.notifyDataSetChanged();
+                        lastkey = task.getResult().getDocuments().get(task.getResult().size() -1);
+                        mAdapter.setIsLoading(false);
+                    }
                 }
-                           }
+            }
         });
 
 /*
@@ -696,14 +713,17 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         messageQuery.addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-
-                for (DocumentSnapshot snapshot : querySnapshot){
-                    Messages model = snapshot.toObject(Messages.class);
-                    messagesList.add(model);
+                //messagesList.clear();
+                for (DocumentChange snapshot : querySnapshot.getDocumentChanges()){
+                    if (snapshot.getType() == DocumentChange.Type.ADDED) {
+                        Messages model = snapshot.getDocument().toObject(Messages.class);
+                        messagesList.add(model);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
-                mAdapter.notifyDataSetChanged();
+
                 lastkey = querySnapshot.getDocuments().get(querySnapshot.size() -1);
-                mMessagesList.smoothScrollToPosition(0);
+
 
             }
         });

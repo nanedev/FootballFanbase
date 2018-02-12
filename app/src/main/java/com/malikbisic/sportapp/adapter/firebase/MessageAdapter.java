@@ -57,7 +57,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Nane on 11.9.2017.
  */
 
-public class MessageAdapter extends RecyclerView.Adapter{
+public class MessageAdapter extends RecyclerView.Adapter {
 
     private List<Messages> mMessageList;
     FirebaseAuth mAutH;
@@ -103,19 +103,15 @@ public class MessageAdapter extends RecyclerView.Adapter{
                     Log.i("paginacijaIsAllLoading", String.valueOf(isAllLoaded));
 
 
-                    if(!isLoading  && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded && lastVisibleItem >= 9)
-                    {
-                        if(onLoadMoreListener != null)
-                        {
+                    if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded && lastVisibleItem >= 9) {
+                        if (onLoadMoreListener != null) {
                             onLoadMoreListener.onLoadMore();
                         }
-                        isLoading =true;
+                        isLoading = true;
                     }
 
                 }
             });
-
-
 
 
         }
@@ -134,10 +130,11 @@ public class MessageAdapter extends RecyclerView.Adapter{
 
         return null;
     }
-        @Override
-        public int getItemViewType(int position) {
-            return mMessageList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
-        }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mMessageList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
+    }
 
 
     @SuppressLint("ResourceAsColor")
@@ -345,23 +342,22 @@ public class MessageAdapter extends RecyclerView.Adapter{
         }
     }
 
-        public void setOnLoadMore(OnLoadMoreListener onLoadMore)
-        {
-            onLoadMoreListener = onLoadMore;
-        }
+
+    public void setOnLoadMore(OnLoadMoreListener onLoadMore) {
+        onLoadMoreListener = onLoadMore;
+    }
 
 
-        public void setIsLoading(boolean param)
-        {
-            isLoading = param;
-        }
+    public void setIsLoading(boolean param) {
+        isLoading = param;
+    }
 
-        public void isFullLoaded(boolean param){
-            isAllLoaded = param;
-        }
+    public void isFullLoaded(boolean param) {
+        isAllLoaded = param;
+    }
 
 
-    public  void saveFile(Bitmap b){
+    public void saveFile(Bitmap b) {
         try {
 
             File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/FootballFanBase/");
@@ -390,14 +386,14 @@ public class MessageAdapter extends RecyclerView.Adapter{
         }
     }
 
-    public void addPicToGallery(File imageFile)
-    {
+    public void addPicToGallery(File imageFile) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 
         Uri contentUri = Uri.fromFile(imageFile);
         mediaScanIntent.setData(contentUri);
         activity.sendBroadcast(mediaScanIntent);
     }
+
     @Override
     public int getItemCount() {
         return mMessageList.size();
@@ -444,6 +440,7 @@ public class MessageAdapter extends RecyclerView.Adapter{
         public void setProfileImageImg(Context ctx, String profileImage) {
             Picasso.with(ctx).load(profileImage).into(profileImageImg);
         }
+
         public void setProfileImageForImage(Context ctx, String profileImage) {
             Picasso.with(ctx).load(profileImage).into(userProfileForIMage);
         }
