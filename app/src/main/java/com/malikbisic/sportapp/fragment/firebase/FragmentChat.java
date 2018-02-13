@@ -84,11 +84,11 @@ public class FragmentChat extends Fragment {
                             for (DocumentChange snapshot : documentSnapshots.getDocumentChanges()) {
                                 if (snapshot.getType() == DocumentChange.Type.ADDED) {
 
-                                    Messages messages = snapshot.getDocument().toObject(Messages.class).withId(toUserID);
-                                    messagesList.add(messages);
+                                  //  Messages messages = snapshot.getDocument().toObject(Messages.class).withId(toUserID);
+                                    //messagesList.add(messages);
 
                                 }
-                            }mAdapter.notifyDataSetChanged();
+                            }//mAdapter.notifyDataSetChanged();
 
                            /* mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                                 @Override

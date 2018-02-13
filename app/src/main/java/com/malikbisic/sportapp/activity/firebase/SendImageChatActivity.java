@@ -1,8 +1,12 @@
 package com.malikbisic.sportapp.activity.firebase;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,13 +20,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.firebase.ImageAlbumAdapter;
 import com.malikbisic.sportapp.adapter.firebase.MultiSelectImageAdapter;
 import com.malikbisic.sportapp.utils.ImageAlbumName;
 import com.malikbisic.sportapp.utils.ImageConstant;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import id.zelory.compressor.Compressor;
 
 public class SendImageChatActivity extends AppCompatActivity {
 
@@ -33,9 +52,16 @@ public class SendImageChatActivity extends AppCompatActivity {
     private RecyclerView gridView;
     private int columnWidth;
 
+    FirebaseAuth mAuth;
     Intent myIntent;
     String myUID;
     String userID;
+    int i = 0;
+
+    int sizeImageSent;
+
+    ArrayList<String> imageUri = new ArrayList<>();
+    Map<String, Object> messageMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +75,8 @@ public class SendImageChatActivity extends AppCompatActivity {
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setTitle("Send image...");
         myIntent = getIntent();
-        myUID = myIntent.getStringExtra("myUID");
+        mAuth = FirebaseAuth.getInstance();
+        myUID = mAuth.getCurrentUser().getUid();
         userID = myIntent.getStringExtra("userID");
 
         gridView = (RecyclerView) findViewById(R.id.grid_view);
@@ -68,6 +95,8 @@ public class SendImageChatActivity extends AppCompatActivity {
 
         gridView.setLayoutManager(manager);
         gridView.setAdapter(adapter);
+
+
     }
 
 
@@ -79,7 +108,7 @@ public class SendImageChatActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 Intent backToChat = new Intent(SendImageChatActivity.this, ChatMessageActivity.class);
                 backToChat.putExtra("userId", userID);
@@ -87,12 +116,111 @@ public class SendImageChatActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.send_images:
-                Log.i("imageForSend", String.valueOf(adapter.checkedPath));
 
-                default:
-                    return super.onOptionsItemSelected(item);
+                sendImage();
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    public void sendImage() {
+        try {
+
+            final ProgressDialog dialogg = new ProgressDialog(SendImageChatActivity.this);
+            dialogg.setMessage("Sending...");
+            dialogg.show();
+            sizeImageSent = adapter.checkedPath.size();
+            Log.i("size", String.valueOf(sizeImageSent));
+            for (Object image : adapter.checkedPath.keySet()) {
+
+                i++;
+                File imagePath = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                    imagePath = new File(adapter.checkedPath.get(image));
+                }
+                Log.i("imagePath", imagePath.getPath());
+
+                final Bitmap imageCompressBitmap = new Compressor(SendImageChatActivity.this)
+                        .setMaxWidth(640)
+                        .setMaxHeight(480)
+                        .setQuality(75)
+                        .compressToBitmap(imagePath);
+
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                imageCompressBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                final byte[] data = baos.toByteArray();
+                StorageReference mFilePath = FirebaseStorage.getInstance().getReference();
+                StorageReference photoPost = mFilePath.child("Chat_Image").child(imagePath.getName());
+                UploadTask uploadTask = photoPost.putBytes(data);
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        if (taskSnapshot.getTask().isSuccessful()) {
+                            Uri downloadUri = taskSnapshot.getDownloadUrl();
+
+                            imageUri.add(downloadUri.toString());
+
+
+                            if (i == sizeImageSent) {
+
+                                for (int x = 0; x < imageUri.size(); x++) {
+                                    if (x == 0) {
+                                        messageMap = new HashMap<>();
+                                        messageMap.put("message", imageUri.get(x));
+                                        messageMap.put("seen", false);
+                                        messageMap.put("type", "gallery");
+                                        messageMap.put("time", FieldValue.serverTimestamp());
+                                        messageMap.put("from", myUID);
+                                    } else {
+                                        messageMap.put("message" + x+1, imageUri.get(x));
+                                    }
+
+                                    if (x == imageUri.size() - 1){
+                                        FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
+
+
+                                        mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).collection("message").add(messageMap);
+                                        mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).collection("message").add(messageMap);
+
+                                        Map<String, Object> chatUser = new HashMap<>();
+                                        chatUser.put("to", userID);
+                                        Map<String, Object> mychatUser = new HashMap<>();
+                                        chatUser.put("to", myUID);
+                                        mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
+                                        mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
+                                        dialogg.dismiss();
+                                    }
+                                }
+
+
+
+                            }
+                 /*   Intent goToMain = new Intent(_activity, SendImageChatActivity.class);
+                    goToMain.putExtra("userId", userID);
+                    _activity.startActivity(goToMain);*/
+
+
+                        } else {
+                            String error = taskSnapshot.getError().getMessage();
+                            Log.e("errorImage", error);
+                            dialogg.dismiss();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("errorPosting", e.getMessage());
+                        dialogg.dismiss();
+
+                    }
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

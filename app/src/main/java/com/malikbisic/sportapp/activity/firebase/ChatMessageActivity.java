@@ -881,6 +881,7 @@ myUsername = dataSnapshot.getString("username");
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(ChatMessageActivity.this,FullScreenImageFromChat.class);
+                        intent.putExtra("userID", mChatUser);
                         intent.putExtra("username",mChatUsername);
                         intent.putExtra("imageString",model.getMessage());
                         startActivity(intent);
@@ -890,6 +891,7 @@ myUsername = dataSnapshot.getString("username");
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(ChatMessageActivity.this,FullScreenImageFromChat.class);
+                        intent.putExtra("userID", mChatUser);
                         intent.putExtra("username",mChatUsername);
                         intent.putExtra("imageString",model.getMessage());
                         startActivity(intent);

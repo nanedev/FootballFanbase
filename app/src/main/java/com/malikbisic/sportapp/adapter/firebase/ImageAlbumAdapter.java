@@ -50,12 +50,12 @@ import id.zelory.compressor.Compressor;
  * Created by malikbisic on 05/02/2018.
  */
 
-public class ImageAlbumAdapter extends  RecyclerView.Adapter<ImageAlbumAdapter.ImageViewHolder>{
+public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.ImageViewHolder> {
     private Activity _activity;
     private ArrayList<String> _filePaths = new ArrayList<String>();
     boolean[] opened;
-boolean firstime;
-boolean secondtime;
+    boolean firstime;
+    boolean secondtime;
     String myUID;
     String userID;
 
@@ -76,40 +76,42 @@ boolean secondtime;
     }
 
     @Override
-    public void onBindViewHolder(final ImageViewHolder holder,  int position) {
+    public void onBindViewHolder(final ImageViewHolder holder, int position) {
         String image = _filePaths.get(position);
         Glide.with(_activity).load(image).into(holder.image);
 
-holder.sendButton.setVisibility(View.GONE);
-holder.gridView.setVisibility(View.GONE);
-holder.image.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        holder.sendButton.setVisibility(View.VISIBLE);
-        holder.gridView.setVisibility(View.VISIBLE);
-        holder.sendButton.setOnClickListener(new View.OnClickListener() {
+        holder.sendButton.setVisibility(View.GONE);
+        holder.gridView.setVisibility(View.GONE);
+        holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendImage(holder.getAdapterPosition());
-            }
-        });
+                holder.sendButton.setVisibility(View.VISIBLE);
+                holder.gridView.setVisibility(View.VISIBLE);
+                holder.sendButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendImage(holder.getAdapterPosition());
+                    }
+                });
 
-        holder.gridView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(_activity,SendImageChatActivity.class);
-                _activity.startActivity(intent);
+                holder.gridView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(_activity, SendImageChatActivity.class);
+                        intent.putExtra("userID", userID);
+                        _activity.startActivity(intent);
+                    }
+                });
             }
         });
-    }
-});
     }
 
     @Override
     public int getItemCount() {
         return _filePaths.size();
     }
-//neki kom
+
+    //neki kom
 /*public class ImageAlbumAdapter extends BaseAdapter {
 
     private Activity _activity;
@@ -272,7 +274,7 @@ holder.image.setOnClickListener(new View.OnClickListener() {
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
 
 
-                    Map<String,Object> messageMap = new HashMap<>();
+                    Map<String, Object> messageMap = new HashMap<>();
                     messageMap.put("message", downloadUri.toString());
                     messageMap.put("seen", false);
                     messageMap.put("type", "image");
@@ -283,9 +285,9 @@ holder.image.setOnClickListener(new View.OnClickListener() {
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).collection("message").add(messageMap);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).collection("message").add(messageMap);
 
-                    Map<String,Object> chatUser = new HashMap<>();
+                    Map<String, Object> chatUser = new HashMap<>();
                     chatUser.put("to", userID);
-                    Map<String,Object> mychatUser = new HashMap<>();
+                    Map<String, Object> mychatUser = new HashMap<>();
                     chatUser.put("to", myUID);
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
@@ -333,18 +335,18 @@ holder.image.setOnClickListener(new View.OnClickListener() {
         return null;
     } */
 
-   public static class ImageViewHolder extends RecyclerView.ViewHolder {
-      public   ImageView image;
-      public   ImageButton sendButton;
-      public  ImageView gridView;
+    public static class ImageViewHolder extends RecyclerView.ViewHolder {
+        public ImageView image;
+        public ImageButton sendButton;
+        public ImageView gridView;
 
-       public ImageViewHolder(View itemView) {
-           super(itemView);
+        public ImageViewHolder(View itemView) {
+            super(itemView);
 
-           image = (ImageView) itemView.findViewById(R.id.imageGrid);
-           sendButton = (ImageButton) itemView.findViewById(R.id.sendImageGrid);
-           gridView = (ImageView) itemView.findViewById(R.id.gotogrid);
-       }
-   }
+            image = (ImageView) itemView.findViewById(R.id.imageGrid);
+            sendButton = (ImageButton) itemView.findViewById(R.id.sendImageGrid);
+            gridView = (ImageView) itemView.findViewById(R.id.gotogrid);
+        }
+    }
 
 }

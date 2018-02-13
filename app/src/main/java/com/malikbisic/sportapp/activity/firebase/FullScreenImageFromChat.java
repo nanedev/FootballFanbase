@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -29,6 +30,7 @@ ImageView fullScreenImage;
 TextView toolbarUsername;
 RelativeLayout saveImageToGallery;
 RelativeLayout closeImage;
+String userID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +45,8 @@ RelativeLayout closeImage;
         intent = getIntent();
         String username = intent.getStringExtra("username");
         final String image = intent.getStringExtra("imageString");
+        userID = intent.getStringExtra("userID");
+        Log.i("USERID", userID);
 
         toolbarUsername = (TextView) findViewById(R.id.userNameINToolbar);
         fullScreenImage = (ImageView) findViewById(R.id.imagefromChat);
@@ -68,6 +72,7 @@ RelativeLayout closeImage;
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FullScreenImageFromChat.this,ChatMessageActivity.class);
+                intent.putExtra("userId", userID);
                 startActivity(intent);
 
             }

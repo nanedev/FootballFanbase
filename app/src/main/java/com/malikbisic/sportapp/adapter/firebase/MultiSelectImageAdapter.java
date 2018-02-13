@@ -66,11 +66,17 @@ public class MultiSelectImageAdapter extends RecyclerView.Adapter<MultiSelectIma
         String image = _filePaths.get(position);
         Glide.with(_activity).load(image).into(holder.image);
 
-        if (holder.sendButton.isChecked()){
-            checkedPath.put(position, _filePaths.get(position));
-        } else {
-            checkedPath.remove(position);
-        }
+        holder.sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.sendButton.isChecked()){
+                    checkedPath.put(position, _filePaths.get(position));
+                } else {
+                    checkedPath.remove(position);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -275,31 +281,7 @@ public class MultiSelectImageAdapter extends RecyclerView.Adapter<MultiSelectIma
             e.printStackTrace();
         }
     }
-/*
-    public static Bitmap decodeFile(String filePath, int WIDTH, int HIGHT) {
-        try {
 
-            File f = new File(filePath);
-
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-
-            final int REQUIRED_WIDTH = WIDTH;
-            final int REQUIRED_HIGHT = HIGHT;
-            int scale = 1;
-            while (o.outWidth / scale / 2 >= REQUIRED_WIDTH
-                    && o.outHeight / scale / 2 >= REQUIRED_HIGHT)
-                scale *= 2;
-
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    } */
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
         public ImageView image;

@@ -61,7 +61,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         if (myUID.equals(fromUID)){
             if (type.equals("image")){
                 holder.lastMessageTxt.setText("You: " + "Sent image");
-            }else {
+            }else if (type.equals("text")){
                 holder.lastMessageTxt.setText("You: " + model.getMessage());
             }
         } else {
@@ -72,7 +72,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                     String username = String.valueOf(documentSnapshot.getString("username"));
                     if (type.equals("image")){
                         holder.lastMessageTxt.setText(username + ": " + "Sent image");
-                    }else {
+                    }else if (type.equals("text")){
                         holder.lastMessageTxt.setText(username + ": " + model.getMessage());
                     }
 
