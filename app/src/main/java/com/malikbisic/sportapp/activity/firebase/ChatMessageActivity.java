@@ -109,7 +109,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     CircleImageView mProfileImg;
     FirebaseAuth mAuth;
     private String mCurrentUserId;
-
+String myUsername;
     ImageView mChatAddBtn;
     ImageButton mChatSendBtn;
     public static EmojiconEditText mChatMessageView;
@@ -521,7 +521,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         @Override
                         public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException s) {
                             lastItem = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
-                            ;
+
                             if (lastkey.getId().equals(lastItem.getId())) {
 
                                 if (lastkey.getId().equals(lastItem.getId())) {
@@ -684,7 +684,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
         final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
                 .setQuery(messageQuery, Messages.class).build();
-        messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        /*messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 if (documentSnapshots.size() != 0) {
@@ -727,18 +727,20 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
 
             }
-        });
+        }); */
 
-        /*
+
         final FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder> adapter = new FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder>(options) {
             @SuppressLint("ResourceAsColor")
             @Override
-            protected void onBindViewHolder(final MessageAdapter.MessageViewHolder holder, final int position, Messages model) {
+            protected void onBindViewHolder(final MessageAdapter.MessageViewHolder holder, final int position, final Messages model) {
                 FirebaseAuth mAutH = FirebaseAuth.getInstance();
 
 
                 String current_user_id = mAutH.getCurrentUser().getUid();
 
+                messagesList.add(model);
+                mAdapter.notifyDataSetChanged();
 
                 String from_user = model.getFrom();
                 String type = model.getType();
@@ -812,9 +814,10 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
                                 @Override
                                 public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
-
+myUsername = dataSnapshot.getString("username");
                                     UserChat model2 = dataSnapshot.toObject(UserChat.class);
                                     String profileImage = model2.getProfileImage();
+
 
                                     holder.setProfileImageForImage(activity, profileImage);
                                 }
@@ -871,6 +874,25 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
 
+                    }
+                });
+
+                holder.messageImageViewFromUser.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ChatMessageActivity.this,FullScreenImageFromChat.class);
+                        intent.putExtra("username",mChatUsername);
+                        intent.putExtra("imageString",model.getMessage());
+                        startActivity(intent);
+                    }
+                });
+                holder.messageImageViewToUser.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ChatMessageActivity.this,FullScreenImageFromChat.class);
+                        intent.putExtra("username",mChatUsername);
+                        intent.putExtra("imageString",model.getMessage());
+                        startActivity(intent);
                     }
                 });
 
@@ -939,6 +961,32 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         return true;
                     }
                 });
+
+          /*      mAdapter.setOnLoadMore(new OnLoadMoreListener() {
+                    @Override
+                    public void onLoadMore() {
+
+
+                        mMessagesList.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                messagesList.add(null);
+                                mAdapter.notifyItemInserted(messagesList.size() - 1);
+                            }
+                        });
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                loadMoreMessages(ChatMessageActivity.this);
+
+
+                            }
+                        }, 5000);
+
+                    }
+                });*/
             }
 
             @Override
@@ -969,9 +1017,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
             }
         });
 
-        adapter.startListening();*/
+        adapter.startListening();
     }
-
     public void saveFile(Bitmap b) {
         try {
 

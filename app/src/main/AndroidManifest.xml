@@ -241,8 +241,15 @@
             android:name=".activity.firebase.SendImageChatActivity"
             android:parentActivityName=".activity.firebase.ChatMessageActivity"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.firebase.CaptureImageSendChatActivity"
-            android:theme="@style/AppTheme.Dark"></activity>
+        <activity
+            android:name=".activity.firebase.CaptureImageSendChatActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.firebase.FullScreenImageFromChat"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark"
+            android:parentActivityName=".activity.firebase.ChatMessageActivity">
+
+        </activity>
     </application>
 
 </manifest>
