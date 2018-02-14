@@ -44,7 +44,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/bottom_chat_layout"
-                android:layout_below="@+id/appBarLayout"></android.support.v7.widget.RecyclerView>
+                android:layout_below="@+id/appBarLayout">
+
+            </android.support.v7.widget.RecyclerView>
 
         </RelativeLayout>
 
@@ -80,8 +82,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edittext_chat_shaoe"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
+                    android:focusable="false"
+
                     android:hint="Enter message"
                     android:padding="10dp"
                     android:textAllCaps="false"

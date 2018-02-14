@@ -43,7 +43,7 @@ String userID;
         getSupportActionBar().setTitle("");
 
         intent = getIntent();
-        String username = intent.getStringExtra("username");
+        final String username = intent.getStringExtra("username");
         final String image = intent.getStringExtra("imageString");
         userID = intent.getStringExtra("userID");
         Log.i("USERID", userID);
@@ -73,6 +73,7 @@ String userID;
             public void onClick(View v) {
                 Intent intent = new Intent(FullScreenImageFromChat.this,ChatMessageActivity.class);
                 intent.putExtra("userId", userID);
+                intent.putExtra("username",username);
                 startActivity(intent);
 
             }

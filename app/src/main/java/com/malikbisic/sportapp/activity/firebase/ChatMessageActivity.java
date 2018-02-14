@@ -73,6 +73,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
+import com.malikbisic.sportapp.activity.api.ChatActivity;
 import com.malikbisic.sportapp.adapter.firebase.ImageAlbumAdapter;
 import com.malikbisic.sportapp.listener.OnLoadMoreListener;
 import com.malikbisic.sportapp.model.firebase.Message;
@@ -276,6 +277,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
                     recyclerViewAlbum.setVisibility(View.VISIBLE);
+                    recyclerViewAlbum.startAnimation(slideUpAnimation);
                     emoticons.setVisibility(View.GONE);
                 } else if (secondClickGallery) {
 
@@ -300,7 +302,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 recyclerViewAlbum.setVisibility(View.GONE);
                 firstClickSmile = true;
                 firstClickGallery = true;
-
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
         });
 
@@ -738,7 +741,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 String current_user_id = mAutH.getCurrentUser().getUid();
 
                 messagesList.add(model);
-                mAdapter.notifyDataSetChanged();
+//                mAdapter.notifyDataSetChanged();
 
                 String from_user = model.getFrom();
                 String type = model.getType();
@@ -1137,4 +1140,16 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         EmojiconsFragment.backspace(mChatMessageView);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!firstClickGallery || !firstClickSmile){
+            emoticons.setVisibility(View.GONE);
+            recyclerViewAlbum.setVisibility(View.GONE);
+            firstClickSmile = true;
+            firstClickGallery = true;
+        } else {
+            super.onBackPressed();
+        }
+
+    }
 }
