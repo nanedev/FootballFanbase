@@ -60,7 +60,7 @@ public class SendImageChatActivity extends AppCompatActivity {
 
     int sizeImageSent;
 
-    ArrayList<String> imageUri = new ArrayList<>();
+    HashMap<String, String> imageUri = new HashMap<>();
     Map<String, Object> messageMap;
 
     @Override
@@ -134,7 +134,6 @@ public class SendImageChatActivity extends AppCompatActivity {
             Log.i("size", String.valueOf(sizeImageSent));
             for (Object image : adapter.checkedPath.keySet()) {
 
-                i++;
                 File imagePath = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
                     imagePath = new File(adapter.checkedPath.get(image));
@@ -160,42 +159,33 @@ public class SendImageChatActivity extends AppCompatActivity {
 
                         if (taskSnapshot.getTask().isSuccessful()) {
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
-
-                            imageUri.add(downloadUri.toString());
+                            i++;
+                            imageUri.put("mess"+i, downloadUri.toString());
 
 
                             if (i == sizeImageSent) {
 
-                                for (int x = 0; x < imageUri.size(); x++) {
-                                    if (x == 0) {
-                                        messageMap = new HashMap<>();
-                                        messageMap.put("message", imageUri.get(x));
-                                        messageMap.put("seen", false);
-                                        messageMap.put("type", "gallery");
-                                        messageMap.put("time", FieldValue.serverTimestamp());
-                                        messageMap.put("from", myUID);
-                                    } else {
-                                        messageMap.put("message" + x+1, imageUri.get(x));
-                                    }
+                                messageMap = new HashMap<>();
+                                messageMap.put("message", "null");
+                                messageMap.put("seen", false);
+                                messageMap.put("galleryImage", imageUri);
+                                messageMap.put("type", "gallery");
+                                messageMap.put("time", FieldValue.serverTimestamp());
+                                messageMap.put("from", myUID);
 
-                                    if (x == imageUri.size() - 1){
-                                        FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
+                                FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
 
 
-                                        mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).collection("message").add(messageMap);
-                                        mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).collection("message").add(messageMap);
+                                mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).collection("message").add(messageMap);
+                                mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).collection("message").add(messageMap);
 
-                                        Map<String, Object> chatUser = new HashMap<>();
-                                        chatUser.put("to", userID);
-                                        Map<String, Object> mychatUser = new HashMap<>();
-                                        chatUser.put("to", myUID);
-                                        mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
-                                        mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
-                                        dialogg.dismiss();
-                                    }
-                                }
-
-
+                                Map<String, Object> chatUser = new HashMap<>();
+                                chatUser.put("to", userID);
+                                Map<String, Object> mychatUser = new HashMap<>();
+                                chatUser.put("to", myUID);
+                                mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
+                                mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
+                                dialogg.dismiss();
 
                             }
                  /*   Intent goToMain = new Intent(_activity, SendImageChatActivity.class);
@@ -203,25 +193,33 @@ public class SendImageChatActivity extends AppCompatActivity {
                     _activity.startActivity(goToMain);*/
 
 
-                        } else {
-                            String error = taskSnapshot.getError().getMessage();
-                            Log.e("errorImage", error);
-                            dialogg.dismiss();
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("errorPosting", e.getMessage());
-                        dialogg.dismiss();
+                    } else
 
+                    {
+                        String error = taskSnapshot.getError().getMessage();
+                        Log.e("errorImage", error);
+                        dialogg.dismiss();
                     }
-                });
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("errorPosting", e.getMessage());
+                    dialogg.dismiss();
+
+                }
+            });
         }
+
+
+    } catch(
+    IOException e)
+
+    {
+        e.printStackTrace();
     }
+
+}
 
     @Override
     public void onBackPressed() {

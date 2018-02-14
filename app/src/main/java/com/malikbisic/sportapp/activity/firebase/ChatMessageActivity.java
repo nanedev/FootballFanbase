@@ -109,7 +109,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     CircleImageView mProfileImg;
     FirebaseAuth mAuth;
     private String mCurrentUserId;
-String myUsername;
+    String myUsername;
     ImageView mChatAddBtn;
     ImageButton mChatSendBtn;
     public static EmojiconEditText mChatMessageView;
@@ -216,14 +216,13 @@ String myUsername;
         mLinearLayout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         mLinearLayout.setStackFromEnd(false);
         mMessagesList.setLayoutManager(mLinearLayout);
-        mAdapter = new MessageAdapter(messagesList, getApplicationContext(), this, mMessagesList);
-        mMessagesList.setAdapter(mAdapter);
+
 
         final Handler handler = new Handler();
         final int delay = 1000; //milliseconds
 
-        handler.postDelayed(new Runnable(){
-            public void run(){
+        handler.postDelayed(new Runnable() {
+            public void run() {
 
 
                 handler.postDelayed(this, delay);
@@ -233,7 +232,6 @@ String myUsername;
         checkAllLoaded();
 
         mRefreshLayout.setEnabled(false);
-
 
 
         smajlic.setOnClickListener(new View.OnClickListener() {
@@ -471,7 +469,7 @@ String myUsername;
 
 
                 itemPos = 0;
-                 loadMoreMessages(ChatMessageActivity.this);
+                loadMoreMessages(ChatMessageActivity.this);
 
             }
 
@@ -541,12 +539,12 @@ String myUsername;
         messageQuery.get().addOnCompleteListener(ChatMessageActivity.this, new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (DocumentChange snap : task.getResult().getDocumentChanges()){
-                    if (snap.getType() == DocumentChange.Type.ADDED){
+                for (DocumentChange snap : task.getResult().getDocumentChanges()) {
+                    if (snap.getType() == DocumentChange.Type.ADDED) {
                         Messages model = snap.getDocument().toObject(Messages.class);
                         messagesList.add(0, model);
                         mAdapter.notifyDataSetChanged();
-                        lastkey = task.getResult().getDocuments().get(task.getResult().size() -1);
+                        lastkey = task.getResult().getDocuments().get(task.getResult().size() - 1);
                         mAdapter.setIsLoading(false);
                     }
                 }
@@ -814,7 +812,7 @@ String myUsername;
                             displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
                                 @Override
                                 public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
-myUsername = dataSnapshot.getString("username");
+                                    myUsername = dataSnapshot.getString("username");
                                     UserChat model2 = dataSnapshot.toObject(UserChat.class);
                                     String profileImage = model2.getProfileImage();
 
@@ -822,6 +820,10 @@ myUsername = dataSnapshot.getString("username");
                                     holder.setProfileImageForImage(activity, profileImage);
                                 }
                             });
+                        } else if (type.equals("gallery")){
+                            System.out.println("galleyImages opened");
+                            System.out.println("images: " + model.getGalleryImage().toString());
+                            Log.i("galleryImages", String.valueOf(model.getGalleryImage().get("mess1")));
                         }
 
 
@@ -880,20 +882,20 @@ myUsername = dataSnapshot.getString("username");
                 holder.messageImageViewFromUser.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(ChatMessageActivity.this,FullScreenImageFromChat.class);
+                        Intent intent = new Intent(ChatMessageActivity.this, FullScreenImageFromChat.class);
                         intent.putExtra("userID", mChatUser);
-                        intent.putExtra("username",mChatUsername);
-                        intent.putExtra("imageString",model.getMessage());
+                        intent.putExtra("username", mChatUsername);
+                        intent.putExtra("imageString", model.getMessage());
                         startActivity(intent);
                     }
                 });
                 holder.messageImageViewToUser.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(ChatMessageActivity.this,FullScreenImageFromChat.class);
+                        Intent intent = new Intent(ChatMessageActivity.this, FullScreenImageFromChat.class);
                         intent.putExtra("userID", mChatUser);
-                        intent.putExtra("username",mChatUsername);
-                        intent.putExtra("imageString",model.getMessage());
+                        intent.putExtra("username", mChatUsername);
+                        intent.putExtra("imageString", model.getMessage());
                         startActivity(intent);
                     }
                 });
@@ -1021,6 +1023,7 @@ myUsername = dataSnapshot.getString("username");
 
         adapter.startListening();
     }
+
     public void saveFile(Bitmap b) {
         try {
 
