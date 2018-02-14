@@ -18,6 +18,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -74,6 +75,7 @@ import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.api.ChatActivity;
+import com.malikbisic.sportapp.adapter.firebase.GalleryImageAdapter;
 import com.malikbisic.sportapp.adapter.firebase.ImageAlbumAdapter;
 import com.malikbisic.sportapp.listener.OnLoadMoreListener;
 import com.malikbisic.sportapp.model.firebase.Message;
@@ -685,50 +687,50 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
         final FirestoreRecyclerOptions<Messages> options = new FirestoreRecyclerOptions.Builder<Messages>()
                 .setQuery(messageQuery, Messages.class).build();
-        /*messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                if (documentSnapshots.size() != 0) {
-                   final DocumentSnapshot lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
+    /*messageQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+            if (documentSnapshots.size() != 0) {
+               final DocumentSnapshot lastkey = documentSnapshots.getDocuments().get(documentSnapshots.size() - 1);
 
-                    CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
-                    messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException s) {
-                            lastItem = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
-                            ;
+                CollectionReference messageRef = FirebaseFirestore.getInstance().collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message");
+                messageRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(QuerySnapshot querySnapshot2, FirebaseFirestoreException s) {
+                        lastItem = querySnapshot2.getDocuments().get(querySnapshot2.size() - 1);
+                        ;
+                        if (lastkey.getId().equals(lastItem.getId())) {
+
                             if (lastkey.getId().equals(lastItem.getId())) {
-
-                                if (lastkey.getId().equals(lastItem.getId())) {
-                                    mAdapter.isFullLoaded(true);
-                                } else {
-                                    mAdapter.isFullLoaded(false);
-                                }
+                                mAdapter.isFullLoaded(true);
+                            } else {
+                                mAdapter.isFullLoaded(false);
                             }
                         }
-                    });
-                }
-            }
-        });
-
-        messageQuery.addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                //messagesList.clear();
-                for (DocumentChange snapshot : querySnapshot.getDocumentChanges()){
-                    if (snapshot.getType() == DocumentChange.Type.ADDED) {
-                        Messages model = snapshot.getDocument().toObject(Messages.class);
-                        messagesList.add(model);
-
                     }
-                }
-                mAdapter.notifyDataSetChanged();
-                lastkey = querySnapshot.getDocuments().get(querySnapshot.size() -1);
-
-
-
+                });
             }
-        }); */
+        }
+    });
+
+    messageQuery.addSnapshotListener(ChatMessageActivity.this, new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
+            //messagesList.clear();
+            for (DocumentChange snapshot : querySnapshot.getDocumentChanges()){
+                if (snapshot.getType() == DocumentChange.Type.ADDED) {
+                    Messages model = snapshot.getDocument().toObject(Messages.class);
+                    messagesList.add(model);
+
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+            lastkey = querySnapshot.getDocuments().get(querySnapshot.size() -1);
+
+
+
+        }
+    }); */
 
 
         final FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder> adapter = new FirestoreRecyclerAdapter<Messages, MessageAdapter.MessageViewHolder>(options) {
@@ -740,11 +742,11 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
                 String current_user_id = mAutH.getCurrentUser().getUid();
 
-                messagesList.add(model);
-//                mAdapter.notifyDataSetChanged();
 
                 String from_user = model.getFrom();
                 String type = model.getType();
+
+                Log.i("type", type);
                 if (from_user != null) {
 
                     if (from_user.equals(current_user_id)) {
@@ -757,6 +759,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.galleryLayout.setVisibility(View.GONE);
                             holder.messageTextTOUser.setText(model.getMessage());
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -768,12 +771,29 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.layoutToUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.galleryLayout.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
                             Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewToUser);
 
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeImageTOUser.setText(time);
+                            }
+                        } else if (type.equals("gallery")){
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.galleryLayout.setVisibility(View.VISIBLE);
+                            ArrayList<String> imageModels = new ArrayList<>();
+                            GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, 3);
+                            GalleryImageAdapter adapter1 = new GalleryImageAdapter(imageModels, ChatMessageActivity.this);
+                            holder.galleryRecView.setLayoutManager(manager);
+                            holder.galleryRecView.setAdapter(adapter1);
+
+                            for (int i = 1; i <= model.getGalleryImage().size(); i++){
+                                imageModels.add(model.getGalleryImage().get("mess")+i);
+                                adapter1.notifyDataSetChanged();
                             }
                         }
 
@@ -784,6 +804,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         holder.layoutImageToUser.setVisibility(View.GONE);
                         holder.layoutImageFromUser.setVisibility(View.GONE);
                         holder.userProfileForIMage.setVisibility(View.GONE);
+                        holder.galleryLayout.setVisibility(View.GONE);
+
 
                         if (type.equals("text")) {
                             holder.layoutFromUser.setVisibility(View.VISIBLE);
@@ -791,6 +813,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.layoutImageToUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.galleryLayout.setVisibility(View.GONE);
                             holder.messageTextFromUser.setText(model.getMessage());
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -802,6 +825,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.layoutToUser.setVisibility(View.GONE);
                             holder.layoutImageToUser.setVisibility(View.GONE);
                             holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayout.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
                             Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewFromUser);
 
@@ -824,9 +848,22 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 }
                             });
                         } else if (type.equals("gallery")){
-                            System.out.println("galleyImages opened");
-                            System.out.println("images: " + model.getGalleryImage().toString());
-                            Log.i("galleryImages", String.valueOf(model.getGalleryImage().get("mess1")));
+                            holder.galleryLayout.setVisibility(View.VISIBLE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            ArrayList<String> imageModels = new ArrayList<>();
+                            GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, 3);
+                            GalleryImageAdapter adapter1 = new GalleryImageAdapter(imageModels, ChatMessageActivity.this);
+                            holder.galleryRecView.setLayoutManager(manager);
+                            holder.galleryRecView.setAdapter(adapter1);
+
+                            for (int i = 1; i <= model.getGalleryImage().size(); i++){
+                                imageModels.add(model.getGalleryImage().get("mess")+i);
+                                adapter1.notifyDataSetChanged();
+                            }
+
                         }
 
 
@@ -845,7 +882,6 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                     }
 
 
-                    Log.i("position", String.valueOf(position));
                     if (mRefreshLayout.isRefreshing()) {
                         mMessagesList.smoothScrollToPosition(getItemCount() - 6);
                     }
@@ -969,31 +1005,31 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                     }
                 });
 
-          /*      mAdapter.setOnLoadMore(new OnLoadMoreListener() {
-                    @Override
-                    public void onLoadMore() {
+      /*      mAdapter.setOnLoadMore(new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
 
 
-                        mMessagesList.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                messagesList.add(null);
-                                mAdapter.notifyItemInserted(messagesList.size() - 1);
-                            }
-                        });
+                    mMessagesList.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            messagesList.add(null);
+                            mAdapter.notifyItemInserted(messagesList.size() - 1);
+                        }
+                    });
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
 
-                                loadMoreMessages(ChatMessageActivity.this);
+                            loadMoreMessages(ChatMessageActivity.this);
 
 
-                            }
-                        }, 5000);
+                        }
+                    }, 5000);
 
-                    }
-                });*/
+                }
+            });*/
             }
 
             @Override
@@ -1015,7 +1051,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 // If the recycler view is initially being loaded or the
                 // user is at the bottom of the list, scroll to the bottom
                 // of the list to show the newly added message.
-                Log.i("newItem", String.valueOf(positionStart));
+
                 if (lastVisiblePosition == 0 ||
                         (positionStart >= (friendlyMessageCount - 1) &&
                                 lastVisiblePosition == (positionStart - 1))) {
@@ -1026,6 +1062,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
         adapter.startListening();
     }
+
+
 
     public void saveFile(Bitmap b) {
         try {

@@ -416,6 +416,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
         public TextView timeImageTOUser;
         public TextView timeImageFromUser;
         public CircleImageView userProfileForIMage;
+        public RelativeLayout galleryLayout;
+        public RecyclerView galleryRecView;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
@@ -434,6 +436,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
             messageImageViewFromUser = (ImageView) itemView.findViewById(R.id.imageMessageFromUser);
             messageImageViewToUser = (ImageView) itemView.findViewById(R.id.imageMessageToUser);
             userProfileForIMage = (CircleImageView) itemView.findViewById(R.id.message_imageImageFrom);
+            galleryLayout = (RelativeLayout) itemView.findViewById(R.id.messageGalleryLayout);
+            galleryRecView = (RecyclerView) itemView.findViewById(R.id.galleryRecView);
 
         }
 
