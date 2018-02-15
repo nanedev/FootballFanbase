@@ -2,6 +2,7 @@ package com.malikbisic.sportapp.adapter.firebase;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryMessageView
 
     @Override
     public void onBindViewHolder(GalleryMessageViewHolder holder, int position) {
+        Log.i("gallery", galleryImageModelArrayList.get(position));
         Picasso.with(activity).setIndicatorsEnabled(false);
         Picasso.with(activity).load(galleryImageModelArrayList.get(position)).into(holder.galleryImage);
 

@@ -790,9 +790,11 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             GalleryImageAdapter adapter1 = new GalleryImageAdapter(imageModels, ChatMessageActivity.this);
                             holder.galleryRecView.setLayoutManager(manager);
                             holder.galleryRecView.setAdapter(adapter1);
-
-                            for (int i = 1; i <= model.getGalleryImage().size(); i++){
-                                imageModels.add(model.getGalleryImage().get("mess")+i);
+                            imageModels.clear();
+                            int id = 0;
+                            for (Object od : model.getGalleryImage().values()){
+                                id++;
+                                imageModels.add(model.getGalleryImage().get("mess"+id));
                                 adapter1.notifyDataSetChanged();
                             }
                         }
@@ -859,8 +861,11 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.galleryRecView.setLayoutManager(manager);
                             holder.galleryRecView.setAdapter(adapter1);
 
-                            for (int i = 1; i <= model.getGalleryImage().size(); i++){
-                                imageModels.add(model.getGalleryImage().get("mess")+i);
+                            imageModels.clear();
+                            int id = 0;
+                            for (Object od : model.getGalleryImage().values()){
+                                id++;
+                                imageModels.add(model.getGalleryImage().get("mess"+id));
                                 adapter1.notifyDataSetChanged();
                             }
 
