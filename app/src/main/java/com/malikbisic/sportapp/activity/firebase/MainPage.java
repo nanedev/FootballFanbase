@@ -125,12 +125,9 @@ public class MainPage extends AppCompatActivity
     private ImageView backgroundHeader;
     private ImageView userProfileImage;
     private TextView usernameuser;
-    private ImageView galleryIcon;
-    private TextView galleryText;
-    private ImageView videoIcon;
-    private TextView videoText;
-    private ImageView audioIcon;
-    private TextView audioText;
+    private RelativeLayout galleryIcon;
+    private RelativeLayout videoIcon;
+    private RelativeLayout audioIcon;
     private EditText postText;
     MenuItem myMenu;
     private ProgressDialog postingDialog;
@@ -227,12 +224,9 @@ public class MainPage extends AppCompatActivity
         profileUsers = FirebaseDatabase.getInstance().getReference();
         userProfileImage = (ImageView) findViewById(R.id.userProfilImage);
         usernameuser = (TextView) findViewById(R.id.user_username);
-        galleryIcon = (ImageView) findViewById(R.id.gallery_icon_content_main);
-        galleryText = (TextView) findViewById(R.id.galleryText);
-        videoIcon = (ImageView) findViewById(R.id.vide_icon_content_main);
-        videoText = (TextView) findViewById(R.id.videoText);
-        audioIcon = (ImageView) findViewById(R.id.talk_icon_content_main);
-        audioText = (TextView) findViewById(R.id.audioText);
+        galleryIcon = (RelativeLayout) findViewById(R.id.gallery_icon_content_main);
+        videoIcon = (RelativeLayout) findViewById(R.id.vide_icon_content_main);
+        audioIcon = (RelativeLayout) findViewById(R.id.talk_icon_content_main);
         postText = (EditText) findViewById(R.id.postOnlyText);
         backgroundUserPost = (RelativeLayout) findViewById(R.id.relativeLayout);
         calendar = Calendar.getInstance();
@@ -324,13 +318,27 @@ public class MainPage extends AppCompatActivity
 
 
         galleryIcon.setOnClickListener(this);
-        galleryText.setOnClickListener(this);
         videoIcon.setOnClickListener(this);
-        videoText.setOnClickListener(this);
         audioIcon.setOnClickListener(this);
-        audioText.setOnClickListener(this);
 
+galleryIcon.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        if (Build.VERSION.SDK_INT < 19) {
+            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+            photoSelected = true;
+            openGallery.setType("image/*");
+            startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
+        } else {
+            photoSelected = true;
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            startActivityForResult(intent, PHOTO_OPEN);
 
+        }
+    }
+});
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         likesReference = FirebaseFirestore.getInstance();
@@ -1363,29 +1371,17 @@ public class MainPage extends AppCompatActivity
     public void onClick(View view) {
 
 
-        if (view.getId() == R.id.gallery_icon_content_main || view.getId() == R.id.galleryText) {
-            if (Build.VERSION.SDK_INT < 19) {
-                Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
-                photoSelected = true;
-                openGallery.setType("image/*");
-                startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
-            } else {
-                photoSelected = true;
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("image/*");
-                startActivityForResult(intent, PHOTO_OPEN);
+        if (view.getId() == R.id.gallery_icon_content_main) {
 
-            }
 
-        } else if (view.getId() == R.id.vide_icon_content_main || view.getId() == R.id.videoText) {
+        } else if (view.getId() == R.id.vide_icon_content_main) {
             Intent intent = new Intent();
             photoSelected = false;
             intent.setType("video/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Complete action using"), VIDEO_OPEN);
 
-        } else if (view.getId() == R.id.talk_icon_content_main || view.getId() == R.id.audioText) {
+        } else if (view.getId() == R.id.talk_icon_content_main) {
 
             Intent intent = new Intent(MainPage.this, RecordAudio.class);
             startActivity(intent);

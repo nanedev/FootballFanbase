@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.malikbisic.sportapp.activity.firebase.RecordAudio">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/container_record_audio">
 
 
@@ -41,6 +42,10 @@
                 android:layout_below="@+id/imageView"
                 android:layout_marginTop="29dp"
                 android:ems="10"
+               android:background="@drawable/shapeforeditekstinaudio"
+                android:cursorVisible="true"
+                android:textColor="@color/white"
+
                 android:hint="Say something about this"
                 android:inputType="textMultiLine" />
 

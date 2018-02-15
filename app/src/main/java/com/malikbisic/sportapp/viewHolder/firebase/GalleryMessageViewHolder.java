@@ -12,11 +12,11 @@ import com.malikbisic.sportapp.R;
 
 public class GalleryMessageViewHolder extends RecyclerView.ViewHolder {
 
-    public ImageView galleryImage;
+
 
     public GalleryMessageViewHolder(View itemView) {
         super(itemView);
 
-        galleryImage = (ImageView) itemView.findViewById(R.id.galleryImage);
+
     }
 }
