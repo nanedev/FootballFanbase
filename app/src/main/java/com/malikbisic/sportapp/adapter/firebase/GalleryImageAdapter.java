@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.firebase.ChatMessageActivity;
 import com.malikbisic.sportapp.model.firebase.GalleryImageModel;
@@ -39,8 +40,8 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryMessageView
     @Override
     public void onBindViewHolder(GalleryMessageViewHolder holder, int position) {
         Log.i("gallery", galleryImageModelArrayList.get(position));
-        Picasso.with(activity).setIndicatorsEnabled(false);
-        Picasso.with(activity).load(galleryImageModelArrayList.get(position)).into(holder.galleryImage);
+
+        Glide.with(activity).load(galleryImageModelArrayList.get(position)).into(holder.galleryImage);
 
     }
 

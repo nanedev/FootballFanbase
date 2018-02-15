@@ -60,7 +60,7 @@ public class SendImageChatActivity extends AppCompatActivity {
 
     int sizeImageSent;
 
-    HashMap<String, String> imageUri = new HashMap<>();
+    ArrayList<String> imageUri = new ArrayList<>();
     Map<String, Object> messageMap;
 
     @Override
@@ -160,7 +160,7 @@ public class SendImageChatActivity extends AppCompatActivity {
                         if (taskSnapshot.getTask().isSuccessful()) {
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
                             i++;
-                            imageUri.put("mess"+i, downloadUri.toString());
+                            imageUri.add(downloadUri.toString());
 
 
                             if (i == sizeImageSent) {

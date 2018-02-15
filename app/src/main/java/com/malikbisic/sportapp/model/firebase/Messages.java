@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.firestore.Exclude;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class Messages {
     private Date time;
     private boolean seen;
     private String from;
-    Map<String, String> galleryImage;
+    ArrayList<String> galleryImage;
     @Exclude
     private String to;
 
@@ -29,7 +30,7 @@ public class Messages {
     public Messages() {
     }
 
-    public Messages(String message, String type, Date time, boolean seen, String from, String key, Map<String, String> galleryImage) {
+    public Messages(String message, String type, Date time, boolean seen, String from, String key, ArrayList<String> galleryImage) {
         this.message = message;
         this.type = type;
         this.time = time;
@@ -89,11 +90,11 @@ public class Messages {
         this.to = to;
     }
 
-    public Map<String, String> getGalleryImage() {
+    public ArrayList<String> getGalleryImage() {
         return galleryImage;
     }
 
-    public void setGalleryImage(Map<String, String> galleryImage) {
+    public void setGalleryImage(ArrayList<String> galleryImage) {
         this.galleryImage = galleryImage;
     }
 }

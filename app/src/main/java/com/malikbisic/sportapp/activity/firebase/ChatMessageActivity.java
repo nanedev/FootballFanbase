@@ -787,16 +787,12 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.galleryLayout.setVisibility(View.VISIBLE);
                             ArrayList<String> imageModels = new ArrayList<>();
                             GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, 3);
-                            GalleryImageAdapter adapter1 = new GalleryImageAdapter(imageModels, ChatMessageActivity.this);
+                            GalleryImageAdapter adapter1 = new GalleryImageAdapter(model.getGalleryImage(), ChatMessageActivity.this);
                             holder.galleryRecView.setLayoutManager(manager);
                             holder.galleryRecView.setAdapter(adapter1);
                             imageModels.clear();
                             int id = 0;
-                            for (Object od : model.getGalleryImage().values()){
-                                id++;
-                                imageModels.add(model.getGalleryImage().get("mess"+id));
-                                adapter1.notifyDataSetChanged();
-                            }
+
                         }
 
                     } else {
@@ -857,17 +853,12 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.layoutImageToUser.setVisibility(View.GONE);
                             ArrayList<String> imageModels = new ArrayList<>();
                             GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, 3);
-                            GalleryImageAdapter adapter1 = new GalleryImageAdapter(imageModels, ChatMessageActivity.this);
+                            GalleryImageAdapter adapter1 = new GalleryImageAdapter(model.getGalleryImage(), ChatMessageActivity.this);
                             holder.galleryRecView.setLayoutManager(manager);
                             holder.galleryRecView.setAdapter(adapter1);
 
                             imageModels.clear();
                             int id = 0;
-                            for (Object od : model.getGalleryImage().values()){
-                                id++;
-                                imageModels.add(model.getGalleryImage().get("mess"+id));
-                                adapter1.notifyDataSetChanged();
-                            }
 
                         }
 
