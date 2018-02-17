@@ -39,14 +39,12 @@ public class GalleryViewPagerAdapter extends PagerAdapter {
     ArrayList<String> images;
     LayoutInflater layoutInflater;
 
-    String userID, username;
+    ArrayList<Bitmap> bitmapArrayList = new ArrayList<>();
 
-    public GalleryViewPagerAdapter(Activity activity, ArrayList<String> images, String userID, String username) {
+    public GalleryViewPagerAdapter(Activity activity, ArrayList<String> images) {
         this.activity = activity;
         this.images = images;
         this.layoutInflater = LayoutInflater.from(activity);
-        this.userID = userID;
-        this.username = username;
     }
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
@@ -64,24 +62,8 @@ public class GalleryViewPagerAdapter extends PagerAdapter {
 
         container.addView(view);
 
-        GalleryImageFullScreen.saveImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        imageViewPreview.buildDrawingCache();
 
-                saveFile(StringToBitMap(images.get(position)));
-            }
-        });
-
-        GalleryImageFullScreen.closeGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity,ChatMessageActivity.class);
-                intent.putExtra("userId", userID);
-                intent.putExtra("username",username);
-                activity.startActivity(intent);
-
-            }
-        });
 
         return view;
     }
