@@ -297,6 +297,22 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
             }
         });
 
+        mChatMessageView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    emoticons.setVisibility(View.GONE);
+                    recyclerViewAlbum.setVisibility(View.GONE);
+                    firstClickSmile = true;
+                    firstClickGallery = true;
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
+
+            }
+        });
+
+
         mChatMessageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -304,12 +320,9 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 recyclerViewAlbum.setVisibility(View.GONE);
                 firstClickSmile = true;
                 firstClickGallery = true;
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
             }
         });
-
-
 
 
        /* mChatMessageView.setOnTouchListener(new View.OnTouchListener() {
@@ -1023,7 +1036,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         recyclerViewAlbum.setVisibility(View.GONE);
                         Toast.makeText(ChatMessageActivity.this, "desavaliseista", Toast.LENGTH_LONG).show();
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 
                     }
                 });

@@ -38,8 +38,10 @@
                 android:id="@+id/message_textFromUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:padding="7dp"
@@ -59,6 +61,9 @@
                 android:gravity="bottom"
                 android:maxLines="1"
                 android:padding="7dp"
+              android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+
                 android:textColor="#bdbdbd"
                 android:textStyle="bold" />
 
