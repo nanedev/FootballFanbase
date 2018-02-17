@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -24,13 +25,15 @@ import java.io.FileOutputStream;
 import java.util.Calendar;
 
 public class FullScreenImageFromChat extends AppCompatActivity {
-Toolbar fullScreenToolbar;
-Intent intent;
-ImageView fullScreenImage;
-TextView toolbarUsername;
-RelativeLayout saveImageToGallery;
-RelativeLayout closeImage;
-String userID;
+    Toolbar fullScreenToolbar;
+    Intent intent;
+    ImageView fullScreenImage;
+    TextView toolbarUsername;
+    RelativeLayout saveImageToGallery;
+    RelativeLayout closeImage;
+    String userID;
+    String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +46,7 @@ String userID;
         getSupportActionBar().setTitle("");
 
         intent = getIntent();
-        final String username = intent.getStringExtra("username");
+        username = intent.getStringExtra("username");
         final String image = intent.getStringExtra("imageString");
         userID = intent.getStringExtra("userID");
         Log.i("USERID", userID);
@@ -60,10 +63,10 @@ String userID;
         saveImageToGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              fullScreenImage.buildDrawingCache();
+                fullScreenImage.buildDrawingCache();
                 Bitmap imageChat = fullScreenImage.getDrawingCache();
                 saveFile(imageChat);
-                Toast.makeText(FullScreenImageFromChat.this,"Image saved",Toast.LENGTH_SHORT).show();
+                Toast.makeText(FullScreenImageFromChat.this, "Image saved", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -71,14 +74,13 @@ String userID;
         closeImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FullScreenImageFromChat.this,ChatMessageActivity.class);
+                Intent intent = new Intent(FullScreenImageFromChat.this, ChatMessageActivity.class);
                 intent.putExtra("userId", userID);
-                intent.putExtra("username",username);
+                intent.putExtra("username", username);
                 startActivity(intent);
 
             }
         });
-
 
 
     }
@@ -119,6 +121,22 @@ String userID;
         Uri contentUri = Uri.fromFile(imageFile);
         mediaScanIntent.setData(contentUri);
         sendBroadcast(mediaScanIntent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent backToChat = new Intent(FullScreenImageFromChat.this, ChatMessageActivity.class);
+                backToChat.putExtra("userId", userID);
+                backToChat.putExtra("username", username);
+                startActivity(backToChat);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
 }

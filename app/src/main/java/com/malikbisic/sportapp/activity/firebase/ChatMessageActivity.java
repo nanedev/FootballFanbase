@@ -245,8 +245,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                     secondClickSmile = true;
                     firstClickGallery = true;
                     secondClickGallery = false;
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+
 
 
                     emoticons.startAnimation(slideUpAnimation);
@@ -259,9 +258,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                     secondClickGallery = false;
           /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
-                    emoticons.setVisibility(View.GONE);
+
                     recyclerViewAlbum.setVisibility(View.GONE);
 
 
@@ -977,7 +974,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         @Override
                         public void onClick(View view, int position) {
                             Intent openGalleryFullScreen = new Intent(ChatMessageActivity.this, GalleryImageFullScreen.class);
-
+                            openGalleryFullScreen.putExtra("userID", mChatUser);
+                            openGalleryFullScreen.putExtra("username", mChatUsername);
                             openGalleryFullScreen.putExtra("images", model.getGalleryImage());
                             openGalleryFullScreen.putExtra("position", position);
                             activity.startActivity(openGalleryFullScreen);
@@ -993,7 +991,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         @Override
                         public void onClick(View view, int position) {
                             Intent openGalleryFullScreen = new Intent(ChatMessageActivity.this, GalleryImageFullScreen.class);
-
+                            openGalleryFullScreen.putExtra("userID", mChatUser);
+                            openGalleryFullScreen.putExtra("username", mChatUsername);
                             openGalleryFullScreen.putExtra("images", model.getGalleryImage());
                             openGalleryFullScreen.putExtra("position", position);
                             activity.startActivity(openGalleryFullScreen);
