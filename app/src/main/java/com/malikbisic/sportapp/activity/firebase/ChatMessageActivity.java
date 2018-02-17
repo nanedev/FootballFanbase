@@ -960,7 +960,37 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         }
 
                     }
+                    holder.galleryREcViewFromUSer.addOnItemTouchListener(new GalleryImageAdapter.RecyclerTouchListener(ChatMessageActivity.this, holder.galleryREcViewFromUSer, new GalleryImageAdapter.ClickListener() {
+                        @Override
+                        public void onClick(View view, int position) {
+                            Intent openGalleryFullScreen = new Intent(ChatMessageActivity.this, GalleryImageFullScreen.class);
 
+                            openGalleryFullScreen.putExtra("images", model.getGalleryImage());
+                            openGalleryFullScreen.putExtra("position", position);
+                            activity.startActivity(openGalleryFullScreen);
+                        }
+
+                        @Override
+                        public void onLongClick(View view, int position) {
+
+                        }
+                    }));
+
+                    holder.galleryRecViewToUser.addOnItemTouchListener(new GalleryImageAdapter.RecyclerTouchListener(ChatMessageActivity.this, holder.galleryRecViewToUser, new GalleryImageAdapter.ClickListener() {
+                        @Override
+                        public void onClick(View view, int position) {
+                            Intent openGalleryFullScreen = new Intent(ChatMessageActivity.this, GalleryImageFullScreen.class);
+
+                            openGalleryFullScreen.putExtra("images", model.getGalleryImage());
+                            openGalleryFullScreen.putExtra("position", position);
+                            activity.startActivity(openGalleryFullScreen);
+                        }
+
+                        @Override
+                        public void onLongClick(View view, int position) {
+
+                        }
+                    }));
 
                     if (mRefreshLayout.isRefreshing()) {
                         mMessagesList.smoothScrollToPosition(getItemCount() - 6);

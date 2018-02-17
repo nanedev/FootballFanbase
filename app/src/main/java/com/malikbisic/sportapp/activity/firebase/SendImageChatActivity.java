@@ -68,6 +68,8 @@ public class SendImageChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_image_chat);
 
+        adapter.checkedPath.clear();
+        imageUri.clear();
         mChatToolbar = (Toolbar) findViewById(R.id.chatImage_toolbar);
         setSupportActionBar(mChatToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -95,6 +97,7 @@ public class SendImageChatActivity extends AppCompatActivity {
 
         gridView.setLayoutManager(manager);
         gridView.setAdapter(adapter);
+
 
 
     }
