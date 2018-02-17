@@ -750,16 +750,21 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 if (from_user != null) {
 
                     if (from_user.equals(current_user_id)) {
-                        holder.layoutToUser.setVisibility(View.VISIBLE);
-                        holder.layoutFromUser.setVisibility(View.GONE);
-                        holder.layoutImageFromUser.setVisibility(View.GONE);
+
 
                         if (type.equals("text")) {
                             holder.layoutToUser.setVisibility(View.VISIBLE);
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
                             holder.layoutImageToUser.setVisibility(View.GONE);
-                            holder.galleryLayout.setVisibility(View.GONE);
+                            holder.timeImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.timeImageTOUser.setVisibility(View.GONE);
+                            holder.messageImageViewToUser.setVisibility(View.GONE);
+                            holder.messageImageViewFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutToUser.setVisibility(View.GONE);
                             holder.messageTextTOUser.setText(model.getMessage());
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -767,11 +772,17 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             }
                         } else if (type.equals("image")) {
                             holder.layoutImageToUser.setVisibility(View.VISIBLE);
-                            holder.layoutFromUser.setVisibility(View.GONE);
-                            holder.layoutImageFromUser.setVisibility(View.GONE);
-                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.timeImageTOUser.setVisibility(View.VISIBLE);
+                            holder.messageImageViewToUser.setVisibility(View.VISIBLE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
-                            holder.galleryLayout.setVisibility(View.GONE);
+                            holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.timeImageFromUser.setVisibility(View.GONE);
+                            holder.messageImageViewFromUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutToUser.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
                             Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewToUser);
 
@@ -782,48 +793,95 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         } else if (type.equals("gallery")){
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
-                            holder.layoutImageToUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
-                            holder.galleryLayout.setVisibility(View.VISIBLE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.timeImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.timeImageTOUser.setVisibility(View.GONE);
+                            holder.messageImageViewToUser.setVisibility(View.GONE);
+                            holder.messageImageViewFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutToUser.setVisibility(View.VISIBLE);
+                            holder.galleryLayoutToUser.setGravity(Gravity.RIGHT);
                             ArrayList<String> imageModels = new ArrayList<>();
-                            GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, 3);
+                            int spanCOunt = 0;
+
+                      if (model.getGalleryImage().size() == 1){
+                          spanCOunt = 1;
+                      }else if (model.getGalleryImage().size() == 2){
+                          spanCOunt = 2;
+                      }else if (model.getGalleryImage().size() > 2){
+                          spanCOunt = 3;
+                      }
+
+
+                            GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, spanCOunt);
                             GalleryImageAdapter adapter1 = new GalleryImageAdapter(model.getGalleryImage(), ChatMessageActivity.this);
-                            holder.galleryRecView.setLayoutManager(manager);
-                            holder.galleryRecView.setAdapter(adapter1);
+                            holder.galleryRecViewToUser.setLayoutManager(manager);
+                            holder.galleryRecViewToUser.setAdapter(adapter1);
                             imageModels.clear();
                             int id = 0;
+
+                            if (model.getTime() != null) {
+                                String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                                holder.timeforGridToUSer.setText(time);
+                            }
 
                         }
 
                     } else {
-                        holder.layoutFromUser.setVisibility(View.VISIBLE);
-                        holder.profileImageImg.setVisibility(View.VISIBLE);
-                        holder.layoutToUser.setVisibility(View.GONE);
-                        holder.layoutImageToUser.setVisibility(View.GONE);
-                        holder.layoutImageFromUser.setVisibility(View.GONE);
-                        holder.userProfileForIMage.setVisibility(View.GONE);
-                        holder.galleryLayout.setVisibility(View.GONE);
+
 
 
                         if (type.equals("text")) {
                             holder.layoutFromUser.setVisibility(View.VISIBLE);
-                            holder.layoutToUser.setVisibility(View.GONE);
-                            holder.layoutImageToUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
-                            holder.galleryLayout.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.timeImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.timeImageTOUser.setVisibility(View.GONE);
+                            holder.messageImageViewToUser.setVisibility(View.GONE);
+                            holder.messageImageViewFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutToUser.setVisibility(View.GONE);
+
                             holder.messageTextFromUser.setText(model.getMessage());
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeTextViewFromUser.setText(time);
                             }
+
+                            FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
+
+                            displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                                @Override
+                                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                    myUsername = dataSnapshot.getString("username");
+                                    UserChat model2 = dataSnapshot.toObject(UserChat.class);
+                                    String profileImage = model2.getProfileImage();
+
+
+                                    holder.setProfileImageImg(activity, profileImage);
+                                }
+                            });
                         } else if (type.equals("image")) {
                             holder.userProfileForIMage.setVisibility(View.VISIBLE);
                             holder.layoutImageFromUser.setVisibility(View.VISIBLE);
-                            holder.layoutToUser.setVisibility(View.GONE);
-                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.timeImageFromUser.setVisibility(View.VISIBLE);
+                            holder.messageImageViewFromUser.setVisibility(View.VISIBLE);
                             holder.layoutFromUser.setVisibility(View.GONE);
-                            holder.galleryLayout.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.timeImageTOUser.setVisibility(View.GONE);
+                            holder.messageImageViewToUser.setVisibility(View.GONE);
+                            holder.galleryLayoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutToUser.setVisibility(View.GONE);
+
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
                             Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewFromUser);
 
@@ -846,35 +904,61 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 }
                             });
                         } else if (type.equals("gallery")){
-                            holder.galleryLayout.setVisibility(View.VISIBLE);
-                            holder.layoutToUser.setVisibility(View.GONE);
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
                             holder.layoutImageToUser.setVisibility(View.GONE);
-                            ArrayList<String> imageModels = new ArrayList<>();
-                            GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, 3);
-                            GalleryImageAdapter adapter1 = new GalleryImageAdapter(model.getGalleryImage(), ChatMessageActivity.this);
-                            holder.galleryRecView.setLayoutManager(manager);
-                            holder.galleryRecView.setAdapter(adapter1);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.timeImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.timeImageTOUser.setVisibility(View.GONE);
+                            holder.messageImageViewToUser.setVisibility(View.GONE);
+                            holder.messageImageViewFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutFromUser.setVisibility(View.VISIBLE);
+                            holder.galleryLayoutToUser.setVisibility(View.GONE);
 
+
+                            ArrayList<String> imageModels = new ArrayList<>();
+                            int spanCOunt = 0;
+
+                            if (model.getGalleryImage().size() == 1){
+                                spanCOunt = 1;
+                            }else if (model.getGalleryImage().size() == 2){
+                                spanCOunt = 2;
+                            }else if (model.getGalleryImage().size() > 2){
+                                spanCOunt = 3;
+                            }
+
+
+                            GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, spanCOunt);
+                            GalleryImageAdapter adapter1 = new GalleryImageAdapter(model.getGalleryImage(), ChatMessageActivity.this);
+                            holder.galleryREcViewFromUSer.setLayoutManager(manager);
+                            holder.galleryREcViewFromUSer.setAdapter(adapter1);
                             imageModels.clear();
                             int id = 0;
 
+                            FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
+
+                            displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                                @Override
+                                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                    myUsername = dataSnapshot.getString("username");
+                                    UserChat model2 = dataSnapshot.toObject(UserChat.class);
+                                    String profileImage = model2.getProfileImage();
+
+
+                                    holder.setProfileImageForGrid(activity, profileImage);
+                                }
+                            });
+
+                            if (model.getTime() != null) {
+                                String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                                holder.timeForGridFromUser.setText(time);
+                            }
+
                         }
 
-
-                        FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
-
-                        displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
-                            @Override
-                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
-
-                                UserChat model2 = dataSnapshot.toObject(UserChat.class);
-                                String profileImage = model2.getProfileImage();
-
-                                holder.setProfileImageImg(activity, profileImage);
-                            }
-                        });
                     }
 
 

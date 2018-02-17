@@ -40,8 +40,9 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryMessageView
     @Override
     public void onBindViewHolder(GalleryMessageViewHolder holder, int position) {
         Log.i("gallery", galleryImageModelArrayList.get(position));
+        Picasso.with(activity).setIndicatorsEnabled(false);
+Picasso.with(activity).load(galleryImageModelArrayList.get(position)).resize(100,100).centerCrop().into(holder.galleryImage);
 
-        Glide.with(activity).load(galleryImageModelArrayList.get(position)).into(holder.galleryImage);
 
     }
 

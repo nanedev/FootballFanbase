@@ -416,8 +416,15 @@ public class MessageAdapter extends RecyclerView.Adapter {
         public TextView timeImageTOUser;
         public TextView timeImageFromUser;
         public CircleImageView userProfileForIMage;
-        public RelativeLayout galleryLayout;
-        public RecyclerView galleryRecView;
+        public RelativeLayout galleryLayoutToUser;
+        public RecyclerView galleryRecViewToUser;
+        public  TextView timeforGridToUSer;
+        public CircleImageView imageFromGrid;
+
+        public RelativeLayout galleryLayoutFromUser;
+        public TextView timeForGridFromUser;
+        public RecyclerView galleryREcViewFromUSer;
+
 
         public MessageViewHolder(View itemView) {
             super(itemView);
@@ -436,8 +443,15 @@ public class MessageAdapter extends RecyclerView.Adapter {
             messageImageViewFromUser = (ImageView) itemView.findViewById(R.id.imageMessageFromUser);
             messageImageViewToUser = (ImageView) itemView.findViewById(R.id.imageMessageToUser);
             userProfileForIMage = (CircleImageView) itemView.findViewById(R.id.message_imageImageFrom);
-            galleryLayout = (RelativeLayout) itemView.findViewById(R.id.messageGalleryLayout);
-            galleryRecView = (RecyclerView) itemView.findViewById(R.id.galleryRecView);
+            galleryLayoutToUser = (RelativeLayout) itemView.findViewById(R.id.messageGalleryLayoutToUser);
+            galleryRecViewToUser = (RecyclerView) itemView.findViewById(R.id.galleryRecViewTo);
+            timeforGridToUSer = (TextView) itemView.findViewById(R.id.timemessageGridUserTo);
+
+
+        imageFromGrid = (CircleImageView) itemView.findViewById(R.id.grid_imageImageFrom);
+galleryREcViewFromUSer = (RecyclerView) itemView.findViewById(R.id.galleryRecViewFrom);
+        galleryLayoutFromUser = (RelativeLayout) itemView.findViewById(R.id.messageGalleryLayoutFromUser);
+        timeForGridFromUser = (TextView) itemView.findViewById(R.id.timemessageGridUserFrom);
 
         }
 
@@ -447,6 +461,10 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
         public void setProfileImageForImage(Context ctx, String profileImage) {
             Picasso.with(ctx).load(profileImage).into(userProfileForIMage);
+        }
+
+        public void setProfileImageForGrid(Context ctx, String profileImage) {
+            Picasso.with(ctx).load(profileImage).into(imageFromGrid);
         }
     }
 
