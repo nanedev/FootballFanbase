@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -401,12 +402,15 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
+
+        //text
         public TextView messageTextFromUser;
         public TextView messageTextTOUser;
         public CircleImageView profileImageImg;
-
         public TextView timeTextViewFromUser;
         public TextView timeTextViewToUser;
+
+        //image
         public ImageView messageImageViewFromUser;
         public ImageView messageImageViewToUser;
         public RelativeLayout layoutFromUser;
@@ -416,19 +420,34 @@ public class MessageAdapter extends RecyclerView.Adapter {
         public TextView timeImageTOUser;
         public TextView timeImageFromUser;
         public CircleImageView userProfileForIMage;
+
+        //gallery
         public RelativeLayout galleryLayoutToUser;
         public RecyclerView galleryRecViewToUser;
-        public  TextView timeforGridToUSer;
+        public TextView timeforGridToUSer;
         public CircleImageView imageFromGrid;
-
         public RelativeLayout galleryLayoutFromUser;
         public TextView timeForGridFromUser;
         public RecyclerView galleryREcViewFromUSer;
+
+        //audio
+        public RelativeLayout layoutAudioFromUser;
+        public RelativeLayout layoutAudioToUser;
+        public CircleImageView imageFromAudio;
+        public ImageView play_stopFromUser;
+        public ImageView play_stopToUser;
+        public TextView totalTimeFromUser;
+        public TextView totalTimeToUser;
+        public TextView messageTimeAudioFromUser;
+        public TextView messageTimeAudioToUser;
+        public SeekBar progressBarFromUser;
+        public SeekBar progressBarToUser;
 
 
         public MessageViewHolder(View itemView) {
             super(itemView);
 
+            //text
             messageTextFromUser = (TextView) itemView.findViewById(R.id.message_textFromUser);
             messageTextTOUser = (TextView) itemView.findViewById(R.id.message_textToUser);
             profileImageImg = (CircleImageView) itemView.findViewById(R.id.message_image);
@@ -436,6 +455,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
             layoutToUser = (RelativeLayout) itemView.findViewById(R.id.message_layout_to_user);
             timeTextViewFromUser = (TextView) itemView.findViewById(R.id.timeMessageFromUser);
             timeTextViewToUser = (TextView) itemView.findViewById(R.id.timeMessageToUser);
+
+            //image
             layoutImageFromUser = (RelativeLayout) itemView.findViewById(R.id.messageimagelayoutFromUser);
             layoutImageToUser = (RelativeLayout) itemView.findViewById(R.id.messageimagelayoutToUser);
             timeImageFromUser = (TextView) itemView.findViewById(R.id.timemessageImageFromUser);
@@ -443,15 +464,28 @@ public class MessageAdapter extends RecyclerView.Adapter {
             messageImageViewFromUser = (ImageView) itemView.findViewById(R.id.imageMessageFromUser);
             messageImageViewToUser = (ImageView) itemView.findViewById(R.id.imageMessageToUser);
             userProfileForIMage = (CircleImageView) itemView.findViewById(R.id.message_imageImageFrom);
+
+            //gallery
             galleryLayoutToUser = (RelativeLayout) itemView.findViewById(R.id.messageGalleryLayoutToUser);
             galleryRecViewToUser = (RecyclerView) itemView.findViewById(R.id.galleryRecViewTo);
             timeforGridToUSer = (TextView) itemView.findViewById(R.id.timemessageGridUserTo);
+            imageFromGrid = (CircleImageView) itemView.findViewById(R.id.grid_imageImageFrom);
+            galleryREcViewFromUSer = (RecyclerView) itemView.findViewById(R.id.galleryRecViewFrom);
+            galleryLayoutFromUser = (RelativeLayout) itemView.findViewById(R.id.messageGalleryLayoutFromUser);
+            timeForGridFromUser = (TextView) itemView.findViewById(R.id.timemessageGridUserFrom);
 
-
-        imageFromGrid = (CircleImageView) itemView.findViewById(R.id.grid_imageImageFrom);
-galleryREcViewFromUSer = (RecyclerView) itemView.findViewById(R.id.galleryRecViewFrom);
-        galleryLayoutFromUser = (RelativeLayout) itemView.findViewById(R.id.messageGalleryLayoutFromUser);
-        timeForGridFromUser = (TextView) itemView.findViewById(R.id.timemessageGridUserFrom);
+            //audio
+            layoutAudioFromUser = (RelativeLayout) itemView.findViewById(R.id.messageAudioLayoutUserFrom);
+            layoutAudioToUser = (RelativeLayout) itemView.findViewById(R.id.messageAudioLayoutUserTo);
+            imageFromAudio = (CircleImageView) itemView.findViewById(R.id.message_audioImageFrom);
+            play_stopFromUser = (ImageView) itemView.findViewById(R.id.play_stop_fromuser);
+            play_stopToUser = (ImageView) itemView.findViewById(R.id.play_stop_touser);
+            totalTimeFromUser = (TextView) itemView.findViewById(R.id.totaltimeaudio_fromuser);
+            totalTimeToUser = (TextView) itemView.findViewById(R.id.totaltimeaudio_touser);
+            messageTimeAudioFromUser = (TextView) itemView.findViewById(R.id.timemessage_fromuser_audio);
+            messageTimeAudioToUser = (TextView) itemView.findViewById(R.id.timemessage_touser_audio);
+            progressBarFromUser = (SeekBar) itemView.findViewById(R.id.progressBarFromUser);
+            progressBarToUser = (SeekBar) itemView.findViewById(R.id.progressBarToUser);
 
         }
 

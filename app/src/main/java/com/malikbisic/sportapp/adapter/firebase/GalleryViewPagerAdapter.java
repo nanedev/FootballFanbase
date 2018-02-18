@@ -67,59 +67,12 @@ public class GalleryViewPagerAdapter extends PagerAdapter {
 
         return view;
     }
-    public Bitmap StringToBitMap(String image){
-        try{
-            byte [] encodeByte=Base64.decode(image, Base64.DEFAULT);
 
-            InputStream inputStream  = new ByteArrayInputStream(encodeByte);
-            Bitmap bitmap  = BitmapFactory.decodeStream(inputStream);
-            return bitmap;
-        }catch(Exception e){
-            e.getMessage();
-            return null;
-        }
-    }
     @Override
     public int getCount() {
         return images.size();
     }
-    public void saveFile(Bitmap b) {
-        try {
-
-            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/FootballFanBase/");
-
-            if (!storageDir.exists()) {
-                storageDir.mkdirs();
-            }
-
-            File imageFile = File.createTempFile(
-                    String.valueOf(Calendar.getInstance().getTimeInMillis()),
-                    ".jpeg",                     /* suffix */
-                    storageDir                   /* directory */
-            );
-
-
-            FileOutputStream writeStream = new FileOutputStream(imageFile);
-
-            b.compress(Bitmap.CompressFormat.JPEG, 100, writeStream);
-            writeStream.flush();
-            writeStream.close();
-            Toast.makeText(activity,"Image saved",Toast.LENGTH_SHORT).show();
-
-            addPicToGallery(imageFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-    }
-
-    public void addPicToGallery(File imageFile) {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-
-        Uri contentUri = Uri.fromFile(imageFile);
-        mediaScanIntent.setData(contentUri);
-        activity.sendBroadcast(mediaScanIntent);
-    }
+    
     @Override
     public boolean isViewFromObject(View view, Object obj) {
         return view == ((View) obj);

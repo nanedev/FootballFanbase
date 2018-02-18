@@ -6,14 +6,20 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +48,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +59,7 @@ import com.firebase.ui.firestore.ChangeEventListener;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -65,18 +73,24 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.api.ChatActivity;
 import com.malikbisic.sportapp.adapter.firebase.GalleryImageAdapter;
 import com.malikbisic.sportapp.adapter.firebase.ImageAlbumAdapter;
+import com.malikbisic.sportapp.adapter.firebase.MainPageAdapter;
 import com.malikbisic.sportapp.listener.OnLoadMoreListener;
 import com.malikbisic.sportapp.model.firebase.Message;
 import com.malikbisic.sportapp.model.firebase.UserChat;
@@ -93,14 +107,22 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.malikbisic.sportapp.activity.firebase.RecordAudio.RequestPermissionCode;
 
 public class ChatMessageActivity extends AppCompatActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
     private String mChatUser;
@@ -154,6 +176,17 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     ImageButton captureImage;
     public static int CAMERA_REQUEST = 45;
 
+    ImageView audioRecordBtn;
+    MediaRecorder mediaRecorder;
+    Random random;
+    String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
+    public static final int RequestPermissionCode = 1;
+    MediaPlayer mediaPlayer;
+    String AudioSavePathInDevice = null;
+    Uri uriAudio;
+    boolean clickPlayAudio = false;
+    boolean clickStopAudio = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,6 +206,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         emoticons = (FrameLayout) findViewById(R.id.emojicons);
         botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         captureImage = (ImageButton) findViewById(R.id.cameraImage);
+        audioRecordBtn = (ImageView) findViewById(R.id.microphoneImage);
 
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
@@ -247,7 +281,6 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                     secondClickGallery = false;
 
 
-
                     emoticons.startAnimation(slideUpAnimation);
                     emoticons.setVisibility(View.VISIBLE);
                     recyclerViewAlbum.setVisibility(View.GONE);
@@ -297,7 +330,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         mChatMessageView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus){
+                if (hasFocus) {
                     emoticons.setVisibility(View.GONE);
                     recyclerViewAlbum.setVisibility(View.GONE);
                     firstClickSmile = true;
@@ -318,6 +351,24 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 firstClickSmile = true;
                 firstClickGallery = true;
 
+            }
+        });
+
+        random = new Random();
+
+        audioRecordBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        recordStart();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        recordStop();
+                        break;
+                }
+
+                return false;
             }
         });
 
@@ -491,6 +542,128 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
         });
 
+    }
+
+    public void recordStart() {
+        if (checkPermission()) {
+
+            AudioSavePathInDevice =
+                    Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                            CreateRandomAudioFileName(5) + "AudioRecording.3gp";
+
+            MediaRecorderReady();
+
+            try {
+                mediaRecorder.prepare();
+                mediaRecorder.start();
+            } catch (IllegalStateException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+
+        } else {
+            requestPermission();
+        }
+
+    }
+
+    public void recordStop() {
+        mediaRecorder.stop();
+        StorageReference mStorage = FirebaseStorage.getInstance().getReference();
+        final ProgressDialog mDialog = new ProgressDialog(ChatMessageActivity.this);
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("audio/mpeg")
+                .build();
+
+        StorageReference filePath = mStorage.child("Audio_Chat").child(CreateRandomAudioFileName(5));
+        final Uri uri = Uri.fromFile(new File(AudioSavePathInDevice));
+        filePath.putFile(uri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                uriAudio = taskSnapshot.getDownloadUrl();
+                mDialog.dismiss();
+
+                Map messageMap = new HashMap();
+                messageMap.put("message", uriAudio.toString());
+                messageMap.put("seen", false);
+                messageMap.put("type", "audio");
+                messageMap.put("time", FieldValue.serverTimestamp());
+                messageMap.put("from", mCurrentUserId);
+
+                mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message").add(messageMap);
+                mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).collection("message").add(messageMap);
+
+                Map chatUser = new HashMap();
+                chatUser.put("to", mChatUser);
+                Map mychatUser = new HashMap();
+                chatUser.put("to", mCurrentUserId);
+                mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
+                mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
+
+
+            }
+        });
+    }
+
+
+    public void MediaRecorderReady() {
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mediaRecorder.setOutputFile(AudioSavePathInDevice);
+    }
+
+    public String CreateRandomAudioFileName(int string) {
+        StringBuilder stringBuilder = new StringBuilder(string);
+        int i = 0;
+        while (i < string) {
+            stringBuilder.append(RandomAudioFileName.
+                    charAt(random.nextInt(RandomAudioFileName.length())));
+
+            i++;
+        }
+        return stringBuilder.toString();
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(ChatMessageActivity.this, new
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case RequestPermissionCode:
+                if (grantResults.length > 0) {
+                    boolean StoragePermission = grantResults[0] ==
+                            PackageManager.PERMISSION_GRANTED;
+                    boolean RecordPermission = grantResults[1] ==
+                            PackageManager.PERMISSION_GRANTED;
+
+                    if (StoragePermission && RecordPermission) {
+                        Toast.makeText(ChatMessageActivity.this, "Permission Granted",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(ChatMessageActivity.this, "Permission Denied", Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+        }
+    }
+
+    public boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
+                WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
+                RECORD_AUDIO);
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -753,8 +926,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 String current_user_id = mAutH.getCurrentUser().getUid();
 
 
-                String from_user = model.getFrom();
-                String type = model.getType();
+                final String from_user = model.getFrom();
+                final String type = model.getType();
 
                 Log.i("type", type);
                 if (from_user != null) {
@@ -775,6 +948,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.messageImageViewFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
+                            holder.layoutAudioFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioToUser.setVisibility(View.GONE);
                             holder.messageTextTOUser.setText(model.getMessage());
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -793,6 +968,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
+                            holder.layoutAudioFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioToUser.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
                             Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewToUser);
 
@@ -800,7 +977,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeImageTOUser.setText(time);
                             }
-                        } else if (type.equals("gallery")){
+                        } else if (type.equals("gallery")) {
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
@@ -813,18 +990,20 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.messageImageViewToUser.setVisibility(View.GONE);
                             holder.messageImageViewFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioToUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.VISIBLE);
                             holder.galleryLayoutToUser.setGravity(Gravity.RIGHT);
                             ArrayList<String> imageModels = new ArrayList<>();
                             int spanCOunt = 0;
 
-                      if (model.getGalleryImage().size() == 1){
-                          spanCOunt = 1;
-                      }else if (model.getGalleryImage().size() == 2){
-                          spanCOunt = 2;
-                      }else if (model.getGalleryImage().size() > 2){
-                          spanCOunt = 3;
-                      }
+                            if (model.getGalleryImage().size() == 1) {
+                                spanCOunt = 1;
+                            } else if (model.getGalleryImage().size() == 2) {
+                                spanCOunt = 2;
+                            } else if (model.getGalleryImage().size() > 2) {
+                                spanCOunt = 3;
+                            }
 
 
                             GridLayoutManager manager = new GridLayoutManager(ChatMessageActivity.this, spanCOunt);
@@ -839,10 +1018,98 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 holder.timeforGridToUSer.setText(time);
                             }
 
+                        } else if (type.equals("audio")) {
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.timeImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.timeImageTOUser.setVisibility(View.GONE);
+                            holder.messageImageViewToUser.setVisibility(View.GONE);
+                            holder.messageImageViewFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutToUser.setVisibility(View.GONE);
+                            holder.layoutAudioFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioToUser.setVisibility(View.VISIBLE);
+
+                            final MediaPlayer mPlayer = new MediaPlayer();
+                            if (model.getMessage() != null) {
+                                mPlayer.reset();
+                                try {
+                                    mPlayer.setDataSource(activity, Uri.parse(model.getMessage()));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            holder.progressBarToUser.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    holder.progressBarToUser.setEnabled(true);
+                                    mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                                    mPlayer.prepareAsync();
+
+                                    mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                        @Override
+                                        public void onPrepared(MediaPlayer mp) {
+                                            mPlayer.start();
+
+                                            holder.progressBarToUser.setMax(mPlayer.getDuration());
+
+                                            new Timer().scheduleAtFixedRate(new TimerTask() {
+                                                @Override
+                                                public void run() {
+                                                    holder.progressBarToUser.setProgress(mPlayer.getCurrentPosition());
+                                                    holder.progressBarToUser.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                        @Override
+                                                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                            if (fromUser) {
+                                                                mPlayer.seekTo(progress);
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                        }
+
+                                                        @Override
+                                                        public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                        }
+                                                    });
+                                                }
+                                            }, 0, 100);
+                                        }
+
+                                    });
+
+
+                                    if (!clickPlayAudio) {
+                                        mPlayer.start();
+                                        clickStopAudio = false;
+                                    }
+
+                                    if (clickStopAudio) {
+                                        mPlayer.stop();
+                                        clickPlayAudio = false;
+                                    }
+
+
+                                    clickPlayAudio = true;
+                                }
+                            });
+
+                            if (model.getTime() != null) {
+                                String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                                holder.messageTimeAudioToUser.setText(time);
+                            }
                         }
 
                     } else {
-
 
 
                         if (type.equals("text")) {
@@ -913,7 +1180,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                     holder.setProfileImageForImage(activity, profileImage);
                                 }
                             });
-                        } else if (type.equals("gallery")){
+                        } else if (type.equals("gallery")) {
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
@@ -932,11 +1199,11 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             ArrayList<String> imageModels = new ArrayList<>();
                             int spanCOunt = 0;
 
-                            if (model.getGalleryImage().size() == 1){
+                            if (model.getGalleryImage().size() == 1) {
                                 spanCOunt = 1;
-                            }else if (model.getGalleryImage().size() == 2){
+                            } else if (model.getGalleryImage().size() == 2) {
                                 spanCOunt = 2;
-                            }else if (model.getGalleryImage().size() > 2){
+                            } else if (model.getGalleryImage().size() > 2) {
                                 spanCOunt = 3;
                             }
 
@@ -967,8 +1234,24 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 holder.timeForGridFromUser.setText(time);
                             }
 
-                        }
+                        } else if (type.equals("audio")) {
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.layoutImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.layoutImageToUser.setVisibility(View.GONE);
+                            holder.layoutToUser.setVisibility(View.GONE);
+                            holder.layoutFromUser.setVisibility(View.GONE);
+                            holder.timeImageFromUser.setVisibility(View.GONE);
+                            holder.userProfileForIMage.setVisibility(View.GONE);
+                            holder.timeImageTOUser.setVisibility(View.GONE);
+                            holder.messageImageViewToUser.setVisibility(View.GONE);
+                            holder.messageImageViewFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutFromUser.setVisibility(View.GONE);
+                            holder.galleryLayoutToUser.setVisibility(View.GONE);
+                            holder.layoutAudioFromUser.setVisibility(View.VISIBLE);
+                            holder.layoutAudioToUser.setVisibility(View.GONE);
 
+                        }
                     }
                     holder.galleryREcViewFromUSer.addOnItemTouchListener(new GalleryImageAdapter.RecyclerTouchListener(ChatMessageActivity.this, holder.galleryREcViewFromUSer, new GalleryImageAdapter.ClickListener() {
                         @Override
@@ -1035,7 +1318,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                         recyclerViewAlbum.setVisibility(View.GONE);
                         Toast.makeText(ChatMessageActivity.this, "desavaliseista", Toast.LENGTH_LONG).show();
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
                     }
                 });
@@ -1155,7 +1438,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
             }
 
             @Override
-            public MessageAdapter.MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public MessageAdapter.MessageViewHolder onCreateViewHolder(ViewGroup parent,
+                                                                       int viewType) {
                 View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_single_layout, parent, false);
                 return new MessageAdapter.MessageViewHolder(v);
             }
@@ -1184,7 +1468,6 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
         adapter.startListening();
     }
-
 
 
     public void saveFile(Bitmap b) {
@@ -1302,7 +1585,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
     @Override
     public void onBackPressed() {
-        if (!firstClickGallery || !firstClickSmile){
+        if (!firstClickGallery || !firstClickSmile) {
             emoticons.setVisibility(View.GONE);
             recyclerViewAlbum.setVisibility(View.GONE);
             firstClickSmile = true;
