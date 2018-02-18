@@ -22,10 +22,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -38,6 +40,7 @@ import com.malikbisic.sportapp.utils.ImageAlbumName;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +59,14 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
     String userID;
     String myUID;
     ProgressDialog dialog;
+    String userIdFromMainPage;
+    boolean mainpage;
+    String username;
+    String clubLogo;
+    String country;
+    String clubName;
+String key;
+String profileImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +83,14 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
         image = (Bitmap) myIntent.getExtras().get("imagedata");
         userID = myIntent.getStringExtra("userID");
         myUID = mAuth.getCurrentUser().getUid();
+        userIdFromMainPage = myIntent.getStringExtra("userIDFromMainPage");
+        mainpage = myIntent.getBooleanExtra("fromMainPage",false);
+        username = myIntent.getStringExtra("username");
+        clubLogo = myIntent.getStringExtra("clubHeader");
+        country = myIntent.getStringExtra("country");
+        profileImage = myIntent.getStringExtra("profileImage");
+clubName = myIntent.getStringExtra("clubName");
+key = myIntent.getStringExtra("postkey");
         dialog = new ProgressDialog(this);
 
         displayImage = (ImageView) findViewById(R.id.imageCapture);
@@ -95,13 +114,99 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.send_images:
-                sendImage();
-
+                if (mainpage){
+                    sendImageFromMainPage();
+                }else {
+                    sendImage();
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
+    public void sendImageFromMainPage() {
+        try {
+
+            Uri imageUri = getImageUri(CaptureImageSendChatActivity.this, image);
+            dialog.setMessage("Sending...");
+            dialog.show();
+            File imagePath = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                imagePath = new File(getRealPathFromURI(imageUri));
+            }
+            Log.i("imagePath", imagePath.getPath());
+
+            final Bitmap imageCompressBitmap = new Compressor(CaptureImageSendChatActivity.this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(75)
+                    .compressToBitmap(imagePath);
+
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            imageCompressBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            final byte[] data = baos.toByteArray();
+            StorageReference mFilePath = FirebaseStorage.getInstance().getReference();
+            StorageReference photoPost = mFilePath.child("Post_Photo").child(imagePath.getName());
+            UploadTask uploadTask = photoPost.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUri = taskSnapshot.getDownloadUrl();
+
+
+                    Map<String,Object> postMap = new HashMap<>();
+                    postMap.put("clubLogo", clubLogo);
+                    postMap.put("country", country);
+                    postMap.put("descForPhoto", "");
+                    postMap.put("favoritePostClub", clubName);
+                    postMap.put("photoPost",downloadUri.toString());
+                    postMap.put("profileImage",profileImage);
+                    postMap.put("time", FieldValue.serverTimestamp());
+                    postMap.put("uid",myUID);
+                    postMap.put("username",username);
+                    final FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
+                    mRootRef.collection("Posting").add(postMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+
+                            String key = documentReference.getId();
+                            Map<String,Object> keyUpdate = new HashMap<>();
+                            keyUpdate.put("key", key);
+                            mRootRef.collection("Posting").document(key).update(keyUpdate);
+
+                            Toast.makeText(CaptureImageSendChatActivity.this,
+                                    "Event document has been added",
+                                    Toast.LENGTH_SHORT).show();
+
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+
+                    Intent backToMainPage = new Intent(CaptureImageSendChatActivity.this, MainPage.class);
+
+                  startActivity(backToMainPage);
+                    dialog.dismiss();
+                    finish();
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("errorPosting", e.getMessage());
+
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void sendImage() {
         try {

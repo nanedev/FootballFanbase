@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
@@ -40,6 +41,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -186,6 +188,7 @@ public class MainPage extends AppCompatActivity
     protected Handler handler;
     private int countItem;
     boolean firstTimeOpened = true;
+    boolean fromMainPage=true;
 
     PremiumUsers premiumUsers;
     FreeUser freeUser;
@@ -197,7 +200,7 @@ public class MainPage extends AppCompatActivity
     DocumentSnapshot prevItemVisible;
     SwipeRefreshLayout swipeRefreshLayoutPost;
     int size;
-
+    public static int CAMERA_REQUEST = 32;
     int numberLikes;
     int numberDisliks;
     int totalLikes, totalDislikes, pointsTotalCurrentMonth, pointsTotalPrevMonth;
@@ -206,8 +209,8 @@ public class MainPage extends AppCompatActivity
     int currentScoreDisike = 0;
     int prevMonthScoreDisike = 0;
     String lastMonthUpdate = "noData";
-
     String countryName;
+    RelativeLayout captureImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -237,6 +240,7 @@ public class MainPage extends AppCompatActivity
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         //linearLayoutManager.setStackFromEnd(true);
         //linearLayoutManager.setReverseLayout(true);
+        captureImage = (RelativeLayout) findViewById(R.id.takephotolayout);
         wallList.setLayoutManager(linearLayoutManager);
         wallList.setItemViewCacheSize(20);
         wallList.setDrawingCacheEnabled(true);
@@ -438,7 +442,13 @@ galleryIcon.setOnClickListener(new View.OnClickListener() {
             }
         };
 
-
+captureImage.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+    }
+});
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
@@ -804,7 +814,26 @@ galleryIcon.setOnClickListener(new View.OnClickListener() {
                 startActivity(goToAddPhotoOrVideo);
 
 
-            } else {
+            } else    if (requestCode == CAMERA_REQUEST) {
+                Bitmap image = null;
+                Uri imageData = null;
+                if (resultCode == RESULT_OK) {
+                    image = (Bitmap) data.getExtras().get("data");
+                    imageData = data.getData();
+                    Intent openCameraSend = new Intent(MainPage.this, CaptureImageSendChatActivity.class);
+                    openCameraSend.setData(imageData);
+                    openCameraSend.putExtra("imagedata", image);
+                    openCameraSend.putExtra("userIDFromMainPage", mAuth.getCurrentUser().getUid());
+                    openCameraSend.putExtra("fromMainPage",fromMainPage);
+                    openCameraSend.putExtra("username",usernameInfo);
+                    openCameraSend.putExtra("profileImage",profielImage);
+                    openCameraSend.putExtra("country",country);
+                    openCameraSend.putExtra("clubHeader",clubHeaderString);
+                    openCameraSend.putExtra("clubName",MainPage.myClubName);
+                    openCameraSend.putExtra("postkey",postKey);
+                    startActivityForResult(openCameraSend, 1);
+                }
+            }else {
 
                 for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                     fragment.onActivityResult(requestCode, resultCode, data);
