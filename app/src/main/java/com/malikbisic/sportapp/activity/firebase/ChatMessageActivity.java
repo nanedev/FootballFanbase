@@ -124,7 +124,7 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.malikbisic.sportapp.activity.firebase.RecordAudio.RequestPermissionCode;
 
-public class ChatMessageActivity extends AppCompatActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
+public class ChatMessageActivity extends AppCompatActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, MediaPlayer.OnPreparedListener {
     private String mChatUser;
     private Toolbar mChatToolbar;
     private FirebaseFirestore mRootRef;
@@ -1019,6 +1019,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             }
 
                         } else if (type.equals("audio")) {
+
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
@@ -1035,39 +1036,49 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.layoutAudioFromUser.setVisibility(View.GONE);
                             holder.layoutAudioToUser.setVisibility(View.VISIBLE);
 
-                            final MediaPlayer mPlayer = new MediaPlayer();
+
                             if (model.getMessage() != null) {
-                                mPlayer.reset();
+                                holder.mPlayer.reset();
                                 try {
-                                    mPlayer.setDataSource(activity, Uri.parse(model.getMessage()));
+                                    holder.mPlayer.setDataSource(model.getMessage());
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             }
 
-                            holder.progressBarToUser.setOnClickListener(new View.OnClickListener() {
+                            holder.progressBarToUser.setProgress(0);
+                            holder.progressBarToUser.setEnabled(true);
+                            holder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                            holder.mPlayer.prepareAsync();
+
+                            holder.progressBarToUser.setEnabled(false);
+                            holder.totalTimeToUser.setText(String.valueOf(holder.mPlayer.getDuration()));
+
+
+                            holder.layoutAudioToUser.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    holder.progressBarToUser.setEnabled(true);
-                                    mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                                    mPlayer.prepareAsync();
-
-                                    mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                    holder.mPlayer.start();
+                                    holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                         @Override
                                         public void onPrepared(MediaPlayer mp) {
-                                            mPlayer.start();
 
-                                            holder.progressBarToUser.setMax(mPlayer.getDuration());
+
+                                            int duration = holder.mPlayer.getDuration();
+
+                                            holder.progressBarToUser.setMax(holder.mPlayer.getDuration());
 
                                             new Timer().scheduleAtFixedRate(new TimerTask() {
                                                 @Override
                                                 public void run() {
-                                                    holder.progressBarToUser.setProgress(mPlayer.getCurrentPosition());
+
+                                                    holder.progressBarToUser.setProgress(holder.mPlayer.getCurrentPosition());
                                                     holder.progressBarToUser.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                                         @Override
                                                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                                                             if (fromUser) {
-                                                                mPlayer.seekTo(progress);
+                                                                holder.mPlayer.seekTo(progress);
                                                             }
                                                         }
 
@@ -1087,19 +1098,6 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
                                     });
 
-
-                                    if (!clickPlayAudio) {
-                                        mPlayer.start();
-                                        clickStopAudio = false;
-                                    }
-
-                                    if (clickStopAudio) {
-                                        mPlayer.stop();
-                                        clickPlayAudio = false;
-                                    }
-
-
-                                    clickPlayAudio = true;
                                 }
                             });
 
@@ -1594,5 +1592,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
             super.onBackPressed();
         }
 
+    }
+    public void onPrepared(MediaPlayer player) {
+        player.start();
     }
 }

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,6 +50,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -442,7 +444,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
         public TextView messageTimeAudioToUser;
         public SeekBar progressBarFromUser;
         public SeekBar progressBarToUser;
-
+        public MediaPlayer mPlayer;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
@@ -486,6 +488,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
             messageTimeAudioToUser = (TextView) itemView.findViewById(R.id.timemessage_touser_audio);
             progressBarFromUser = (SeekBar) itemView.findViewById(R.id.progressBarFromUser);
             progressBarToUser = (SeekBar) itemView.findViewById(R.id.progressBarToUser);
+            mPlayer = new MediaPlayer();
 
         }
 
@@ -499,6 +502,21 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
         public void setProfileImageForGrid(Context ctx, String profileImage) {
             Picasso.with(ctx).load(profileImage).into(imageFromGrid);
+        }
+
+        public void setAudioFile(Context context, String audioFile) {
+
+            if (audioFile != null) {
+                mPlayer.reset();
+                try {
+
+                    mPlayer.setDataSource(context, Uri.parse(audioFile));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
         }
     }
 
