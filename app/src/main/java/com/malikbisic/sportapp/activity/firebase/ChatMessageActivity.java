@@ -184,8 +184,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     MediaPlayer mediaPlayer;
     String AudioSavePathInDevice = null;
     Uri uriAudio;
-    boolean clickPlayAudio = false;
-    boolean clickStopAudio = false;
+    boolean clickPlayAudioForUser = false;
+    boolean clickPlayAudioToUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1046,57 +1046,62 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 }
                             }
 
-                            holder.progressBarToUser.setProgress(0);
-                            holder.progressBarToUser.setEnabled(true);
+
                             holder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
                             holder.mPlayer.prepareAsync();
 
                             holder.progressBarToUser.setEnabled(false);
-                            holder.totalTimeToUser.setText(String.valueOf(holder.mPlayer.getDuration()));
+
+                            holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+
+
+                                    int duration = holder.mPlayer.getDuration();
+                                    holder.totalTimeToUser.setText(String.valueOf(holder.mPlayer.getDuration()/100));
+                                    holder.progressBarToUser.setMax(holder.mPlayer.getDuration());
+
+                                    new Timer().scheduleAtFixedRate(new TimerTask() {
+                                        @Override
+                                        public void run() {
+
+                                            holder.progressBarToUser.setProgress(holder.mPlayer.getCurrentPosition());
+                                            holder.progressBarToUser.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                @Override
+                                                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                    if (fromUser) {
+                                                        holder.mPlayer.seekTo(progress);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                }
+
+                                                @Override
+                                                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                }
+                                            });
+                                        }
+                                    }, 0, 100);
+                                }
+
+                            });
 
 
                             holder.layoutAudioToUser.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    holder.mPlayer.start();
-                                    holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-
-
-                                            int duration = holder.mPlayer.getDuration();
-
-                                            holder.progressBarToUser.setMax(holder.mPlayer.getDuration());
-
-                                            new Timer().scheduleAtFixedRate(new TimerTask() {
-                                                @Override
-                                                public void run() {
-
-                                                    holder.progressBarToUser.setProgress(holder.mPlayer.getCurrentPosition());
-                                                    holder.progressBarToUser.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                                        @Override
-                                                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                                            if (fromUser) {
-                                                                holder.mPlayer.seekTo(progress);
-                                                            }
-                                                        }
-
-                                                        @Override
-                                                        public void onStartTrackingTouch(SeekBar seekBar) {
-
-                                                        }
-
-                                                        @Override
-                                                        public void onStopTrackingTouch(SeekBar seekBar) {
-
-                                                        }
-                                                    });
-                                                }
-                                            }, 0, 100);
-                                        }
-
-                                    });
+                                    if (!clickPlayAudioToUser) {
+                                        holder.mPlayer.start();
+                                        clickPlayAudioToUser = true;
+                                    }else if (clickPlayAudioToUser && holder.mPlayer.isPlaying()){
+                                        holder.mPlayer.pause();
+                                        clickPlayAudioToUser = false;
+                                    }
 
                                 }
                             });
@@ -1248,6 +1253,80 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
                             holder.layoutAudioFromUser.setVisibility(View.VISIBLE);
                             holder.layoutAudioToUser.setVisibility(View.GONE);
+
+                            if (model.getMessage() != null) {
+                                holder.mPlayer.reset();
+                                try {
+                                    holder.mPlayer.setDataSource(model.getMessage());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            holder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                            holder.mPlayer.prepareAsync();
+
+                            holder.progressBarFromUser.setEnabled(false);
+
+
+                            holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+
+
+                                    int duration = holder.mPlayer.getDuration();
+
+                                    holder.totalTimeFromUser.setText(String.valueOf(holder.mPlayer.getDuration()/1000));
+                                    holder.progressBarFromUser.setMax(holder.mPlayer.getDuration());
+
+                                    new Timer().scheduleAtFixedRate(new TimerTask() {
+                                        @Override
+                                        public void run() {
+
+                                            holder.progressBarFromUser.setProgress(holder.mPlayer.getCurrentPosition());
+                                            holder.progressBarFromUser.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                @Override
+                                                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                    if (fromUser) {
+                                                        holder.mPlayer.seekTo(progress);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                }
+
+                                                @Override
+                                                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                }
+                                            });
+                                        }
+                                    }, 0, 100);
+                                }
+
+                            });
+                            holder.layoutAudioFromUser.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    if (!clickPlayAudioForUser) {
+                                        holder.mPlayer.start();
+                                        clickPlayAudioForUser = true;
+                                    }else if (clickPlayAudioForUser && holder.mPlayer.isPlaying()){
+                                        holder.mPlayer.pause();
+                                        clickPlayAudioForUser = false;
+                                    }
+
+
+                                }
+                            });
+
+                            if (model.getTime() != null) {
+                                String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+                                holder.messageTimeAudioFromUser.setText(time);
+                            }
 
                         }
                     }

@@ -279,7 +279,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="70dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
             android:layout_toEndOf="@+id/message_audioImageFrom"
             android:layout_toRightOf="@+id/message_audioImageFrom"
             android:progress="20" />
@@ -334,7 +333,6 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="80dp"
             android:layout_alignParentRight="true"
-            android:progress="20"
             android:layout_marginStart="80dp"
             android:layout_alignParentEnd="true" />
 
