@@ -260,11 +260,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     ((MainPageAdapter.PostViewHolder) holder).mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
                     try {
-                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
+
                         ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                             @Override
                             public void onPrepared(MediaPlayer mp) {
-                                ((MainPageAdapter.PostViewHolder) holder).mPlayer.start();
+                               mp.start();
 
                                 ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
 
@@ -293,9 +293,12 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                     }
                                 }, 0, 100);
 
-                            }
-                        });
+                            }}
 
+
+
+                            );
+                        ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
 
                         ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override

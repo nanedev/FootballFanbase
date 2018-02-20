@@ -39,6 +39,7 @@ import android.view.WindowManager;
 import android.widget.DatePicker;
 
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import android.widget.RelativeLayout;
@@ -77,10 +78,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
 import com.malikbisic.sportapp.activity.firebase.MyPostsActivity;
+import com.malikbisic.sportapp.activity.firebase.UserVotesActivity;
 import com.malikbisic.sportapp.adapter.firebase.PlayerFirebaseAdapter;
 import com.malikbisic.sportapp.adapter.firebase.ProfileFragmentAdapter;
 import com.malikbisic.sportapp.model.FootballPlayer;
@@ -202,9 +205,11 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
     String playerID;
     private DiscreteScrollView itemPicker;
     private InfiniteScrollAdapter infiniteAdapter;
-
+RelativeLayout layoutForTopTenPlayers;
     TextView totalPointsTextview;
     int pos = 1;
+    RelativeLayout layoutForWinner;
+    RelativeLayout votesLayout;
 
 
     public ProfileFragment() {
@@ -266,9 +271,9 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         thisMonhtNumberLikes = (TextView) findViewById(R.id.likesinprofilefragment);
         thisMonthNumberDislikes = (TextView) findViewById(R.id.dislikesinporiflefragment);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
-
-        winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
-        winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
+layoutForTopTenPlayers = (RelativeLayout) findViewById(R.id.parentForListplayers);
+votesLayout = (RelativeLayout) findViewById(R.id.goalslayout);
+layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
         totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumber);
         postLayout = (RelativeLayout) findViewById(R.id.postlayout);
         backarrow.setOnClickListener(new View.OnClickListener() {
@@ -289,29 +294,6 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         });
 
 
-        winnerImage.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(View v) {
-
-                if (firstImageClick) {
-                    firstImageClick = false;
-                    secondImageClick = true;
-                    usersLayoutWinner.setVisibility(View.VISIBLE);
-                    countryLayoutWinner.setVisibility(View.VISIBLE);
-                    clubLayoutWinner.setVisibility(View.VISIBLE);
-                    pointsLayoutWinner.setVisibility(View.VISIBLE);
-
-                } else if (secondImageClick) {
-                    firstImageClick = true;
-                    secondImageClick = false;
-                    usersLayoutWinner.setVisibility(View.GONE);
-                    countryLayoutWinner.setVisibility(View.GONE);
-                    clubLayoutWinner.setVisibility(View.GONE);
-                    pointsLayoutWinner.setVisibility(View.GONE);
-                }
-            }
-        });
 
         numberPost();
         totalUserPoints();
@@ -329,6 +311,13 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         usersPoint(this);
 
         editProfilePicture = (TextView) findViewById(R.id.edit_profile_image);
+        votesLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileFragment.this,UserVotesActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         //logoClub = (ImageView)  findViewById(R.id.club_logo_profile);
@@ -515,11 +504,17 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {
+                if (task.getResult().isEmpty()){
+                    layoutForWinner.setVisibility(View.GONE);
+                }
                 String playName;
                 String playerImage;
                 long playerPoints;
                 for (DocumentSnapshot documentSnapshot : task.getResult()) {
+
+
                     if (documentSnapshot.exists()) {
+                        layoutForWinner.setVisibility(View.VISIBLE);
                         playerID = documentSnapshot.getId();
                         playName = documentSnapshot.getString("playerName");
                         playerImage = documentSnapshot.getString("playerImage");
@@ -633,7 +628,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
     }
 
     public void updateListPlayer() {
-        DateFormat currentDateFormat = new SimpleDateFormat("MMMM");
+        DateFormat currentDateFormat = new SimpleDateFormat("MMMM",Locale.getDefault());
         final Date currentDate = new Date();
 
         final String currentMonth = currentDateFormat.format(currentDate);
@@ -642,12 +637,17 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {
+                if (task.getResult().isEmpty()){
+                    layoutForTopTenPlayers.setVisibility(View.GONE);
+                }
                 String playName;
                 String playerImage;
                 long playerPoints;
                 int id = 0;
                 for (DocumentSnapshot documentSnapshot : task.getResult()) {
+
                     if (documentSnapshot.exists()) {
+                        layoutForTopTenPlayers.setVisibility(View.VISIBLE);
                         id++;
                         playerID = documentSnapshot.getId();
                         playName = documentSnapshot.getString("playerName");

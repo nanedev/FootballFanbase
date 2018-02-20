@@ -248,11 +248,13 @@
             android:name=".activity.firebase.FullScreenImageFromChat"
             android:parentActivityName=".activity.firebase.ChatMessageActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
-        <activity android:name=".activity.firebase.GalleryImageFullScreen"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".activity.firebase.GalleryImageFullScreen"
             android:parentActivityName=".activity.firebase.ChatMessageActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark"></activity>
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.firebase.UserVotesActivity"></activity>
     </application>
 
 </manifest>
