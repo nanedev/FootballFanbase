@@ -117,6 +117,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -994,6 +995,9 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.layoutAudioToUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.VISIBLE);
                             holder.galleryLayoutToUser.setGravity(Gravity.RIGHT);
+                            holder.layoutAudioFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioToUser.setVisibility(View.GONE);
+
                             ArrayList<String> imageModels = new ArrayList<>();
                             int spanCOunt = 0;
 
@@ -1034,7 +1038,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
                             holder.layoutAudioFromUser.setVisibility(View.GONE);
-                            holder.layoutAudioToUser.setVisibility(View.VISIBLE);
+                            holder.layoutAudioToUser.setVisibility(View.INVISIBLE);
 
 
                             if (model.getMessage() != null) {
@@ -1056,10 +1060,15 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mp) {
-
+                                    holder.layoutAudioToUser.setVisibility(View.VISIBLE);
 
                                     int duration = holder.mPlayer.getDuration();
-                                    holder.totalTimeToUser.setText(String.valueOf(holder.mPlayer.getDuration()/100));
+                                    @SuppressLint("DefaultLocale") String time = String.format("%02d:%02d",
+                                            TimeUnit.MILLISECONDS.toMinutes(duration),
+                                            TimeUnit.MILLISECONDS.toSeconds(duration) -
+                                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
+                                    );
+                                    holder.totalTimeToUser.setText(String.valueOf(time));
                                     holder.progressBarToUser.setMax(holder.mPlayer.getDuration());
 
                                     new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -1098,10 +1107,20 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                     if (!clickPlayAudioToUser) {
                                         holder.mPlayer.start();
                                         clickPlayAudioToUser = true;
-                                    }else if (clickPlayAudioToUser && holder.mPlayer.isPlaying()){
+                                        holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.pauseto_icon));
+                                    }else if (clickPlayAudioToUser){
                                         holder.mPlayer.pause();
                                         clickPlayAudioToUser = false;
+                                        holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.playto_icon));
                                     }
+
+                                    holder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                        @Override
+                                        public void onCompletion(MediaPlayer mp) {
+                                            clickPlayAudioToUser = false;
+                                            holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.playto_icon));
+                                        }
+                                    });
 
                                 }
                             });
@@ -1128,6 +1147,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.messageImageViewFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
+                            holder.layoutAudioFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioToUser.setVisibility(View.GONE);
 
                             holder.messageTextFromUser.setText(model.getMessage());
                             if (model.getTime() != null) {
@@ -1161,6 +1182,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.messageImageViewToUser.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
+                            holder.layoutAudioFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioToUser.setVisibility(View.GONE);
 
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
                             Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewFromUser);
@@ -1197,7 +1220,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.messageImageViewFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.VISIBLE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
-
+                            holder.layoutAudioFromUser.setVisibility(View.GONE);
+                            holder.layoutAudioToUser.setVisibility(View.GONE);
 
                             ArrayList<String> imageModels = new ArrayList<>();
                             int spanCOunt = 0;
@@ -1251,7 +1275,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.messageImageViewFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
-                            holder.layoutAudioFromUser.setVisibility(View.VISIBLE);
+                            holder.layoutAudioFromUser.setVisibility(View.INVISIBLE);
                             holder.layoutAudioToUser.setVisibility(View.GONE);
 
                             if (model.getMessage() != null) {
@@ -1272,11 +1296,15 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mp) {
-
+                                    holder.layoutAudioFromUser.setVisibility(View.VISIBLE);
 
                                     int duration = holder.mPlayer.getDuration();
-
-                                    holder.totalTimeFromUser.setText(String.valueOf(holder.mPlayer.getDuration()/1000));
+                                    @SuppressLint("DefaultLocale") String time = String.format("%02d:%02d",
+                                            TimeUnit.MILLISECONDS.toMinutes(duration),
+                                            TimeUnit.MILLISECONDS.toSeconds(duration) -
+                                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
+                                    );
+                                    holder.totalTimeFromUser.setText(String.valueOf(time));
                                     holder.progressBarFromUser.setMax(holder.mPlayer.getDuration());
 
                                     new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -1314,11 +1342,19 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                     if (!clickPlayAudioForUser) {
                                         holder.mPlayer.start();
                                         clickPlayAudioForUser = true;
-                                    }else if (clickPlayAudioForUser && holder.mPlayer.isPlaying()){
+                                        holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.pause_icon));
+                                    }else if (clickPlayAudioForUser){
                                         holder.mPlayer.pause();
                                         clickPlayAudioForUser = false;
+                                        holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.play_icon));
                                     }
-
+                                    holder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                        @Override
+                                        public void onCompletion(MediaPlayer mp) {
+                                            clickPlayAudioForUser = false;
+                                            holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.play_icon));
+                                        }
+                                    });
 
                                 }
                             });
@@ -1327,6 +1363,20 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.messageTimeAudioFromUser.setText(time);
                             }
+
+                            FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
+
+                            displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                                @Override
+                                public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                    myUsername = dataSnapshot.getString("username");
+                                    UserChat model2 = dataSnapshot.toObject(UserChat.class);
+                                    String profileImage = model2.getProfileImage();
+
+
+                                    holder.setProfileImageForAudio(activity, profileImage);
+                                }
+                            });
 
                         }
                     }

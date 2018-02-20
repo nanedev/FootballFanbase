@@ -260,7 +260,7 @@
         android:id="@+id/messageAudioLayoutUserFrom"
         android:layout_width="wrap_content"
         android:layout_height="70dp"
-        android:visibility="invisible">
+        android:visibility="visible">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/message_audioImageFrom"
@@ -274,24 +274,21 @@
             style="@style/CustomProgressBarFromUserChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="70dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="70dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginRight="80dp"
             android:layout_toEndOf="@+id/message_audioImageFrom"
             android:layout_toRightOf="@+id/message_audioImageFrom"
-            android:progress="20" />
+            android:progress="20"
+            android:layout_marginEnd="80dp" />
 
         <ImageView
             android:id="@+id/play_stop_fromuser"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginBottom="185dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="22dp"
-            emojicon:srcCompat="@drawable/ic_play_circle_filled_black_24dp" />
+            android:layout_marginLeft="80dp"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="14dp"
+            emojicon:srcCompat="@drawable/play_icon" />
 
         <TextView
             android:id="@+id/totaltimeaudio_fromuser"
@@ -299,12 +296,12 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
             android:layout_marginEnd="5dp"
-            android:layout_marginLeft="250dp"
+            android:layout_marginLeft="210dp"
             android:layout_marginRight="5dp"
-            android:layout_marginStart="250dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginStart="210dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/timeaudio_fromuser_chat"
-            android:text="0:04"
+            android:text="00:04"
             android:textColor="@color/white" />
 
         <TextView
@@ -321,7 +318,8 @@
     <RelativeLayout
         android:id="@+id/messageAudioLayoutUserTo"
         android:layout_width="wrap_content"
-        android:layout_height="70dp">
+        android:layout_height="70dp"
+        android:visibility="gone">
 
 
         <SeekBar
@@ -333,18 +331,19 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="80dp"
             android:layout_alignParentRight="true"
-            android:layout_marginStart="80dp"
+            android:layout_marginStart="160dp"
             android:layout_alignParentEnd="true" />
 
         <ImageView
             android:id="@+id/play_stop_touser"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginBottom="185dp"
-            android:layout_marginLeft="100dp"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="22dp"
-            emojicon:srcCompat="@drawable/ic_play_circle_filled_black_24dp" />
+            android:layout_marginTop="33dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="190dp"
+            emojicon:srcCompat="@drawable/playto_icon"
+            android:layout_marginStart="190dp" />
 
         <TextView
             android:id="@+id/totaltimeaudio_touser"
@@ -354,10 +353,10 @@
             android:layout_marginEnd="25dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="40dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="33dp"
             android:background="@drawable/timeaudio_touser_chat"
             android:text="0:04"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:layout_alignParentEnd="true" />
 
         <TextView

@@ -503,7 +503,9 @@ public class MessageAdapter extends RecyclerView.Adapter {
         public void setProfileImageForGrid(Context ctx, String profileImage) {
             Picasso.with(ctx).load(profileImage).into(imageFromGrid);
         }
-
+        public void setProfileImageForAudio(Context ctx, String profileImage) {
+            Picasso.with(ctx).load(profileImage).into(imageFromAudio);
+        }
         public void setAudioFile(Context context, String audioFile) {
 
             if (audioFile != null) {
