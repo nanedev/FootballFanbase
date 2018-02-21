@@ -444,6 +444,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
         public TextView messageTimeAudioToUser;
         public SeekBar progressBarFromUser;
         public SeekBar progressBarToUser;
+
         public MediaPlayer mPlayer;
 
         public MessageViewHolder(View itemView) {

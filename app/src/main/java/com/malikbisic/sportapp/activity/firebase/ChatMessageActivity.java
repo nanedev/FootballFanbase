@@ -1057,6 +1057,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
                             holder.progressBarToUser.setEnabled(false);
 
+
                             holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mp) {
@@ -1107,18 +1108,18 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                     if (!clickPlayAudioToUser) {
                                         holder.mPlayer.start();
                                         clickPlayAudioToUser = true;
-                                        holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.pauseto_icon));
+                                        holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.pause_icon));
                                     }else if (clickPlayAudioToUser){
                                         holder.mPlayer.pause();
                                         clickPlayAudioToUser = false;
-                                        holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.playto_icon));
+                                        holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.play_icon));
                                     }
 
                                     holder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                         @Override
                                         public void onCompletion(MediaPlayer mp) {
                                             clickPlayAudioToUser = false;
-                                            holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.playto_icon));
+                                            holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.play_icon));
                                         }
                                     });
 
@@ -1275,7 +1276,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             holder.messageImageViewFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
-                            holder.layoutAudioFromUser.setVisibility(View.INVISIBLE);
+                            holder.layoutAudioFromUser.setVisibility(View.VISIBLE);
                             holder.layoutAudioToUser.setVisibility(View.GONE);
 
                             if (model.getMessage() != null) {
@@ -1317,6 +1318,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                                                     if (fromUser) {
                                                         holder.mPlayer.seekTo(progress);
+
                                                     }
                                                 }
 
@@ -1342,17 +1344,17 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                     if (!clickPlayAudioForUser) {
                                         holder.mPlayer.start();
                                         clickPlayAudioForUser = true;
-                                        holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.pause_icon));
+                                        holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.pauseto_icon));
                                     }else if (clickPlayAudioForUser){
                                         holder.mPlayer.pause();
                                         clickPlayAudioForUser = false;
-                                        holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.play_icon));
+                                        holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.playto_icon));
                                     }
                                     holder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                         @Override
                                         public void onCompletion(MediaPlayer mp) {
                                             clickPlayAudioForUser = false;
-                                            holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.play_icon));
+                                            holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.playto_icon));
                                         }
                                     });
 
