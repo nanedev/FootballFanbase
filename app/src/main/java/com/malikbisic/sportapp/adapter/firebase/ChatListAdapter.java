@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,6 +97,10 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
             }
         }
 
+        if (model.getTime() != null) {
+            String time = DateUtils.formatDateTime(ctx, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
+            holder.timeLastMessageTxt.setText(time);
+        }
 
 
         DocumentReference usersInfo = FirebaseFirestore.getInstance().collection("Users").document(model.getTo());
@@ -134,6 +139,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         public CircleImageView profileImageImg;
         public TextView usernameTxt;
         public TextView lastMessageTxt;
+        public TextView timeLastMessageTxt;
 
         public ChatListViewHolder(View itemView) {
             super(itemView);
@@ -142,6 +148,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
             profileImageImg = (CircleImageView) view.findViewById(R.id.profileImage_chatList);
             usernameTxt = (TextView) view.findViewById(R.id.username_chatList);
             lastMessageTxt = (TextView) view.findViewById(R.id.lastChat_chatList);
+            timeLastMessageTxt = (TextView) view.findViewById(R.id.timeLastMessage);
 
         }
     }

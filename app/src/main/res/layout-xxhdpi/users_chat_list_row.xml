@@ -29,8 +29,25 @@
         android:layout_alignBottom="@+id/profileImage_chatList"
         android:layout_alignLeft="@+id/username_chatList"
         android:layout_alignStart="@+id/username_chatList"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_toLeftOf="@+id/timeLastMessage"
+        android:layout_toStartOf="@+id/timeLastMessage"
+        android:singleLine="true"
         android:textSize="13dp"
         android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/timeLastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/username_chatList"
+        android:padding="2dp"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:textStyle="bold" />
 
 
 </RelativeLayout>

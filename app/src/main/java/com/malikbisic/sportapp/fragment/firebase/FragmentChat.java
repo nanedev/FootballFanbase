@@ -47,8 +47,17 @@ public class FragmentChat extends Fragment {
 
     RecyclerView usersChatList;
     List<Messages> messagesList = new ArrayList<>();
+    List<Messages> userList = new ArrayList<>();
     ChatListAdapter mAdapter;
     FirebaseAuth mAuth;
+
+
+    int prevCount = 0;
+    int currentCount;
+
+    String prevMessage;
+    String currentMessage;
+    boolean firstCall = false;
 
     @Nullable
     @Override
@@ -65,25 +74,62 @@ public class FragmentChat extends Fragment {
         usersChatList.setAdapter(mAdapter);
         loadMessagesList();
 
-        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                loadMessagesList();
-            }
-        });
+        updateMessagesList();
 
 
         return view;
     }
 
     private void loadMessagesList() {
+        messagesList.clear();
+        CollectionReference messageListQUERY = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user");
+        messageListQUERY.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
+                messagesList.clear();
+                for (final DocumentSnapshot snap : task.getResult()) {
+
+                    final String toUserID = snap.getId();
+                    com.google.firebase.firestore.Query messageListRef = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user")
+                            .document(toUserID).collection("message");
+                    messageListRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                            for (DocumentChange snapshot : task.getResult().getDocumentChanges()) {
+                                if (snapshot.getType() == DocumentChange.Type.ADDED) {
+
+
+                                    Messages messages = snapshot.getDocument().toObject(Messages.class).withId(toUserID);
+                                    messagesList.add(messages);
+
+                                    currentMessage = snapshot.getDocument().getId();
+                                }
+
+                                currentCount = mAdapter.getItemCount();
+
+
+                            }
+                            mAdapter.notifyDataSetChanged();
+
+                            prevCount = mAdapter.getItemCount();
+                        }
+                    });
+
+                }
+            }
+        });
+
+
+    }
+
+    private void updateMessagesList() {
         CollectionReference messageListQUERY = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user");
         messageListQUERY.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                messagesList.clear();
+
                 for (DocumentSnapshot snap : querySnapshot.getDocuments()) {
                     final String toUserID = snap.getId();
                     com.google.firebase.firestore.Query messageListRef = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user")
@@ -91,29 +137,24 @@ public class FragmentChat extends Fragment {
                     messageListRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-                            for (DocumentChange snapshot : querySnapshot.getDocumentChanges()) {
-                                if (snapshot.getType() == DocumentChange.Type.ADDED) {
 
-                                    Messages messages = snapshot.getDocument().toObject(Messages.class).withId(toUserID);
-                                    messagesList.add(messages);
 
-                                }
-                            }mAdapter.notifyDataSetChanged();
 
-                           /* mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                                @Override
-                                public void onChanged() {
-                                    super.onChanged();
-                                    messagesList.clear();
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });*/
+
+                                    if (firstCall) {
+
+                                        messagesList.clear();
+                                        loadMessagesList();
+                                    }
+
+
                         }
                     });
 
                 }
             }
-        } );
+        });
 
+        firstCall = true;
     }
 }
