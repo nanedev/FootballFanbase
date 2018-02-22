@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.adapter.firebase;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.firebase.ChatMessageActivity;
 import com.malikbisic.sportapp.model.firebase.Messages;
 import com.squareup.picasso.Picasso;
 
@@ -60,9 +62,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
         if (myUID.equals(fromUID)){
             if (type.equals("image")){
-                holder.lastMessageTxt.setText("You: " + "Sent image");
+                holder.lastMessageTxt.setText(ctx.getResources().getString(R.string.sentPhoto));
             }else if (type.equals("text")){
-                holder.lastMessageTxt.setText("You: " + model.getMessage());
+                holder.lastMessageTxt.setText(ctx.getResources().getString(R.string.sentText, model.getMessage()));
+            } else if (type.equals("gallery")){
+                holder.lastMessageTxt.setText(ctx.getResources().getString(R.string.sentGallery, model.getGalleryImage().size()));
+            } else if (type.equals("audio")){
+                holder.lastMessageTxt.setText(ctx.getResources().getString(R.string.sentaudioFile));
             }
         } else {
             DocumentReference usersInfo = FirebaseFirestore.getInstance().collection("Users").document(fromUID);
@@ -71,9 +77,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                 public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                     String username = String.valueOf(documentSnapshot.getString("username"));
                     if (type.equals("image")){
-                        holder.lastMessageTxt.setText(username + ": " + "Sent image");
+                        holder.lastMessageTxt.setText(ctx.getResources().getString(R.string.usersentPhoto, username));
                     }else if (type.equals("text")){
-                        holder.lastMessageTxt.setText(username + ": " + model.getMessage());
+                        holder.lastMessageTxt.setText(ctx.getResources().getString(R.string.usersentText, username, model.getMessage()));
+                    } else if (type.equals("gallery")){
+                        holder.lastMessageTxt.setText(ctx.getResources().getString(R.string.usersentGallery, username, model.getGalleryImage().size()));
+                    } else if (type.equals("audio")){
+                        holder.lastMessageTxt.setText(ctx.getResources().getString(R.string.usersentaudioFile, username));
                     }
 
                 }
@@ -92,11 +102,21 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         usersInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                String username = String.valueOf(documentSnapshot.getString("username"));
+                final String username = String.valueOf(documentSnapshot.getString("username"));
                 String profileImage = String.valueOf(documentSnapshot.getString("profileImage"));
 
                 holder.usernameTxt.setText(username);
                 Picasso.with(ctx).load(profileImage).into(holder.profileImageImg);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ctx, ChatMessageActivity.class);
+                        intent.putExtra("userId", model.getTo());
+                        intent.putExtra("username", username);
+                        ctx.startActivity(intent);
+                    }
+                });
             }
         });
 

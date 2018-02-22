@@ -71,4 +71,15 @@
     </string>
 
 
+    <string name="sentPhoto">You sent a photo</string>
+    <string name="you">You</string>
+    <string name="sentText">You: %1$s</string>
+    <string name="sentaudioFile">You sent audio file</string>
+    <string name="sentGallery">You have %1$d photos</string>
+
+
+    <string name="usersentPhoto">%1$s sent a photo</string>
+    <string name="usersentText">%1$s: %2$s</string>
+    <string name="usersentaudioFile">%1$s sent audio file</string>
+    <string name="usersentGallery">%1$s have %2$d photos</string>
 </resources>
