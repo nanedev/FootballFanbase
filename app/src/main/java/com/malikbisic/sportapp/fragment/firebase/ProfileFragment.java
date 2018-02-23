@@ -311,13 +311,6 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
         usersPoint(this);
 
         editProfilePicture = (TextView) findViewById(R.id.edit_profile_image);
-        votesLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ProfileFragment.this,UserVotesActivity.class);
-                startActivity(intent);
-            }
-        });
 
 
         //logoClub = (ImageView)  findViewById(R.id.club_logo_profile);
@@ -618,7 +611,18 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             long numberVotes = task.getResult().size();
 
+
                             playerVoteTextview.setText(String.valueOf(numberVotes));
+
+                            votesLayout.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(ProfileFragment.this,UserVotesActivity.class);
+                                    intent.putExtra("playerID", playerID);
+                                    startActivity(intent);
+                                }
+                            });
+
                         }
                     });
 
