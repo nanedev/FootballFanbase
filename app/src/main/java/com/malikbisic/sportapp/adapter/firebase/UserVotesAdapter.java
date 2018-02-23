@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.model.api.PlayerModel;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
 import com.malikbisic.sportapp.viewHolder.firebase.UserVotesViewHolder;
 
@@ -18,11 +19,11 @@ import java.util.List;
  */
 
 public class UserVotesAdapter extends RecyclerView.Adapter<UserVotesViewHolder> {
-    List<UsersModel> list;
+    List<PlayerModel> list;
     Activity activity;
 
 
-    public UserVotesAdapter(List<UsersModel> list, Activity activity) {
+    public UserVotesAdapter(List<PlayerModel> list, Activity activity) {
         this.list = list;
         this.activity = activity;
     }
@@ -36,11 +37,8 @@ public class UserVotesAdapter extends RecyclerView.Adapter<UserVotesViewHolder> 
 
     @Override
     public void onBindViewHolder(UserVotesViewHolder holder, int position) {
-UsersModel model  = list.get(position);
+PlayerModel model  = list.get(position);
 
-        Glide.with(holder.itemView.getContext()).load(model.getProfileImage()).into(holder.userProfileImage);
-
-        holder.username.setText(model.getUsername());
 
     }
 

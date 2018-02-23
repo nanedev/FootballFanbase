@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -91,7 +92,7 @@ holder.votePlayer.setOnClickListener(new View.OnClickListener() {
     }
 
     public void votePlayer(final PlayerModel model) {
-        DateFormat currentDateFormat = new SimpleDateFormat("MMMM");
+        DateFormat currentDateFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
         final Date currentDate = new Date();
 
         final String currentMonth = currentDateFormat.format(currentDate);
@@ -165,7 +166,7 @@ holder.votePlayer.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
                         // TODO Do something
 
-                        String enterPoint = enterPointsVote.getText().toString().trim();
+                        final String enterPoint = enterPointsVote.getText().toString().trim();
                         if (!TextUtils.isEmpty(enterPoint)) {
                             final long points = Integer.parseInt(enterPoint);
 
@@ -208,6 +209,7 @@ holder.votePlayer.setOnClickListener(new View.OnClickListener() {
                                                                     Map<String, Object> usersInfo = new HashMap<>();
                                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                                    usersInfo.put("userGivePoints",enterPoint);
                                                                     if (task.getResult().exists()){
                                                                         DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                                         usersVote.update(usersInfo);
@@ -237,6 +239,7 @@ holder.votePlayer.setOnClickListener(new View.OnClickListener() {
                                                                     Map<String, Object> usersInfo = new HashMap<>();
                                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
+                                                                    usersInfo.put("userGivePoints",enterPoint);
                                                                     if (task.getResult().exists()){
                                                                         DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                                         usersVote.update(usersInfo);
