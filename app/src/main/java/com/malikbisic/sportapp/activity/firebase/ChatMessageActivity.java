@@ -191,6 +191,9 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     boolean clickPlayAudioForUser = false;
     boolean clickPlayAudioToUser = false;
     boolean deleteBtnPress = false;
+
+    TextView typing;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -211,6 +214,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         captureImage = (ImageButton) findViewById(R.id.cameraImage);
         audioRecordBtn = (ImageView) findViewById(R.id.microphoneImage);
+        typing = (TextView) findViewById(R.id.typingListener);
 
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
@@ -404,7 +408,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                     mychatUser.put("to", mCurrentUserId);
                     mychatUser.put("typing", true);
                     mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(chatUser);
-                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).update(mychatUser);
+
                     // Send notification for start typing event
                     isTyping = true;
                 }
@@ -422,7 +426,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 mychatUser.put("to", mCurrentUserId);
                                 mychatUser.put("typing", false);
                                 mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(chatUser);
-                                mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).update(mychatUser);
+
                                 //send notification for stopped typing event
                             }
                         },
@@ -435,9 +439,9 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         mChatMessageView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_DEL){
+                if (keyCode == KeyEvent.KEYCODE_DEL) {
                     deleteBtnPress = true;
-                }else {
+                } else {
                     deleteBtnPress = false;
                 }
                 return false;
@@ -1441,7 +1445,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
                         }
                     }
-                    mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
                         public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
                             if (e != null) {
@@ -1451,15 +1455,11 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                                 boolean isTyping = snapshot.getBoolean("typing");
 
                                 if (isTyping) {
-                                    if (position == 0) {
 
-                                        holder.typing.setText("typing");
-                                        holder.typing.setVisibility(View.VISIBLE);
-                                    } else {
-                                        holder.typing.setVisibility(View.GONE);
-                                    }
+                                    typing.setText("typing");
+                                    typing.setVisibility(View.VISIBLE);
                                 } else {
-                                    holder.typing.setVisibility(View.GONE);
+                                    typing.setVisibility(View.GONE);
                                 }
                             }
                         }

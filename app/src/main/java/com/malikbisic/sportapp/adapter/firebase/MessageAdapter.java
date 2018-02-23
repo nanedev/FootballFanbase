@@ -493,7 +493,6 @@ public class MessageAdapter extends RecyclerView.Adapter {
             progressBarToUser = (SeekBar) itemView.findViewById(R.id.progressBarToUser);
             mPlayer = new MediaPlayer();
 
-            typing = (TextView) itemView.findViewById(R.id.typingListener);
 
         }
 

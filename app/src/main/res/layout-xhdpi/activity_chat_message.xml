@@ -27,7 +27,7 @@
         android:id="@+id/swipe_message_swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/chatdole"
+        android:layout_above="@+id/typingListener"
         android:layout_below="@+id/appBarLayout"
         android:duplicateParentState="true">
 
@@ -43,8 +43,8 @@
                 android:id="@+id/messageList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/bottom_chat_layout"
-                android:layout_below="@+id/appBarLayout">
+                android:layout_below="@+id/appBarLayout"
+                android:visibility="visible">
 
             </android.support.v7.widget.RecyclerView>
 
@@ -52,6 +52,16 @@
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/typingListener"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/chatdole"
+        android:padding="5dp"
+        android:text="typing"
+        android:textSize="18sp"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/chatdole"
