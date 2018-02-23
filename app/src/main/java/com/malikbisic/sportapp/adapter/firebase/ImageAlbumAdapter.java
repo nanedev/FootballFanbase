@@ -287,8 +287,10 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
 
                     Map<String, Object> chatUser = new HashMap<>();
                     chatUser.put("to", userID);
+                    chatUser.put("typing", false);
                     Map<String, Object> mychatUser = new HashMap<>();
-                    chatUser.put("to", myUID);
+                    mychatUser.put("to", myUID);
+                    mychatUser.put("typing", false);
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
 

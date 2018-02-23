@@ -76,7 +76,7 @@ public class FragmentChat extends Fragment {
 
         updateMessagesList();
 
-
+        firstCall = true;
         return view;
     }
 
@@ -155,6 +155,6 @@ public class FragmentChat extends Fragment {
             }
         });
 
-        firstCall = true;
+
     }
 }
