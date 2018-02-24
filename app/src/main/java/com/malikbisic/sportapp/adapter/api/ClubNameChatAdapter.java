@@ -3,16 +3,21 @@ package com.malikbisic.sportapp.adapter.api;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.ServerTimestamp;
 import com.malikbisic.sportapp.R;
@@ -34,6 +39,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
     Activity activity;
     int numberOnline = 0;
     boolean isOnline;
+    FirebaseAuth mAuth;
 
     public ClubNameChatAdapter(List<? extends ExpandableGroup> groups, Context ctx, Activity activity) {
         super(groups);
@@ -59,6 +65,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
     @Override
     public void onBindChildViewHolder(final UsersChatViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
 
+        mAuth = FirebaseAuth.getInstance();
         final UserChat userChat = (UserChat) group.getItems().get(childIndex);
         holder.setUsername(userChat.getUsername());
         holder.setFlag(ctx, userChat.getFlag());
@@ -69,6 +76,22 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                CollectionReference seenMessage = db.collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user").document(userChat.getUserID()).collection("message");
+                Query queryMessage = seenMessage.whereEqualTo("seen", false);
+
+                queryMessage.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for (DocumentSnapshot snapshot : task.getResult()){
+                            String docID = snapshot.getId();
+
+                            db.collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user").document(userChat.getUserID()).collection("message").document(docID)
+                                    .update("seen", true);
+                        }
+                    }
+                });
 
                 Intent intent = new Intent(ctx, ChatMessageActivity.class);
                 intent.putExtra("userId", userChat.getUserID());
