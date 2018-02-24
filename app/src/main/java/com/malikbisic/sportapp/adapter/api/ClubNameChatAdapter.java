@@ -78,7 +78,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
             public void onClick(View v) {
 
                 final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                CollectionReference seenMessage = db.collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user").document(userChat.getUserID()).collection("message");
+                CollectionReference seenMessage = db.collection("Messages").document(userChat.getUserID()).collection("chat-user").document(mAuth.getCurrentUser().getUid()).collection("message");
                 Query queryMessage = seenMessage.whereEqualTo("seen", false);
 
                 queryMessage.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -87,7 +87,7 @@ public class ClubNameChatAdapter extends ExpandableRecyclerViewAdapter<ClubNameV
                         for (DocumentSnapshot snapshot : task.getResult()){
                             String docID = snapshot.getId();
 
-                            db.collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user").document(userChat.getUserID()).collection("message").document(docID)
+                            db.collection("Messages").document(userChat.getUserID()).collection("chat-user").document(mAuth.getCurrentUser().getUid()).collection("message").document(docID)
                                     .update("seen", true);
                         }
                     }

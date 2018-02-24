@@ -124,7 +124,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                     public void onClick(View v) {
 
                         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        CollectionReference seenMessage = db.collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user").document(model.getTo()).collection("message");
+                        CollectionReference seenMessage = db.collection("Messages").document(model.getTo()).collection("chat-user").document(mAuth.getCurrentUser().getUid()).collection("message");
                         Query queryMessage = seenMessage.whereEqualTo("seen", false);
 
                         queryMessage.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -133,7 +133,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
                                 for (DocumentSnapshot snapshot : task.getResult()){
                                     String docID = snapshot.getId();
 
-                                    db.collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user").document(model.getTo()).collection("message").document(docID)
+                                    db.collection("Messages").document(model.getTo()).collection("chat-user").document(mAuth.getCurrentUser().getUid()).collection("message").document(docID)
                                     .update("seen", true);
                                 }
                             }
