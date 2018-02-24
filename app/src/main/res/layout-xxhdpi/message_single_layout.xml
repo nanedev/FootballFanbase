@@ -75,59 +75,89 @@
 
 
     </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/message_layout_to_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-
-        android:layout_alignParentTop="true"
-        android:background="@drawable/message_shape_to"
-        android:visibility="gone">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
 
-            <com.rockerhieu.emojicon.EmojiconTextView
-                android:id="@+id/message_textToUser"
+            <RelativeLayout
+                android:id="@+id/message_layout_to_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:visibility="visible"
-                emojicon:emojiconAlignment="baseline"
-                emojicon:emojiconSize="28sp"
 
 
-                />
+                android:layout_alignParentTop="true"
+                android:background="@drawable/message_shape_to"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/timeMessageToUser"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/layouttouserlinear"
+                    android:orientation="horizontal">
+
+                    <com.rockerhieu.emojicon.EmojiconTextView
+                        android:id="@+id/message_textToUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:padding="7dp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        emojicon:emojiconAlignment="baseline"
+                        emojicon:emojiconSize="28sp"
+
+
+                        />
+
+                    <TextView
+                        android:id="@+id/timeMessageToUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_weight="0"
+                        android:ellipsize="end"
+                        android:gravity="bottom"
+                        android:maxLines="1"
+                        android:padding="7dp"
+                        android:textColor="#bdbdbd"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+
+
+
+            </RelativeLayout>
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_weight="0"
-                android:ellipsize="end"
-                android:gravity="bottom"
-                android:maxLines="1"
-                android:padding="7dp"
-                android:textColor="#bdbdbd"
-                android:textStyle="bold" />
+                android:padding="5dp"
+                android:visibility="gone"
+                android:id="@+id/seenlayoutformessage"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/message_layout_to_user"
+                android:background="@drawable/seen_shape"
+                >
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="seen"/>
+
+            </RelativeLayout>
+        </RelativeLayout>
 
 
-    </RelativeLayout>
+
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/message_imageImageFrom"
@@ -170,36 +200,64 @@
 
     </RelativeLayout>
 
-
-    <RelativeLayout
-        android:id="@+id/messageimagelayoutToUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/message_shape_to_image"
-        android:visibility="gone"
-
-        >
-
-        <ImageView
-            android:id="@+id/imageMessageToUser"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_margin="2dp" />
-
-        <TextView
-            android:id="@+id/timemessageImageToUser"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageMessageToUser"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:paddingBottom="10dp"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+            <RelativeLayout
+                android:id="@+id/messageimagelayoutToUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-    </RelativeLayout>
+                android:background="@drawable/message_shape_to_image"
+                android:visibility="gone"
+
+                >
+
+                <ImageView
+                    android:id="@+id/imageMessageToUser"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_margin="2dp" />
+
+                <TextView
+                    android:id="@+id/timemessageImageToUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageMessageToUser"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:visibility="gone"
+                android:id="@+id/seenlayoutforimage"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/messageimagelayoutToUser"
+                android:background="@drawable/seen_shape"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="seen"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
 
 
     <RelativeLayout
@@ -234,14 +292,19 @@
             android:textColor="@color/primary"
             android:textStyle="bold" />
     </RelativeLayout>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentRight="true">
+
 
 
     <RelativeLayout
         android:id="@+id/messageGalleryLayoutToUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true">
+      >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/galleryRecViewTo"
@@ -259,6 +322,30 @@
             android:textColor="@color/white"
             android:textStyle="bold" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:id="@+id/seenlayoutforgrid"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/messageGalleryLayoutToUser"
+        android:background="@drawable/seen_shape"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="seen"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
+
 
     <RelativeLayout
         android:id="@+id/messageAudioLayoutUserFrom"
@@ -430,6 +517,28 @@
             android:text="TextView"
             android:textColor="@color/white"
             android:textStyle="bold" />
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:visibility="gone"
+            android:id="@+id/seenlayoutforaudio"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/timemessage_touser_audio"
+            android:background="@drawable/seen_shape"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:text="seen"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
     </RelativeLayout>

@@ -1063,6 +1063,7 @@ typingLayout.setVisibility(View.GONE);
                                 holder.timeImageTOUser.setText(time);
                             }
                         } else if (type.equals("gallery")) {
+
                             holder.layoutFromUser.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
                             holder.userProfileForIMage.setVisibility(View.GONE);

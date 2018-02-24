@@ -6,431 +6,542 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
     android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@id/container">
-    <RelativeLayout
-        android:id="@+id/message_from_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:id="@+id/container">
+
+        <RelativeLayout
+            android:id="@+id/message_from_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/message_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true" />
+
+            <LinearLayout
+                android:id="@+id/text_and_time_from_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/message_image"
+                android:layout_toRightOf="@+id/message_image"
+                android:background="@drawable/message_shape"
+                android:orientation="horizontal">
+
+
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    android:id="@+id/message_textFromUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:padding="7dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    emojicon:emojiconAlignment="baseline"
+                    emojicon:emojiconSize="28sp" />
+
+                <TextView
+                    android:id="@+id/timeMessageFromUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0"
+                    android:ellipsize="end"
+                    android:gravity="bottom"
+                    android:maxLines="1"
+                    android:padding="7dp"
+
+                    android:textColor="#bdbdbd"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+
+            <RelativeLayout
+                android:id="@+id/message_layout_to_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+
+                android:layout_alignParentTop="true"
+                android:background="@drawable/message_shape_to"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/layouttouserlinear"
+                    android:orientation="horizontal">
+
+                    <com.rockerhieu.emojicon.EmojiconTextView
+                        android:id="@+id/message_textToUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:padding="7dp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        emojicon:emojiconAlignment="baseline"
+                        emojicon:emojiconSize="28sp"
+
+
+                        />
+
+                    <TextView
+                        android:id="@+id/timeMessageToUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_weight="0"
+                        android:ellipsize="end"
+                        android:gravity="bottom"
+                        android:maxLines="1"
+                        android:padding="7dp"
+                        android:textColor="#bdbdbd"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:visibility="gone"
+                android:id="@+id/seenlayoutformessage"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/message_layout_to_user"
+                android:background="@drawable/seen_shape"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="seen"/>
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+
+
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/message_image"
+            android:id="@+id/message_imageImageFrom"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerVertical="true" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
-        <LinearLayout
-            android:id="@+id/text_and_time_from_user"
+        <RelativeLayout
+            android:id="@+id/messageimagelayoutFromUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_toEndOf="@+id/message_image"
-            android:layout_toRightOf="@+id/message_image"
-            android:background="@drawable/message_shape"
-            android:orientation="horizontal">
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/message_imageImageFrom"
+            android:layout_toRightOf="@+id/message_imageImageFrom"
+            android:background="@drawable/message_image_shape_from"
 
 
-            <com.rockerhieu.emojicon.EmojiconTextView
-                android:id="@+id/message_textFromUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:padding="7dp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:visibility="visible"
-                emojicon:emojiconAlignment="baseline"
-                emojicon:emojiconSize="28sp" />
+            >
 
-            <TextView
-                android:id="@+id/timeMessageFromUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="0"
-                android:ellipsize="end"
-                android:gravity="bottom"
-                android:maxLines="1"
-                android:padding="7dp"
-
-                android:textColor="#bdbdbd"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/message_layout_to_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-
-        android:layout_alignParentTop="true"
-        android:background="@drawable/message_shape_to"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.rockerhieu.emojicon.EmojiconTextView
-                android:id="@+id/message_textToUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:visibility="visible"
-                emojicon:emojiconAlignment="baseline"
-                emojicon:emojiconSize="28sp"
-
+            <ImageView
+                android:id="@+id/imageMessageFromUser"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_margin="2dp"
 
                 />
 
             <TextView
-                android:id="@+id/timeMessageToUser"
+                android:id="@+id/timemessageImageFromUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_weight="0"
-                android:ellipsize="end"
-                android:gravity="bottom"
-                android:maxLines="1"
-                android:padding="7dp"
-                android:textColor="#bdbdbd"
+                android:layout_below="@+id/imageMessageFromUser"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:paddingBottom="10dp"
+                android:textColor="@color/white"
                 android:textStyle="bold" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-
-    </RelativeLayout>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/message_imageImageFrom"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <RelativeLayout
-        android:id="@+id/messageimagelayoutFromUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/message_imageImageFrom"
-        android:layout_toRightOf="@+id/message_imageImageFrom"
-        android:background="@drawable/message_image_shape_from"
-
-
-        >
-
-        <ImageView
-            android:id="@+id/imageMessageFromUser"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_margin="2dp"
-
-            />
-
-        <TextView
-            android:id="@+id/timemessageImageFromUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageMessageFromUser"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:paddingBottom="10dp"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/messageimagelayoutToUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/message_shape_to_image"
-        android:visibility="gone"
-
-        >
-
-        <ImageView
-            android:id="@+id/imageMessageToUser"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_margin="2dp" />
-
-        <TextView
-            android:id="@+id/timemessageImageToUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageMessageToUser"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:paddingBottom="10dp"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/messageGalleryLayoutFromUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        >
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/grid_imageImageFrom"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/galleryRecViewFrom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/grid_imageImageFrom"
-            android:layout_marginTop="7dp" />
-
-        <TextView
-            android:id="@+id/timemessageGridUserFrom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/galleryRecViewFrom"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/primary"
-            android:textStyle="bold" />
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/messageGalleryLayoutToUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/galleryRecViewTo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/timemessageGridUserTo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/galleryRecViewTo"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:text="00:00"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/messageAudioLayoutUserFrom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/message_audioImageFrom"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            />
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/message_audioImageFrom"
-            android:layout_toRightOf="@+id/message_audioImageFrom"
-            android:id="@+id/nekilayout"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp">
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+            <RelativeLayout
+                android:id="@+id/messageimagelayoutToUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:background="@drawable/message_shape_to_image"
+                android:visibility="gone"
+
+                >
+
+                <ImageView
+                    android:id="@+id/imageMessageToUser"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_margin="2dp" />
+
+                <TextView
+                    android:id="@+id/timemessageImageToUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageMessageToUser"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/message_audioImageFrom"
+                android:padding="5dp"
+                android:visibility="gone"
+                android:id="@+id/seenlayoutforimage"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/messageimagelayoutToUser"
+                android:background="@drawable/seen_shape"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="seen"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/messageGalleryLayoutFromUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/grid_imageImageFrom"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/galleryRecViewFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/grid_imageImageFrom"
+                android:layout_marginTop="7dp" />
+
+            <TextView
+                android:id="@+id/timemessageGridUserFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/galleryRecViewFrom"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/primary"
+                android:textStyle="bold" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+
+
+
+            <RelativeLayout
+                android:id="@+id/messageGalleryLayoutToUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/galleryRecViewTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/timemessageGridUserTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/galleryRecViewTo"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:text="00:00"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:id="@+id/seenlayoutforgrid"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/messageGalleryLayoutToUser"
+                android:background="@drawable/seen_shape"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="seen"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/messageAudioLayoutUserFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/message_audioImageFrom"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/message_audioImageFrom"
-                android:id="@+id/layoutforsseekbarfromuser"
+                android:layout_toRightOf="@+id/message_audioImageFrom"
+                android:id="@+id/nekilayout"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/message_audioImageFrom"
+                    android:layout_toEndOf="@+id/message_audioImageFrom"
+                    android:id="@+id/layoutforsseekbarfromuser"
+                    android:paddingLeft="-14dp"
+                    android:paddingStart="-14dp"
+                    android:paddingRight="-15dp"
+                    android:paddingEnd="-15dp"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
+                    android:background="@drawable/shapeseekbar">
+                    <SeekBar
+                        android:id="@+id/progressBarFromUser"
+                        android:progressDrawable="@drawable/customfromuser_chat"
+                        android:layout_width="220dp"
+                        android:layout_height="40dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/message_audioImageFrom"
+                        android:layout_toEndOf="@+id/message_audioImageFrom"
+                        android:progress="20"
+                        android:thumb="@drawable/thumb" />
+
+                    <ImageView
+                        android:id="@+id/play_stop_fromuser"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/message_audioImageFrom"
+                        android:layout_toRightOf="@+id/message_audioImageFrom"
+                        emojicon:srcCompat="@drawable/playto_icon" />
+
+                    <View
+                        android:layout_width="80dp"
+                        android:layout_height="1dp"
+                        android:id="@+id/lineinseekbar"
+                        android:background="@color/white"
+                        android:layout_toRightOf="@+id/play_stop_fromuser"
+                        android:layout_toEndOf="@+id/play_stop_fromuser"
+                        android:layout_centerVertical="true"/>
+
+                    <TextView
+                        android:id="@+id/totaltimeaudio_fromuser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/lineinseekbar"
+                        android:background="@drawable/shape_duration_from_user"
+                        android:layout_toEndOf="@+id/lineinseekbar"
+                        android:text="00:04"
+                        android:textColor="@color/primary" />
+
+                </RelativeLayout>
+
+
+
+                <TextView
+                    android:id="@+id/timemessage_fromuser_audio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/layoutforsseekbarfromuser"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:text="TextView"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/messageAudioLayoutUserTo"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:id="@+id/layoutseekbarto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:paddingLeft="-14dp"
                 android:paddingStart="-14dp"
                 android:paddingRight="-15dp"
                 android:paddingEnd="-15dp"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
-                android:background="@drawable/shapeseekbar">
+                android:background="@drawable/shapeseekbatotouser"
+                >
+
+
                 <SeekBar
-                    android:id="@+id/progressBarFromUser"
-                    android:progressDrawable="@drawable/customfromuser_chat"
+                    android:id="@+id/progressBarToUser"
+                    android:progressDrawable="@drawable/customtouser_chat"
                     android:layout_width="220dp"
                     android:layout_height="40dp"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/message_audioImageFrom"
-                    android:layout_toEndOf="@+id/message_audioImageFrom"
                     android:progress="20"
                     android:thumb="@drawable/thumb" />
 
                 <ImageView
-                    android:id="@+id/play_stop_fromuser"
+                    android:id="@+id/play_stop_touser"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginLeft="30dp"
                     android:layout_marginStart="30dp"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/message_audioImageFrom"
-                    android:layout_toRightOf="@+id/message_audioImageFrom"
-                    emojicon:srcCompat="@drawable/playto_icon" />
+                    emojicon:srcCompat="@drawable/play_icon" />
 
                 <View
                     android:layout_width="80dp"
                     android:layout_height="1dp"
-                    android:id="@+id/lineinseekbar"
-                    android:background="@color/white"
-                    android:layout_toRightOf="@+id/play_stop_fromuser"
-                    android:layout_toEndOf="@+id/play_stop_fromuser"
+                    android:id="@+id/lineinseekbarto"
+                    android:background="@color/primary"
+                    android:layout_toRightOf="@+id/play_stop_touser"
+                    android:layout_toEndOf="@+id/play_stop_touser"
                     android:layout_centerVertical="true"/>
 
                 <TextView
-                    android:id="@+id/totaltimeaudio_fromuser"
+                    android:id="@+id/totaltimeaudio_touser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/lineinseekbar"
-                    android:background="@drawable/shape_duration_from_user"
-                    android:layout_toEndOf="@+id/lineinseekbar"
-                    android:text="00:04"
-                    android:textColor="@color/primary" />
+                    android:layout_toRightOf="@+id/lineinseekbarto"
+                    android:layout_toEndOf="@+id/lineinseekbarto"
+                    android:background="@drawable/timeaudio_touser_chat"
+                    android:text="0:04"
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
 
-
-
             <TextView
-                android:id="@+id/timemessage_fromuser_audio"
+                android:id="@+id/timemessage_touser_audio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/layoutforsseekbarfromuser"
+                android:layout_below="@+id/layoutseekbarto"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
                 android:text="TextView"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:textColor="@color/primary"
+                android:textColor="@color/white"
                 android:textStyle="bold" />
 
-        </RelativeLayout>
 
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/messageAudioLayoutUserTo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:visibility="visible">
-
-        <RelativeLayout
-            android:id="@+id/layoutseekbarto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shapeseekbatotouser"
-            android:paddingBottom="1dp"
-            android:paddingEnd="-15dp"
-            android:paddingLeft="-14dp"
-            android:paddingRight="-15dp"
-            android:paddingStart="-14dp"
-            android:paddingTop="1dp">
-
-
-            <SeekBar
-                android:id="@+id/progressBarToUser"
-                android:layout_width="220dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:progress="20"
-                android:progressDrawable="@drawable/customtouser_chat"
-                android:thumb="@drawable/thumb" />
-
-            <ImageView
-                android:id="@+id/play_stop_touser"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="30dp"
-                android:layout_marginStart="30dp"
-                emojicon:srcCompat="@drawable/play_icon" />
-
-            <View
-                android:id="@+id/lineinseekbarto"
-                android:layout_width="80dp"
-                android:layout_height="1dp"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/play_stop_touser"
-                android:layout_toRightOf="@+id/play_stop_touser"
-                android:background="@color/primary" />
-
-            <TextView
-                android:id="@+id/totaltimeaudio_touser"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/lineinseekbarto"
-                android:layout_toRightOf="@+id/lineinseekbarto"
-                android:background="@drawable/timeaudio_touser_chat"
-                android:text="0:04"
-                android:textColor="@color/white" />
+                android:padding="5dp"
+                android:visibility="gone"
+                android:id="@+id/seenlayoutforaudio"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/timemessage_touser_audio"
+                android:background="@drawable/seen_shape"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="seen"/>
+
+            </RelativeLayout>
 
         </RelativeLayout>
-
-        <TextView
-            android:id="@+id/timemessage_touser_audio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layoutseekbarto"
-            android:layout_centerHorizontal="true"
-            android:text="TextView"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
     </RelativeLayout>
-</RelativeLayout>
-
 
     <!--
         <RelativeLayout

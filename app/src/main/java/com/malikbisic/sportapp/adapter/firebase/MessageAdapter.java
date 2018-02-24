@@ -449,6 +449,11 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
         public TextView typing;
 
+        RelativeLayout seenLayoutMessage;
+        RelativeLayout seenLayoutImage;
+        RelativeLayout seenLayoutGridImage;
+        RelativeLayout seenLayoutAudio;
+
         public MessageViewHolder(View itemView) {
             super(itemView);
 
@@ -492,6 +497,13 @@ public class MessageAdapter extends RecyclerView.Adapter {
             progressBarFromUser = (SeekBar) itemView.findViewById(R.id.progressBarFromUser);
             progressBarToUser = (SeekBar) itemView.findViewById(R.id.progressBarToUser);
             mPlayer = new MediaPlayer();
+
+            //seenlayout
+
+            seenLayoutMessage = (RelativeLayout) itemView.findViewById(R.id.seenlayoutformessage);
+            seenLayoutImage = (RelativeLayout) itemView.findViewById(R.id.seenlayoutforimage);
+            seenLayoutAudio = (RelativeLayout) itemView.findViewById(R.id.seenlayoutforaudio);
+            seenLayoutGridImage = (RelativeLayout) itemView.findViewById(R.id.seenlayoutforgrid);
 
 
         }
