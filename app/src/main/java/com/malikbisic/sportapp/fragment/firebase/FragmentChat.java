@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,6 +26,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentListenOptions;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -37,6 +39,7 @@ import com.malikbisic.sportapp.adapter.firebase.ChatListAdapter;
 import com.malikbisic.sportapp.model.firebase.Messages;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,7 +50,8 @@ public class FragmentChat extends Fragment {
 
     RecyclerView usersChatList;
     List<Messages> messagesList = new ArrayList<>();
-    List<Messages> userList = new ArrayList<>();
+    ArrayList<Date> dateChange = new ArrayList<>();
+
     ChatListAdapter mAdapter;
     FirebaseAuth mAuth;
 
@@ -57,7 +61,7 @@ public class FragmentChat extends Fragment {
 
     String prevMessage;
     String currentMessage;
-    boolean firstCall = false;
+    boolean firstCall = true;
 
     @Nullable
     @Override
@@ -72,16 +76,32 @@ public class FragmentChat extends Fragment {
         mAdapter = new ChatListAdapter(messagesList, getContext());
         usersChatList.setLayoutManager(manager);
         usersChatList.setAdapter(mAdapter);
-        loadMessagesList();
 
-        updateMessagesList();
-
-        firstCall = true;
         return view;
     }
 
-    private void loadMessagesList() {
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        updateMessagesList();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
         messagesList.clear();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    private void loadMessagesList() {
+
         CollectionReference messageListQUERY = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user");
         messageListQUERY.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -93,6 +113,7 @@ public class FragmentChat extends Fragment {
                     final String toUserID = snap.getId();
                     com.google.firebase.firestore.Query messageListRef = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user")
                             .document(toUserID).collection("message");
+
                     messageListRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -102,16 +123,17 @@ public class FragmentChat extends Fragment {
 
 
                                     Messages messages = snapshot.getDocument().toObject(Messages.class).withId(toUserID);
-                                    messagesList.add(messages);
+                                    messagesList.add(0, messages);
 
                                     currentMessage = snapshot.getDocument().getId();
                                 }
 
                                 currentCount = mAdapter.getItemCount();
 
-
+                                mAdapter.notifyDataSetChanged();
+                                Log.i("metLOAD", "true");
                             }
-                            mAdapter.notifyDataSetChanged();
+
 
                             prevCount = mAdapter.getItemCount();
                         }
@@ -120,40 +142,25 @@ public class FragmentChat extends Fragment {
                 }
             }
         });
+        firstCall = true;
 
 
     }
 
     private void updateMessagesList() {
-        CollectionReference messageListQUERY = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user");
-        messageListQUERY.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
 
-                for (DocumentSnapshot snap : querySnapshot.getDocuments()) {
-                    final String toUserID = snap.getId();
-                    com.google.firebase.firestore.Query messageListRef = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid()).collection("chat-user")
-                            .document(toUserID).collection("message");
-                    messageListRef.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(QuerySnapshot querySnapshot, FirebaseFirestoreException e) {
-
-
-
-
-                                    if (firstCall) {
-
-                                        messagesList.clear();
-                                        loadMessagesList();
-                                    }
-
-
-                        }
-                    });
-
+            DocumentReference messageListQUERY = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid());
+            messageListQUERY.addSnapshotListener(getActivity(), new DocumentListenOptions(), new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                    Date time = documentSnapshot.getDate("timenewMessage");
+                    if (dateChange.size() != 0 && !dateChange.contains(time)){
+                        loadMessagesList();
+                    } else {
+                        dateChange.add(time);
+                    }
                 }
-            }
-        });
+            });
 
 
     }

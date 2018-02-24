@@ -293,6 +293,9 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
                     mychatUser.put("typing", false);
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
+                    Map timeMessage = new HashMap();
+                    timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
+                    mRootRef.collection("Messages").document(userID).set(timeMessage);
 
                  /*   Intent goToMain = new Intent(_activity, SendImageChatActivity.class);
                     goToMain.putExtra("userId", userID);

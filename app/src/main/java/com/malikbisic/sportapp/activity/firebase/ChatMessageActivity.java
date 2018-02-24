@@ -681,6 +681,10 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                 mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
                 mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
 
+                Map timeMessage = new HashMap();
+                timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
+                mRootRef.collection("Messages").document(mChatUser).set(timeMessage);
+
 
             }
         });
@@ -1745,6 +1749,10 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
             mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
 
             mChatMessageView.setText("");
+
+            Map timeMessage = new HashMap();
+            timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
+            mRootRef.collection("Messages").document(mChatUser).set(timeMessage);
 
 
         }
