@@ -191,9 +191,9 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     boolean clickPlayAudioForUser = false;
     boolean clickPlayAudioToUser = false;
     boolean deleteBtnPress = false;
+RelativeLayout typingLayout;
 
-    TextView typing;
-
+TextView usernameTypinG;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,8 +214,12 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         captureImage = (ImageButton) findViewById(R.id.cameraImage);
         audioRecordBtn = (ImageView) findViewById(R.id.microphoneImage);
-        typing = (TextView) findViewById(R.id.typingListener);
 
+        typingLayout = (RelativeLayout) findViewById(R.id.layouttypingfrom);
+        usernameTypinG = (TextView) findViewById(R.id.usernamefrom);
+
+usernameTypinG.setVisibility(View.GONE);
+typingLayout.setVisibility(View.GONE);
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
         recyclerViewAlbum = (RecyclerView) findViewById(R.id.album);
@@ -1456,14 +1460,30 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
 
                             }
                             if (snapshot.exists()) {
+                                FirebaseFirestore displayImage = FirebaseFirestore.getInstance();
+
+                                displayImage.collection("Users").document(from_user).addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                        myUsername = dataSnapshot.getString("username");
+
+
+                                    }
+                                });
                                 boolean isTyping = snapshot.getBoolean("typing");
 
                                 if (isTyping) {
 
-                                    typing.setText("typing");
-                                    typing.setVisibility(View.VISIBLE);
+                                    usernameTypinG.setText(mChatUsername + " is typing ...");
+
+
+                                    usernameTypinG.setVisibility(View.VISIBLE);
+                                    typingLayout.setVisibility(View.VISIBLE);
+
                                 } else {
-                                    typing.setVisibility(View.GONE);
+                                    typingLayout.setVisibility(View.GONE);
+
+                                    usernameTypinG.setVisibility(View.GONE);
                                 }
                             }
                         }

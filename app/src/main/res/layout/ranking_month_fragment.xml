@@ -3,24 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
-
     <RelativeLayout
         android:id="@+id/rankingslayoutcontainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/seaparator1"
-        android:layout_toStartOf="@+id/seaparator1">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/rankingsLayoutplayer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/seaparator1"
-            android:layout_toStartOf="@+id/seaparator1"
+            android:layout_alignEnd="@+id/verticalseparator"
+            android:layout_alignRight="@+id/verticalseparator"
             android:background="@drawable/shape_table">
+
 
             <TextView
                 android:id="@+id/playersText"
@@ -28,8 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
 
-                android:text="PLAYERS"
-                 />
+                android:text="PLAYERS" />
 
             <TextView
                 android:id="@+id/playerRankingText"
@@ -37,14 +31,62 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/playersText"
                 android:layout_centerHorizontal="true"
-                android:text="RANKING"
-              />
+                android:text="RANKING" />
 
 
         </RelativeLayout>
 
 
+        <RelativeLayout
+            android:id="@+id/postsRanking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/verticalseparator"
+            android:layout_alignStart="@+id/verticalseparator"
+            android:layout_below="@id/leagueseparator"
+            android:background="@drawable/shape_table">
+
+
+            <TextView
+                android:id="@+id/postRankingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="TOP"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/postsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/postRankingText"
+                android:layout_centerHorizontal="true"
+                android:text="POSTS"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/verticalseparator"
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:background="@color/black" />
+
+        <View
+            android:id="@+id/horizontallinestnadnigs"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/playersRankinglayoutalltime"
+            android:background="@color/black" />
+
+
     </RelativeLayout>
+
 
     <View
         android:id="@+id/horizontalviewranking"
@@ -54,14 +96,11 @@
         android:background="@color/black" />
 
 
-
-
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/playersRankingrecyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/playersRankingrecyclerview"
         android:layout_below="@+id/horizontalviewranking">
-
 
 
     </android.support.v7.widget.RecyclerView>

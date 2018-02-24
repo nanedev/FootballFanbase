@@ -493,7 +493,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
         DateTime prevDate = new DateTime().minusMonths(1);
         final String prevMonth = prevDate.toString("MMMM");
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final Query documentReference = db.collection("PlayerPoints").document(prevMonth).collection("player-id").orderBy("playerPoints", Query.Direction.DESCENDING).limit(1);
+        final Query documentReference = db.collection("PlayerPoints").document("February").collection("player-id").orderBy("playerPoints", Query.Direction.DESCENDING).limit(1);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {
@@ -604,7 +604,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
                     });
                     Volley.newRequestQueue(ProfileFragment.this).add(request);
 
-                    final Query usersVoteRef = db.collection("PlayerPoints").document(prevMonth).collection("player-id").document(playerID).collection("usersVote");
+                    final Query usersVoteRef = db.collection("PlayerPoints").document("February").collection("player-id").document(playerID).collection("usersVote");
 
                     usersVoteRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override

@@ -27,7 +27,7 @@
         android:id="@+id/swipe_message_swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/chatdole"
+        android:layout_above="@+id/layouttypingfrom"
         android:layout_below="@+id/appBarLayout"
         android:duplicateParentState="true">
 
@@ -52,6 +52,27 @@
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingEnd="5dp"
+        android:paddingRight="5dp"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
+        android:id="@+id/layouttypingfrom"
+        android:background="@drawable/typing_shape"
+        android:layout_above="@id/chatdole">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/usernamefrom"
+            android:textColor="@color/primary"
+            android:layout_centerVertical="true"/>
+
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/chatdole"

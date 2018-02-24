@@ -83,7 +83,7 @@ public class FragmentChat extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
+loadMessagesList();
         updateMessagesList();
 
     }
