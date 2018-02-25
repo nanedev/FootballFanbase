@@ -1040,6 +1040,11 @@ typingLayout.setVisibility(View.GONE);
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeTextViewToUser.setText(time);
                             }
+
+                            if (model.isSeen()  && position == 0){
+                                holder.seenLayoutMessage.setVisibility(View.VISIBLE);
+
+                            }
                         } else if (type.equals("image")) {
                             holder.layoutImageToUser.setVisibility(View.VISIBLE);
                             holder.timeImageTOUser.setVisibility(View.VISIBLE);
@@ -1061,6 +1066,9 @@ typingLayout.setVisibility(View.GONE);
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeImageTOUser.setText(time);
+                            }
+                            if (model.isSeen() && position == 0){
+                                holder.seenLayoutImage.setVisibility(View.VISIBLE);
                             }
                         } else if (type.equals("gallery")) {
 
@@ -1106,6 +1114,10 @@ typingLayout.setVisibility(View.GONE);
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeforGridToUSer.setText(time);
                             }
+                            if (model.isSeen() && position == 0){
+                                holder.seenLayoutGridImage.setVisibility(View.VISIBLE);
+                            }
+
 
                         } else if (type.equals("audio")) {
 
@@ -1133,6 +1145,9 @@ typingLayout.setVisibility(View.GONE);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
+                            }
+                            if (model.isSeen() && position == 0){
+                                holder.seenLayoutAudio.setVisibility(View.VISIBLE);
                             }
 
 

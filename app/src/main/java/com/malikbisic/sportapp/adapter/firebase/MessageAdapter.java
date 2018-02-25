@@ -449,10 +449,10 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
         public TextView typing;
 
-        RelativeLayout seenLayoutMessage;
-        RelativeLayout seenLayoutImage;
-        RelativeLayout seenLayoutGridImage;
-        RelativeLayout seenLayoutAudio;
+       public RelativeLayout seenLayoutMessage;
+       public RelativeLayout seenLayoutImage;
+       public RelativeLayout seenLayoutGridImage;
+       public RelativeLayout seenLayoutAudio;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
