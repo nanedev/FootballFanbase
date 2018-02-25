@@ -8,9 +8,9 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/container">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/message_from_user"
@@ -75,26 +75,27 @@
 
 
         </RelativeLayout>
+
         <RelativeLayout
+            android:id="@+id/message_layout_to_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true">
 
             <RelativeLayout
-                android:id="@+id/message_layout_to_user"
+
+                android:id="@+id/mesagelayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-
                 android:layout_alignParentTop="true"
-                android:background="@drawable/message_shape_to"
-                android:visibility="gone">
+                android:background="@drawable/message_shape_to">
 
                 <LinearLayout
+                    android:id="@+id/layouttouserlinear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/layouttouserlinear"
                     android:orientation="horizontal">
 
                     <com.rockerhieu.emojicon.EmojiconTextView
@@ -131,32 +132,28 @@
                 </LinearLayout>
 
 
-
-
             </RelativeLayout>
+
             <RelativeLayout
+                android:id="@+id/seenlayoutformessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:visibility="gone"
-                android:id="@+id/seenlayoutformessage"
+                android:layout_below="@+id/mesagelayout"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/message_layout_to_user"
                 android:background="@drawable/seen_shape"
-                >
+                android:padding="5dp"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
-                    android:text="seen"/>
+                    android:layout_centerVertical="true"
+                    android:text="seen"
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
         </RelativeLayout>
-
-
 
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -201,17 +198,20 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/messageimagelayoutToUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentRight="true"
+            android:visibility="gone">
+
             <RelativeLayout
-                android:id="@+id/messageimagelayoutToUser"
+
+                android:id="@+id/imagelayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:background="@drawable/message_shape_to_image"
-                android:visibility="gone"
+
 
                 >
 
@@ -233,31 +233,28 @@
                     android:textStyle="bold" />
 
             </RelativeLayout>
+
             <RelativeLayout
+                android:id="@+id/seenlayoutforimage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:visibility="gone"
-                android:id="@+id/seenlayoutforimage"
+                android:layout_below="@+id/imagelayout"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/messageimagelayoutToUser"
                 android:background="@drawable/seen_shape"
-                >
+                android:padding="5dp"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
-                    android:text="seen"/>
+                    android:layout_centerVertical="true"
+                    android:text="seen"
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
 
         </RelativeLayout>
-
-
-
 
 
         <RelativeLayout
@@ -292,19 +289,21 @@
                 android:textColor="@color/primary"
                 android:textStyle="bold" />
         </RelativeLayout>
+
         <RelativeLayout
+            android:id="@+id/messageGalleryLayoutToUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true">
-
+            android:layout_alignParentRight="true"
+            android:visibility="gone">
 
 
             <RelativeLayout
-                android:id="@+id/messageGalleryLayoutToUser"
+
+                android:id="@+id/mesagegalyerlayout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/galleryRecViewTo"
@@ -324,23 +323,22 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/seenlayoutforgrid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:id="@+id/seenlayoutforgrid"
-                android:visibility="gone"
+                android:layout_below="@+id/mesagegalyerlayout"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/messageGalleryLayoutToUser"
                 android:background="@drawable/seen_shape"
-                >
+                android:padding="5dp"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
-                    android:text="seen"/>
+                    android:layout_centerVertical="true"
+                    android:text="seen"
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
 
@@ -351,81 +349,81 @@
             android:id="@+id/messageAudioLayoutUserFrom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/message_audioImageFrom"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                />
+                android:layout_alignParentStart="true" />
+
             <RelativeLayout
+                android:id="@+id/nekilayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/message_audioImageFrom"
-                android:layout_toRightOf="@+id/message_audioImageFrom"
-                android:id="@+id/nekilayout"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp">
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/message_audioImageFrom"
+                android:layout_toRightOf="@+id/message_audioImageFrom">
+
                 <RelativeLayout
+                    android:id="@+id/layoutforsseekbarfromuser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/message_audioImageFrom"
-                    android:layout_toEndOf="@+id/message_audioImageFrom"
-                    android:id="@+id/layoutforsseekbarfromuser"
-                    android:paddingLeft="-14dp"
-                    android:paddingStart="-14dp"
-                    android:paddingRight="-15dp"
-                    android:paddingEnd="-15dp"
-                    android:paddingTop="1dp"
+
+                    android:background="@drawable/shapeseekbar"
                     android:paddingBottom="1dp"
-                    android:background="@drawable/shapeseekbar">
+                    android:paddingEnd="-15dp"
+                    android:paddingLeft="-14dp"
+                    android:paddingRight="-15dp"
+                    android:paddingStart="-14dp"
+                    android:paddingTop="1dp">
+
                     <SeekBar
                         android:id="@+id/progressBarFromUser"
-                        android:progressDrawable="@drawable/customfromuser_chat"
                         android:layout_width="220dp"
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/message_audioImageFrom"
                         android:layout_toEndOf="@+id/message_audioImageFrom"
+                        android:layout_toRightOf="@+id/message_audioImageFrom"
                         android:progress="20"
+                        android:progressDrawable="@drawable/customfromuser_chat"
                         android:thumb="@drawable/thumb" />
 
                     <ImageView
                         android:id="@+id/play_stop_fromuser"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="30dp"
                         android:layout_marginStart="30dp"
-                        android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/message_audioImageFrom"
                         android:layout_toRightOf="@+id/message_audioImageFrom"
                         emojicon:srcCompat="@drawable/playto_icon" />
 
                     <View
+                        android:id="@+id/lineinseekbar"
                         android:layout_width="80dp"
                         android:layout_height="1dp"
-                        android:id="@+id/lineinseekbar"
-                        android:background="@color/white"
-                        android:layout_toRightOf="@+id/play_stop_fromuser"
+                        android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/play_stop_fromuser"
-                        android:layout_centerVertical="true"/>
+                        android:layout_toRightOf="@+id/play_stop_fromuser"
+                        android:background="@color/white" />
 
                     <TextView
                         android:id="@+id/totaltimeaudio_fromuser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/lineinseekbar"
                         android:layout_toRightOf="@+id/lineinseekbar"
                         android:background="@drawable/shape_duration_from_user"
-                        android:layout_toEndOf="@+id/lineinseekbar"
                         android:text="00:04"
                         android:textColor="@color/primary" />
 
                 </RelativeLayout>
-
 
 
                 <TextView
@@ -434,10 +432,10 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/layoutforsseekbarfromuser"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"
-                    android:text="TextView"
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:text="TextView"
                     android:textColor="@color/primary"
                     android:textStyle="bold" />
 
@@ -447,61 +445,60 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/messageAudioLayoutUserTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:id="@+id/messageAudioLayoutUserTo"
+            android:layout_alignParentRight="true"
             android:visibility="gone">
 
             <RelativeLayout
                 android:id="@+id/layoutseekbarto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="-14dp"
-                android:paddingStart="-14dp"
-                android:paddingRight="-15dp"
-                android:paddingEnd="-15dp"
-                android:paddingTop="1dp"
-                android:paddingBottom="1dp"
                 android:background="@drawable/shapeseekbatotouser"
-                >
+                android:paddingBottom="1dp"
+                android:paddingEnd="-15dp"
+                android:paddingLeft="-14dp"
+                android:paddingRight="-15dp"
+                android:paddingStart="-14dp"
+                android:paddingTop="1dp">
 
 
                 <SeekBar
                     android:id="@+id/progressBarToUser"
-                    android:progressDrawable="@drawable/customtouser_chat"
                     android:layout_width="220dp"
                     android:layout_height="40dp"
                     android:layout_centerVertical="true"
                     android:progress="20"
+                    android:progressDrawable="@drawable/customtouser_chat"
                     android:thumb="@drawable/thumb" />
 
                 <ImageView
                     android:id="@+id/play_stop_touser"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="30dp"
                     android:layout_marginStart="30dp"
-                    android:layout_centerVertical="true"
                     emojicon:srcCompat="@drawable/play_icon" />
 
                 <View
+                    android:id="@+id/lineinseekbarto"
                     android:layout_width="80dp"
                     android:layout_height="1dp"
-                    android:id="@+id/lineinseekbarto"
-                    android:background="@color/primary"
-                    android:layout_toRightOf="@+id/play_stop_touser"
+                    android:layout_centerVertical="true"
                     android:layout_toEndOf="@+id/play_stop_touser"
-                    android:layout_centerVertical="true"/>
+                    android:layout_toRightOf="@+id/play_stop_touser"
+                    android:background="@color/primary" />
 
                 <TextView
                     android:id="@+id/totaltimeaudio_touser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/lineinseekbarto"
                     android:layout_toEndOf="@+id/lineinseekbarto"
+                    android:layout_toRightOf="@+id/lineinseekbarto"
                     android:background="@drawable/timeaudio_touser_chat"
                     android:text="0:04"
                     android:textColor="@color/white" />
@@ -520,23 +517,22 @@
 
 
             <RelativeLayout
+                android:id="@+id/seenlayoutforaudio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:visibility="gone"
-                android:id="@+id/seenlayoutforaudio"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/timemessage_touser_audio"
+                android:layout_centerHorizontal="true"
                 android:background="@drawable/seen_shape"
-                >
+                android:padding="5dp"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
-                    android:text="seen"/>
+                    android:layout_centerVertical="true"
+                    android:text="seen"
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
 

@@ -1135,7 +1135,7 @@ typingLayout.setVisibility(View.GONE);
                             holder.galleryLayoutFromUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
                             holder.layoutAudioFromUser.setVisibility(View.GONE);
-                            holder.layoutAudioToUser.setVisibility(View.INVISIBLE);
+                            holder.layoutAudioToUser.setVisibility(View.VISIBLE);
 
 
                             if (model.getMessage() != null) {
@@ -1482,7 +1482,11 @@ typingLayout.setVisibility(View.GONE);
                                     @Override
                                     public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
                                         myUsername = dataSnapshot.getString("username");
+                                        UserChat model2 = dataSnapshot.toObject(UserChat.class);
+                                        String profileImage = model2.getProfileImage();
 
+
+                                        holder.setProfileImageForAudio(activity, profileImage);
 
                                     }
                                 });
