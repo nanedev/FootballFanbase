@@ -1114,7 +1114,7 @@ typingLayout.setVisibility(View.GONE);
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeforGridToUSer.setText(time);
                             }
-                            if (model.isSeen() && position == 0){
+                           if (model.isSeen() && position == 0){
                                 holder.seenLayoutGridImage.setVisibility(View.VISIBLE);
                             }
 
@@ -1146,9 +1146,7 @@ typingLayout.setVisibility(View.GONE);
                                     e.printStackTrace();
                                 }
                             }
-                            if (model.isSeen() && position == 0){
-                                holder.seenLayoutAudio.setVisibility(View.VISIBLE);
-                            }
+
 
 
                             holder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -1229,6 +1227,9 @@ typingLayout.setVisibility(View.GONE);
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.messageTimeAudioToUser.setText(time);
+                            }
+                            if (model.isSeen() && position == 0){
+                                holder.seenLayoutAudio.setVisibility(View.VISIBLE);
                             }
                         }
 

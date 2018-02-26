@@ -448,79 +448,90 @@
             android:id="@+id/messageAudioLayoutUserTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:visibility="gone">
-
+            android:layout_alignParentRight="true">
             <RelativeLayout
-                android:id="@+id/layoutseekbarto"
+                android:id="@+id/nekilayout2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/shapeseekbatotouser"
-                android:paddingBottom="1dp"
-                android:paddingEnd="-15dp"
-                android:paddingLeft="-14dp"
-                android:paddingRight="-15dp"
-                android:paddingStart="-14dp"
-                android:paddingTop="1dp">
 
+                >
 
-                <SeekBar
-                    android:id="@+id/progressBarToUser"
-                    android:layout_width="220dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:progress="20"
-                    android:progressDrawable="@drawable/customtouser_chat"
-                    android:thumb="@drawable/thumb" />
-
-                <ImageView
-                    android:id="@+id/play_stop_touser"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginStart="30dp"
-                    emojicon:srcCompat="@drawable/play_icon" />
-
-                <View
-                    android:id="@+id/lineinseekbarto"
-                    android:layout_width="80dp"
-                    android:layout_height="1dp"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/play_stop_touser"
-                    android:layout_toRightOf="@+id/play_stop_touser"
-                    android:background="@color/primary" />
-
-                <TextView
-                    android:id="@+id/totaltimeaudio_touser"
+                <RelativeLayout
+                    android:id="@+id/layoutseekbarto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/lineinseekbarto"
-                    android:layout_toRightOf="@+id/lineinseekbarto"
-                    android:background="@drawable/timeaudio_touser_chat"
-                    android:text="0:04"
-                    android:textColor="@color/white" />
+                    android:background="@drawable/shapeseekbatotouser"
+                    android:paddingBottom="1dp"
+                    android:paddingEnd="-15dp"
+                    android:paddingLeft="-14dp"
+                    android:paddingRight="-15dp"
+                    android:paddingStart="-14dp"
+                    android:paddingTop="1dp">
+
+
+                    <SeekBar
+                        android:id="@+id/progressBarToUser"
+                        android:layout_width="220dp"
+                        android:layout_height="40dp"
+                        android:layout_centerVertical="true"
+                        android:progress="20"
+                        android:progressDrawable="@drawable/customtouser_chat"
+                        android:thumb="@drawable/thumb" />
+
+                    <ImageView
+                        android:id="@+id/play_stop_touser"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        emojicon:srcCompat="@drawable/play_icon" />
+
+                    <View
+                        android:id="@+id/lineinseekbarto"
+                        android:layout_width="80dp"
+                        android:layout_height="1dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/play_stop_touser"
+                        android:layout_toRightOf="@+id/play_stop_touser"
+                        android:background="@color/primary" />
+
+                    <TextView
+                        android:id="@+id/totaltimeaudio_touser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/lineinseekbarto"
+                        android:layout_toRightOf="@+id/lineinseekbarto"
+                        android:background="@drawable/timeaudio_touser_chat"
+                        android:text="0:04"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/timemessage_touser_audio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/layoutseekbarto"
+                    android:layout_centerHorizontal="true"
+                    android:text="TextView"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+
+
 
             </RelativeLayout>
-
-            <TextView
-                android:id="@+id/timemessage_touser_audio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/layoutseekbarto"
-                android:layout_centerHorizontal="true"
-                android:text="TextView"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
 
 
             <RelativeLayout
                 android:id="@+id/seenlayoutforaudio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/timemessage_touser_audio"
+                android:layout_below="@+id/nekilayout2"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/seen_shape"
                 android:padding="5dp"
@@ -535,8 +546,10 @@
                     android:textColor="@color/white" />
 
             </RelativeLayout>
-
         </RelativeLayout>
+
+
+
     </RelativeLayout>
 
     <!--
