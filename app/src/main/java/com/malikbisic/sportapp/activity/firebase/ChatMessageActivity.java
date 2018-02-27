@@ -42,6 +42,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -270,17 +271,6 @@ typingLayout.setVisibility(View.GONE);
         mLinearLayout.setStackFromEnd(false);
         mMessagesList.setLayoutManager(mLinearLayout);
 
-
-        final Handler handler = new Handler();
-        final int delay = 1000; //milliseconds
-
-        handler.postDelayed(new Runnable() {
-            public void run() {
-
-
-                handler.postDelayed(this, delay);
-            }
-        }, delay);
         loadMessages(ChatMessageActivity.this);
         checkAllLoaded();
 
@@ -391,72 +381,7 @@ typingLayout.setVisibility(View.GONE);
         });
 
 
-        mChatMessageView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            boolean isTyping = false;
-            private Timer timer = new Timer();
-            private final long DELAY = 3000; // milliseconds
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                Log.d("", "");
-                if (!isTyping && !deleteBtnPress) {
-                    Map chatUser = new HashMap();
-                    chatUser.put("to", mChatUser);
-                    chatUser.put("typing", true);
-                    Map mychatUser = new HashMap();
-                    mychatUser.put("to", mCurrentUserId);
-                    mychatUser.put("typing", true);
-                    mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(chatUser);
-
-                    // Send notification for start typing event
-                    isTyping = true;
-                }
-                timer.cancel();
-                timer = new Timer();
-                timer.schedule(
-                        new TimerTask() {
-                            @Override
-                            public void run() {
-                                isTyping = false;
-                                Map chatUser = new HashMap();
-                                chatUser.put("to", mChatUser);
-                                chatUser.put("typing", false);
-                                Map mychatUser = new HashMap();
-                                mychatUser.put("to", mCurrentUserId);
-                                mychatUser.put("typing", false);
-                                mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(chatUser);
-
-                                //send notification for stopped typing event
-                            }
-                        },
-                        DELAY
-                );
-
-            }
-        });
-
-        mChatMessageView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_DEL) {
-                    deleteBtnPress = true;
-                } else {
-                    deleteBtnPress = false;
-                }
-                return false;
-            }
-        });
 
        /* mChatMessageView.setOnTouchListener(new View.OnTouchListener() {
             @Override

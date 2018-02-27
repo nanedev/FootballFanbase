@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SportApp</string>
-    <string name="facebook_app_id" translatable="false">1877708112466372</string>
+    <string name="facebook_app_id">1877708112466372</string>
+    <string name="fb_login_protocol_scheme">fb1877708112466372</string>
     <string name="password">Password:</string>
     <string name="email">Email:</string>
     <string name="choose_gender">Choose gender:</string>

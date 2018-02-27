@@ -3,11 +3,15 @@ package com.malikbisic.sportapp.activity.firebase;
 import android.app.ProgressDialog;
 import android.content.Intent;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,7 +21,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,6 +40,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -43,6 +53,10 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 
+import java.lang.reflect.Array;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +77,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView passwordError;
     private TextView mForgotPassword;
     private ImageButton googleSignIn;
+    private ImageButton facebookLogin;
     private String user_id;
     private String email;
     private String password;
@@ -74,6 +89,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static boolean checkGoogleSignIn = false;
     public static boolean checkLoginPressed = false;
     String getUserEmail;
+
+    CallbackManager mCallbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mSignUpLink = (TextView) findViewById(R.id.link_signup);
         googleSignIn = (ImageButton) findViewById(R.id.google_login);
+        facebookLogin = (ImageButton) findViewById(R.id.facebbok_login);
         emailError = (TextView) findViewById(R.id.emailInfoErrorLogin);
         passwordError = (TextView) findViewById(R.id.passwordInfoErrorLogin);
         mForgotPassword = (TextView) findViewById(R.id.forgot_password);
@@ -109,6 +127,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //mReferenceUsers.keepSynced(true);
 
         mAuth = FirebaseAuth.getInstance();
+
+        //FACEBOOK SIGN IN
+
+        facebookLogin.setOnClickListener(this);
+
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.malikbisic.sportapp",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("patchE", e.getLocalizedMessage());
+
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("algE", e.getLocalizedMessage());
+        }
+
 
         //GOOGLE SIGN IN
 
@@ -138,9 +178,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 }).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-
     }
+
+
+
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -172,7 +213,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mDialog.dismiss();
             }
         }
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(LoginActivity.this, "Login fb", Toast.LENGTH_LONG).show();
+                            Log.i("profileFB", String.valueOf(task.getResult().getAdditionalUserInfo().getProfile().get("first_name")));
+                            Log.i("profileFB", String.valueOf(task.getResult().getAdditionalUserInfo().getProfile().get("last_name")));
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
     }
 
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
@@ -512,6 +580,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             signIn();
 
+        } else if (v.getId() == R.id.facebbok_login){
+            mCallbackManager = CallbackManager.Factory.create();
+
+            LoginManager loginButton = LoginManager.getInstance();
+            loginButton.logInWithReadPermissions(LoginActivity.this, Arrays.asList("email", "public_profile"));
+            loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                    handleFacebookAccessToken(loginResult.getAccessToken());
+                }
+
+                @Override
+                public void onCancel() {
+                    Log.d(TAG, "facebook:onCancel");
+                    // ...
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    Log.d(TAG, "facebook:onError", error);
+                    // ...
+                }
+            });
         }
 
     }
