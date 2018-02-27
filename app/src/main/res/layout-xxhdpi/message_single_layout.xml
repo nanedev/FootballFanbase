@@ -221,6 +221,14 @@
                     android:layout_height="150dp"
                     android:layout_margin="2dp" />
 
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/progresBarToUserImage"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"/>
+
                 <TextView
                     android:id="@+id/timemessageImageToUser"
                     android:layout_width="wrap_content"
@@ -388,7 +396,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/message_audioImageFrom"
                         android:layout_toRightOf="@+id/message_audioImageFrom"
-                        android:progress="20"
+                        android:progress="0"
                         android:progressDrawable="@drawable/customfromuser_chat"
                         android:thumb="@drawable/thumb" />
 
@@ -476,7 +484,7 @@
                         android:layout_width="220dp"
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"
-                        android:progress="20"
+                        android:progress="0"
                         android:progressDrawable="@drawable/customtouser_chat"
                         android:thumb="@drawable/thumb" />
 

@@ -153,11 +153,13 @@ loadMessagesList();
             messageListQUERY.addSnapshotListener(getActivity(), new DocumentListenOptions(), new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                    Date time = documentSnapshot.getDate("timenewMessage");
-                    if (dateChange.size() != 0 && !dateChange.contains(time)){
-                        loadMessagesList();
-                    } else {
-                        dateChange.add(time);
+                    if (documentSnapshot.exists()) {
+                        Date time = documentSnapshot.getDate("timenewMessage");
+                        if (dateChange.size() != 0 && !dateChange.contains(time)) {
+                            loadMessagesList();
+                        } else {
+                            dateChange.add(time);
+                        }
                     }
                 }
             });

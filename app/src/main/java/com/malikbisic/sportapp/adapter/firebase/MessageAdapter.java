@@ -444,6 +444,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
         public TextView messageTimeAudioToUser;
         public SeekBar progressBarFromUser;
         public SeekBar progressBarToUser;
+        public ProgressBar imageToUSerProgress;
 
         public MediaPlayer mPlayer;
 
@@ -504,6 +505,10 @@ public class MessageAdapter extends RecyclerView.Adapter {
             seenLayoutImage = (RelativeLayout) itemView.findViewById(R.id.seenlayoutforimage);
             seenLayoutAudio = (RelativeLayout) itemView.findViewById(R.id.seenlayoutforaudio);
             seenLayoutGridImage = (RelativeLayout) itemView.findViewById(R.id.seenlayoutforgrid);
+
+            //progressbar
+
+            imageToUSerProgress = (ProgressBar) itemView.findViewById(R.id.progresBarToUserImage);
 
 
         }

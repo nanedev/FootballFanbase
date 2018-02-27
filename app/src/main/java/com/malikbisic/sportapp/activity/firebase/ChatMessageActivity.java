@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -57,6 +58,7 @@ import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.common.ChangeEventType;
 import com.firebase.ui.firestore.ChangeEventListener;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -106,6 +108,8 @@ import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -291,7 +295,8 @@ typingLayout.setVisibility(View.GONE);
                     secondClickSmile = true;
                     firstClickGallery = true;
                     secondClickGallery = false;
-
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                     emoticons.startAnimation(slideUpAnimation);
                     emoticons.setVisibility(View.VISIBLE);
@@ -301,6 +306,7 @@ typingLayout.setVisibility(View.GONE);
                     secondClickSmile = false;
                     firstClickGallery = true;
                     secondClickGallery = false;
+                    mChatMessageView. clearFocus();
           /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
 
@@ -318,11 +324,12 @@ typingLayout.setVisibility(View.GONE);
                     secondClickGallery = true;
                     firstClickSmile = true;
                     secondClickSmile = false;
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                     recyclerViewAlbum.setVisibility(View.VISIBLE);
                     recyclerViewAlbum.startAnimation(slideUpAnimation);
                     emoticons.setVisibility(View.GONE);
+                    mChatMessageView.clearFocus();
                 } else if (secondClickGallery) {
 
                     firstClickGallery = true;
@@ -330,8 +337,7 @@ typingLayout.setVisibility(View.GONE);
                     firstClickSmile = true;
                     secondClickSmile = false;
                     recyclerViewAlbum.setVisibility(View.GONE);
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mChatMessageView.getWindowToken(), 0);
+
                     emoticons.setVisibility(View.GONE);
                 }
 
@@ -339,6 +345,7 @@ typingLayout.setVisibility(View.GONE);
             }
         });
 
+        mChatMessageView.clearFocus();
         mChatMessageView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -347,8 +354,7 @@ typingLayout.setVisibility(View.GONE);
                     recyclerViewAlbum.setVisibility(View.GONE);
                     firstClickSmile = true;
                     firstClickGallery = true;
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
                 }
 
             }
@@ -358,6 +364,7 @@ typingLayout.setVisibility(View.GONE);
         mChatMessageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mChatMessageView.setFocusable(true);
                 emoticons.setVisibility(View.GONE);
                 recyclerViewAlbum.setVisibility(View.GONE);
                 firstClickSmile = true;
@@ -365,7 +372,6 @@ typingLayout.setVisibility(View.GONE);
 
             }
         });
-
         random = new Random();
 
         audioRecordBtn.setOnTouchListener(new View.OnTouchListener() {
@@ -1048,6 +1054,7 @@ typingLayout.setVisibility(View.GONE);
                         } else if (type.equals("image")) {
                             holder.layoutImageToUser.setVisibility(View.VISIBLE);
                             holder.timeImageTOUser.setVisibility(View.VISIBLE);
+
                             holder.messageImageViewToUser.setVisibility(View.VISIBLE);
                             holder.userProfileForIMage.setVisibility(View.GONE);
                             holder.layoutImageFromUser.setVisibility(View.GONE);
@@ -1060,8 +1067,81 @@ typingLayout.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.GONE);
                             holder.layoutAudioFromUser.setVisibility(View.GONE);
                             holder.layoutAudioToUser.setVisibility(View.GONE);
-                            Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
-                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewToUser);
+                         /*   */
+                            holder.imageToUSerProgress.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.spinnerLoad), PorterDuff.Mode.MULTIPLY);
+                            holder.imageToUSerProgress.setVisibility(View.VISIBLE);
+
+                            holder.imageToUSerProgress.setIndeterminate(true);
+                            Picasso.with(ChatMessageActivity.this)
+                                    .load(model.getMessage())
+
+                                    .transform(new RoundedTransformation(20,3))
+                                    .fit()
+                                    .centerCrop()
+                                    .into(holder.messageImageViewToUser, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            holder.imageToUSerProgress.setVisibility(View.GONE);
+                                            Toast.makeText(ChatMessageActivity.this,"success",Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onError() {
+                                            holder.imageToUSerProgress.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.spinnerLoad), PorterDuff.Mode.MULTIPLY);
+                                            holder.imageToUSerProgress.setVisibility(View.VISIBLE);
+
+                                            holder.imageToUSerProgress.setIndeterminate(true);
+                                            Toast.makeText(ChatMessageActivity.this,"Cached valjda",Toast.LENGTH_SHORT).show();
+Picasso.with(ChatMessageActivity.this)
+        .load(model.getMessage())
+        .transform(new RoundedTransformation(20, 3))
+        .fit()
+        .networkPolicy(NetworkPolicy.OFFLINE)
+        .centerCrop()
+        .into(holder.messageImageViewToUser);
+holder.imageToUSerProgress.setVisibility(View.GONE);
+                                        }
+                                    });
+/*
+                            Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(true);
+                            Picasso.Builder builder = new Picasso.Builder(ChatMessageActivity.this);
+                            builder.listener(new Picasso.Listener()
+                            {
+                                @Override
+                                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
+                                {
+                                    exception.printStackTrace();
+                                }
+                            });
+                            Picasso.with(ChatMessageActivity.this)
+                                    .load(model.getMessage())
+
+                                    .transform(new RoundedTransformation(20, 3))
+
+                                    .fit()
+                                    .centerCrop()
+                                    .into(holder.messageImageViewToUser);*/
+                           /* Picasso.with(ChatMessageActivity.this)
+                                    .load(model.getMessage())
+                                    .transform(new RoundedTransformation(20, 3))
+                                    .networkPolicy(NetworkPolicy.OFFLINE)
+                                    .fit()
+                                    .centerCrop()
+                                    .into(holder.messageImageViewToUser, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+*//*holder.imageToUSerProgress.setVisibility(View.GONE);*//*
+                                        }
+
+                                        @Override
+                                        public void onError() {
+                                            //Try again online if cache failed
+
+                                        }
+                                    });
+*/
+
+                        //    Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewToUser);
 
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -1088,6 +1168,7 @@ typingLayout.setVisibility(View.GONE);
                             holder.layoutAudioToUser.setVisibility(View.GONE);
                             holder.galleryLayoutToUser.setVisibility(View.VISIBLE);
                             holder.galleryLayoutToUser.setGravity(Gravity.RIGHT);
+
                             holder.layoutAudioFromUser.setVisibility(View.GONE);
                             holder.layoutAudioToUser.setVisibility(View.GONE);
 
@@ -1159,7 +1240,7 @@ typingLayout.setVisibility(View.GONE);
                             holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mp) {
-                                    holder.layoutAudioToUser.setVisibility(View.VISIBLE);
+
 
                                     int duration = holder.mPlayer.getDuration();
                                     @SuppressLint("DefaultLocale") String time = String.format("%02d:%02d",
@@ -1288,7 +1369,34 @@ typingLayout.setVisibility(View.GONE);
                             holder.layoutAudioToUser.setVisibility(View.GONE);
 
                             Picasso.with(ChatMessageActivity.this).setIndicatorsEnabled(false);
-                            Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewFromUser);
+
+                            Picasso.with(ChatMessageActivity.this)
+                                    .load(model.getMessage())
+
+                                    .transform(new RoundedTransformation(20,3))
+                                    .fit()
+                                    .centerCrop()
+                                    .into(holder.messageImageViewFromUser, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+
+                                            Toast.makeText(ChatMessageActivity.this,"success",Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onError() {
+
+                                            Toast.makeText(ChatMessageActivity.this,"Cached valjda",Toast.LENGTH_SHORT).show();
+                                            Picasso.with(ChatMessageActivity.this)
+                                                    .load(model.getMessage())
+                                                    .transform(new RoundedTransformation(20, 3))
+                                                    .fit()
+                                                    .networkPolicy(NetworkPolicy.OFFLINE)
+                                                    .centerCrop()
+                                                    .into(holder.messageImageViewFromUser);
+
+                                        }
+                                    });
 
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
@@ -1398,7 +1506,7 @@ typingLayout.setVisibility(View.GONE);
                             holder.mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mp) {
-                                    holder.layoutAudioFromUser.setVisibility(View.VISIBLE);
+
 
                                     int duration = holder.mPlayer.getDuration();
                                     @SuppressLint("DefaultLocale") String time = String.format("%02d:%02d",
@@ -1704,7 +1812,7 @@ typingLayout.setVisibility(View.GONE);
             }
         };
 
-        mMessagesList.setAdapter(adapter);
+
 
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -1726,6 +1834,8 @@ typingLayout.setVisibility(View.GONE);
         });
 
         adapter.startListening();
+
+        mMessagesList.setAdapter(adapter);
     }
 
 
