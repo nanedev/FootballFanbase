@@ -1154,6 +1154,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
 
         public void setLikeBtn(final String post_key, Activity activity) {
+            if(!mAuth.getCurrentUser().getUid().isEmpty()){
             String uid = mAuth.getCurrentUser().getUid();
             Log.i("uid", uid);
             final DocumentReference doc = likeReference.collection("Likes").document(post_key).collection("like-id").document(uid);
@@ -1176,7 +1177,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                 }
             });
-        }
+        }}
 
         public void setNumberDislikes(String post_key, Activity activity) {
 

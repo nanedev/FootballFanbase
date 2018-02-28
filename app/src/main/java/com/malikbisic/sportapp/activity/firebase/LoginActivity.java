@@ -352,7 +352,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            if (user.getProviders().get(0).equals("facebook.com")){
+                            if ( user.getProviders().get(0).equals("facebook.com")){
                                 if (document.contains("username")) {
                                     String current_userID = mAuth.getCurrentUser().getUid();
                                     String device_id = FirebaseInstanceId.getInstance().getToken();
@@ -414,11 +414,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 mDialog.dismiss();
                                 finish();
 
-                            } else if (!user.isEmailVerified()) {
+                            } else if (!user.isEmailVerified()  && user.getProviders().get(0).equals("password")) {
                                 mDialog.dismiss();
                                 Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
-                            } else {
-
                             }
                         } else {
                             Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);

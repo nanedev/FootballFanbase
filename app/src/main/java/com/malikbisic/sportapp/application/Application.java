@@ -82,20 +82,21 @@ public class Application extends android.app.Application{
             usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    String myClub = task.getResult().getString("favoriteClub");
-                    Log.i("club", myClub);
-                    db.collection("UsersChat").document(myClub).collection("user-id").document(myUID).update("online", FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.i("online", "update");
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e("errorUpdateOnline", e.getLocalizedMessage());
-                        }
-                    });
-
+                    if (task.getResult().exists()) {
+                        String myClub = task.getResult().getString("favoriteClub");
+                        Log.i("club", myClub);
+                        db.collection("UsersChat").document(myClub).collection("user-id").document(myUID).update("online", FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.i("online", "update");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("errorUpdateOnline", e.getLocalizedMessage());
+                            }
+                        });
+                    }
                 }
             });        }
     }
