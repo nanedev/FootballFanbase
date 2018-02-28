@@ -85,8 +85,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static String gFirstName;
     public static String gLastName;
     public static String gUserId;
+    public static String fbFirstName;
+    public static String fbLastName;
+    public static String fbUserId;
     public static String userIdLogin;
     public static boolean checkGoogleSignIn = false;
+    public static boolean checkFacebookLogin = false;
     public static boolean checkLoginPressed = false;
     String getUserEmail;
 
@@ -181,8 +185,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
-
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -209,7 +211,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // Google Sign In failed, update UI appropriately
                 // ...
                 ApiException e = new ApiException(result.getStatus());
-                Log.e("googleLogin",e.getMessage());
+                Log.e("googleLogin", e.getMessage());
                 mDialog.dismiss();
             }
         }
@@ -228,9 +230,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(LoginActivity.this, "Login fb", Toast.LENGTH_LONG).show();
-                            Log.i("profileFB", String.valueOf(task.getResult().getAdditionalUserInfo().getProfile().get("first_name")));
-                            Log.i("profileFB", String.valueOf(task.getResult().getAdditionalUserInfo().getProfile().get("last_name")));
+
+                            fbFirstName = String.valueOf(task.getResult().getAdditionalUserInfo().getProfile().get("first_name"));
+                            fbLastName = String.valueOf(task.getResult().getAdditionalUserInfo().getProfile().get("last_name"));
+                            fbUserId = user.getUid();
+                            checkUserExists();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -337,17 +341,49 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (mAuth.getCurrentUser() != null) {
 
             user_id = mAuth.getCurrentUser().getUid();
-            DocumentReference usersRef = mReferenceUsers.collection("Users").document(user_id);
+            final DocumentReference usersRef = mReferenceUsers.collection("Users").document(user_id);
             usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
 
+
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             FirebaseUser user = mAuth.getCurrentUser();
+                            if (user.getProviders().get(0).equals("facebook.com")){
+                                if (document.contains("username")) {
+                                    String current_userID = mAuth.getCurrentUser().getUid();
+                                    String device_id = FirebaseInstanceId.getInstance().getToken();
 
-                            if (user.isEmailVerified() && document.contains("username")) {
+                                    Map<String, Object> user2 = new HashMap<>();
+                                    user2.put("device_id", device_id);
+
+                                    mReferenceUsers.collection("Users").document(current_userID)
+                                            .update(user2)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("error update", e.getLocalizedMessage());
+                                        }
+                                    });
+                                    Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                                    startActivity(setupIntent);
+                                    mDialog.dismiss();
+                                    finish();
+                                } else if (!document.contains("username")) {
+                                    Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                                    startActivity(intent);
+                                    mDialog.dismiss();
+                                    finish();
+
+                                }
+                            } else if (user.isEmailVerified() && document.contains("username")) {
                                 String current_userID = mAuth.getCurrentUser().getUid();
                                 String device_id = FirebaseInstanceId.getInstance().getToken();
 
@@ -563,6 +599,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         if (v.getId() == R.id.btn_login) {
             checkGoogleSignIn = false;
+            checkFacebookLogin = false;
             RegisterActivity.registerPressed = true;
             checkLogin();
         } else if (v.getId() == R.id.link_signup) {
@@ -576,11 +613,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             LoginManager.getInstance().logOut();
             checkGoogleSignIn = true;
+            checkFacebookLogin = false;
             RegisterActivity.registerPressed = false;
 
             signIn();
 
-        } else if (v.getId() == R.id.facebbok_login){
+        } else if (v.getId() == R.id.facebbok_login) {
+
+            checkFacebookLogin = true;
+            checkGoogleSignIn = false;
+            RegisterActivity.registerPressed = false;
             mCallbackManager = CallbackManager.Factory.create();
 
             LoginManager loginButton = LoginManager.getInstance();

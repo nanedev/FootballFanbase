@@ -106,6 +106,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     String googleUser_id;
     String googleFirstName;
     String googleLastName;
+    String fbFirstName;
+    String fbLastName;
+    String fbUserId;
     private String gender;
     String loginUserid;
     private Uri imageUri;
@@ -242,6 +245,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         googleFirstName = LoginActivity.gFirstName;
         googleLastName = LoginActivity.gLastName;
         loginUserid = LoginActivity.userIdLogin;
+        fbFirstName = LoginActivity.fbFirstName;
+        fbLastName = LoginActivity.fbLastName;
+        fbUserId = LoginActivity.fbUserId;
 
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -493,6 +499,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                     }
 
+                    facebookEnterDatabase();
+
                     new CountDownTimer(4000, 1000) {
                         @Override
                         public void onTick(long l) {
@@ -513,6 +521,112 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         });
 
 
+    }
+
+    public void facebookEnterDatabase() {
+
+
+        username = enterUsername.getText().toString().trim();
+        userDate = birthday.getText().toString().trim();
+        favoriteClubString = favoriteClub.getText().toString().trim();
+        countryString = selectCountry.getText().toString().trim();
+        File thumb_filePath = new File(getRealPathFromURI(resultUri));
+        try {
+            Bitmap profileThumb = new Compressor(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(75)
+                    .compressToBitmap(thumb_filePath);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] thumb_byte = baos.toByteArray();
+            profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+            mDialog.setMessage("Registering...");
+            mDialog.show();
+
+            UploadTask task = profileImageRef.putBytes(thumb_byte);
+            task.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    String downloadUrl = task.getResult().getDownloadUrl().toString();
+                    if (task.isSuccessful()) {
+                        mReference = FirebaseFirestore.getInstance();
+
+
+
+                        Map<String,Object> userInfoMap = new HashMap<>();
+                        userInfoMap.put("name", fbFirstName);
+                        userInfoMap.put("surname", fbLastName);
+                        userInfoMap.put("username", username);
+                        userInfoMap.put("date", userDate);
+                        userInfoMap.put("gender", gender);
+                        if (downloadUrl != null)
+                            userInfoMap.put("profileImage", downloadUrl.toString());
+                        userInfoMap.put("country", countryString);
+                        userInfoMap.put("flag", imageOfCountry);
+                        userInfoMap.put("favoriteClub", clubName);
+                        userInfoMap.put("favoriteClubLogo", clubLogo);
+                        userInfoMap.put("userID", uid);
+                        userInfoMap.put("premium", true);
+                        userInfoMap.put("premiumDate", todayDateTime);
+
+
+                        googleCollection.collection("Users").document(uid).set(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                //Log.i("Successfully written",task.getResult().toString());
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.i("Error",e.getLocalizedMessage());
+                            }
+                        });
+
+
+
+
+
+                        final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+
+                        Map<String,Object> userChatInfo = new HashMap<>();
+                        userChatInfo.put("username", username);
+                        userChatInfo.put("date", currentDate);
+                        if (downloadUrl != null)
+                            userChatInfo.put("profileImage", downloadUrl.toString());
+                        userChatInfo.put("country", countryString);
+                        userChatInfo.put("flag", imageOfCountry);
+                        userChatInfo.put("favoriteClub", clubName);
+                        userChatInfo.put("favoriteClubLogo", clubLogo);
+                        userChatInfo.put("userID", uid);
+                        userChatInfo.put("online", "true");
+
+                        usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+
+
+                        clubTableFan(downloadUrl.toString());
+                        mDialog.dismiss();
+                    }else   Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                }
+            });
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void googleEnterDatabase() {

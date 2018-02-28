@@ -128,7 +128,7 @@
                 android:padding="12dp"
                 android:layout_marginRight="12dp"
                 android:layout_marginEnd="12dp"
-                android:contentDescription="@string/image_desc"/>
+                android:contentDescription="@string/image_desc"/>.
         </LinearLayout>
 
     </LinearLayout>
