@@ -214,8 +214,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.e("googleLogin", e.getMessage());
                 mDialog.dismiss();
             }
+        } else {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleFacebookAccessToken(AccessToken token) {

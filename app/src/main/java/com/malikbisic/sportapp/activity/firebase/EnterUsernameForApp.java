@@ -249,6 +249,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         fbLastName = LoginActivity.fbLastName;
         fbUserId = LoginActivity.fbUserId;
 
+
+
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -490,16 +492,20 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     mDialog.show();
                     if (LoginActivity.checkGoogleSignIn) {
                         googleEnterDatabase();
+                        Log.i("enter", "google");
 
 
-                    }
-                    if (RegisterActivity.registerPressed) {
+                    } else if (RegisterActivity.registerPressed) {
 
                         loginEnterDatabase();
+                        Log.i("enter", "login");
 
+                    } else {
+                        facebookEnterDatabase();
+                        Log.i("enter", "facebook");
                     }
 
-                    facebookEnterDatabase();
+
 
                     new CountDownTimer(4000, 1000) {
                         @Override
