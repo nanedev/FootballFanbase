@@ -196,11 +196,12 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     boolean clickPlayAudioForUser = false;
     boolean clickPlayAudioToUser = false;
     boolean deleteBtnPress = false;
-RelativeLayout typingLayout;
+    RelativeLayout typingLayout;
 
-RelativeLayout goToGridLayout;
+    RelativeLayout goToGridLayout;
 
-TextView usernameTypinG;
+    TextView usernameTypinG;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -221,12 +222,12 @@ TextView usernameTypinG;
         botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         captureImage = (ImageButton) findViewById(R.id.cameraImage);
         audioRecordBtn = (ImageView) findViewById(R.id.microphoneImage);
-goToGridLayout = (RelativeLayout) findViewById(R.id.gridlayout);
+        goToGridLayout = (RelativeLayout) findViewById(R.id.gridlayout);
         typingLayout = (RelativeLayout) findViewById(R.id.layouttypingfrom);
         usernameTypinG = (TextView) findViewById(R.id.usernamefrom);
 
-usernameTypinG.setVisibility(View.GONE);
-typingLayout.setVisibility(View.GONE);
+        usernameTypinG.setVisibility(View.GONE);
+        typingLayout.setVisibility(View.GONE);
         mChatUser = getIntent().getStringExtra("userId");
         mChatUsername = getIntent().getStringExtra("username");
         recyclerViewAlbum = (RecyclerView) findViewById(R.id.album);
@@ -287,7 +288,7 @@ typingLayout.setVisibility(View.GONE);
                     secondClickSmile = true;
                     firstClickGallery = true;
                     secondClickGallery = false;
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                     emoticons.startAnimation(slideUpAnimation);
@@ -298,12 +299,12 @@ typingLayout.setVisibility(View.GONE);
                     secondClickSmile = false;
                     firstClickGallery = true;
                     secondClickGallery = false;
-                    mChatMessageView. clearFocus();
+                    mChatMessageView.clearFocus();
           /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
-emoticons.setVisibility(View.GONE);
+                    emoticons.setVisibility(View.GONE);
                     recyclerViewAlbum.setVisibility(View.GONE);
-goToGridLayout.setVisibility(View.GONE);
+                    goToGridLayout.setVisibility(View.GONE);
 
                 }
             }
@@ -325,7 +326,7 @@ goToGridLayout.setVisibility(View.GONE);
                             startActivity(intent);
                         }
                     });
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                     recyclerViewAlbum.setVisibility(View.VISIBLE);
                     recyclerViewAlbum.startAnimation(slideUpAnimation);
@@ -338,7 +339,7 @@ goToGridLayout.setVisibility(View.GONE);
                     firstClickSmile = true;
                     secondClickSmile = false;
                     recyclerViewAlbum.setVisibility(View.GONE);
-goToGridLayout.setVisibility(View.GONE);
+                    goToGridLayout.setVisibility(View.GONE);
                     emoticons.setVisibility(View.GONE);
                 }
 
@@ -462,18 +463,51 @@ goToGridLayout.setVisibility(View.GONE);
              * This notify that, somewhere within s, the text has been changed.
              * @param s
              */
+
+            boolean isTyping = false;
+            private Timer timer = new Timer();
+            private final long DELAY = 3000; // milliseconds
+
             @Override
             public void afterTextChanged(Editable s) {
+
+
+                Log.d("", "");
+                if (!isTyping && !deleteBtnPress) {
+                    Map chatUser = new HashMap();
+                    chatUser.put("to", mChatUser);
+                    chatUser.put("typing", true);
+                    Map mychatUser = new HashMap();
+                    mychatUser.put("to", mCurrentUserId);
+                    mychatUser.put("typing", true);
+                    mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(chatUser);
+
+                    // Send notification for start typing event
+                    isTyping = true;
+                }
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                isTyping = false;
+                                Map chatUser = new HashMap();
+                                chatUser.put("to", mChatUser);
+                                chatUser.put("typing", false);
+                                Map mychatUser = new HashMap();
+                                mychatUser.put("to", mCurrentUserId);
+                                mychatUser.put("typing", false);
+                                mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(chatUser);
+
+                                //send notification for stopped typing event
+                            }
+                        },
+                        DELAY
+                );
+
             }
 
-            /**
-             * This notify that, within s, the count characters beginning at start have just
-             * replaced old text that had length
-             * @param s
-             * @param start
-             * @param before
-             * @param count
-             */
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
@@ -983,7 +1017,7 @@ goToGridLayout.setVisibility(View.GONE);
                                 holder.timeTextViewToUser.setText(time);
                             }
 
-                            if (model.isSeen()  && position == 0){
+                            if (model.isSeen() && position == 0) {
                                 holder.seenLayoutMessage.setVisibility(View.VISIBLE);
 
                             }
@@ -1011,14 +1045,14 @@ goToGridLayout.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this)
                                     .load(model.getMessage())
 
-                                    .transform(new RoundedTransformation(20,3))
+                                    .transform(new RoundedTransformation(20, 3))
                                     .fit()
                                     .centerCrop()
                                     .into(holder.messageImageViewToUser, new Callback() {
                                         @Override
                                         public void onSuccess() {
                                             holder.imageToUSerProgress.setVisibility(View.GONE);
-                                            Toast.makeText(ChatMessageActivity.this,"success",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ChatMessageActivity.this, "success", Toast.LENGTH_SHORT).show();
                                         }
 
                                         @Override
@@ -1027,15 +1061,15 @@ goToGridLayout.setVisibility(View.GONE);
                                             holder.imageToUSerProgress.setVisibility(View.VISIBLE);
 
                                             holder.imageToUSerProgress.setIndeterminate(true);
-                                            Toast.makeText(ChatMessageActivity.this,"Cached valjda",Toast.LENGTH_SHORT).show();
-Picasso.with(ChatMessageActivity.this)
-        .load(model.getMessage())
-        .transform(new RoundedTransformation(20, 3))
-        .fit()
-        .networkPolicy(NetworkPolicy.OFFLINE)
-        .centerCrop()
-        .into(holder.messageImageViewToUser);
-holder.imageToUSerProgress.setVisibility(View.GONE);
+                                            Toast.makeText(ChatMessageActivity.this, "Cached valjda", Toast.LENGTH_SHORT).show();
+                                            Picasso.with(ChatMessageActivity.this)
+                                                    .load(model.getMessage())
+                                                    .transform(new RoundedTransformation(20, 3))
+                                                    .fit()
+                                                    .networkPolicy(NetworkPolicy.OFFLINE)
+                                                    .centerCrop()
+                                                    .into(holder.messageImageViewToUser);
+                                            holder.imageToUSerProgress.setVisibility(View.GONE);
                                         }
                                     });
 /*
@@ -1077,13 +1111,13 @@ holder.imageToUSerProgress.setVisibility(View.GONE);
                                     });
 */
 
-                        //    Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewToUser);
+                            //    Picasso.with(ChatMessageActivity.this).load(model.getMessage()).transform(new RoundedTransformation(20, 3)).fit().centerCrop().into(holder.messageImageViewToUser);
 
                             if (model.getTime() != null) {
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeImageTOUser.setText(time);
                             }
-                            if (model.isSeen() && position == 0){
+                            if (model.isSeen() && position == 0) {
                                 holder.seenLayoutImage.setVisibility(View.VISIBLE);
                             }
                         } else if (type.equals("gallery")) {
@@ -1131,7 +1165,7 @@ holder.imageToUSerProgress.setVisibility(View.GONE);
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.timeforGridToUSer.setText(time);
                             }
-                           if (model.isSeen() && position == 0){
+                            if (model.isSeen() && position == 0) {
                                 holder.seenLayoutGridImage.setVisibility(View.VISIBLE);
                             }
 
@@ -1163,7 +1197,6 @@ holder.imageToUSerProgress.setVisibility(View.GONE);
                                     e.printStackTrace();
                                 }
                             }
-
 
 
                             holder.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -1245,7 +1278,7 @@ holder.imageToUSerProgress.setVisibility(View.GONE);
                                 String time = DateUtils.formatDateTime(ChatMessageActivity.this, model.getTime().getTime(), DateUtils.FORMAT_SHOW_TIME);
                                 holder.messageTimeAudioToUser.setText(time);
                             }
-                            if (model.isSeen() && position == 0){
+                            if (model.isSeen() && position == 0) {
                                 holder.seenLayoutAudio.setVisibility(View.VISIBLE);
                             }
                         }
@@ -1309,20 +1342,20 @@ holder.imageToUSerProgress.setVisibility(View.GONE);
                             Picasso.with(ChatMessageActivity.this)
                                     .load(model.getMessage())
 
-                                    .transform(new RoundedTransformation(20,3))
+                                    .transform(new RoundedTransformation(20, 3))
                                     .fit()
                                     .centerCrop()
                                     .into(holder.messageImageViewFromUser, new Callback() {
                                         @Override
                                         public void onSuccess() {
 
-                                            Toast.makeText(ChatMessageActivity.this,"success",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ChatMessageActivity.this, "success", Toast.LENGTH_SHORT).show();
                                         }
 
                                         @Override
                                         public void onError() {
 
-                                            Toast.makeText(ChatMessageActivity.this,"Cached valjda",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(ChatMessageActivity.this, "Cached valjda", Toast.LENGTH_SHORT).show();
                                             Picasso.with(ChatMessageActivity.this)
                                                     .load(model.getMessage())
                                                     .transform(new RoundedTransformation(20, 3))
@@ -1747,7 +1780,6 @@ holder.imageToUSerProgress.setVisibility(View.GONE);
                 return new MessageAdapter.MessageViewHolder(v);
             }
         };
-
 
 
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
