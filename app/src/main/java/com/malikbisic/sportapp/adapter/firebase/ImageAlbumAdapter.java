@@ -19,9 +19,11 @@ import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -34,6 +36,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.firebase.AddPhotoOrVideo;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
 import com.malikbisic.sportapp.activity.firebase.SendImageChatActivity;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,10 +57,11 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
     private Activity _activity;
     private ArrayList<String> _filePaths = new ArrayList<String>();
     boolean[] opened;
-    boolean firstime;
-    boolean secondtime;
+    boolean firstime = true;
+    boolean secondtime = false;
     String myUID;
     String userID;
+
 
 
     public ImageAlbumAdapter(Activity _activity, ArrayList<String> _filePaths, String myUID, String userID) {
@@ -78,15 +82,26 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
     @Override
     public void onBindViewHolder(final ImageViewHolder holder, int position) {
         String image = _filePaths.get(position);
-        Glide.with(_activity).load(image).into(holder.image);
+        Glide.with(_activity)
+                .load(image)
+                .override(250, 250)
+                .centerCrop()
+
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(holder.imageHolder);
+    //    Picasso.with(_activity).load(image).resize(250,250).centerCrop().into(holder.imageHolder);
 
         holder.sendButton.setVisibility(View.GONE);
-        holder.gridView.setVisibility(View.GONE);
-        holder.image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+holder.sendlayout.setVisibility(View.GONE);
+
+    holder.imageHolder.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+
+
                 holder.sendButton.setVisibility(View.VISIBLE);
-                holder.gridView.setVisibility(View.VISIBLE);
+                holder.sendlayout.setVisibility(View.VISIBLE);
                 holder.sendButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -94,16 +109,13 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
                     }
                 });
 
-                holder.gridView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(_activity, SendImageChatActivity.class);
-                        intent.putExtra("userID", userID);
-                        _activity.startActivity(intent);
-                    }
-                });
-            }
-        });
+
+
+
+
+        }
+    });
+
     }
 
     @Override
@@ -343,14 +355,17 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
         public ImageView image;
         public ImageButton sendButton;
-        public ImageView gridView;
+        public RelativeLayout sendlayout;
+        public ImageView imageHolder;
+
 
         public ImageViewHolder(View itemView) {
             super(itemView);
-
+sendlayout = (RelativeLayout) itemView.findViewById(R.id.sendlayout);
             image = (ImageView) itemView.findViewById(R.id.imageGrid);
+            imageHolder = (ImageView) itemView.findViewById(R.id.nekiid);
             sendButton = (ImageButton) itemView.findViewById(R.id.sendImageGrid);
-            gridView = (ImageView) itemView.findViewById(R.id.gotogrid);
+
         }
     }
 

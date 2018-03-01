@@ -235,7 +235,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             fbFirstName = String.valueOf(task.getResult().getAdditionalUserInfo().getProfile().get("first_name"));
                             fbLastName = String.valueOf(task.getResult().getAdditionalUserInfo().getProfile().get("last_name"));
                             fbUserId = user.getUid();
-                            checkUserExists();
+                            checkUserExistsFacebook();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -352,39 +352,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            if ( user.getProviders().get(0).equals("facebook.com")){
-                                if (document.contains("username")) {
-                                    String current_userID = mAuth.getCurrentUser().getUid();
-                                    String device_id = FirebaseInstanceId.getInstance().getToken();
-
-                                    Map<String, Object> user2 = new HashMap<>();
-                                    user2.put("device_id", device_id);
-
-                                    mReferenceUsers.collection("Users").document(current_userID)
-                                            .update(user2)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.e("error update", e.getLocalizedMessage());
-                                        }
-                                    });
-                                    Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
-                                    startActivity(setupIntent);
-                                    mDialog.dismiss();
-                                    finish();
-                                } else if (!document.contains("username")) {
-                                    Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
-                                    startActivity(intent);
-                                    mDialog.dismiss();
-                                    finish();
-
-                                }
-                            } else if (user.isEmailVerified() && document.contains("username")) {
+                         if (user.isEmailVerified() && document.contains("username")) {
                                 String current_userID = mAuth.getCurrentUser().getUid();
                                 String device_id = FirebaseInstanceId.getInstance().getToken();
 
@@ -414,7 +382,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 mDialog.dismiss();
                                 finish();
 
-                            } else if (!user.isEmailVerified()  && user.getProviders().get(0).equals("password")) {
+                            } else if (!user.isEmailVerified() || !document.contains("username")) {
                                 mDialog.dismiss();
                                 Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
                             }
@@ -477,7 +445,68 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }); */
         }
     }
+    public void checkUserExistsFacebook() {
+        mDialog.setMessage("Please wait...");
+        mDialog.show();
+        if (mAuth.getCurrentUser() != null) {
 
+            user_id = mAuth.getCurrentUser().getUid();
+            final DocumentReference usersRef = mReferenceUsers.collection("Users").document(user_id);
+            usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+
+
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user.getProviders().get(0).equals("facebook.com")) {
+                                if (document.contains("username")) {
+                                    String current_userID = mAuth.getCurrentUser().getUid();
+                                    String device_id = FirebaseInstanceId.getInstance().getToken();
+
+                                    Map<String, Object> user2 = new HashMap<>();
+                                    user2.put("device_id", device_id);
+
+                                    mReferenceUsers.collection("Users").document(current_userID)
+                                            .update(user2)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("error update", e.getLocalizedMessage());
+                                        }
+                                    });
+                                    Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                                    startActivity(setupIntent);
+                                    mDialog.dismiss();
+                                    finish();
+                                } else if (!document.contains("username")) {
+                                    Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                                    startActivity(intent);
+                                    mDialog.dismiss();
+                                    finish();
+
+                                }
+                            }
+                        } else {
+                            Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                            goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(goToSetUp);
+                            finish();
+
+
+                        }
+                    }
+                }
+            });
+        }
+    }
     private void autoLogin() {
 
         if (mAuth.getCurrentUser() != null) {

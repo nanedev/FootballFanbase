@@ -52,24 +52,26 @@
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
     <RelativeLayout
+        android:id="@+id/layouttypingfrom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="2dp"
+        android:layout_above="@id/chatdole"
+        android:background="@drawable/typing_shape"
         android:paddingBottom="2dp"
         android:paddingEnd="5dp"
+        android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingStart="5dp"
-        android:paddingLeft="5dp"
-        android:id="@+id/layouttypingfrom"
-        android:background="@drawable/typing_shape"
-        android:layout_above="@id/chatdole">
+        android:paddingTop="2dp">
+
         <TextView
+            android:id="@+id/usernamefrom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/usernamefrom"
-            android:textColor="@color/primary"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:textColor="@color/primary" />
 
 
     </RelativeLayout>
@@ -105,11 +107,13 @@
                     android:background="@drawable/edittext_chat_shaoe"
                     android:focusable="true"
                     android:hint="Enter message"
+                    android:lineSpacingExtra="5dp"
                     android:padding="10dp"
+                    emojicon:emojiconAlignment="baseline"
                     android:textAllCaps="false"
                     android:textColor="#000"
                     android:textCursorDrawable="@null"
-                    emojicon:emojiconSize="28sp" />
+                    emojicon:emojiconSize="20sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -191,7 +195,7 @@
         <FrameLayout
             android:id="@+id/emojicons"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="250dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/layoutzagornjiidonji"
@@ -204,7 +208,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/album"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="250dp"
             android:layout_below="@+id/layoutzagornjiidonji"
             android:orientation="horizontal"
             android:visibility="gone">
@@ -212,6 +216,30 @@
         </android.support.v7.widget.RecyclerView>
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin = "10dp"
+        android:visibility="gone"
+        android:id="@+id/gridlayout"
+        android:background="@drawable/grid_shape">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/grididcon"
+            android:id="@+id/gotogrid"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+
+            />
+
+    </RelativeLayout>
+
+
 
 
 </RelativeLayout>

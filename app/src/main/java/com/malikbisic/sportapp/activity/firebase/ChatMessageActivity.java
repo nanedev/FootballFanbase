@@ -198,6 +198,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     boolean deleteBtnPress = false;
 RelativeLayout typingLayout;
 
+RelativeLayout goToGridLayout;
+
 TextView usernameTypinG;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,7 +221,7 @@ TextView usernameTypinG;
         botomChatLay = (RelativeLayout) findViewById(R.id.chatdole);
         captureImage = (ImageButton) findViewById(R.id.cameraImage);
         audioRecordBtn = (ImageView) findViewById(R.id.microphoneImage);
-
+goToGridLayout = (RelativeLayout) findViewById(R.id.gridlayout);
         typingLayout = (RelativeLayout) findViewById(R.id.layouttypingfrom);
         usernameTypinG = (TextView) findViewById(R.id.usernamefrom);
 
@@ -299,9 +301,9 @@ typingLayout.setVisibility(View.GONE);
                     mChatMessageView. clearFocus();
           /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
-
+emoticons.setVisibility(View.GONE);
                     recyclerViewAlbum.setVisibility(View.GONE);
-
+goToGridLayout.setVisibility(View.GONE);
 
                 }
             }
@@ -314,6 +316,15 @@ typingLayout.setVisibility(View.GONE);
                     secondClickGallery = true;
                     firstClickSmile = true;
                     secondClickSmile = false;
+                    goToGridLayout.setVisibility(View.VISIBLE);
+                    goToGridLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(ChatMessageActivity.this, SendImageChatActivity.class);
+                            intent.putExtra("userID", mCurrentUserId);
+                            startActivity(intent);
+                        }
+                    });
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                     recyclerViewAlbum.setVisibility(View.VISIBLE);
@@ -327,7 +338,7 @@ typingLayout.setVisibility(View.GONE);
                     firstClickSmile = true;
                     secondClickSmile = false;
                     recyclerViewAlbum.setVisibility(View.GONE);
-
+goToGridLayout.setVisibility(View.GONE);
                     emoticons.setVisibility(View.GONE);
                 }
 
