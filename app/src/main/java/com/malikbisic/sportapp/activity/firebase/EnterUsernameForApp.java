@@ -800,12 +800,12 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         continueBtn.setEnabled(true);
         setResult(RESULT_OK, null);
         FirebaseUser user = mAuth.getCurrentUser();
-        if (user.isEmailVerified()) {
+        if (user.isEmailVerified() || user.getProviders().get(0).equals("facebook.com")) {
             Intent intent = new Intent(EnterUsernameForApp.this, MainPage.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
-        } else {
+        } else{
             Intent intent = new Intent(EnterUsernameForApp.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("email", user.getEmail());

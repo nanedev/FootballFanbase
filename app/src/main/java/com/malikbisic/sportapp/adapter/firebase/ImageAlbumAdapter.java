@@ -63,7 +63,6 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
     String userID;
 
 
-
     public ImageAlbumAdapter(Activity _activity, ArrayList<String> _filePaths, String myUID, String userID) {
         this._activity = _activity;
         this._filePaths = _filePaths;
@@ -89,19 +88,23 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
 
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.imageHolder);
-    //    Picasso.with(_activity).load(image).resize(250,250).centerCrop().into(holder.imageHolder);
+        //    Picasso.with(_activity).load(image).resize(250,250).centerCrop().into(holder.imageHolder);
 
         holder.sendButton.setVisibility(View.GONE);
-holder.sendlayout.setVisibility(View.GONE);
+        holder.sendlayout.setVisibility(View.GONE);
 
-    holder.imageHolder.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        holder.imageHolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
 
-
-                holder.sendButton.setVisibility(View.VISIBLE);
-                holder.sendlayout.setVisibility(View.VISIBLE);
+                if (holder.sendButton.getVisibility() == View.GONE) {
+                    holder.sendButton.setVisibility(View.VISIBLE);
+                    holder.sendlayout.setVisibility(View.VISIBLE);
+                }else {
+                    holder.sendButton.setVisibility(View.GONE);
+                    holder.sendlayout.setVisibility(View.GONE);
+                }
                 holder.sendButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -110,11 +113,8 @@ holder.sendlayout.setVisibility(View.GONE);
                 });
 
 
-
-
-
-        }
-    });
+            }
+        });
 
     }
 
@@ -361,7 +361,7 @@ holder.sendlayout.setVisibility(View.GONE);
 
         public ImageViewHolder(View itemView) {
             super(itemView);
-sendlayout = (RelativeLayout) itemView.findViewById(R.id.sendlayout);
+            sendlayout = (RelativeLayout) itemView.findViewById(R.id.sendlayout);
             image = (ImageView) itemView.findViewById(R.id.imageGrid);
             imageHolder = (ImageView) itemView.findViewById(R.id.nekiid);
             sendButton = (ImageButton) itemView.findViewById(R.id.sendImageGrid);
