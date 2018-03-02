@@ -20,6 +20,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -201,7 +202,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     RelativeLayout goToGridLayout;
 
     TextView usernameTypinG;
-
+    long lastDown;
+    long lastDuration;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -376,21 +378,48 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
         });
         random = new Random();
 
-        audioRecordBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        recordStart();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        recordStop();
-                        break;
-                }
 
-                return false;
+        audioRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //code for click event
+
+         Toast.makeText(ChatMessageActivity.this,"kratki klik",Toast.LENGTH_SHORT).show();
+
             }
         });
+
+        audioRecordBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                recordStart();
+                Toast.makeText(ChatMessageActivity.this,"record started",Toast.LENGTH_SHORT).show();
+                //code for hold event... which sounds like you want to begin recording here
+
+                audioRecordBtn.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        switch(motionEvent.getAction()){
+
+                            case MotionEvent.ACTION_UP:
+                            {
+recordStop();
+                                Toast.makeText(ChatMessageActivity.this,"record stopped",Toast.LENGTH_SHORT).show();
+                                //stop recording voice if a long hold was detected and a recording started
+                                return true; //indicate we're done listening to this touch listener
+                            }
+                        }
+                        return false;
+                    }
+                });
+
+
+
+                return true; //indicate we're done listening to this touch listener
+            }
+        });
+
+
 
 
 
@@ -627,49 +656,51 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     }
 
     public void recordStop() {
-        mediaRecorder.stop();
-        StorageReference mStorage = FirebaseStorage.getInstance().getReference();
-        final ProgressDialog mDialog = new ProgressDialog(ChatMessageActivity.this);
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setContentType("audio/mpeg")
-                .build();
-
-        StorageReference filePath = mStorage.child("Audio_Chat").child(CreateRandomAudioFileName(5));
-        final Uri uri = Uri.fromFile(new File(AudioSavePathInDevice));
-        filePath.putFile(uri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                uriAudio = taskSnapshot.getDownloadUrl();
-                mDialog.dismiss();
-
-                Map messageMap = new HashMap();
-                messageMap.put("message", uriAudio.toString());
-                messageMap.put("seen", false);
-                messageMap.put("type", "audio");
-                messageMap.put("time", FieldValue.serverTimestamp());
-                messageMap.put("from", mCurrentUserId);
-
-                mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message").add(messageMap);
-                mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).collection("message").add(messageMap);
-
-                Map chatUser = new HashMap();
-                chatUser.put("to", mChatUser);
-                chatUser.put("typing", false);
-                Map mychatUser = new HashMap();
-                mychatUser.put("to", mCurrentUserId);
-                mychatUser.put("typing", false);
-                mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
-                mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
-
-                Map timeMessage = new HashMap();
-                timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
-                mRootRef.collection("Messages").document(mChatUser).set(timeMessage);
 
 
-            }
-        });
+            mediaRecorder.stop();
+            StorageReference mStorage = FirebaseStorage.getInstance().getReference();
+            final ProgressDialog mDialog = new ProgressDialog(ChatMessageActivity.this);
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setContentType("audio/mpeg")
+                    .build();
+
+            StorageReference filePath = mStorage.child("Audio_Chat").child(CreateRandomAudioFileName(5));
+            final Uri uri = Uri.fromFile(new File(AudioSavePathInDevice));
+            filePath.putFile(uri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    uriAudio = taskSnapshot.getDownloadUrl();
+                    mDialog.dismiss();
+
+                    Map messageMap = new HashMap();
+                    messageMap.put("message", uriAudio.toString());
+                    messageMap.put("seen", false);
+                    messageMap.put("type", "audio");
+                    messageMap.put("time", FieldValue.serverTimestamp());
+                    messageMap.put("from", mCurrentUserId);
+
+                    mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message").add(messageMap);
+                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).collection("message").add(messageMap);
+
+                    Map chatUser = new HashMap();
+                    chatUser.put("to", mChatUser);
+                    chatUser.put("typing", false);
+                    Map mychatUser = new HashMap();
+                    mychatUser.put("to", mCurrentUserId);
+                    mychatUser.put("typing", false);
+                    mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
+                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
+
+                    Map timeMessage = new HashMap();
+                    timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
+                    mRootRef.collection("Messages").document(mChatUser).set(timeMessage);
+
+
+                }
+            });
+
     }
-
 
     public void MediaRecorderReady() {
         mediaRecorder = new MediaRecorder();
