@@ -449,7 +449,8 @@ public class MessageAdapter extends RecyclerView.Adapter {
         public MediaPlayer mPlayer;
 
         public TextView typing;
-
+        public boolean isPaused;
+        public long runningTime = 0;
        public RelativeLayout seenLayoutMessage;
        public RelativeLayout seenLayoutImage;
        public RelativeLayout seenLayoutGridImage;

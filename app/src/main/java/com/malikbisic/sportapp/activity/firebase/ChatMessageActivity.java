@@ -11,6 +11,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -200,7 +203,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     RelativeLayout typingLayout;
 
     RelativeLayout goToGridLayout;
-
+private boolean isPaused;
+private  long runningTime = 0;
     TextView usernameTypinG;
     long lastDown;
     long lastDuration;
@@ -405,6 +409,7 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
                             {
 recordStop();
                                 Toast.makeText(ChatMessageActivity.this,"record stopped",Toast.LENGTH_SHORT).show();
+                                audioRecordBtn.setOnTouchListener(null);
                                 //stop recording voice if a long hold was detected and a recording started
                                 return true; //indicate we're done listening to this touch listener
                             }
@@ -659,6 +664,7 @@ recordStop();
 
 
             mediaRecorder.stop();
+
             StorageReference mStorage = FirebaseStorage.getInstance().getReference();
             final ProgressDialog mDialog = new ProgressDialog(ChatMessageActivity.this);
             StorageMetadata metadata = new StorageMetadata.Builder()
@@ -924,6 +930,7 @@ recordStop();
 
     @Override
     protected void onStart() {
+
         super.onStart();
 
        /* mAdapter.setOnLoadMore(new OnLoadMoreListener() {
@@ -953,6 +960,7 @@ recordStop();
         }); */
 
     }
+
 
     private void loadMessages(final Activity activity) {
 
@@ -1509,7 +1517,7 @@ recordStop();
 
 
                                     int duration = holder.mPlayer.getDuration();
-                                    @SuppressLint("DefaultLocale") String time = String.format("%02d:%02d",
+                                    @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
                                             TimeUnit.MILLISECONDS.toMinutes(duration),
                                             TimeUnit.MILLISECONDS.toSeconds(duration) -
                                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
@@ -1550,20 +1558,110 @@ recordStop();
                                 @Override
                                 public void onClick(View v) {
 
+                                    if (!holder.isPaused) {
+
+
+                                        new CountDownTimer(holder.mPlayer.getDuration(), 1000) {
+
+                                            public void onTick(long millisUntilFinished) {
+
+                                                if (holder.isPaused) {
+                                                    cancel();
+                                                } else {
+                                                    @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                                                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
+                                                    );
+                                                    //Convert milliseconds into hour,minute and seconds
+                                                    holder.totalTimeFromUser.setText(time);//set text
+                                                    holder.runningTime = millisUntilFinished;
+                                                }
+
+
+                                            }
+
+                                            public void onFinish() {
+                                                holder.totalTimeFromUser.setText("0:00");
+                                             /*   int duration = holder.mPlayer.getDuration();
+                                                @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                        TimeUnit.MILLISECONDS.toMinutes(duration),
+                                                        TimeUnit.MILLISECONDS.toSeconds(duration) -
+                                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
+                                                );
+
+                                                holder.totalTimeFromUser.setText(String.valueOf(time));*/
+
+                                            }
+                                        }.start();
+                                    } else {
+                                        new CountDownTimer(holder.runningTime, 1000) {
+
+                                            public void onTick(long millisUntilFinished) {
+
+                                                if (holder.isPaused) {
+                                                    cancel();
+                                                } else {
+                                                    @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                                                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
+                                                    );
+                                                    //Convert milliseconds into hour,minute and seconds
+                                                    holder.totalTimeFromUser.setText(time);//set text
+                                                    holder.runningTime = millisUntilFinished;
+                                                }
+
+
+                                            }
+
+                                            public void onFinish() {
+                                             /*   int duration = holder.mPlayer.getDuration();
+                                                @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                        TimeUnit.MILLISECONDS.toMinutes(duration),
+                                                        TimeUnit.MILLISECONDS.toSeconds(duration) -
+                                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
+                                                );*/
+
+                                                holder.totalTimeFromUser.setText("0:00");
+
+
+                                            }
+                                        }.start();
+                                    }
+
                                     if (!clickPlayAudioForUser) {
                                         holder.mPlayer.start();
+
+                                        holder.isPaused = false;
+
                                         clickPlayAudioForUser = true;
                                         holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.pauseto_icon));
                                     } else if (clickPlayAudioForUser) {
                                         holder.mPlayer.pause();
+                                        holder.isPaused = true;
                                         clickPlayAudioForUser = false;
+
+
+
+
+
+
                                         holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.playto_icon));
                                     }
                                     holder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                         @Override
                                         public void onCompletion(MediaPlayer mp) {
                                             clickPlayAudioForUser = false;
+                                            holder.mPlayer.seekTo(0);
+                                            @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                    TimeUnit.MILLISECONDS.toMinutes(holder.mPlayer.getDuration()),
+                                                    TimeUnit.MILLISECONDS.toSeconds(holder.mPlayer.getDuration()) -
+                                                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(holder.mPlayer.getDuration())));
+
+                                            holder.totalTimeFromUser.setText(time);
                                             holder.play_stopFromUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.playto_icon));
+                                            holder.progressBarFromUser.setProgress(0);
                                         }
                                     });
 
