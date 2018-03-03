@@ -1292,25 +1292,114 @@ recordStop();
                             holder.layoutAudioToUser.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    if (!holder.isPaused) {
+
+
+                                        new CountDownTimer(holder.mPlayer.getDuration(), 1000) {
+
+                                            public void onTick(long millisUntilFinished) {
+
+                                                if (holder.isPaused) {
+                                                    cancel();
+                                                } else {
+                                                    @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                                                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
+                                                    );
+                                                    //Convert milliseconds into hour,minute and seconds
+                                                    holder.totalTimeToUser.setText(time);//set text
+                                                    holder.runningTime = millisUntilFinished;
+                                                }
+
+
+                                            }
+
+                                            public void onFinish() {
+                                                holder.totalTimeToUser.setText("0:00");
+                                             /*   int duration = holder.mPlayer.getDuration();
+                                                @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                        TimeUnit.MILLISECONDS.toMinutes(duration),
+                                                        TimeUnit.MILLISECONDS.toSeconds(duration) -
+                                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
+                                                );
+
+                                                holder.totalTimeFromUser.setText(String.valueOf(time));*/
+
+                                            }
+                                        }.start();
+                                    } else {
+                                        new CountDownTimer(holder.runningTime, 1000) {
+
+                                            public void onTick(long millisUntilFinished) {
+
+                                                if (holder.isPaused) {
+                                                    cancel();
+                                                } else {
+                                                    @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                                                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
+                                                    );
+                                                    //Convert milliseconds into hour,minute and seconds
+                                                    holder.totalTimeToUser.setText(time);//set text
+                                                    holder.runningTime = millisUntilFinished;
+                                                }
+
+
+                                            }
+
+                                            public void onFinish() {
+                                             /*   int duration = holder.mPlayer.getDuration();
+                                                @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                        TimeUnit.MILLISECONDS.toMinutes(duration),
+                                                        TimeUnit.MILLISECONDS.toSeconds(duration) -
+                                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
+                                                );*/
+
+                                                holder.totalTimeFromUser.setText("0:00");
+
+
+                                            }
+                                        }.start();
+                                    }
+
                                     if (!clickPlayAudioToUser) {
                                         holder.mPlayer.start();
+
+                                        holder.isPaused = false;
+
                                         clickPlayAudioToUser = true;
                                         holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.pause_icon));
                                     } else if (clickPlayAudioToUser) {
                                         holder.mPlayer.pause();
+                                        holder.isPaused = true;
                                         clickPlayAudioToUser = false;
+
+
+
+
+
+
                                         holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.play_icon));
                                     }
-
                                     holder.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                         @Override
                                         public void onCompletion(MediaPlayer mp) {
                                             clickPlayAudioToUser = false;
+                                            holder.mPlayer.seekTo(0);
+                                            @SuppressLint("DefaultLocale") String time = String.format("%2d:%02d",
+                                                    TimeUnit.MILLISECONDS.toMinutes(holder.mPlayer.getDuration()),
+                                                    TimeUnit.MILLISECONDS.toSeconds(holder.mPlayer.getDuration()) -
+                                                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(holder.mPlayer.getDuration())));
+
+                                            holder.totalTimeToUser.setText(time);
                                             holder.play_stopToUser.setImageDrawable(activity.getResources().getDrawable(R.drawable.play_icon));
+                                            holder.progressBarToUser.setProgress(0);
                                         }
                                     });
 
-                                }
+                            }
                             });
 
                             if (model.getTime() != null) {
@@ -1576,6 +1665,7 @@ recordStop();
                                                     //Convert milliseconds into hour,minute and seconds
                                                     holder.totalTimeFromUser.setText(time);//set text
                                                     holder.runningTime = millisUntilFinished;
+
                                                 }
 
 
@@ -1610,6 +1700,7 @@ recordStop();
                                                     //Convert milliseconds into hour,minute and seconds
                                                     holder.totalTimeFromUser.setText(time);//set text
                                                     holder.runningTime = millisUntilFinished;
+
                                                 }
 
 
