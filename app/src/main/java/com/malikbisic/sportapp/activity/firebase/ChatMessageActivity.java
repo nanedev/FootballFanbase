@@ -704,12 +704,12 @@ recordStop();
 
                     Map<String, Object> notifMap = new HashMap<>();
                     notifMap.put("action", "chat");
-                    notifMap.put("uid", mChatUser);
+                    notifMap.put("uid", mCurrentUserId);
                     notifMap.put("seen", false);
                     notifMap.put("whatIS", "audio file");
                     notifMap.put("timestamp", FieldValue.serverTimestamp());
 
-                    if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
+                    if (!mCurrentUserId.equals(mAuth.getCurrentUser().getUid())) {
                         CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(mChatUser).collection("notif-id");
                         notifSet.add(notifMap);
                     }
