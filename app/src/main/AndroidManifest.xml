@@ -212,7 +212,13 @@
             android:parentActivityName=".activity.api.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="com.malikbisic.sportapp.activity_TARGET_NOTIFICATION_chat" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.firebase.FanbaseFanClubTable"
             android:screenOrientation="portrait"
