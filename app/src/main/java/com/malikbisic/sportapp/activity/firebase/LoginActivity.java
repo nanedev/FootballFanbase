@@ -529,7 +529,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     CountDownTimer timer = new CountDownTimer(3000, 1000) {
                                         @Override
                                         public void onTick(long l) {
-
+                                            mDialog.setMessage("Login...");
+                                            mDialog.show();
                                         }
 
                                         @Override
@@ -557,8 +558,43 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         }
                                     }.start();
 
-                                } else {
+                                } else if (user.getProviders().get(0).equals("facebook.com") && snapshot.contains("username")) {
+                                    final String current_userID = mAuth.getCurrentUser().getUid();
+                                    final String device_id = FirebaseInstanceId.getInstance().getToken();
 
+
+                                    CountDownTimer timer = new CountDownTimer(3000, 1000) {
+                                        @Override
+                                        public void onTick(long l) {
+                                                mDialog.setMessage("Login...");
+                                                mDialog.show();
+                                        }
+
+                                        @Override
+                                        public void onFinish() {
+                                            Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
+                                            startActivity(setupIntent);
+                                            mDialog.dismiss();
+
+                                            Map<String, Object> updateDevideId = new HashMap<>();
+                                            updateDevideId.put("device_id", device_id);
+                                            finish();
+                                            mReferenceUsers.collection("Users").document(current_userID)
+                                                    .update(updateDevideId)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.e("error update auto login", e.getLocalizedMessage());
+                                                }
+                                            });
+                                        }
+                                    }.start();
+                                }else {
                                     mDialog.dismiss();
 
                                 }

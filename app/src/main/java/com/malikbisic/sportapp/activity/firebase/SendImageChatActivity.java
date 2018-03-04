@@ -23,6 +23,7 @@ import android.widget.GridView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,6 +57,7 @@ public class SendImageChatActivity extends AppCompatActivity {
     Intent myIntent;
     String myUID;
     String userID;
+    String username;
     int i = 0;
 
     int sizeImageSent;
@@ -80,6 +82,7 @@ public class SendImageChatActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         myUID = mAuth.getCurrentUser().getUid();
         userID = myIntent.getStringExtra("userID");
+        username = myIntent.getStringExtra("username");
 
         gridView = (RecyclerView) findViewById(R.id.grid_view);
 
@@ -115,6 +118,7 @@ public class SendImageChatActivity extends AppCompatActivity {
             case android.R.id.home:
                 Intent backToChat = new Intent(SendImageChatActivity.this, ChatMessageActivity.class);
                 backToChat.putExtra("userId", userID);
+                backToChat.putExtra("username", username);
                 setResult(Activity.RESULT_OK, backToChat);
                 finish();
                 return true;
@@ -194,13 +198,27 @@ public class SendImageChatActivity extends AppCompatActivity {
                                 Map timeMessage = new HashMap();
                                 timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
                                 mRootRef.collection("Messages").document(userID).set(timeMessage);
-                                dialogg.dismiss();
 
+                                Map<String, Object> notifMap = new HashMap<>();
+                                notifMap.put("action", "chat");
+                                notifMap.put("uid", userID);
+                                notifMap.put("seen", false);
+                                notifMap.put("whatIS", "images");
+                                notifMap.put("timestamp", FieldValue.serverTimestamp());
+
+                                if (!userID.equals(mAuth.getCurrentUser().getUid())) {
+                                    CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
+                                    notifSet.add(notifMap);
+                                }
+
+                                    dialogg.dismiss();
+
+
+                                Intent backToChat = new Intent(SendImageChatActivity.this, ChatMessageActivity.class);
+                                backToChat.putExtra("userId", userID);
+                                backToChat.putExtra("username", username);
+                                startActivity(backToChat);
                             }
-                 /*   Intent goToMain = new Intent(_activity, SendImageChatActivity.class);
-                    goToMain.putExtra("userId", userID);
-                    _activity.startActivity(goToMain);*/
-
 
                     } else
 

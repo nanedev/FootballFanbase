@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -308,6 +309,18 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
                     Map timeMessage = new HashMap();
                     timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
                     mRootRef.collection("Messages").document(userID).set(timeMessage);
+
+                    Map<String, Object> notifMap = new HashMap<>();
+                    notifMap.put("action", "chat");
+                    notifMap.put("uid", userID);
+                    notifMap.put("seen", false);
+                    notifMap.put("whatIS", "image");
+                    notifMap.put("timestamp", FieldValue.serverTimestamp());
+
+                    if (!userID.equals(myUID)) {
+                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
+                        notifSet.add(notifMap);
+                    }
 
                  /*   Intent goToMain = new Intent(_activity, SendImageChatActivity.class);
                     goToMain.putExtra("userId", userID);

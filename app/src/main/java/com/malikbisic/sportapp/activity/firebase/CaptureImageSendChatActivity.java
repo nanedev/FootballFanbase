@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -65,8 +66,9 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
     String clubLogo;
     String country;
     String clubName;
-String key;
-String profileImage;
+    String key;
+    String profileImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,13 +86,13 @@ String profileImage;
         userID = myIntent.getStringExtra("userID");
         myUID = mAuth.getCurrentUser().getUid();
         userIdFromMainPage = myIntent.getStringExtra("userIDFromMainPage");
-        mainpage = myIntent.getBooleanExtra("fromMainPage",false);
+        mainpage = myIntent.getBooleanExtra("fromMainPage", false);
         username = myIntent.getStringExtra("username");
         clubLogo = myIntent.getStringExtra("clubHeader");
         country = myIntent.getStringExtra("country");
         profileImage = myIntent.getStringExtra("profileImage");
-clubName = myIntent.getStringExtra("clubName");
-key = myIntent.getStringExtra("postkey");
+        clubName = myIntent.getStringExtra("clubName");
+        key = myIntent.getStringExtra("postkey");
         dialog = new ProgressDialog(this);
 
         displayImage = (ImageView) findViewById(R.id.imageCapture);
@@ -106,7 +108,7 @@ key = myIntent.getStringExtra("postkey");
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 Intent backToChat = new Intent(CaptureImageSendChatActivity.this, ChatMessageActivity.class);
                 backToChat.putExtra("userId", userID);
@@ -114,9 +116,9 @@ key = myIntent.getStringExtra("postkey");
                 finish();
                 return true;
             case R.id.send_images:
-                if (mainpage){
+                if (mainpage) {
                     sendImageFromMainPage();
-                }else {
+                } else {
                     sendImage();
                 }
             default:
@@ -124,6 +126,7 @@ key = myIntent.getStringExtra("postkey");
         }
 
     }
+
     public void sendImageFromMainPage() {
         try {
 
@@ -155,23 +158,23 @@ key = myIntent.getStringExtra("postkey");
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
 
 
-                    Map<String,Object> postMap = new HashMap<>();
+                    Map<String, Object> postMap = new HashMap<>();
                     postMap.put("clubLogo", clubLogo);
                     postMap.put("country", country);
                     postMap.put("descForPhoto", "");
                     postMap.put("favoritePostClub", clubName);
-                    postMap.put("photoPost",downloadUri.toString());
-                    postMap.put("profileImage",profileImage);
+                    postMap.put("photoPost", downloadUri.toString());
+                    postMap.put("profileImage", profileImage);
                     postMap.put("time", FieldValue.serverTimestamp());
-                    postMap.put("uid",myUID);
-                    postMap.put("username",username);
+                    postMap.put("uid", myUID);
+                    postMap.put("username", username);
                     final FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
                     mRootRef.collection("Posting").add(postMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
 
                             String key = documentReference.getId();
-                            Map<String,Object> keyUpdate = new HashMap<>();
+                            Map<String, Object> keyUpdate = new HashMap<>();
                             keyUpdate.put("key", key);
                             mRootRef.collection("Posting").document(key).update(keyUpdate);
 
@@ -190,7 +193,7 @@ key = myIntent.getStringExtra("postkey");
 
                     Intent backToMainPage = new Intent(CaptureImageSendChatActivity.this, MainPage.class);
 
-                  startActivity(backToMainPage);
+                    startActivity(backToMainPage);
                     dialog.dismiss();
                     finish();
 
@@ -257,8 +260,21 @@ key = myIntent.getStringExtra("postkey");
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
 
+                    Map<String, Object> notifMap = new HashMap<>();
+                    notifMap.put("action", "chat");
+                    notifMap.put("uid", userID);
+                    notifMap.put("seen", false);
+                    notifMap.put("whatIS", "image");
+                    notifMap.put("timestamp", FieldValue.serverTimestamp());
+
+                    if (!userID.equals(mAuth.getCurrentUser().getUid())) {
+                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
+                        notifSet.add(notifMap);
+                    }
+
                     Intent backToChat = new Intent(CaptureImageSendChatActivity.this, SendImageChatActivity.class);
                     backToChat.putExtra("userId", userID);
+                    backToChat.putExtra("username", username);
                     setResult(Activity.RESULT_OK, backToChat);
                     dialog.dismiss();
                     finish();
@@ -276,6 +292,7 @@ key = myIntent.getStringExtra("postkey");
             e.printStackTrace();
         }
     }
+
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
