@@ -312,7 +312,7 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
 
                     Map<String, Object> notifMap = new HashMap<>();
                     notifMap.put("action", "chat");
-                    notifMap.put("uid", userID);
+                    notifMap.put("uid", myUID);
                     notifMap.put("seen", false);
                     notifMap.put("whatIS", "image");
                     notifMap.put("timestamp", FieldValue.serverTimestamp());

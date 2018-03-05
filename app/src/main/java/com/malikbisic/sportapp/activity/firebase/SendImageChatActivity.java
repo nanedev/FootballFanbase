@@ -206,7 +206,7 @@ public class SendImageChatActivity extends AppCompatActivity {
                                 notifMap.put("whatIS", "images");
                                 notifMap.put("timestamp", FieldValue.serverTimestamp());
 
-                                if (!myUID.equals(mAuth.getCurrentUser().getUid())) {
+                                if (!userID.equals(mAuth.getCurrentUser().getUid())) {
                                     CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
                                     notifSet.add(notifMap);
                                 }
