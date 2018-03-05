@@ -729,7 +729,7 @@ recordStop();
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.getResult().exists()){
                                 boolean isInChat = task.getResult().getBoolean("isInChat");
-                                if (isInChat){
+                                if (!isInChat){
                                     Map<String, Object> notifMap = new HashMap<>();
                                     notifMap.put("action", "chat");
                                     notifMap.put("uid", mCurrentUserId);
@@ -2152,7 +2152,7 @@ recordStop();
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.getResult().exists()) {
                         boolean isInChat = task.getResult().getBoolean("isInChat");
-                        if (isInChat) {
+                        if (!isInChat) {
                             Map<String, Object> notifMap = new HashMap<>();
                             notifMap.put("action", "chat");
                             notifMap.put("uid", mCurrentUserId);

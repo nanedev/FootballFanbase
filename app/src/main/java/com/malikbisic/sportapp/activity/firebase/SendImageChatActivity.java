@@ -227,7 +227,7 @@ public class SendImageChatActivity extends AppCompatActivity {
 
                                         if (task.getResult().exists()){
                                             boolean isInChat = task.getResult().getBoolean("isInChat");
-                                            if (isInChat){
+                                            if (!isInChat){
                                                 Map<String, Object> notifMap = new HashMap<>();
                                                 notifMap.put("action", "chat");
                                                 notifMap.put("uid", myUID);
