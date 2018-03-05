@@ -693,24 +693,42 @@ recordStop();
                     mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message").add(messageMap);
                     mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).collection("message").add(messageMap);
 
-                    Map chatUser = new HashMap();
+                    final Map chatUser = new HashMap();
                     chatUser.put("to", mChatUser);
                     chatUser.put("typing", false);
-                    Map mychatUser = new HashMap();
+                    final Map mychatUser = new HashMap();
                     mychatUser.put("to", mCurrentUserId);
                     mychatUser.put("typing", false);
-                    mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
-                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
-
+                    mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.getResult().exists()){
+                                mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(chatUser);
+                            }else {
+                                mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
+                            }
+                        }
+                    });
+                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.getResult().exists()){
+                                mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).update(mychatUser);
+                            } else {
+                                mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
+                            }
+                        }
+                    });
                     Map timeMessage = new HashMap();
                     timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
                     mRootRef.collection("Messages").document(mChatUser).set(timeMessage);
 
-                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+
+                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                            if (documentSnapshot.exists()){
-                                boolean isInChat = documentSnapshot.getBoolean("isInChat");
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.getResult().exists()){
+                                boolean isInChat = task.getResult().getBoolean("isInChat");
                                 if (isInChat){
                                     Map<String, Object> notifMap = new HashMap<>();
                                     notifMap.put("action", "chat");
@@ -727,6 +745,7 @@ recordStop();
                             }
                         }
                     });
+
 
 
 
@@ -2128,12 +2147,12 @@ recordStop();
             timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
             mRootRef.collection("Messages").document(mChatUser).set(timeMessage);
 
-            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                    if (documentSnapshot.exists()){
-                        boolean isInChat = documentSnapshot.getBoolean("isInChat");
-                        if (isInChat){
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.getResult().exists()) {
+                        boolean isInChat = task.getResult().getBoolean("isInChat");
+                        if (isInChat) {
                             Map<String, Object> notifMap = new HashMap<>();
                             notifMap.put("action", "chat");
                             notifMap.put("uid", mCurrentUserId);
@@ -2150,10 +2169,7 @@ recordStop();
                 }
             });
 
-
-
-
-        }
+            }
     }
 
     public boolean onTouch(View v, MotionEvent event) {

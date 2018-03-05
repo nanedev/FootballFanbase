@@ -24,10 +24,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -293,34 +296,66 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
                     messageMap.put("type", "image");
                     messageMap.put("time", FieldValue.serverTimestamp());
                     messageMap.put("from", myUID);
-                    FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
+                    final FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
 
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).collection("message").add(messageMap);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).collection("message").add(messageMap);
 
-                    Map<String, Object> chatUser = new HashMap<>();
+                    final Map<String, Object> chatUser = new HashMap<>();
                     chatUser.put("to", userID);
                     chatUser.put("typing", false);
-                    Map<String, Object> mychatUser = new HashMap<>();
+                    final Map<String, Object> mychatUser = new HashMap<>();
                     mychatUser.put("to", myUID);
                     mychatUser.put("typing", false);
-                    mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
-                    mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
+
+
+                    mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.getResult().exists()){
+                                mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).update(chatUser);
+                            }else {
+                                mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
+                            }
+                        }
+                    });
+                    mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.getResult().exists()){
+                                mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).update(mychatUser);
+                            } else {
+                                mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
+                            }
+                        }
+                    });
                     Map timeMessage = new HashMap();
                     timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
                     mRootRef.collection("Messages").document(userID).set(timeMessage);
 
-                    Map<String, Object> notifMap = new HashMap<>();
-                    notifMap.put("action", "chat");
-                    notifMap.put("uid", myUID);
-                    notifMap.put("seen", false);
-                    notifMap.put("whatIS", "image");
-                    notifMap.put("timestamp", FieldValue.serverTimestamp());
 
-                    if (!userID.equals(myUID)) {
-                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
-                        notifSet.add(notifMap);
-                    }
+                    mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                            if (task.getResult().exists()){
+                                boolean isInChat = task.getResult().getBoolean("isInChat");
+                                if (isInChat){
+                                    Map<String, Object> notifMap = new HashMap<>();
+                                    notifMap.put("action", "chat");
+                                    notifMap.put("uid", myUID);
+                                    notifMap.put("seen", false);
+                                    notifMap.put("whatIS", "image");
+                                    notifMap.put("timestamp", FieldValue.serverTimestamp());
+
+                                    if (!userID.equals(myUID)) {
+                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
+                                        notifSet.add(notifMap);
+                                    }
+                                }
+                            }
+                        }
+                    });
 
                  /*   Intent goToMain = new Intent(_activity, SendImageChatActivity.class);
                     goToMain.putExtra("userId", userID);

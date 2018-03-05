@@ -24,8 +24,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -251,23 +253,42 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
                     messageMap.put("type", "image");
                     messageMap.put("time", FieldValue.serverTimestamp());
                     messageMap.put("from", myUID);
-                    FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
+                    final FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
 
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).collection("message").add(messageMap);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).collection("message").add(messageMap);
 
-                    Map chatUser = new HashMap();
+                    final Map chatUser = new HashMap();
                     chatUser.put("to", userID);
-                    Map mychatUser = new HashMap();
+                    final Map mychatUser = new HashMap();
                     chatUser.put("to", myUID);
-                    mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
-                    mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
-
-                    mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                            if (documentSnapshot.exists()){
-                                boolean isInChat = documentSnapshot.getBoolean("isInChat");
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.getResult().exists()){
+                                mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).update(chatUser);
+                            }else {
+                                mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
+                            }
+                        }
+                    });
+                    mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.getResult().exists()){
+                                mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).update(mychatUser);
+                            } else {
+                                mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
+                            }
+                        }
+                    });
+
+                    mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                            if (task.getResult().exists()){
+                                boolean isInChat = task.getResult().getBoolean("isInChat");
                                 if (isInChat){
                                     Map<String, Object> notifMap = new HashMap<>();
                                     notifMap.put("action", "chat");
