@@ -2095,14 +2095,32 @@ recordStop();
             mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).collection("message").add(messageMap);
             mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).collection("message").add(messageMap);
 
-            Map chatUser = new HashMap();
+            final Map chatUser = new HashMap();
             chatUser.put("to", mChatUser);
             chatUser.put("typing", false);
-            Map mychatUser = new HashMap();
+            final Map mychatUser = new HashMap();
             mychatUser.put("to", mCurrentUserId);
             mychatUser.put("typing", false);
-            mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
-            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
+            mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.getResult().exists()){
+                        mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(chatUser);
+                    }else {
+                        mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).set(chatUser);
+                    }
+                }
+            });
+            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.getResult().exists()){
+                        mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).update(mychatUser);
+                    } else {
+                        mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).set(mychatUser);
+                    }
+                }
+            });
 
             mChatMessageView.setText("");
 
