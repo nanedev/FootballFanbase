@@ -71,7 +71,7 @@ public class BadgeServices extends FirebaseMessagingService {
         if (action.equals("chat")){
             Bitmap bitmap = getBitmapfromUrl(remoteMessage.getData().get("profileImage"));
             String username = remoteMessage.getData().get("username");
-            String from_user_id = remoteMessage.getData().get("from_user_id");
+            String from_user_id = remoteMessage.getData().get("userId");
             String clickAction = remoteMessage.getNotification().getClickAction();
 
 

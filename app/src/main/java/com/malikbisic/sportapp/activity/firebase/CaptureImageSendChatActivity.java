@@ -29,8 +29,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -260,17 +263,28 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
                     mRootRef.collection("Messages").document(myUID).collection("chat-user").document(userID).set(chatUser);
                     mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).set(mychatUser);
 
-                    Map<String, Object> notifMap = new HashMap<>();
-                    notifMap.put("action", "chat");
-                    notifMap.put("uid", myUID);
-                    notifMap.put("seen", false);
-                    notifMap.put("whatIS", "image");
-                    notifMap.put("timestamp", FieldValue.serverTimestamp());
+                    mRootRef.collection("Messages").document(userID).collection("chat-user").document(myUID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                            if (documentSnapshot.exists()){
+                                boolean isInChat = documentSnapshot.getBoolean("isInChat");
+                                if (isInChat){
+                                    Map<String, Object> notifMap = new HashMap<>();
+                                    notifMap.put("action", "chat");
+                                    notifMap.put("uid", myUID);
+                                    notifMap.put("seen", false);
+                                    notifMap.put("whatIS", "image");
+                                    notifMap.put("timestamp", FieldValue.serverTimestamp());
 
-                    if (!userID.equals(mAuth.getCurrentUser().getUid())) {
-                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
-                        notifSet.add(notifMap);
-                    }
+                                    if (!userID.equals(mAuth.getCurrentUser().getUid())) {
+                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
+                                        notifSet.add(notifMap);
+                                    }
+                                }
+                            }
+                        }
+                    });
+
 
                     Intent backToChat = new Intent(CaptureImageSendChatActivity.this, SendImageChatActivity.class);
                     backToChat.putExtra("userId", userID);

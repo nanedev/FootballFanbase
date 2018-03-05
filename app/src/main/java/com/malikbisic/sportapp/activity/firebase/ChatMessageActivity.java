@@ -240,6 +240,9 @@ private  long runningTime = 0;
         slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.anmation_drom_down_to_top);
 
+        Log.i("chatinfoMyUID", mCurrentUserId);
+        Log.i("chatinfoUserID", mChatUser);
+
         slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_from_top_to_bottom);
 
 
@@ -328,7 +331,8 @@ private  long runningTime = 0;
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(ChatMessageActivity.this, SendImageChatActivity.class);
-                            intent.putExtra("userID", mCurrentUserId);
+                            intent.putExtra("userID", mChatUser);
+                            intent.putExtra("username", mChatUsername);
                             startActivity(intent);
                         }
                     });
@@ -702,17 +706,28 @@ recordStop();
                     timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
                     mRootRef.collection("Messages").document(mChatUser).set(timeMessage);
 
-                    Map<String, Object> notifMap = new HashMap<>();
-                    notifMap.put("action", "chat");
-                    notifMap.put("uid", mCurrentUserId);
-                    notifMap.put("seen", false);
-                    notifMap.put("whatIS", "audio file");
-                    notifMap.put("timestamp", FieldValue.serverTimestamp());
+                    mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                            if (documentSnapshot.exists()){
+                                boolean isInChat = documentSnapshot.getBoolean("isInChat");
+                                if (isInChat){
+                                    Map<String, Object> notifMap = new HashMap<>();
+                                    notifMap.put("action", "chat");
+                                    notifMap.put("uid", mCurrentUserId);
+                                    notifMap.put("seen", false);
+                                    notifMap.put("whatIS", "audio file");
+                                    notifMap.put("timestamp", FieldValue.serverTimestamp());
 
-                    if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
-                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(mChatUser).collection("notif-id");
-                        notifSet.add(notifMap);
-                    }
+                                    if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
+                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(mChatUser).collection("notif-id");
+                                        notifSet.add(notifMap);
+                                    }
+                                }
+                            }
+                        }
+                    });
+
 
 
 
@@ -946,34 +961,23 @@ recordStop();
 
         super.onStart();
 
-       /* mAdapter.setOnLoadMore(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
 
+        Map<String, Object> mychatUser = new HashMap<>();
 
-                mMessagesList.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        messagesList.add(null);
-                        mAdapter.notifyItemInserted(messagesList.size() - 1);
-                    }
-                });
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        loadMoreMessages(ChatMessageActivity.this);
-
-
-                    }
-                }, 5000);
-
-            }
-        }); */
+        mychatUser.put("isInChat", true);
+        mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(mychatUser);
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Map<String, Object> mychatUser = new HashMap<>();
+
+        mychatUser.put("isInChat", false);
+        mRootRef.collection("Messages").document(mCurrentUserId).collection("chat-user").document(mChatUser).update(mychatUser);
+
+    }
 
     private void loadMessages(final Activity activity) {
 
@@ -2106,19 +2110,29 @@ recordStop();
             timeMessage.put("timenewMessage", FieldValue.serverTimestamp());
             mRootRef.collection("Messages").document(mChatUser).set(timeMessage);
 
+            mRootRef.collection("Messages").document(mChatUser).collection("chat-user").document(mCurrentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                    if (documentSnapshot.exists()){
+                        boolean isInChat = documentSnapshot.getBoolean("isInChat");
+                        if (isInChat){
+                            Map<String, Object> notifMap = new HashMap<>();
+                            notifMap.put("action", "chat");
+                            notifMap.put("uid", mCurrentUserId);
+                            notifMap.put("seen", false);
+                            notifMap.put("whatIS", "text");
+                            notifMap.put("timestamp", FieldValue.serverTimestamp());
+
+                            if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
+                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(mChatUser).collection("notif-id");
+                                notifSet.add(notifMap);
+                            }
+                        }
+                    }
+                }
+            });
 
 
-            Map<String, Object> notifMap = new HashMap<>();
-            notifMap.put("action", "chat");
-            notifMap.put("uid", mCurrentUserId);
-            notifMap.put("seen", false);
-            notifMap.put("whatIS", "text");
-            notifMap.put("timestamp", FieldValue.serverTimestamp());
-
-            if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
-                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(mChatUser).collection("notif-id");
-                notifSet.add(notifMap);
-            }
 
 
         }
