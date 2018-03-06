@@ -169,7 +169,8 @@ public class MainPage extends AppCompatActivity
     ProgressDialog pDialog;
 
     TextView notificationCounterNumber;
-    FirebaseFirestore notificationReference;
+    TextView messageCounterNumber;
+    FirebaseFirestore notificationReference, chatNotificationReference;
     NavigationView navigationView;
 
     List<Post> itemSize = new ArrayList<>();
@@ -469,6 +470,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         backgroundHeader = (ImageView) header.findViewById(R.id.backgroundImgForHeader);
 
         notificationCounterNumber = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_notifications));
+        messageCounterNumber = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_message));
 
         String useram = intent.getStringExtra("username");
 
@@ -1159,6 +1161,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
 
 
         initializeCountDrawer();
+        messageCounter();
         launcerCounter();
 
 
@@ -1329,36 +1332,42 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                 }
             }
         });
+    }
 
-      /*  query.get().addOnCompleteListener(MainPage.this, new OnCompleteListener<QuerySnapshot>() {
+    public void messageCounter(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        final String myUserId = user.getUid();
+        messageCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
+        messageCounterNumber.setTypeface(null, Typeface.BOLD);
+        messageCounterNumber.setTextColor(getResources().getColor(R.color.redError));
+
+        messageCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
+
+        chatNotificationReference = FirebaseFirestore.getInstance();
+
+        CollectionReference getNumberNotification = chatNotificationReference.collection("NotificationChat").document(myUserId).collection("notif-id");
+
+        com.google.firebase.firestore.Query query = getNumberNotification.whereEqualTo("seen", false);
+
+        query.addSnapshotListener(MainPage.this, new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-                int number = querySnapshot.getResult().size();
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                int number = documentSnapshots.getDocuments().size();
 
                 if (number == 0) {
-                    notificationCounterNumber.setText("");
+                    messageCounterNumber.setText("");
 //                    ShortcutBadger.removeCount(MainPage.this);
 
 
                 } else {
-                    notificationCounterNumber.setText("" + number);
+                    messageCounterNumber.setText(" " + String.valueOf(number));
 //                    startService(
 //                            new Intent(MainPage.this, BadgeServices.class).putExtra("badgeCount", number)
 //                    );
                 }
             }
-
-        });*/
-
-//        Intent intent = new Intent(Intent.ACTION_MAIN);
-//        intent.addCategory(Intent.CATEGORY_HOME);
-//        ResolveInfo resolveInfo = getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
-//        String currentHomePackage = resolveInfo.activityInfo.packageName;
-
-
+        });
     }
-
 
     @Override
     protected void onResume() {
