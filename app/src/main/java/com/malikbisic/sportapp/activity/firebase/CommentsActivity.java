@@ -588,12 +588,12 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             }
 
         };
-        populate.startListening();
-        populate.notifyDataSetChanged();
+
 
         comments.setAdapter(populate);
 
-
+        populate.startListening();
+        populate.notifyDataSetChanged();
 
 
 

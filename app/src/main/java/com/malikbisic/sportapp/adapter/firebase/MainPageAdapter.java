@@ -427,7 +427,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                         @Override
                                         public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
-                                            if (documentSnapshots.exists()) {
+                                            if (dataSnapshot.exists()) {
 
                                                 String userpostUID = dataSnapshot.getString("uid");
 
