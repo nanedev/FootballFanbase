@@ -1026,6 +1026,12 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         TextView timeAgoTextView;
 
+
+        TextView systemTextHeader;
+        ImageView systemImage;
+        TextView systemDate;
+        RelativeLayout systemParentLayout;
+
         public PostViewHolder(View itemView) {
             super(itemView);
 
@@ -1069,6 +1075,12 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             comments = (TextView) mView.findViewById(R.id.comments_textview);
             numberComments = (TextView) mView.findViewById(R.id.number_comments);
             timeAgoTextView = (TextView) mView.findViewById(R.id.postAgoTime);
+
+
+            systemTextHeader = (TextView) mView.findViewById(R.id.textSystem);
+            systemImage = (ImageView) mView.findViewById(R.id.imagesystem);
+            systemParentLayout = (RelativeLayout) mView.findViewById(R.id.systemParentLayout);
+            systemDate = (TextView) mView.findViewById(R.id.datetext);
 
 
         }
@@ -1399,6 +1411,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             }
 
         }
+
+
 
     }
 

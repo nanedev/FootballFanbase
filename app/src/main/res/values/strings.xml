@@ -83,4 +83,9 @@
     <string name="usersentText">%1$s: %2$s</string>
     <string name="usersentaudioFile">%1$s sent audio file</string>
     <string name="usersentGallery">%1$s have %2$d photos</string>
+
+
+    <string name="football_fanbase_system_post">
+       <i> ©FootballFanbase </i>
+    </string>
 </resources>

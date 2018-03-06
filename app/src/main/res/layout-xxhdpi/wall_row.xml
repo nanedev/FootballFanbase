@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/shpe_for_grid_from_user"
-        android:padding="1dp">
+        android:padding="1dp"
+        android:visibility="gone">
 
         <RelativeLayout
             android:id="@+id/picture_and_username"
@@ -407,6 +408,131 @@
 
 
     </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/systemParentLayout"
+        android:background="@drawable/message_shape_to">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/header"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/footballfanabsetext"
+                android:text="@string/football_fanbase_system_post"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/datetext"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/primary"
+                android:text="11.11.1111"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/dividerheader"
+            android:layout_below="@+id/header"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_below="@+id/dividerheader"
+            android:id="@+id/layoutfortextsystem">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textSystem"
+                android:textColor="@color/black"/>
+
+        </RelativeLayout>
+
+
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="300dp"
+           android:id="@+id/layoutifimage"
+           android:layout_below="@+id/layoutfortextsystem">
+
+
+           <ImageView
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:id="@+id/imagesystem"
+               android:layout_centerVertical="true"/>
+
+
+       </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/footerdivider"
+            android:background="@color/primary"
+            android:layout_below="@+id/layoutifimage"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layoutforsystemlikesdislikes"
+            android:padding="5dp"
+            android:layout_below="@+id/footerdivider">
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/likessystem"
+                    android:text="Likes"
+                    android:textColor="@color/primary"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dilsikessystem"
+                    android:text="Dislieks"
+                    android:layout_toRightOf="@+id/likessystem"
+                    android:layout_toEndOf="@+id/likessystem"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/primary"
+                    android:layout_marginStart="10dp"/>
+            </RelativeLayout>
+
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>
