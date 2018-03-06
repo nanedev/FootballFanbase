@@ -114,13 +114,11 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
             }
         };
 
-        final Query query = getCommentRef;
+        final Query query = getCommentRef.orderBy("timestamp", Query.Direction.DESCENDING);
 
         commentsInComments.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        linearLayoutManager.setStackFromEnd(true);
-        linearLayoutManager.setReverseLayout(true);
         commentsInComments.setLayoutManager(linearLayoutManager);
         sendComment.setOnClickListener(this);
 
@@ -182,7 +180,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
 
                                             DocumentReference profileInfo = profileUsers.collection("Users").document(uid);
 
-                                            profileInfo.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                            profileInfo.addSnapshotListener(CommentsInComments.this,new EventListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
@@ -202,7 +200,7 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
                 });
 
                 final FirebaseFirestore commentsUsers = FirebaseFirestore.getInstance();
-                commentsUsers.collection("CommentsInComments").document(key).collection("reply-id").document(post_key_comments).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                commentsUsers.collection("CommentsInComments").document(key).collection("reply-id").document(post_key_comments).addSnapshotListener(CommentsInComments.this,new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(DocumentSnapshot querySnapshot, FirebaseFirestoreException e) {
 
@@ -269,10 +267,11 @@ public class CommentsInComments extends AppCompatActivity implements View.OnClic
             commentsMap.put("profileImage", profileImage);
             commentsMap.put("username", username);
             commentsMap.put("uid", auth.getCurrentUser().getUid());
+            commentsMap.put("timestamp",FieldValue.serverTimestamp());
             post_comment.add(commentsMap);
 
             FirebaseFirestore getIduserpost = FirebaseFirestore.getInstance();
-            getIduserpost.collection("Comments").document(keyPost).collection("comment-id").document(key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            getIduserpost.collection("Comments").document(keyPost).collection("comment-id").document(key).addSnapshotListener(CommentsInComments.this,new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 

@@ -75,7 +75,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     FirebaseFirestore likesReference, dislikeReference;
     boolean like_process = false;
     boolean dislike_process = false;
-
+    LinearLayoutManager linearLayoutManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,13 +135,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
             }
         };
-        final Query query = getCommentRef;
+        final Query query = getCommentRef.orderBy("time", Query.Direction.DESCENDING);
 
         comments.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+    linearLayoutManager  = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        linearLayoutManager.setStackFromEnd(true);
-        linearLayoutManager.setReverseLayout(true);
         comments.setLayoutManager(linearLayoutManager);
 
         sendComment.setOnClickListener(this);
@@ -151,7 +149,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 .build();
 
 
-        FirestoreRecyclerAdapter populate = new FirestoreRecyclerAdapter<Comments, CommentsActivity.CommentsViewHolder>(response) {
+        final FirestoreRecyclerAdapter populate = new FirestoreRecyclerAdapter<Comments, CommentsActivity.CommentsViewHolder>(response) {
             @Override
             public CommentsActivity.CommentsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comments_wall, parent, false);
@@ -178,7 +176,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                         final String username = viewHolder.usernameTxt.getText().toString().trim();
                         Log.i("username", username);
 
-                        profileUsers.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        profileUsers.collection("Users").addSnapshotListener(CommentsActivity.this,new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
 
@@ -231,7 +229,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 });
 
                 final FirebaseFirestore commentsUsers = FirebaseFirestore.getInstance();
-                commentsUsers.collection("Comments").document(key).collection("comment-id").document(post_key_comments).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                commentsUsers.collection("Comments").document(key).collection("comment-id").document(post_key_comments).addSnapshotListener(CommentsActivity.this,new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(DocumentSnapshot querySnapshot, FirebaseFirestoreException e) {
 
@@ -330,7 +328,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
                         like_process = true;
                         viewHolder.setNumberLikes(post_key_comments, CommentsActivity.this);
-                        likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(uid).addSnapshotListener(CommentsActivity.this,new EventListener<DocumentSnapshot>() {
                             @Override
                             public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
 
@@ -368,7 +366,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
 
                                         CollectionReference getIduserpost = FirebaseFirestore.getInstance().collection("Comments").document(key).collection("comment-id");
-                                        getIduserpost.document(post_key_comments).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        getIduserpost.document(post_key_comments).addSnapshotListener(CommentsActivity.this,new EventListener<DocumentSnapshot>() {
                                             @Override
                                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
@@ -590,9 +588,20 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             }
 
         };
-        comments.setAdapter(populate);
+
+
+      populate.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                if(positionStart == 0) {
+                    linearLayoutManager.scrollToPosition(0);
+                }
+            }
+        });
+
         populate.startListening();
         populate.notifyDataSetChanged();
+        comments.setAdapter(populate);
 
     }
 
@@ -615,10 +624,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             commentsMap.put("profileImage", profileImage);
             commentsMap.put("username", username);
             commentsMap.put("uid", auth.getCurrentUser().getUid());
+            commentsMap.put("time",FieldValue.serverTimestamp());
             post_comment.add(commentsMap);
 
             FirebaseFirestore getIduserpost = FirebaseFirestore.getInstance();
-            getIduserpost.collection("Posting").document(key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            getIduserpost.collection("Posting").document(key).addSnapshotListener(CommentsActivity.this,new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
 
