@@ -341,6 +341,7 @@
                 android:id="@+id/comments_textview"
                 android:text="Comments"
                 android:textColor="#1976d2"
+                android:visibility="gone"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"/>
 

@@ -156,6 +156,7 @@
             android:layout_alignStart="@+id/comment_something_comments"
             android:layout_below="@+id/comment_something_comments"
             android:layout_marginLeft="10dp"
+            android:visibility="gone"
             android:layout_marginStart="10dp"
             android:layout_marginTop="7dp"
             android:textColor="#000" />

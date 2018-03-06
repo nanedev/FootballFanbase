@@ -1131,6 +1131,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                     if (e == null) {
+                        if (documentSnapshots.isEmpty()){
+                            comments.setVisibility(View.GONE);
+                        }
                         int numberOfComments = documentSnapshots.getDocuments().size();
 
 
@@ -1141,9 +1144,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         } else if (numberOfComments == 1) {
 
                             comments.setText("Comment");
+                            comments.setVisibility(View.VISIBLE);
                             numberComments.setText(String.valueOf(numberOfComments));
                         } else {
                             comments.setText("Comments");
+                            comments.setVisibility(View.VISIBLE);
                             numberComments.setText(String.valueOf(numberOfComments));
 
                         }

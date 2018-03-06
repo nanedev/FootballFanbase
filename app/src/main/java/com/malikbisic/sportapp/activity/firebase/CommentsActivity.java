@@ -588,20 +588,14 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             }
 
         };
-
-
-      populate.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                if(positionStart == 0) {
-                    linearLayoutManager.scrollToPosition(0);
-                }
-            }
-        });
-
         populate.startListening();
         populate.notifyDataSetChanged();
+
         comments.setAdapter(populate);
+
+
+
+
 
     }
 
@@ -830,17 +824,24 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                     if (e == null) {
+                        if (documentSnapshots.isEmpty()){
+                            commentsReplyNumber.setVisibility(View.GONE);
+                        }
                         long numberOfComments = documentSnapshots.size();
 
                         if (numberOfComments == 0) {
 
                             commentsReplyNumber.setText("");
+                            commentsReplyNumber.setVisibility(View.GONE);
+
                         } else if (numberOfComments == 1) {
 
                             commentSomething.setText("Reply");
+                            commentsReplyNumber.setVisibility(View.VISIBLE);
                             commentsReplyNumber.setText(String.valueOf(numberOfComments));
                         } else {
                             commentSomething.setText("Replies");
+                            commentsReplyNumber.setVisibility(View.VISIBLE);
                             commentsReplyNumber.setText(String.valueOf(numberOfComments));
 
                         }
