@@ -111,7 +111,7 @@ public class NotificationFragment extends Fragment {
         Log.i("30 days", String.valueOf(d));
         long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS);
         notificationRef = FirebaseFirestore.getInstance();
-        query = notificationRef.collection("Notification").document(uid).collection("notif-id").orderBy("timestamp", Query.Direction.ASCENDING).startAt(d);
+        query = notificationRef.collection("Notification").document(uid).collection("notif-id").orderBy("action").whereGreaterThan("action", "chat").orderBy("timestamp", Query.Direction.ASCENDING).startAt(d);
         deleteExpiredNotification();
 
         return view;

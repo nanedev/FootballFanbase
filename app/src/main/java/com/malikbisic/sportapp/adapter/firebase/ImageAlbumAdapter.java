@@ -349,7 +349,7 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
                                     notifMap.put("timestamp", FieldValue.serverTimestamp());
 
                                     if (!userID.equals(myUID)) {
-                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userID).collection("notif-id");
+                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("NotificationChat").document(userID).collection("notif-id");
                                         notifSet.add(notifMap);
                                     }
                                 }

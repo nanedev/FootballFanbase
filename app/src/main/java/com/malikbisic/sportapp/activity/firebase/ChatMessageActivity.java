@@ -738,7 +738,7 @@ recordStop();
                                     notifMap.put("timestamp", FieldValue.serverTimestamp());
 
                                     if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
-                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(mChatUser).collection("notif-id");
+                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("NotificationChat").document(mChatUser).collection("notif-id");
                                         notifSet.add(notifMap);
                                     }
                                 }
@@ -2161,7 +2161,7 @@ recordStop();
                             notifMap.put("timestamp", FieldValue.serverTimestamp());
 
                             if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
-                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(mChatUser).collection("notif-id");
+                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("NotificationChat").document(mChatUser).collection("notif-id");
                                 notifSet.add(notifMap);
                             }
                         }
