@@ -969,6 +969,17 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             Intent intent = new Intent(MainPage.this, ChatActivity.class);
             startActivity(intent);
 
+            chatNotificationReference.collection("NotificationChat").document(mAuth.getCurrentUser().getUid()).collection("notif-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (DocumentSnapshot snapshot : task.getResult()){
+                        String docID = snapshot.getId();
+
+                        chatNotificationReference.collection("NotificationChat").document(mAuth.getCurrentUser().getUid()).collection("notif-id").document(docID).update("seen", true);
+                    }
+                }
+            });
+
         } else if (id == R.id.nav_football) {
             Intent intent = new Intent(MainPage.this, FootballActivity.class);
             startActivity(intent);

@@ -250,6 +250,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
             ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
+            ((MainPageAdapter.PostViewHolder) holder).setSystemView(ctx);
 
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
@@ -1093,6 +1094,38 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         public void onClick(View view) {
 
 
+        }
+
+        public void setSystemView(final Context context){
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference systemReference = db.collection("Posting").document("systemview");
+            systemReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                    boolean isSystem = documentSnapshot.getBoolean("isSystemView");
+
+                    if (isSystem){
+                        systemParentLayout.setVisibility(View.VISIBLE);
+                        String systemTextString = documentSnapshot.getString("systemText");
+                        String systemImageString = documentSnapshot.getString("systemImage");
+                        Date time = documentSnapshot.getDate("systemTime");
+
+                        Picasso.with(context).load(systemImageString).into(systemImage);
+                        systemTextHeader.setText(systemTextString);
+
+                        PostingTimeAgo getTimeAgo = new PostingTimeAgo();
+                        //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
+                        if (time != null) {
+                            long lastTime = time.getTime();
+                            String lastStringTime = getTimeAgo.getTimeAgo(lastTime, context);
+                            systemDate.setText(lastStringTime);
+                        }
+
+                    } else {
+                        systemParentLayout.setVisibility(View.GONE);
+                    }
+                }
+            });
         }
 
         public void dynamicLinkShare(){
