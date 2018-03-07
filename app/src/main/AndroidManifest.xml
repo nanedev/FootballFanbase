@@ -240,7 +240,8 @@
         <activity
             android:name=".activity.api.LivescoreMatchInfo"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:theme="@style/AppTheme.Dark"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".activity.api.PlayerInfoActivity"
             android:screenOrientation="portrait"
