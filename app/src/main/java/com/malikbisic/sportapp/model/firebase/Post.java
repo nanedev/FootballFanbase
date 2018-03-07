@@ -29,7 +29,7 @@ public class Post {
     private String key;
     String systemImage;
     String systemText;
-    boolean isSystem;
+    boolean isSystemView;
     Date systemTime;
 
 
@@ -60,7 +60,7 @@ public class Post {
         this.time = time;
         this.systemImage = systemImage;
         this.systemText = systemText;
-        this.isSystem = isSystem;
+        this.isSystemView = isSystem;
         this.systemTime = systemTime;
     }
 
@@ -88,12 +88,12 @@ public class Post {
         this.systemText = systemText;
     }
 
-    public boolean isSystem() {
-        return isSystem;
+    public boolean isSystemView() {
+        return isSystemView;
     }
 
-    public void setSystem(boolean system) {
-        isSystem = system;
+    public void setSystemView(boolean systemView) {
+        isSystemView = systemView;
     }
 
     public Date getTime() {

@@ -250,7 +250,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
             ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
-            ((MainPageAdapter.PostViewHolder) holder).setSystemView(model.getSystemText(), model.getSystemImage(), model.isSystem(), model.getSystemTime(), ctx);
+            ((MainPageAdapter.PostViewHolder) holder).setSystemView(model.getSystemText(), model.getSystemImage(), model.isSystemView(), model.getTime(), ctx);
 
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
@@ -1097,11 +1097,15 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         }
 
         public void setSystemView(String text, String image, boolean isSystem, Date time, final Context context){
+
+            Log.i("systemBoolean", String.valueOf(isSystem));
             if (isSystem){
                 systemParentLayout.setVisibility(View.VISIBLE);
 
                 Picasso.with(context).load(image).into(systemImage);
                 systemTextHeader.setText(text);
+                Log.i("systemText", text);
+                Log.i("systemImage", image);
 
                 PostingTimeAgo getTimeAgo = new PostingTimeAgo();
                 //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
