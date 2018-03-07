@@ -27,6 +27,10 @@ public class Post {
     String clubLogo;
     @Exclude
     private String key;
+    String systemImage;
+    String systemText;
+    boolean isSystem;
+    Date systemTime;
 
 
 
@@ -39,7 +43,7 @@ public class Post {
         return (T) this;
     }
 
-    public Post (String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key, Date time) {
+    public Post (String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key, Date time, String systemImage, String systemText, boolean isSystem, Date systemTime) {
         this.username = username;
         this.profileImage = profileImage;
         this.descForAudio = descForAudio;
@@ -54,6 +58,42 @@ public class Post {
         this.clubLogo = clubLogo;
         this.key = key;
         this.time = time;
+        this.systemImage = systemImage;
+        this.systemText = systemText;
+        this.isSystem = isSystem;
+        this.systemTime = systemTime;
+    }
+
+    public Date getSystemTime() {
+        return systemTime;
+    }
+
+    public void setSystemTime(Date systemTime) {
+        this.systemTime = systemTime;
+    }
+
+    public String getSystemImage() {
+        return systemImage;
+    }
+
+    public void setSystemImage(String systemImage) {
+        this.systemImage = systemImage;
+    }
+
+    public String getSystemText() {
+        return systemText;
+    }
+
+    public void setSystemText(String systemText) {
+        this.systemText = systemText;
+    }
+
+    public boolean isSystem() {
+        return isSystem;
+    }
+
+    public void setSystem(boolean system) {
+        isSystem = system;
     }
 
     public Date getTime() {

@@ -250,7 +250,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
             ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
-            ((MainPageAdapter.PostViewHolder) holder).setSystemView(ctx);
+            ((MainPageAdapter.PostViewHolder) holder).setSystemView(model.getSystemText(), model.getSystemImage(), model.isSystem(), model.getSystemTime(), ctx);
 
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
@@ -1096,36 +1096,24 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         }
 
-        public void setSystemView(final Context context){
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference systemReference = db.collection("Posting").document("systemview");
-            systemReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                    boolean isSystem = documentSnapshot.getBoolean("isSystemView");
+        public void setSystemView(String text, String image, boolean isSystem, Date time, final Context context){
+            if (isSystem){
+                systemParentLayout.setVisibility(View.VISIBLE);
 
-                    if (isSystem){
-                        systemParentLayout.setVisibility(View.VISIBLE);
-                        String systemTextString = documentSnapshot.getString("systemText");
-                        String systemImageString = documentSnapshot.getString("systemImage");
-                        Date time = documentSnapshot.getDate("systemTime");
+                Picasso.with(context).load(image).into(systemImage);
+                systemTextHeader.setText(text);
 
-                        Picasso.with(context).load(systemImageString).into(systemImage);
-                        systemTextHeader.setText(systemTextString);
-
-                        PostingTimeAgo getTimeAgo = new PostingTimeAgo();
-                        //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
-                        if (time != null) {
-                            long lastTime = time.getTime();
-                            String lastStringTime = getTimeAgo.getTimeAgo(lastTime, context);
-                            systemDate.setText(lastStringTime);
-                        }
-
-                    } else {
-                        systemParentLayout.setVisibility(View.GONE);
-                    }
+                PostingTimeAgo getTimeAgo = new PostingTimeAgo();
+                //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
+                if (time != null) {
+                    long lastTime = time.getTime();
+                    String lastStringTime = getTimeAgo.getTimeAgo(lastTime, context);
+                    systemDate.setText(lastStringTime);
                 }
-            });
+
+            } else {
+                systemParentLayout.setVisibility(View.GONE);
+            }
         }
 
         public void dynamicLinkShare(){
