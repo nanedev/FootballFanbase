@@ -120,6 +120,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     String post_key;
     private static final int ITEM_VIEW = 0;
     private static final int ITEM_LOADING = 1;
+    private static final int ITEM_HEADER = 2;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
@@ -164,19 +165,15 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     Log.i("paginacijaIsAllLoading", String.valueOf(isAllLoaded));
 
 
-                    if(!isLoading  && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded && lastVisibleItem >= 9)
-                    {
-                        if(onLoadMoreListener != null)
-                        {
+                    if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded && lastVisibleItem >= 9) {
+                        if (onLoadMoreListener != null) {
                             onLoadMoreListener.onLoadMore();
                         }
-                        isLoading =true;
+                        isLoading = true;
                     }
 
                 }
             });
-
-
 
 
         }
@@ -190,7 +187,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
+        if (position == 0) {
+            return ITEM_HEADER;
+        }
         return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
+
     }
 
 
@@ -203,6 +204,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         } else if (viewType == ITEM_LOADING) {
             View v1 = LayoutInflater.from(parent.getContext()).inflate(R.layout.progressbar_item, parent, false);
             return new ProgressViewHolder(v1);
+        } else if (viewType == ITEM_HEADER) {
+            View v2 = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_system_message, parent, false);
+            return new HeadeViewHolder(v2);
         }
 
         return null;
@@ -250,7 +254,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
             ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
-            ((MainPageAdapter.PostViewHolder) holder).setSystemView(model.getSystemText(), model.getSystemImage(), model.isSystemView(), model.getTime(), ctx);
 
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
@@ -263,42 +266,42 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     try {
 
                         ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                               mp.start();
+                                                                                                    @Override
+                                                                                                    public void onPrepared(MediaPlayer mp) {
+                                                                                                        mp.start();
 
-                                ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
+                                                                                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setMax(((MainPageAdapter.PostViewHolder) holder).mPlayer.getDuration());
 
-                                new Timer().scheduleAtFixedRate(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
-                                        ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                            @Override
-                                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                                if (fromUser) {
-                                                    ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
-                                                }
-                                            }
+                                                                                                        new Timer().scheduleAtFixedRate(new TimerTask() {
+                                                                                                            @Override
+                                                                                                            public void run() {
+                                                                                                                ((MainPageAdapter.PostViewHolder) holder).seekBar.setProgress(((MainPageAdapter.PostViewHolder) holder).mPlayer.getCurrentPosition());
+                                                                                                                ((MainPageAdapter.PostViewHolder) holder).seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                                                                                    @Override
+                                                                                                                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                                                                                        if (fromUser) {
+                                                                                                                            ((MainPageAdapter.PostViewHolder) holder).mPlayer.seekTo(progress);
+                                                                                                                        }
+                                                                                                                    }
 
-                                            @Override
-                                            public void onStartTrackingTouch(SeekBar seekBar) {
+                                                                                                                    @Override
+                                                                                                                    public void onStartTrackingTouch(SeekBar seekBar) {
 
-                                            }
+                                                                                                                    }
 
-                                            @Override
-                                            public void onStopTrackingTouch(SeekBar seekBar) {
+                                                                                                                    @Override
+                                                                                                                    public void onStopTrackingTouch(SeekBar seekBar) {
 
-                                            }
-                                        });
-                                    }
-                                }, 0, 100);
+                                                                                                                    }
+                                                                                                                });
+                                                                                                            }
+                                                                                                        }, 0, 100);
 
-                            }}
+                                                                                                    }
+                                                                                                }
 
 
-
-                            );
+                        );
                         ((MainPageAdapter.PostViewHolder) holder).mPlayer.prepareAsync();
 
                         ((MainPageAdapter.PostViewHolder) holder).mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -606,7 +609,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
 
                                         final String[] items = {"Edit post", "Delete post", "Cancel"};
-                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+                                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(activity, R.style.AppTheme_Dark_Dialog);
 
                                         dialog.setItems(items, new DialogInterface.OnClickListener() {
                                             @Override
@@ -650,9 +653,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                             commentRef.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                    if (task.isSuccessful()){
-                                                                        for (DocumentSnapshot snapshots : task.getResult()){
-                                                                        docId    = snapshots.getId();
+                                                                    if (task.isSuccessful()) {
+                                                                        for (DocumentSnapshot snapshots : task.getResult()) {
+                                                                            docId = snapshots.getId();
                                                                             commentRef.collection("Comments").document(post_key).collection("comment-id").document(docId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
                                                                                 public void onSuccess(Void aVoid) {
@@ -660,8 +663,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                                                         @Override
                                                                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                                                                            if (task.isSuccessful()){
-                                                                                                for (DocumentSnapshot snapshot : task.getResult()){
+                                                                                            if (task.isSuccessful()) {
+                                                                                                for (DocumentSnapshot snapshot : task.getResult()) {
                                                                                                     String id = snapshot.getId();
                                                                                                     replyRef.collection("CommentsInComments").document(docId).collection("reply-id").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                         @Override
@@ -681,7 +684,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                                                         @Override
                                                                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                                                                            for (DocumentSnapshot snapshot : task.getResult()){
+                                                                                            for (DocumentSnapshot snapshot : task.getResult()) {
                                                                                                 String likeComId = snapshot.getId();
                                                                                                 likeCommentsRef.collection("LikeComments").document(docId).collection("like-id").document(likeComId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
@@ -698,7 +701,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                                                                         @Override
                                                                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                                                                            for (DocumentSnapshot snapshot : task.getResult()){
+                                                                                            for (DocumentSnapshot snapshot : task.getResult()) {
                                                                                                 String dislikeComId = snapshot.getId();
                                                                                                 dislikeCommentsRef.collection("DislikesComments").document(docId).collection("dislike-id").document(dislikeComId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
@@ -720,7 +723,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                                                                                 }
                                                                             });
-
 
 
                                                                         }
@@ -952,32 +954,31 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 ((ProgressViewHolder) holder).progressBar.setVisibility(
                         View.VISIBLE);
                 ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
-            } else if (!isLoading || isAllLoaded){
+            } else if (!isLoading || isAllLoaded) {
                 ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
             }
 
+        } else if (getViewType == ITEM_HEADER) {
+
+            ((MainPageAdapter.HeadeViewHolder) holder).setSystemView(ctx);
         }
 
     }
 
 
-
-
-
-    public void setOnLoadMore(OnLoadMoreListener onLoadMore)
-    {
+    public void setOnLoadMore(OnLoadMoreListener onLoadMore) {
         onLoadMoreListener = onLoadMore;
     }
 
 
-    public void setIsLoading(boolean param)
-    {
+    public void setIsLoading(boolean param) {
         isLoading = param;
     }
 
-    public void isFullLoaded(boolean param){
+    public void isFullLoaded(boolean param) {
         isAllLoaded = param;
     }
+
     @Override
     public int getItemCount() {
         return postList.size();
@@ -1028,11 +1029,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         TextView timeAgoTextView;
 
 
-        TextView systemTextHeader;
-        ImageView systemImage;
-        TextView systemDate;
-        RelativeLayout systemParentLayout;
-
         public PostViewHolder(View itemView) {
             super(itemView);
 
@@ -1078,12 +1074,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             timeAgoTextView = (TextView) mView.findViewById(R.id.postAgoTime);
 
 
-            systemTextHeader = (TextView) mView.findViewById(R.id.textSystem);
-            systemImage = (ImageView) mView.findViewById(R.id.imagesystem);
-            systemParentLayout = (RelativeLayout) mView.findViewById(R.id.systemParentLayout);
-            systemDate = (TextView) mView.findViewById(R.id.datetext);
-
-
         }
 
         public void checkPremium() {
@@ -1096,31 +1086,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         }
 
-        public void setSystemView(String text, String image, boolean isSystem, Date time, final Context context){
 
-            Log.i("systemBoolean", String.valueOf(isSystem));
-            if (isSystem){
-                systemParentLayout.setVisibility(View.VISIBLE);
-
-                Picasso.with(context).load(image).into(systemImage);
-                systemTextHeader.setText(text);
-                Log.i("systemText", text);
-                Log.i("systemImage", image);
-
-                PostingTimeAgo getTimeAgo = new PostingTimeAgo();
-                //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
-                if (time != null) {
-                    long lastTime = time.getTime();
-                    String lastStringTime = getTimeAgo.getTimeAgo(lastTime, context);
-                    systemDate.setText(lastStringTime);
-                }
-
-            } else {
-                systemParentLayout.setVisibility(View.GONE);
-            }
-        }
-
-        public void dynamicLinkShare(){
+        public void dynamicLinkShare() {
             DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
                     .setLink(Uri.parse("https://footballfanbase.com/"))
                     .setDynamicLinkDomain("https://ac33r.app.goo.gl")
@@ -1168,7 +1135,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                     if (e == null) {
-                        if (documentSnapshots.isEmpty()){
+                        if (documentSnapshots.isEmpty()) {
                             comments.setVisibility(View.GONE);
                         }
                         int numberOfComments = documentSnapshots.getDocuments().size();
@@ -1196,30 +1163,31 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
 
         public void setLikeBtn(final String post_key, Activity activity) {
-            if(!mAuth.getCurrentUser().getUid().isEmpty()){
-            String uid = mAuth.getCurrentUser().getUid();
-            Log.i("uid", uid);
-            final DocumentReference doc = likeReference.collection("Likes").document(post_key).collection("like-id").document(uid);
-            doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+            if (!mAuth.getCurrentUser().getUid().isEmpty()) {
+                String uid = mAuth.getCurrentUser().getUid();
+                Log.i("uid", uid);
+                final DocumentReference doc = likeReference.collection("Likes").document(post_key).collection("like-id").document(uid);
+                doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
-                    if (documentSnapshot.exists()) {
+                        if (documentSnapshot.exists()) {
 
-                        dislike_button.setClickable(false);
-                        like_button.setActivated(true);
-                        Log.i("key like ima ", post_key);
+                            dislike_button.setClickable(false);
+                            like_button.setActivated(true);
+                            Log.i("key like ima ", post_key);
 
 
-                    } else {
-                        dislike_button.setClickable(true);
-                        like_button.setActivated(false);
-                        Log.i("key like nema ", post_key);
+                        } else {
+                            dislike_button.setClickable(true);
+                            like_button.setActivated(false);
+                            Log.i("key like nema ", post_key);
+                        }
+
                     }
-
-                }
-            });
-        }}
+                });
+            }
+        }
 
         public void setNumberDislikes(String post_key, Activity activity) {
 
@@ -1412,7 +1380,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 } catch (Exception e) {
                     Log.e("errorVideo", e.getLocalizedMessage());
                 }
-                    videoView.requestFocus();
+                videoView.requestFocus();
             } else {
                 layoutVideo.setVisibility(View.GONE);
             }
@@ -1438,7 +1406,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         }
 
 
-
     }
 
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {
@@ -1448,5 +1415,58 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             super(v);
             progressBar = (ProgressBar) v.findViewById(R.id.progressBar1);
         }
+    }
+
+    public static class HeadeViewHolder extends RecyclerView.ViewHolder {
+        TextView systemTextHeader;
+        ImageView systemImage;
+        TextView systemDate;
+        RelativeLayout systemParentLayout;
+        View mView;
+
+        public HeadeViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+
+
+            systemTextHeader = (TextView) mView.findViewById(R.id.textSystem);
+            systemImage = (ImageView) mView.findViewById(R.id.imagesystem);
+            systemParentLayout = (RelativeLayout) mView.findViewById(R.id.systemParentLayout);
+            systemDate = (TextView) mView.findViewById(R.id.datetext);
+
+        }
+
+        public void setSystemView(final Context context) {
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference systemReference = db.collection("Posting").document("systemview");
+            systemReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                    boolean isSystem = documentSnapshot.getBoolean("isSystemView");
+
+                    if (isSystem) {
+                        systemParentLayout.setVisibility(View.VISIBLE);
+                        String systemTextString = documentSnapshot.getString("systemText");
+                        String systemImageString = documentSnapshot.getString("systemImage");
+                        Date time = documentSnapshot.getDate("systemTime");
+
+                        Picasso.with(context).load(systemImageString).into(systemImage);
+                        systemTextHeader.setText(systemTextString);
+
+                        PostingTimeAgo getTimeAgo = new PostingTimeAgo();
+                        //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
+                        if (time != null) {
+                            long lastTime = time.getTime();
+                            String lastStringTime = getTimeAgo.getTimeAgo(lastTime, context);
+                            systemDate.setText(lastStringTime);
+                        }
+
+                    } else {
+                        systemParentLayout.setVisibility(View.GONE);
+                        mView.setVisibility(View.GONE);
+                    }
+                }
+            });}
     }
 }

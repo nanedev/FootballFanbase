@@ -1,0 +1,121 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/systemParentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/message_shape_to"
+    android:visibility="visible">
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/footballfanabsetext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/football_fanbase_system_post"
+            android:textColor="@color/primary"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/datetext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="11.11.1111"
+            android:textColor="@color/primary" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/dividerheader"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/header" />
+
+
+    <RelativeLayout
+        android:id="@+id/layoutfortextsystem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dividerheader"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/textSystem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/layoutifimage"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/layoutfortextsystem">
+
+
+        <ImageView
+            android:id="@+id/imagesystem"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true" />
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/footerdivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/layoutifimage"
+        android:background="@color/primary" />
+
+
+    <RelativeLayout
+        android:id="@+id/layoutforsystemlikesdislikes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/footerdivider"
+        android:padding="5dp">
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+
+
+            <TextView
+                android:id="@+id/likessystem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Likes"
+                android:textColor="@color/primary"
+
+                />
+
+            <TextView
+                android:id="@+id/dilsikessystem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/likessystem"
+                android:layout_toRightOf="@+id/likessystem"
+                android:text="Dislieks"
+                android:textColor="@color/primary" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
