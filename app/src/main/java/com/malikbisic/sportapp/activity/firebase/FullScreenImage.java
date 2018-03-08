@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -28,6 +29,8 @@ import com.malikbisic.sportapp.activity.StopAppServices;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 
 public class FullScreenImage extends AppCompatActivity {
     FirebaseFirestore db;
@@ -89,7 +92,7 @@ public class FullScreenImage extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.fullScreenImageView);
         uri = intent.getStringExtra("imageURL");
         imageTitle = intent.getStringExtra("title");
-        Glide.with(this).load(uri).into(image);
+        Glide.with(this).load(uri).diskCacheStrategy(SOURCE).override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL).into(image);
         numberLikesLayout = (RelativeLayout) findViewById(R.id.likeslayout);
         numberDislikesLayout = (RelativeLayout) findViewById(R.id.dislikeslayout);
         numberCommentsLayout = (RelativeLayout) findViewById(R.id.comentslayout);

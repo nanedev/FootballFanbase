@@ -179,6 +179,7 @@
                 android:id="@+id/layout_audio_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:padding="5dp">
 
 
@@ -201,53 +202,59 @@
             <RelativeLayout
                 android:id="@+id/layout_for_audio_player"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/layout_audio_textview"
-                android:background="#b71c1c"
+                android:background="@color/white"
                 android:visibility="visible">
 
-
-                <Button
-                    android:id="@+id/play_button"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_toLeftOf="@+id/pause_button"
-                    android:layout_toStartOf="@+id/pause_button"
-                    android:background="@drawable/ic_play_circle_filled_black_24dp" />
-
-
-                <Button
-                    android:id="@+id/pause_button"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignBaseline="@+id/play_button"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dugmici"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/ic_pause_circle_filled_black_24dp" />
+                    android:padding="5dp">
 
-                <Button
-                    android:id="@+id/stop_button"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignBaseline="@+id/pause_button"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginStart="30dp"
-                    android:layout_toEndOf="@+id/pause_button"
-                    android:layout_toRightOf="@+id/pause_button"
-                    android:background="@drawable/ic_stop_black_24dp" />
+
+                    <Button
+                        android:id="@+id/play_button"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/play_icon" />
+
+
+                    <Button
+                        android:id="@+id/pause_button"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_toRightOf="@+id/play_button"
+                        android:layout_toEndOf="@+id/play_button"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/pause_icon" />
+
+                    <Button
+                        android:id="@+id/stop_button"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/pause_button"
+                        android:layout_toRightOf="@+id/pause_button"
+                        android:background="@drawable/stopicon" />
+
+                </RelativeLayout>
+
+
 
                 <SeekBar
                     android:id="@+id/audio_seek_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="40dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginStart="20dp"
+                    android:layout_below="@+id/dugmici"
+                    android:layout_centerHorizontal="true"
                     android:progressDrawable="@drawable/red_scrubber_progress"
                     android:thumb="@drawable/red_scrubber_control" />
 
@@ -288,7 +295,7 @@
                 <com.malikbisic.sportapp.utils.DynamicImageView
                     android:id="@+id/posted_image"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="300dp"
                     android:layout_below="@+id/layout_for_text_image"
                     android:visibility="visible"
 
@@ -300,9 +307,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
+                android:background="@color/white"
                 android:visibility="visible">
 
-                <TextView
+                <com.rockerhieu.emojicon.EmojiconTextView
                     android:id="@+id/text_for_video"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -310,22 +318,25 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginStart="10dp"
+                    android:lineSpacingExtra="5dp"
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    emojicon:emojiconAlignment="baseline"
+                    emojicon:emojiconSize="20sp" />
             </RelativeLayout>
 
             <FrameLayout
                 android:id="@+id/framelayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="300dp"
                 android:layout_below="@+id/layout_for_video_text"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="10dp">
+
+                >
 
                 <cn.jzvd.JZVideoPlayerStandard
                     android:id="@+id/posted_video"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp" />
+                    android:layout_height="300dp" />
 
 
             </FrameLayout>

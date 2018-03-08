@@ -1338,7 +1338,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         public void setDescForPhoto(String descForPhoto) {
 
             TextView post_desc_for_photo = (TextView) mView.findViewById(R.id.text_for_image);
-
+            layoutPhotoText.setVisibility(View.GONE);
             if (descForPhoto != null) {
                 layoutPhotoText.setVisibility(View.VISIBLE);
                 post_desc_for_photo.setText(descForPhoto);
