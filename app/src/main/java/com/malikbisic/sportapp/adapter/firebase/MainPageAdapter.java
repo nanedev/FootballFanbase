@@ -365,7 +365,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 });*/
 
 
-            ((MainPageAdapter.PostViewHolder) holder).numberofLikes.setOnClickListener(new View.OnClickListener() {
+            ((PostViewHolder) holder).layoutForNumberLikes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent listUsername = new Intent(ctx, Username_Likes_Activity.class);
@@ -375,7 +375,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+            ((PostViewHolder) holder).layoutForNumberDislikes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent listUsername = new Intent(ctx, Username_Dislikes_Activity.class);
@@ -558,7 +558,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     });
                 }
             });
-
+/*
             ((MainPageAdapter.PostViewHolder) holder).comments.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -568,9 +568,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     openCom.putExtra("username", MainPage.usernameInfo);
                     activity.startActivity(openCom);
                 }
-            });
+            });*/
 
-            ((MainPageAdapter.PostViewHolder) holder).numberComments.setOnClickListener(new View.OnClickListener() {
+            ((PostViewHolder) holder).layoutForNumberComments.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent openCom = new Intent(ctx, CommentsActivity.class);
@@ -998,14 +998,19 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         public Button pause_button;
         public SeekBar seekBar;
         public Button stop_button;
+        RelativeLayout likeButtonLayout;
         ImageView like_button;
+        TextView likeBtnTekst;
         ImageView dislike_button;
+        TextView dislikeBtnTekst;
         FirebaseDatabase database;
         FirebaseFirestore likeReference, dislikeReference;
         FirebaseFirestore userReference;
         FirebaseFirestore numberCommentsReference;
         FirebaseAuth mAuth;
+        public RelativeLayout layoutForNumberLikes;
         public TextView numberofLikes;
+        public RelativeLayout layoutForNumberDislikes;
         public TextView numberOfDislikes;
         RelativeLayout layoutPhoto, layoutPhotoText, layoutAudioText, layoutVideoText, single_post_layout;
         FrameLayout layoutVideo;
@@ -1019,6 +1024,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         RelativeLayout backgroundImage;
         ImageView postBackgroundImage;
         CircleImageView post_clubLogo;
+
+        RelativeLayout layoutForNumberComments;
         TextView comments;
         TextView numberComments;
         String logo;
@@ -1048,8 +1055,13 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             progressDialog = new ProgressDialog(mView.getContext());
             seekBar = (SeekBar) mView.findViewById(R.id.audio_seek_bar);
             like_button = (ImageView) mView.findViewById(R.id.like_button);
+            likeBtnTekst = (TextView) mView.findViewById(R.id.likesomething);
+            likeButtonLayout = (RelativeLayout) mView.findViewById(R.id.layoutlajkbuton);
             dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
+            dislikeBtnTekst = (TextView) mView.findViewById(R.id.disliketekst);
             numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
+            layoutForNumberLikes = (RelativeLayout)mView.findViewById(R.id.layoutlikenumber);
+            layoutForNumberDislikes = (RelativeLayout) mView.findViewById(R.id.layoutnumberdislikes);
             numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
             single_post_layout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_post);
 
@@ -1073,6 +1085,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             postBackgroundImage = (ImageView) mView.findViewById(R.id.image_post_background);
             comments = (TextView) mView.findViewById(R.id.comments_textview);
             numberComments = (TextView) mView.findViewById(R.id.number_comments);
+            layoutForNumberComments = (RelativeLayout) mView.findViewById(R.id.layoutcommentsNumber);
             timeAgoTextView = (TextView) mView.findViewById(R.id.postAgoTime);
 
 
@@ -1119,11 +1132,16 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                     if (e == null) {
+                        if (documentSnapshots.isEmpty()){
+                            layoutForNumberLikes.setVisibility(View.GONE);
+                        }
                         numberLikes = documentSnapshots.size();
                         if (numberLikes == 0) {
                             numberofLikes.setText("");
+                            layoutForNumberLikes.setVisibility(View.GONE);
                         } else {
                             numberofLikes.setText(String.valueOf(numberLikes));
+                            layoutForNumberLikes.setVisibility(View.VISIBLE);
                         }
                     }
                 }
@@ -1139,6 +1157,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     if (e == null) {
                         if (documentSnapshots.isEmpty()) {
                             comments.setVisibility(View.GONE);
+                            layoutForNumberComments.setVisibility(View.GONE);
                         }
                         int numberOfComments = documentSnapshots.getDocuments().size();
 
@@ -1147,14 +1166,17 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                             comments.setVisibility(View.GONE);
                             numberComments.setText("");
+                            layoutForNumberComments.setVisibility(View.GONE);
                         } else if (numberOfComments == 1) {
 
                             comments.setText("Comment");
                             comments.setVisibility(View.VISIBLE);
+                            layoutForNumberComments.setVisibility(View.VISIBLE);
                             numberComments.setText(String.valueOf(numberOfComments));
                         } else {
                             comments.setText("Comments");
                             comments.setVisibility(View.VISIBLE);
+                            layoutForNumberComments.setVisibility(View.VISIBLE);
                             numberComments.setText(String.valueOf(numberOfComments));
 
                         }
@@ -1175,14 +1197,26 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                         if (documentSnapshot.exists()) {
 
+
                             dislike_button.setClickable(false);
                             like_button.setActivated(true);
+                            if (like_button.isActivated()){
+
+                                like_button.setImageResource(R.drawable.thumbup);
+                                likeBtnTekst.setText("Liked");
+
+                            }
                             Log.i("key like ima ", post_key);
 
 
                         } else {
                             dislike_button.setClickable(true);
                             like_button.setActivated(false);
+                            if (!like_button.isActivated()){
+                                like_button.setImageResource(R.drawable.thumbupgreen);
+                                likeBtnTekst.setText("Like");
+
+                            }
                             Log.i("key like nema ", post_key);
                         }
 
@@ -1199,13 +1233,18 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                     if (e == null) {
+                        if (documentSnapshots.isEmpty()){
+                            layoutForNumberDislikes.setVisibility(View.GONE);
+                        }
                         numberDislikes = documentSnapshots.getDocuments().size();
 
 
                         if (numberDislikes == 0) {
                             numberOfDislikes.setText("");
+                            layoutForNumberDislikes.setVisibility(View.GONE);
                         } else {
                             numberOfDislikes.setText(String.valueOf(numberDislikes));
+                            layoutForNumberDislikes.setVisibility(View.VISIBLE);
                         }
 
                     }
@@ -1224,11 +1263,21 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     if (documentSnapshot.exists()) {
                         dislike_button.setActivated(true);
                         like_button.setClickable(false);
+
+                        if (dislike_button.isActivated()){
+                            dislike_button.setImageResource(R.drawable.thumbdown);
+                            dislikeBtnTekst.setText("Disliked");
+
+                        }
                         Log.i("key dislike ima ", post_key);
 
                     } else {
                         dislike_button.setActivated(false);
                         like_button.setClickable(true);
+                        if (!dislike_button.isActivated()){
+                            dislike_button.setImageResource(R.drawable.thumbdowngreen);
+                            dislikeBtnTekst.setText("Dislike");
+                        }
                         Log.i("key dislike nema ", post_key);
                     }
                 }
@@ -1326,7 +1375,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         .load(uri)
                         .into(postBackgroundImage);
                 postBackgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                postBackgroundImage.setAlpha(0.4f);
+                postBackgroundImage.setAlpha(0.99f);
             }
         }
 
