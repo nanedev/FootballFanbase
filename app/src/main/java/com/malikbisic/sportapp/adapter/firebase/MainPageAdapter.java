@@ -121,7 +121,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     String post_key;
     private static final int ITEM_VIEW = 0;
     private static final int ITEM_LOADING = 1;
-    private static final int ITEM_HEADER = 2;
+
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
@@ -188,9 +188,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return ITEM_HEADER;
-        }
+
         return postList.get(position) != null ? ITEM_VIEW : ITEM_LOADING;
 
     }
@@ -205,9 +203,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         } else if (viewType == ITEM_LOADING) {
             View v1 = LayoutInflater.from(parent.getContext()).inflate(R.layout.progressbar_item, parent, false);
             return new ProgressViewHolder(v1);
-        } else if (viewType == ITEM_HEADER) {
-            View v2 = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_system_message, parent, false);
-            return new HeadeViewHolder(v2);
         }
 
         return null;
@@ -217,7 +212,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         int getViewType = holder.getItemViewType();
-        final Post model = postList.get(position);
+
 
         postingDatabase = FirebaseFirestore.getInstance();
         notificationReference = FirebaseFirestore.getInstance();//.getReference().child("Notification");
@@ -236,7 +231,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         //DocumentSnapshot refDoc = postingDatabase.collection("Posting").document(model.getKey());
         if (getViewType == ITEM_VIEW) {
-
+            final Post model = postList.get(position);
             final String post_key = model.getKey();
             ((MainPageAdapter.PostViewHolder) holder).setDescForAudio(model.getDescForAudio());
             ((MainPageAdapter.PostViewHolder) holder).setDescForPhoto(model.getDescForPhoto());
@@ -255,6 +250,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
             ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
+            ((MainPageAdapter.PostViewHolder) holder).setSystemView(ctx, model.getSystemText(), model.isSystemView(), model.getSystemImage(), model.getTime());
 
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
@@ -959,10 +955,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
             }
 
-        } else if (getViewType == ITEM_HEADER) {
-
-            ((MainPageAdapter.HeadeViewHolder) holder).setSystemView(ctx);
-
         }
 
     }
@@ -1036,6 +1028,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         int numberDislikes;
 
         TextView timeAgoTextView;
+        TextView systemTextHeader;
+        ImageView systemImage;
+        TextView systemDate;
+        RelativeLayout systemParentLayout;
 
 
         public PostViewHolder(View itemView) {
@@ -1060,7 +1056,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             dislike_button = (ImageView) mView.findViewById(R.id.dislike_button);
             dislikeBtnTekst = (TextView) mView.findViewById(R.id.disliketekst);
             numberofLikes = (TextView) mView.findViewById(R.id.number_of_likes);
-            layoutForNumberLikes = (RelativeLayout)mView.findViewById(R.id.layoutlikenumber);
+            layoutForNumberLikes = (RelativeLayout) mView.findViewById(R.id.layoutlikenumber);
             layoutForNumberDislikes = (RelativeLayout) mView.findViewById(R.id.layoutnumberdislikes);
             numberOfDislikes = (TextView) mView.findViewById(R.id.number_of_dislikes);
             single_post_layout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_post);
@@ -1088,6 +1084,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             layoutForNumberComments = (RelativeLayout) mView.findViewById(R.id.layoutcommentsNumber);
             timeAgoTextView = (TextView) mView.findViewById(R.id.postAgoTime);
 
+            systemTextHeader = (TextView) mView.findViewById(R.id.textSystem);
+            systemImage = (ImageView) mView.findViewById(R.id.imagesystem);
+            systemParentLayout = (RelativeLayout) mView.findViewById(R.id.systemParentLayout);
+            systemDate = (TextView) mView.findViewById(R.id.datetext);
 
         }
 
@@ -1098,6 +1098,33 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         public void onClick(View view) {
 
+
+        }
+
+
+        public void setSystemView(final Context context, String systemTextS, boolean isSystem, String systemImageS, Date time) {
+
+
+            if (isSystem) {
+                systemParentLayout.setVisibility(View.VISIBLE);
+
+
+                Picasso.with(context).load(systemImageS).into(systemImage);
+                systemTextHeader.setText(systemTextS);
+
+                PostingTimeAgo getTimeAgo = new PostingTimeAgo();
+                //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
+                if (time != null) {
+                    long lastTime = time.getTime();
+                    String lastStringTime = getTimeAgo.getTimeAgo(lastTime, context);
+                    systemDate.setText(lastStringTime);
+                }
+
+            } else {
+                systemParentLayout.setVisibility(View.GONE);
+
+
+            }
 
         }
 
@@ -1132,7 +1159,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                     if (e == null) {
-                        if (documentSnapshots.isEmpty()){
+                        if (documentSnapshots.isEmpty()) {
                             layoutForNumberLikes.setVisibility(View.GONE);
                         }
                         numberLikes = documentSnapshots.size();
@@ -1200,7 +1227,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                             dislike_button.setClickable(false);
                             like_button.setActivated(true);
-                            if (like_button.isActivated()){
+                            if (like_button.isActivated()) {
 
                                 like_button.setImageResource(R.drawable.thumbup);
                                 likeBtnTekst.setText("Liked");
@@ -1212,7 +1239,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         } else {
                             dislike_button.setClickable(true);
                             like_button.setActivated(false);
-                            if (!like_button.isActivated()){
+                            if (!like_button.isActivated()) {
                                 like_button.setImageResource(R.drawable.thumbupgreen);
                                 likeBtnTekst.setText("Like");
 
@@ -1233,7 +1260,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                     if (e == null) {
-                        if (documentSnapshots.isEmpty()){
+                        if (documentSnapshots.isEmpty()) {
                             layoutForNumberDislikes.setVisibility(View.GONE);
                         }
                         numberDislikes = documentSnapshots.getDocuments().size();
@@ -1264,7 +1291,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         dislike_button.setActivated(true);
                         like_button.setClickable(false);
 
-                        if (dislike_button.isActivated()){
+                        if (dislike_button.isActivated()) {
                             dislike_button.setImageResource(R.drawable.thumbdown);
                             dislikeBtnTekst.setText("Disliked");
 
@@ -1274,7 +1301,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     } else {
                         dislike_button.setActivated(false);
                         like_button.setClickable(true);
-                        if (!dislike_button.isActivated()){
+                        if (!dislike_button.isActivated()) {
                             dislike_button.setImageResource(R.drawable.thumbdowngreen);
                             dislikeBtnTekst.setText("Dislike");
                         }
@@ -1468,60 +1495,4 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public static class HeadeViewHolder extends RecyclerView.ViewHolder {
-        TextView systemTextHeader;
-        ImageView systemImage;
-        TextView systemDate;
-        RelativeLayout systemParentLayout;
-        View mView;
-
-        public HeadeViewHolder(View itemView) {
-            super(itemView);
-            mView = itemView;
-
-
-            systemTextHeader = (TextView) mView.findViewById(R.id.textSystem);
-            systemImage = (ImageView) mView.findViewById(R.id.imagesystem);
-            systemParentLayout = (RelativeLayout) mView.findViewById(R.id.systemParentLayout);
-            systemDate = (TextView) mView.findViewById(R.id.datetext);
-
-        }
-
-        public void setSystemView(final Context context) {
-
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference systemReference = db.collection("Posting").document("systemview");
-            systemReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                    boolean isSystem = documentSnapshot.getBoolean("isSystemView");
-
-                    if (isSystem) {
-                        systemParentLayout.setVisibility(View.VISIBLE);
-
-
-                        String systemTextString = documentSnapshot.getString("systemText");
-                        String systemImageString = documentSnapshot.getString("systemImage");
-                        Date time = documentSnapshot.getDate("systemTime");
-
-                        Picasso.with(context).load(systemImageString).into(systemImage);
-                        systemTextHeader.setText(systemTextString);
-
-                        PostingTimeAgo getTimeAgo = new PostingTimeAgo();
-                        //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
-                        if (time != null) {
-                            long lastTime = time.getTime();
-                            String lastStringTime = getTimeAgo.getTimeAgo(lastTime, context);
-                            systemDate.setText(lastStringTime);
-                        }
-
-                    } else {
-                        systemParentLayout.setVisibility(View.GONE);
-
-
-                    }
-
-                }
-            });}
-    }
 }
