@@ -1488,7 +1488,6 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         }
 
         public void setSystemView(final Context context) {
-            final RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)itemView.getLayoutParams();
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference systemReference = db.collection("Posting").document("systemview");
@@ -1499,9 +1498,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                     if (isSystem) {
                         systemParentLayout.setVisibility(View.VISIBLE);
-                        param.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                        param.width = LinearLayout.LayoutParams.MATCH_PARENT;
-                        mView.setVisibility(View.VISIBLE);
+
+
                         String systemTextString = documentSnapshot.getString("systemText");
                         String systemImageString = documentSnapshot.getString("systemImage");
                         Date time = documentSnapshot.getDate("systemTime");
@@ -1519,12 +1517,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                     } else {
                         systemParentLayout.setVisibility(View.GONE);
-                        mView.setVisibility(View.GONE);
-                        param.height = 0;
-                        param.width = 0;
-                    }
 
-                    mView.setLayoutParams(param);
+
+                    }
 
                 }
             });}
