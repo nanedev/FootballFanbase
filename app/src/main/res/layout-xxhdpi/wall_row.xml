@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
+
         >
 
         <RelativeLayout
@@ -26,23 +27,20 @@
                 android:id="@+id/down_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-              android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-               android:layout_margin="10dp"
-                android:src="@drawable/drowpdown"
+                android:layout_alignParentTop="true"
                 android:layout_centerVertical="true"
-                />
+                android:layout_margin="10dp"
+                android:src="@drawable/drowpdown" />
 
             <RelativeLayout
+                android:id="@+id/downarowshareclubcountrylayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/downarowshareclubcountrylayout"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:padding="10dp">
-
-
 
 
                 <ImageView
@@ -50,45 +48,43 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/sharee"
-                    android:layout_toRightOf="@+id/image_post_background"
-                    android:layout_toEndOf="@+id/image_post_background"
                     android:layout_marginLeft="5dp"
-                    android:layout_marginStart="5dp"/>
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/image_post_background"
+                    android:layout_toRightOf="@+id/image_post_background"
+                    android:src="@drawable/sharee" />
 
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/clubLogoPost"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/premiumiconinpost"
+                    android:layout_toRightOf="@+id/premiumiconinpost"
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/clubLogoPost"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/premiumiconinpost"
-                        android:layout_toEndOf="@+id/premiumiconinpost"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginStart="5dp"
-
-                      />
+                    />
 
 
                 <ImageView
                     android:id="@+id/premiumiconinpost"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/premium"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/premium" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/image_post_background"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/clubLogoPost"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_toEndOf="@+id/clubLogoPost"
-                        android:scaleType="centerCrop" />
-
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/image_post_background"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/clubLogoPost"
+                    android:layout_toRightOf="@+id/clubLogoPost"
+                    android:scaleType="centerCrop" />
 
 
             </RelativeLayout>
@@ -101,7 +97,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/downarowshareclubcountrylayout"
-               android:padding="5dp">
+                android:padding="5dp">
 
 
                 <RelativeLayout
@@ -114,8 +110,8 @@
                         android:id="@+id/profile_image_wall"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:layout_marginStart="10dp"
                         android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
 
                         />
 
@@ -135,8 +131,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Username"
-                            android:textSize="18sp"
                             android:textColor="#000000"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -155,15 +151,10 @@
                     </RelativeLayout>
 
 
-
                 </RelativeLayout>
 
 
             </RelativeLayout>
-
-
-
-
 
 
         </RelativeLayout>
@@ -208,9 +199,9 @@
                 android:visibility="visible">
 
                 <RelativeLayout
+                    android:id="@+id/dugmici"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/dugmici"
                     android:layout_centerHorizontal="true"
                     android:padding="5dp">
 
@@ -227,18 +218,18 @@
                         android:id="@+id/pause_button"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_toRightOf="@+id/play_button"
-                        android:layout_toEndOf="@+id/play_button"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_marginStart="10dp"
-                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/play_button"
+                        android:layout_toRightOf="@+id/play_button"
                         android:background="@drawable/pause_icon" />
 
                     <Button
                         android:id="@+id/stop_button"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                      android:layout_centerVertical="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_marginStart="10dp"
                         android:layout_toEndOf="@+id/pause_button"
@@ -246,7 +237,6 @@
                         android:background="@drawable/stopicon" />
 
                 </RelativeLayout>
-
 
 
                 <SeekBar
@@ -265,8 +255,8 @@
                 android:id="@+id/layout_for_text_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:background="@color/white"
+                android:padding="5dp"
                 android:visibility="visible">
 
                 <com.rockerhieu.emojicon.EmojiconTextView
@@ -289,8 +279,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_for_text_image"
-                android:visibility="gone"
-                >
+                android:visibility="gone">
 
                 <com.malikbisic.sportapp.utils.DynamicImageView
                     android:id="@+id/posted_image"
@@ -306,8 +295,8 @@
                 android:id="@+id/layout_for_video_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:background="@color/white"
+                android:padding="5dp"
                 android:visibility="visible">
 
                 <com.rockerhieu.emojicon.EmojiconTextView
@@ -331,7 +320,7 @@
                 android:layout_height="300dp"
                 android:layout_below="@+id/layout_for_video_text"
 
-          >
+                >
 
                 <cn.jzvd.JZVideoPlayerStandard
                     android:id="@+id/posted_video"
@@ -451,22 +440,22 @@
                     android:layout_centerVertical="true">
 
 
-
                     <TextView
                         android:id="@+id/number_comments"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:textColor="@color/primary" />
+
                     <TextView
                         android:id="@+id/comments_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="comments"
                         android:layout_marginLeft="5dp"
                         android:layout_marginStart="5dp"
-                        android:layout_toRightOf="@+id/number_comments"
                         android:layout_toEndOf="@+id/number_comments"
+                        android:layout_toRightOf="@+id/number_comments"
+                        android:text="comments"
                         android:textColor="@color/primary"
                         android:visibility="gone" />
 
@@ -479,12 +468,12 @@
                 android:id="@+id/dividerforlikesdislkes"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="5dp"
                 android:layout_below="@+id/layoutForNumberLikesDislikes"
                 android:layout_marginEnd="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
                 android:background="@color/primary" />
 
             <RelativeLayout
@@ -545,8 +534,8 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="5dp"
                         android:layout_marginStart="5dp"
-                        android:layout_toRightOf="@+id/dislike_button"
                         android:layout_toEndOf="@+id/dislike_button"
+                        android:layout_toRightOf="@+id/dislike_button"
                         android:text="Dislike"
                         android:textColor="@color/primary" />
 
@@ -600,7 +589,7 @@
         android:id="@+id/systemParentLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/message_shape_to"
+        android:background="@color/white"
         android:visibility="gone">
 
         <RelativeLayout
@@ -613,7 +602,7 @@
                 android:id="@+id/footballfanabsetext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+
                 android:text="@string/football_fanbase_system_post"
                 android:textColor="@color/primary"
                 android:textStyle="bold" />
@@ -622,11 +611,10 @@
                 android:id="@+id/datetext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
+                android:layout_below="@+id/footballfanabsetext"
+
                 android:text="11.11.1111"
-                android:textColor="@color/primary" />
+                android:textColor="#bdbdbd" />
 
         </RelativeLayout>
 
@@ -648,68 +636,97 @@
                 android:id="@+id/textSystem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
-
         <RelativeLayout
-            android:id="@+id/layoutifimage"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_below="@+id/layoutfortextsystem">
-
-
-            <ImageView
-                android:id="@+id/imagesystem"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true" />
-
-
-        </RelativeLayout>
-
-        <View
-            android:id="@+id/footerdivider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/layoutifimage"
-            android:background="@color/primary" />
-
-
-        <RelativeLayout
-            android:id="@+id/layoutforsystemlikesdislikes"
+            android:id="@+id/layoutifimageifquestionpool"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/footerdivider"
+            android:layout_below="@+id/layoutfortextsystem">
+
+            <RelativeLayout
+                android:id="@+id/layoutifimage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutfortextsystem">
+
+
+                <ImageView
+                    android:id="@+id/imagesystem"
+                    android:layout_width="match_parent"
+                    android:layout_height="600dp"
+                    android:layout_centerVertical="true" />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/systemlayoutnumbercomments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layoutifimageifquestionpool"
+            android:layout_marginTop="10dp"
             android:padding="5dp">
+
+            <RelativeLayout
+                android:id="@+id/systemNumberCommentsLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/systemNumberComments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/primary" />
+
+
+                <TextView
+                    android:id="@+id/systemcomments_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/systemNumberComments"
+                    android:layout_toRightOf="@+id/systemNumberComments"
+                    android:text="comments"
+                    android:textColor="@color/primary"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true">
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+                    android:id="@+id/systemcommentimage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/commentsgreen" />
 
 
                 <TextView
-                    android:id="@+id/likessystem"
+                    android:id="@+id/systemcomment_something"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Likes"
-                    android:textColor="@color/primary"
-
-                    />
-
-                <TextView
-                    android:id="@+id/dilsikessystem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@+id/likessystem"
-                    android:layout_toRightOf="@+id/likessystem"
-                    android:text="Dislikes"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/systemcommentimage"
+                    android:layout_toRightOf="@+id/systemcommentimage"
+                    android:text="Comment"
                     android:textColor="@color/primary" />
+
             </RelativeLayout>
 
 

@@ -37,6 +37,7 @@ import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -84,6 +85,8 @@ import java.util.TimerTask;
 
 import cn.jzvd.JZVideoPlayerStandard;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.SOURCE;
 
 
 /**
@@ -250,6 +253,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
             ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
+
             ((MainPageAdapter.PostViewHolder) holder).setSystemView(ctx, model.getSystemText(), model.isSystemView(), model.getSystemImage(), model.getTime());
 
 
@@ -584,6 +588,18 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
                     Intent openCom = new Intent(ctx, CommentsActivity.class);
                     openCom.putExtra("keyComment", post_key);
+                    openCom.putExtra("profileComment", MainPage.profielImage);
+                    openCom.putExtra("username", MainPage.usernameInfo);
+                    activity.startActivity(openCom);
+                }
+            });
+
+            ((PostViewHolder) holder).systemCommentSomething.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Intent openCom = new Intent(ctx, CommentsActivity.class);
+                    openCom.putExtra("keyCommentsystem", post_key);
                     openCom.putExtra("profileComment", MainPage.profielImage);
                     openCom.putExtra("username", MainPage.usernameInfo);
                     activity.startActivity(openCom);
@@ -1032,7 +1048,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         ImageView systemImage;
         TextView systemDate;
         RelativeLayout systemParentLayout;
-
+        TextView systemCommentSomething;
+        TextView systemNumberComments;
+TextView systemCommentsTextview;
+RelativeLayout systemNumberCommentsLayout;
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -1088,6 +1107,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             systemImage = (ImageView) mView.findViewById(R.id.imagesystem);
             systemParentLayout = (RelativeLayout) mView.findViewById(R.id.systemParentLayout);
             systemDate = (TextView) mView.findViewById(R.id.datetext);
+            systemCommentSomething = (TextView) mView.findViewById(R.id.systemcomment_something);
+            systemCommentsTextview = (TextView) mView.findViewById(R.id.systemcomments_textview);
+            systemNumberCommentsLayout = (RelativeLayout)mView.findViewById(R.id.systemNumberCommentsLayout);
 
         }
 
@@ -1109,7 +1131,13 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 systemParentLayout.setVisibility(View.VISIBLE);
 
 
-                Picasso.with(context).load(systemImageS).into(systemImage);
+                Picasso
+                        .with(context)
+                        .load(systemImageS)
+                        .fit()
+                        .centerCrop()
+                        // call .centerInside() or .centerCrop() to avoid a stretched image
+                        .into(systemImage);
                 systemTextHeader.setText(systemTextS);
 
                 PostingTimeAgo getTimeAgo = new PostingTimeAgo();
@@ -1120,11 +1148,15 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     systemDate.setText(lastStringTime);
                 }
 
+
+
             } else {
                 systemParentLayout.setVisibility(View.GONE);
 
 
             }
+
+
 
         }
 
@@ -1205,6 +1237,43 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                             comments.setVisibility(View.VISIBLE);
                             layoutForNumberComments.setVisibility(View.VISIBLE);
                             numberComments.setText(String.valueOf(numberOfComments));
+
+                        }
+                    }
+                }
+            });
+        }
+
+        public void setSystemNumberComments(String post_key, Activity activity) {
+            numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                    if (e == null) {
+                        if (documentSnapshots.isEmpty()) {
+                            systemCommentsTextview.setVisibility(View.GONE);
+                            systemNumberCommentsLayout.setVisibility(View.GONE);
+
+                        }
+                        int numberOfComments = documentSnapshots.getDocuments().size();
+
+
+                        if (numberOfComments == 0) {
+
+                            systemCommentsTextview.setVisibility(View.GONE);
+                            systemNumberComments.setText("");
+                            systemNumberCommentsLayout.setVisibility(View.GONE);
+                        } else if (numberOfComments == 1) {
+
+                            systemCommentsTextview.setText("Comment");
+                            systemCommentsTextview.setVisibility(View.VISIBLE);
+                            systemNumberCommentsLayout.setVisibility(View.VISIBLE);
+                            systemNumberComments.setText(String.valueOf(numberOfComments));
+                        } else {
+                            systemCommentsTextview.setText("Comments");
+                            systemCommentsTextview.setVisibility(View.VISIBLE);
+                            systemNumberCommentsLayout.setVisibility(View.VISIBLE);
+                            systemNumberComments.setText(String.valueOf(numberOfComments));
 
                         }
                     }
