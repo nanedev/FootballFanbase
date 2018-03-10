@@ -3,6 +3,7 @@ package com.malikbisic.sportapp.activity.firebase;
 import android.annotation.SuppressLint;
 import android.app.*;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -47,6 +48,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.caverock.androidsvg.SVG;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -857,7 +859,32 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.executePendingTransactions();
         if (fragmentManager.getBackStackEntryCount() < 1) {
-            super.onBackPressed();
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(MainPage.this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(MainPage.this);
+            }
+            builder.setTitle("")
+                    .setMessage("Are you sure you want to logout?")
+                    .setPositiveButton("    Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mAuth.signOut();
+                            LoginManager.getInstance().logOut();
+                            mUsers.child("online").setValue(ServerValue.TIMESTAMP);
+                            Intent goToLogin = new Intent(MainPage.this, LoginActivity.class);
+                            goToLogin.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(goToLogin);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         } else {
             fragmentManager.executePendingTransactions();
             fragmentManager.popBackStack();

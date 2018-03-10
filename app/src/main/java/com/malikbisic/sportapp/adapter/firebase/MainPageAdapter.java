@@ -255,7 +255,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
 
             ((MainPageAdapter.PostViewHolder) holder).setSystemView(ctx, model.getSystemText(), model.isSystemView(), model.getSystemImage(), model.getTime());
-
+            //((MainPageAdapter.PostViewHolder) holder).setSystemNumberComments(post_key, activity);
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
             ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
@@ -599,9 +599,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 public void onClick(View view) {
 
                     Intent openCom = new Intent(ctx, CommentsActivity.class);
-                    openCom.putExtra("keyCommentsystem", post_key);
+                    openCom.putExtra("keyComment", post_key);
                     openCom.putExtra("profileComment", MainPage.profielImage);
                     openCom.putExtra("username", MainPage.usernameInfo);
+                    openCom.putExtra("isCommentSystem", true);
                     activity.startActivity(openCom);
                 }
             });
@@ -1050,8 +1051,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         RelativeLayout systemParentLayout;
         TextView systemCommentSomething;
         TextView systemNumberComments;
-TextView systemCommentsTextview;
-RelativeLayout systemNumberCommentsLayout;
+        TextView systemCommentsTextview;
+        RelativeLayout systemNumberCommentsLayout;
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -1109,7 +1110,7 @@ RelativeLayout systemNumberCommentsLayout;
             systemDate = (TextView) mView.findViewById(R.id.datetext);
             systemCommentSomething = (TextView) mView.findViewById(R.id.systemcomment_something);
             systemCommentsTextview = (TextView) mView.findViewById(R.id.systemcomments_textview);
-            systemNumberCommentsLayout = (RelativeLayout)mView.findViewById(R.id.systemNumberCommentsLayout);
+            systemNumberCommentsLayout = (RelativeLayout) mView.findViewById(R.id.systemNumberCommentsLayout);
 
         }
 
@@ -1149,13 +1150,11 @@ RelativeLayout systemNumberCommentsLayout;
                 }
 
 
-
             } else {
                 systemParentLayout.setVisibility(View.GONE);
 
 
             }
-
 
 
         }

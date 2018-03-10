@@ -397,4 +397,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent backToLogin = new Intent(RegisterActivity.this, LoginActivity.class);
+        startActivity(backToLogin);
+        finish();
+    }
 }

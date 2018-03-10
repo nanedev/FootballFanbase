@@ -75,6 +75,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     FirebaseFirestore likesReference, dislikeReference;
     boolean like_process = false;
     boolean dislike_process = false;
+    boolean isSystemComment;
     LinearLayoutManager linearLayoutManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         username = myIntent.getStringExtra("username");
         profileUsers = FirebaseFirestore.getInstance();
         postingDatabase = profileUsers.collection("Posting");
+        isSystemComment = myIntent.getBooleanExtra("isCommentSystem", false);
         //     notificationReference = mReference.collection("Notification");
         replyRef = FirebaseFirestore.getInstance();
         likesReference = FirebaseFirestore.getInstance();
@@ -637,9 +639,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                         notifMap.put("whatIS", "post");
                         notifMap.put("post_key", key);
                         notifMap.put("timestamp", FieldValue.serverTimestamp());
-                        if (!userpostUID.equals(auth.getCurrentUser().getUid())) {
-                            CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                            notifSet.add(notifMap);
+                        if (!isSystemComment) {
+                            if (!userpostUID.equals(auth.getCurrentUser().getUid())) {
+                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                                notifSet.add(notifMap);
+                            }
                         }
                     }
 

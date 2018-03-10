@@ -130,6 +130,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mReferenceUsers.collection("Users");
         //mReferenceUsers.keepSynced(true);
 
+
+        mEmailText.setFocusableInTouchMode(true);
+        mPasswordText.setFocusableInTouchMode(true);
+        mEmailText.clearFocus();
+        mPasswordText.clearFocus();
         mAuth = FirebaseAuth.getInstance();
 
         //FACEBOOK SIGN IN
@@ -727,5 +732,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent closeApp = new Intent(Intent.ACTION_MAIN);
+        closeApp.addCategory(Intent.CATEGORY_HOME);
+        closeApp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(closeApp);
+        finish();
+        System.exit(0);
     }
 }
