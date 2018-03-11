@@ -138,6 +138,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     FirebaseFirestore likeCommentsRef;
     FirebaseFirestore dislikeCommentsRef;
 
+    private static int firstVisibleInListview;
 
     public MainPageAdapter(final List<Post> postList, Context ctx, Activity activity, RecyclerView recyclerView, String key) {
         this.postList = postList;
@@ -168,6 +169,14 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     Log.i("paginacijaIsLOADING", String.valueOf(isLoading));
                     Log.i("paginacijaIsAllLoading", String.valueOf(isAllLoaded));
 
+                    int currentFirstVisible = llm.findFirstVisibleItemPosition();
+
+                    if(dy > 0)
+                        Log.i("RecyclerView scrolled: ", "scroll up!");
+                    else
+                        Log.i("RecyclerView scrolled: ", "scroll down!");
+
+                    firstVisibleInListview = currentFirstVisible;
 
                     if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isAllLoaded && lastVisibleItem >= 9) {
                         if (onLoadMoreListener != null) {
@@ -255,7 +264,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
 
             ((MainPageAdapter.PostViewHolder) holder).setSystemView(ctx, model.getSystemText(), model.isSystemView(), model.getSystemImage(), model.getTime());
-            //((MainPageAdapter.PostViewHolder) holder).setSystemNumberComments(post_key, activity);
+            ((MainPageAdapter.PostViewHolder) holder).setSystemNumberComments(post_key, activity);
 
             ((MainPageAdapter.PostViewHolder) holder).seekBar.setEnabled(true);
             ((MainPageAdapter.PostViewHolder) holder).play_button.setOnClickListener(new View.OnClickListener() {
@@ -1111,6 +1120,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             systemCommentSomething = (TextView) mView.findViewById(R.id.systemcomment_something);
             systemCommentsTextview = (TextView) mView.findViewById(R.id.systemcomments_textview);
             systemNumberCommentsLayout = (RelativeLayout) mView.findViewById(R.id.systemNumberCommentsLayout);
+            systemNumberComments = (TextView) mView.findViewById(R.id.systemNumberComments);
 
         }
 

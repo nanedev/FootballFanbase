@@ -83,6 +83,7 @@ import com.malikbisic.sportapp.adapter.firebase.MainPageAdapter;
 import com.malikbisic.sportapp.classes.FreeUser;
 import com.malikbisic.sportapp.classes.PremiumUsers;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.listener.ScrollListener;
 import com.malikbisic.sportapp.model.firebase.Post;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
 import com.squareup.picasso.Picasso;
@@ -259,6 +260,17 @@ public class MainPage extends AppCompatActivity
         wallList.setAdapter(adapter);
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
         itemSize.clear();
+
+        final RelativeLayout lll = (RelativeLayout) findViewById(R.id.relativeLayout);
+        final RelativeLayout lll22 = (RelativeLayout) findViewById(R.id.rec_view_layout);
+        wallList.addOnScrollListener(new ScrollListener(this) {
+            @Override
+            public void onMoved(int distance) {
+                lll.setTranslationY(-distance*2.7f);
+                //lll22.setTranslationY(-distance*2.7f);
+
+            }
+        });
 
 
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
