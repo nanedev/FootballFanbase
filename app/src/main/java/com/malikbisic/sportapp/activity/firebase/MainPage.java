@@ -222,6 +222,7 @@ public class MainPage extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
 
         Intent closeAPP = new Intent(this, StopAppServices.class);
         startService(closeAPP);
@@ -263,14 +264,7 @@ public class MainPage extends AppCompatActivity
 
         final RelativeLayout lll = (RelativeLayout) findViewById(R.id.relativeLayout);
         final RelativeLayout lll22 = (RelativeLayout) findViewById(R.id.rec_view_layout);
-        wallList.addOnScrollListener(new ScrollListener(this) {
-            @Override
-            public void onMoved(int distance) {
-                lll.setTranslationY(-distance*2.7f);
-                //lll22.setTranslationY(-distance*2.7f);
 
-            }
-        });
 
 
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
