@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
@@ -19,6 +20,8 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
@@ -215,14 +218,18 @@ public class MainPage extends AppCompatActivity
     String lastMonthUpdate = "noData";
     String countryName;
     RelativeLayout captureImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_main_page);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setLogo(R.drawable.refreshicon);
+
+    setSupportActionBar(toolbar);
+getSupportActionBar().setTitle("");
+
 
         Intent closeAPP = new Intent(this, StopAppServices.class);
         startService(closeAPP);
@@ -265,7 +272,52 @@ public class MainPage extends AppCompatActivity
         final RelativeLayout lll = (RelativeLayout) findViewById(R.id.relativeLayout);
         final RelativeLayout lll22 = (RelativeLayout) findViewById(R.id.rec_view_layout);
 
+        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.colapsingtoolbar);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbarmainpage);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
+                if (Math.abs(verticalOffset)-appBarLayout.getTotalScrollRange() == 0)
+                {
+                    //  Collapsed
+                    toolbar.setLogo(R.drawable.refreshbtngreen);
+                    toolbar.setBackgroundColor(Color.parseColor("#ffffff"));
+
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                            MainPage.this, drawer,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                    drawer.addDrawerListener(toggle);
+                    toggle.syncState();
+
+                    getSupportActionBar().setHomeButtonEnabled(true);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    getSupportActionBar().setHomeAsUpIndicator(R.drawable.hamburgericongreen);
+
+                    navigationView= (NavigationView) findViewById(R.id.nav_view);
+                    navigationView.setNavigationItemSelectedListener(MainPage.this);
+                    postText.setVisibility(View.VISIBLE);
+
+
+                }
+                else
+                {
+                    //Expanded
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    toggle = new ActionBarDrawerToggle(
+                            MainPage.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                    drawer.addDrawerListener(toggle);
+                    toggle.syncState();
+
+                    navigationView = (NavigationView) findViewById(R.id.nav_view);
+                    navigationView.setNavigationItemSelectedListener(MainPage.this);
+                    toolbar.setBackgroundColor(Color.parseColor("#33691e"));
+                    toolbar.setLogo(R.drawable.refreshicon);
+                    postText.setVisibility(View.GONE);
+
+                }
+            }
+        });
 
         mUsersReference = FirebaseDatabase.getInstance().getReference().child("Users");
 

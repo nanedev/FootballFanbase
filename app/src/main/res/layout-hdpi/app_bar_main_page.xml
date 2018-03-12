@@ -6,15 +6,20 @@
     android:layout_height="match_parent"
     tools:context="com.malikbisic.sportapp.activity.firebase.MainPage">
 
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:id="@+id/appbarmainpage">
+
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:id="@+id/colapsingtoolbar"
+            >
 
 
             <RelativeLayout
