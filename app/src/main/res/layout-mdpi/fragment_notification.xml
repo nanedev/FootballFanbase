@@ -2,15 +2,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#fff"
     android:fitsSystemWindows="true"
     android:clickable="true"
     tools:context="com.malikbisic.sportapp.fragment.firebase.NotificationFragment">
 
     <!-- TODO: Update blank fragment layout -->
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:id="@+id/appbarnotif">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/noticationToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Read All"
+                android:id="@+id/notification_clear_id_notif"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+
+                />
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/notification_recView" />
+        android:id="@+id/notification_recView"
+        android:layout_below="@+id/appbarnotif"/>
 
 </RelativeLayout>

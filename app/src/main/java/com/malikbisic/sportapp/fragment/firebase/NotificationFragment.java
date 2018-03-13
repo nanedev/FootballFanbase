@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -70,8 +71,9 @@ public class NotificationFragment extends AppCompatActivity {
     String uid;
 
     ArrayList<String> listNotfikey;
+    Toolbar toolbar;
 
-
+TextView clearNotif;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,7 +91,8 @@ public class NotificationFragment extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
-        notificationRecView.setLayoutManager(layoutManager);
+
+
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -101,7 +104,61 @@ public class NotificationFragment extends AppCompatActivity {
 
         FirebaseUser user = auth.getCurrentUser();
         uid = user.getUid();
+        toolbar = (Toolbar) findViewById(R.id.noticationToolbar);
+        setSupportActionBar(toolbar);
+        clearNotif = (TextView) findViewById(R.id.notification_clear_id_notif);
 
+clearNotif.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        final String[] items = {"Mark all as read", "Cancel"};
+        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(NotificationFragment.this,R.style.AppTheme_Dark_Dialog);
+        dialog.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (items[which].equals("Mark all as read")) {
+
+
+                    CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
+                    notif.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                            for (DocumentSnapshot snapshot : task.getResult()) {
+                                String docID = snapshot.getId();
+
+                                DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
+                                        .document(uid).collection("notif-id").document(docID);
+                                docDelete.update("seen", true)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("errorSetSeenAllNotif", e.getLocalizedMessage());
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+
+                } else if (items[which].equals("Cancel")) {
+
+                }
+            }
+
+        });
+        dialog.create();
+        dialog.show();
+
+    }
+});
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -30);
         Date d = c.getTime();
@@ -109,7 +166,7 @@ public class NotificationFragment extends AppCompatActivity {
         Log.i("30 days", String.valueOf(d));
         long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS);
         notificationRef = FirebaseFirestore.getInstance();
-        query = notificationRef.collection("Notification").document(uid).collection("notif-id").orderBy("action").whereGreaterThan("action", "chat").orderBy("timestamp", Query.Direction.ASCENDING).startAt(d);
+        query = notificationRef.collection("Notification").document(uid).collection("notif-id").orderBy("timestamp", Query.Direction.ASCENDING).startAt(d);
         deleteExpiredNotification();
 
     }
@@ -381,7 +438,7 @@ public class NotificationFragment extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.notification_menu, menu);
-        MenuItem post = menu.findItem(R.id.postText);
+        MenuItem post = menu.findItem(R.id.notification_clear_id);
         post.setVisible(false);
         return true;
 
@@ -394,51 +451,6 @@ public class NotificationFragment extends AppCompatActivity {
 
         if (item.getItemId() == R.id.notification_clear_id) {
 
-            final String[] items = {"Mark all as read", "Cancel"};
-            android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(NotificationFragment.this,R.style.AppTheme_Dark_Dialog);
-            dialog.setItems(items, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    if (items[which].equals("Mark all as read")) {
-
-
-                        CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
-                        notif.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                                for (DocumentSnapshot snapshot : task.getResult()) {
-                                    String docID = snapshot.getId();
-
-                                    DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
-                                            .document(uid).collection("notif-id").document(docID);
-                                    docDelete.update("seen", true)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.e("errorSetSeenAllNotif", e.getLocalizedMessage());
-                                        }
-                                    });
-                                }
-
-                            }
-                        });
-
-                    } else if (items[which].equals("Cancel")) {
-
-                    }
-                }
-
-            });
-            dialog.create();
-            dialog.show();
 
 
         }
