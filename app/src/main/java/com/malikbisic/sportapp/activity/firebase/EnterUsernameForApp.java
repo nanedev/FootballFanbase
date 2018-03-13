@@ -495,7 +495,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         Log.i("enter", "google");
 
 
-                    } else if (RegisterActivity.registerPressed) {
+                    } else if (RegisterActivity.registerPressed || LoginActivity.checkLoginPressed) {
 
                         loginEnterDatabase();
                         Log.i("enter", "login");
@@ -575,7 +575,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         userInfoMap.put("favoriteClub", clubName);
                         userInfoMap.put("favoriteClubLogo", clubLogo);
                         userInfoMap.put("userID", uid);
-                        userInfoMap.put("premium", true);
+                        userInfoMap.put("premium", false);
                         userInfoMap.put("premiumDate", todayDateTime);
 
 
@@ -624,7 +624,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
 
                         clubTableFan(downloadUrl.toString());
-                        mDialog.dismiss();
+                        if ((mDialog != null) && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
                     }else   Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
             });
@@ -681,7 +683,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         userInfoMap.put("favoriteClub", clubName);
                         userInfoMap.put("favoriteClubLogo", clubLogo);
                         userInfoMap.put("userID", uid);
-                        userInfoMap.put("premium", true);
+                        userInfoMap.put("premium", false);
                         userInfoMap.put("premiumDate", todayDateTime);
 
 
@@ -859,7 +861,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 userInfoMap.put("favoriteClub", clubName);
                 userInfoMap.put("favoriteClubLogo", clubLogo);
                 userInfoMap.put("userID", uid);
-                userInfoMap.put("premium", true);
+                userInfoMap.put("premium", false);
                 userInfoMap.put("premiumDate", todayDateTime);
 
                 loginViaEmailCollection.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -936,6 +938,15 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if ((mDialog != null) && mDialog.isShowing())
+            mDialog.dismiss();
+        mDialog = null;
     }
 
     @Override

@@ -86,6 +86,8 @@
                     android:ems="10"
                     android:gravity="top"
                     android:hint="Post something"
+                    android:textColorHint="#000000"
+                    android:focusable="true"
                     android:inputType="textMultiLine"
                     android:padding="5dp"
                     android:textColor="@color/black"

@@ -6,7 +6,8 @@
     android:background="#fff"
     android:fitsSystemWindows="true"
     android:clickable="true"
-    tools:context="com.malikbisic.sportapp.fragment.firebase.NotificationFragment">
+    tools:context="com.malikbisic.sportapp.fragment.firebase.NotificationFragment"
+    android:focusable="true">
 
     <!-- TODO: Update blank fragment layout -->
 

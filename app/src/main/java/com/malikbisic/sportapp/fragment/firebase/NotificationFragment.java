@@ -73,7 +73,7 @@ public class NotificationFragment extends AppCompatActivity {
     ArrayList<String> listNotfikey;
     Toolbar toolbar;
 
-TextView clearNotif;
+    TextView clearNotif;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,7 @@ TextView clearNotif;
         // Inflate the layout for this fragment
 
 
-       setContentView(R.layout.fragment_notification);
+        setContentView(R.layout.fragment_notification);
         Intent closeAPP = new Intent(NotificationFragment.this, StopAppServices.class);
         startService(closeAPP);
 
@@ -92,7 +92,7 @@ TextView clearNotif;
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
 
-
+        notificationRecView.setLayoutManager(layoutManager);
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -108,57 +108,57 @@ TextView clearNotif;
         setSupportActionBar(toolbar);
         clearNotif = (TextView) findViewById(R.id.notification_clear_id_notif);
 
-clearNotif.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        final String[] items = {"Mark all as read", "Cancel"};
-        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(NotificationFragment.this,R.style.AppTheme_Dark_Dialog);
-        dialog.setItems(items, new DialogInterface.OnClickListener() {
+        clearNotif.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
+                final String[] items = {"Mark all as read", "Cancel"};
+                android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(NotificationFragment.this, R.style.AppTheme_Dark_Dialog);
+                dialog.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                if (items[which].equals("Mark all as read")) {
+                        if (items[which].equals("Mark all as read")) {
 
 
-                    CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
-                    notif.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            CollectionReference notif = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id");
+                            notif.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                            for (DocumentSnapshot snapshot : task.getResult()) {
-                                String docID = snapshot.getId();
+                                    for (DocumentSnapshot snapshot : task.getResult()) {
+                                        String docID = snapshot.getId();
 
-                                DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
-                                        .document(uid).collection("notif-id").document(docID);
-                                docDelete.update("seen", true)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        DocumentReference docDelete = FirebaseFirestore.getInstance().collection("Notification")
+                                                .document(uid).collection("notif-id").document(docID);
+                                        docDelete.update("seen", true)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
 
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
                                             @Override
-                                            public void onSuccess(Void aVoid) {
-
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("errorSetSeenAllNotif", e.getLocalizedMessage());
                                             }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.e("errorSetSeenAllNotif", e.getLocalizedMessage());
+                                        });
                                     }
-                                });
-                            }
+
+                                }
+                            });
+
+                        } else if (items[which].equals("Cancel")) {
 
                         }
-                    });
+                    }
 
-                } else if (items[which].equals("Cancel")) {
+                });
+                dialog.create();
+                dialog.show();
 
-                }
             }
-
         });
-        dialog.create();
-        dialog.show();
-
-    }
-});
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -30);
         Date d = c.getTime();
@@ -171,7 +171,7 @@ clearNotif.setOnClickListener(new View.OnClickListener() {
 
     }
 
-    public void deleteExpiredNotification(){
+    public void deleteExpiredNotification() {
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -30);
@@ -180,7 +180,7 @@ clearNotif.setOnClickListener(new View.OnClickListener() {
         notif.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (DocumentSnapshot snapshot : task.getResult()){
+                for (DocumentSnapshot snapshot : task.getResult()) {
                     String id = snapshot.getId();
 
                     DocumentReference doc = FirebaseFirestore.getInstance().collection("Notification").document(uid).collection("notif-id").document(id);
@@ -450,7 +450,6 @@ clearNotif.setOnClickListener(new View.OnClickListener() {
 
 
         if (item.getItemId() == R.id.notification_clear_id) {
-
 
 
         }

@@ -670,6 +670,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             checkGoogleSignIn = false;
             checkFacebookLogin = false;
             RegisterActivity.registerPressed = true;
+            checkLoginPressed = true;
             checkLogin();
         } else if (v.getId() == R.id.link_signup) {
             Intent goToReg = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -684,6 +685,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             checkGoogleSignIn = true;
             checkFacebookLogin = false;
             RegisterActivity.registerPressed = false;
+            checkLoginPressed = false;
 
             signIn();
 
@@ -692,6 +694,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             checkFacebookLogin = true;
             checkGoogleSignIn = false;
             RegisterActivity.registerPressed = false;
+            checkLoginPressed = false;
             mCallbackManager = CallbackManager.Factory.create();
 
             LoginManager loginButton = LoginManager.getInstance();
