@@ -89,9 +89,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static String fbLastName;
     public static String fbUserId;
     public static String userIdLogin;
-    public static boolean checkGoogleSignIn = false;
-    public static boolean checkFacebookLogin = false;
-    public static boolean checkLoginPressed = false;
+    public static boolean checkGoogleSignIn;
+    public static boolean checkFacebookLogin;
+    public static boolean checkLoginPressed;
     String getUserEmail;
 
     CallbackManager mCallbackManager;
@@ -280,6 +280,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     Toast.LENGTH_SHORT).show();
                         } else {
 
+                            checkGoogleSignIn = true;
+                            checkFacebookLogin = false;
+                            checkLoginPressed = false;
                             checkUserExists();
 
                             mDialog.dismiss();
@@ -343,6 +346,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void checkUserExists() {
         mDialog.setMessage("Please wait...");
+        if (mDialog != null && !mDialog.isShowing())
         mDialog.show();
         if (mAuth.getCurrentUser() != null) {
 
@@ -383,9 +387,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 finish();
                             } else if (user.isEmailVerified() && !document.contains("username")) {
                                 Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
+                                intent.putExtra("loginBtnPress", checkLoginPressed);
                                 startActivity(intent);
                                 mDialog.dismiss();
-                                finish();
+
 
                             } else if (!user.isEmailVerified() || !document.contains("username")) {
                                 mDialog.dismiss();
@@ -395,7 +400,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                             goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(goToSetUp);
-                            finish();
+
 
 
                         }
@@ -494,6 +499,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 } else if (!document.contains("username")) {
                                     Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                                     startActivity(intent);
+                                    intent.putExtra("loginBtnPress", checkLoginPressed);
+                                    intent.putExtra("googleLoginPress", checkGoogleSignIn);
+                                    intent.putExtra("facebookLoginPress", checkFacebookLogin);
                                     mDialog.dismiss();
                                     finish();
 
@@ -687,6 +695,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             RegisterActivity.registerPressed = false;
             checkLoginPressed = false;
 
+            Log.i("loginGoogle", String.valueOf(checkGoogleSignIn));
             signIn();
 
         } else if (v.getId() == R.id.facebbok_login) {
@@ -696,6 +705,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             RegisterActivity.registerPressed = false;
             checkLoginPressed = false;
             mCallbackManager = CallbackManager.Factory.create();
+            Log.i("loginFB", String.valueOf(checkFacebookLogin));
 
             LoginManager loginButton = LoginManager.getInstance();
             loginButton.logInWithReadPermissions(LoginActivity.this, Arrays.asList("email", "public_profile"));

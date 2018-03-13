@@ -152,6 +152,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     FirebaseFirestore loginViaEmailCollection;
 
+    boolean loginBasic, googleLogin, facebookLogin;
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,6 +189,11 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         clubLogo = getClubNameAndLogo.getStringExtra("clubLogo");
         firstNameLogin = getClubNameAndLogo.getStringExtra("firstName");
         lastNameLogin = getClubNameAndLogo.getStringExtra("secondName");
+        loginBasic = getClubNameAndLogo.getBooleanExtra("loginBtnPress", false);
+        googleLogin = getClubNameAndLogo.getBooleanExtra("googleSignIn", false);
+        googleLogin = getClubNameAndLogo.getBooleanExtra("facebook", false);
+        Log.i("loginBasic", String.valueOf(loginBasic));
+
 
         favoriteClub.setText(clubName);
         clubLogoImage.setVisibility(View.VISIBLE);
@@ -250,7 +257,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         fbUserId = LoginActivity.fbUserId;
 
 
-
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -259,7 +265,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 startActivityForResult(openGallery, GALLERY_REQUEST);
             }
         });
-
 
 
         genderItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -432,7 +437,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     valid = true;
                 }
 
-                if (task.getResult().getDocuments().size()  > 0) {
+                if (task.getResult().getDocuments().size() > 0) {
                     usernameErrorTxt.setText("Username already exists");
                     usernameErrorTxt.setVisibility(View.VISIBLE);
                     validUsername = false;
@@ -495,7 +500,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         Log.i("enter", "google");
 
 
-                    } else if (RegisterActivity.registerPressed || LoginActivity.checkLoginPressed) {
+                    } else if (loginBasic) {
 
                         loginEnterDatabase();
                         Log.i("enter", "login");
@@ -504,7 +509,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         facebookEnterDatabase();
                         Log.i("enter", "facebook");
                     }
-
 
 
                     new CountDownTimer(4000, 1000) {
@@ -561,8 +565,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         mReference = FirebaseFirestore.getInstance();
 
 
-
-                        Map<String,Object> userInfoMap = new HashMap<>();
+                        Map<String, Object> userInfoMap = new HashMap<>();
                         userInfoMap.put("name", fbFirstName);
                         userInfoMap.put("surname", fbLastName);
                         userInfoMap.put("username", username);
@@ -588,17 +591,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.i("Error",e.getLocalizedMessage());
+                                Log.i("Error", e.getLocalizedMessage());
                             }
                         });
 
 
-
-
-
                         final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
 
-                        Map<String,Object> userChatInfo = new HashMap<>();
+                        Map<String, Object> userChatInfo = new HashMap<>();
                         userChatInfo.put("username", username);
                         userChatInfo.put("date", currentDate);
                         if (downloadUrl != null)
@@ -627,7 +627,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         if ((mDialog != null) && mDialog.isShowing()) {
                             mDialog.dismiss();
                         }
-                    }else   Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                    } else
+                        Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -669,8 +670,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         mReference = FirebaseFirestore.getInstance();
 
 
-
-                        Map<String,Object> userInfoMap = new HashMap<>();
+                        Map<String, Object> userInfoMap = new HashMap<>();
                         userInfoMap.put("name", googleFirstName);
                         userInfoMap.put("surname", googleLastName);
                         userInfoMap.put("username", username);
@@ -696,17 +696,14 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.i("Error",e.getLocalizedMessage());
+                                Log.i("Error", e.getLocalizedMessage());
                             }
                         });
 
 
-
-
-
                         final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
 
-                        Map<String,Object> userChatInfo = new HashMap<>();
+                        Map<String, Object> userChatInfo = new HashMap<>();
                         userChatInfo.put("username", username);
                         userChatInfo.put("date", currentDate);
                         if (downloadUrl != null)
@@ -732,8 +729,10 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
 
                         clubTableFan(downloadUrl.toString());
-                        mDialog.dismiss();
-                    }else   Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                        if (mDialog != null && mDialog.isShowing())
+                            mDialog.dismiss();
+                    } else
+                        Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -743,7 +742,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         }
     }
 
-    public void clubTableFan(final String profileImage){
+    public void clubTableFan(final String profileImage) {
         final String clubName = favoriteClub.getText().toString().trim();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -751,7 +750,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         clubTable.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()){
+                if (documentSnapshot.exists()) {
                     long numberFun = documentSnapshot.getLong("numberClubFan");
                     int addNewFan = (int) (numberFun + 1);
                     Map<String, Object> numberUpdateMap = new HashMap<>();
@@ -762,8 +761,8 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     usersInfo.put("userUID", mAuth.getCurrentUser().getUid());
                     usersInfo.put("username", username);
                     usersInfo.put("profileImage", profileImage);
-                   CollectionReference usersCol =  clubTable.collection("users");
-                   usersCol.add(usersInfo);
+                    CollectionReference usersCol = clubTable.collection("users");
+                    usersCol.add(usersInfo);
 
                 } else {
                     Map<String, Object> numberUpdateMap = new HashMap<>();
@@ -777,7 +776,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     usersInfo.put("userUID", mAuth.getCurrentUser().getUid());
                     usersInfo.put("username", username);
                     usersInfo.put("profileImage", profileImage);
-                    CollectionReference usersCol =  clubTable.collection("users");
+                    CollectionReference usersCol = clubTable.collection("users");
                     usersCol.add(usersInfo);
                 }
             }
@@ -807,7 +806,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
-        } else{
+        } else {
             Intent intent = new Intent(EnterUsernameForApp.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("email", user.getEmail());
@@ -835,92 +834,83 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] thumb_byte = baos.toByteArray();
 
-        profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-        mDialog.setMessage("Registering...");
-        mDialog.show();
+            profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+            mDialog.setMessage("Registering...");
+            mDialog.show();
 
             UploadTask task = profileImageRef.putBytes(thumb_byte);
-        task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                final Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
 
+                    Map<String, Object> userInfoMap = new HashMap<>();
+                    userInfoMap.put("username", username);
+                    userInfoMap.put("date", userDate);
+                    userInfoMap.put("gender", gender);
+                    if (downloadUrl != null)
+                        userInfoMap.put("profileImage", downloadUrl.toString());
+                    userInfoMap.put("country", countryString);
+                    userInfoMap.put("flag", imageOfCountry);
+                    userInfoMap.put("favoriteClub", clubName);
+                    userInfoMap.put("favoriteClubLogo", clubLogo);
+                    userInfoMap.put("userID", uid);
+                    userInfoMap.put("premium", false);
+                    userInfoMap.put("premiumDate", todayDateTime);
+
+                    loginViaEmailCollection.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i("Error", e.getLocalizedMessage());
+                        }
+                    });
 
 
+                    final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+
+                    Map<String, Object> userChatInfo = new HashMap<>();
+                    userChatInfo.put("username", username);
+                    userChatInfo.put("date", currentDate);
+                    if (downloadUrl != null)
+                        userChatInfo.put("profileImage", downloadUrl.toString());
+                    userChatInfo.put("country", countryString);
+                    userChatInfo.put("flag", imageOfCountry);
+                    userChatInfo.put("favoriteClub", clubName);
+                    userChatInfo.put("favoriteClubLogo", clubLogo);
+                    userChatInfo.put("userID", uid);
+                    userChatInfo.put("online", "true");
+
+                    usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
 
 
-                Map<String,Object> userInfoMap = new HashMap<>();
-                userInfoMap.put("username", username);
-                userInfoMap.put("date", userDate);
-                userInfoMap.put("gender", gender);
-                if (downloadUrl != null)
-                    userInfoMap.put("profileImage", downloadUrl.toString());
-                userInfoMap.put("country", countryString);
-                userInfoMap.put("flag", imageOfCountry);
-                userInfoMap.put("favoriteClub", clubName);
-                userInfoMap.put("favoriteClubLogo", clubLogo);
-                userInfoMap.put("userID", uid);
-                userInfoMap.put("premium", false);
-                userInfoMap.put("premiumDate", todayDateTime);
+                    clubTableFan(downloadUrl.toString());
 
-                loginViaEmailCollection.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.i("Successfully written",task.getResult().toString());
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("Error",e.getLocalizedMessage());
-                    }
-                });
+                    if ((mDialog != null) && mDialog.isShowing())
+                        mDialog.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
 
-
-
-
-
-
-                final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
-
-                Map<String,Object> userChatInfo = new HashMap<>();
-                userChatInfo.put("username", username);
-                userChatInfo.put("date", currentDate);
-                if (downloadUrl != null)
-                    userChatInfo.put("profileImage", downloadUrl.toString());
-                userChatInfo.put("country", countryString);
-                userChatInfo.put("flag", imageOfCountry);
-                userChatInfo.put("favoriteClub", clubName);
-                userChatInfo.put("favoriteClubLogo", clubLogo);
-                userChatInfo.put("userID", uid);
-                userChatInfo.put("online", "true");
-
-                usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                });
-
-
-
-
-                clubTableFan(downloadUrl.toString());
-
-                mDialog.dismiss();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+                    Toast.makeText(EnterUsernameForApp.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

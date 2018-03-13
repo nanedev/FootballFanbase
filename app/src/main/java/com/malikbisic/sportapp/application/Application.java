@@ -31,7 +31,7 @@ import java.util.List;
  * Created by Nane on 16.3.2017.
  */
 
-public class Application extends android.app.Application{
+public class Application extends android.app.Application {
 
 
     static Application instance;
@@ -53,7 +53,6 @@ public class Application extends android.app.Application{
         }
 
 
-
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttpDownloader(this, Integer.MAX_VALUE));
         Picasso built = builder.build();
@@ -62,9 +61,7 @@ public class Application extends android.app.Application{
         Picasso.setSingletonInstance(built);
 
 
-
     }
-
 
 
     @Override
@@ -84,21 +81,23 @@ public class Application extends android.app.Application{
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.getResult().exists()) {
                         String myClub = task.getResult().getString("favoriteClub");
-                        Log.i("club", myClub);
-                        db.collection("UsersChat").document(myClub).collection("user-id").document(myUID).update("online", FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.i("online", "update");
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e("errorUpdateOnline", e.getLocalizedMessage());
-                            }
-                        });
+                        if (myClub != null) {
+                            db.collection("UsersChat").document(myClub).collection("user-id").document(myUID).update("online", FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.i("online", "update");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("errorUpdateOnline", e.getLocalizedMessage());
+                                }
+                            });
+                        }
                     }
                 }
-            });        }
+            });
+        }
     }
 
     @Override
