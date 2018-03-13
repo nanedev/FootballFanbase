@@ -268,6 +268,7 @@ getSupportActionBar().setTitle("");
         wallList.setAdapter(adapter);
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
         itemSize.clear();
+        postText.clearFocus();
 
         final RelativeLayout lll = (RelativeLayout) findViewById(R.id.relativeLayout);
         final RelativeLayout lll22 = (RelativeLayout) findViewById(R.id.rec_view_layout);
@@ -296,7 +297,6 @@ getSupportActionBar().setTitle("");
 
                     navigationView= (NavigationView) findViewById(R.id.nav_view);
                     navigationView.setNavigationItemSelectedListener(MainPage.this);
-                    postText.setVisibility(View.VISIBLE);
 
 
                 }
@@ -313,7 +313,7 @@ getSupportActionBar().setTitle("");
                     navigationView.setNavigationItemSelectedListener(MainPage.this);
                     toolbar.setBackgroundColor(Color.parseColor("#33691e"));
                     toolbar.setLogo(R.drawable.refreshicon);
-                    postText.setVisibility(View.GONE);
+
 
                 }
             }
@@ -1076,7 +1076,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             
 
         }else if (id == R.id.nav_notifications) {
-            NotificationFragment notificationFragment = new NotificationFragment();
+           /* NotificationFragment notificationFragment = new NotificationFragment();
 
             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
 
@@ -1084,7 +1084,9 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                     R.anim.push_left_out, R.anim.push_left_out).
                     replace(R.id.mainpage_fragment, notificationFragment, notificationFragment.getTag())
                     .addToBackStack(null)
-                    .commit();
+                    .commit(); */
+            Intent intent = new Intent(MainPage.this, NotificationFragment.class);
+            startActivity(intent);
 
             isNotificationClicked = true;
 
