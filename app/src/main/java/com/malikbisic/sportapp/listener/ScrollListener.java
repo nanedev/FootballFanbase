@@ -13,6 +13,10 @@ public abstract class ScrollListener extends RecyclerView.OnScrollListener {
     private int toolbarOffset = 0;
     private int toolbarHeight;
 
+    int scrollDist = 0;
+    boolean isVisible = true;
+    static final float MINIMUM = 25;
+
     public ScrollListener(Context context) {
         int[] actionBarAttr = new int[] { android.R.attr.actionBarSize };
         TypedArray a = context.obtainStyledAttributes(actionBarAttr);
@@ -24,11 +28,19 @@ public abstract class ScrollListener extends RecyclerView.OnScrollListener {
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
-        clipToolbarOffset();
-        onMoved(toolbarOffset);
+        if (isVisible && scrollDist > MINIMUM) {
+            hide();
+            scrollDist = 0;
+            isVisible = false;
+        }
+        else if (!isVisible && scrollDist < -MINIMUM) {
+            show();
+            scrollDist = 0;
+            isVisible = true;
+        }
 
-        if((toolbarOffset < toolbarHeight && dy>0) || (toolbarOffset > 0 && dy<0)) {
-            toolbarOffset += dy;
+        if ((isVisible && dy > 0) || (!isVisible && dy < 0)) {
+            scrollDist += dy;
         }
     }
 
@@ -40,5 +52,6 @@ public abstract class ScrollListener extends RecyclerView.OnScrollListener {
         }
     }
 
-    public abstract void onMoved(int distance);
+    public abstract void show();
+    public abstract void hide();
 }
