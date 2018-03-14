@@ -856,7 +856,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                     userInfoMap.put("favoriteClub", clubName);
                     userInfoMap.put("favoriteClubLogo", clubLogo);
                     userInfoMap.put("userID", uid);
-                    userInfoMap.put("premium", false);
+                    userInfoMap.put("premium", true);
                     userInfoMap.put("premiumDate", todayDateTime);
 
                     loginViaEmailCollection.collection("Users").document(uid).update(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -49,6 +49,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.caverock.androidsvg.SVG;
 import com.facebook.login.LoginManager;
@@ -269,6 +270,7 @@ getSupportActionBar().setTitle("");
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
         itemSize.clear();
         postText.clearFocus();
+        swipeRefreshLayoutPost.setEnabled(false);
 
         final RelativeLayout lll = (RelativeLayout) findViewById(R.id.relativeLayout);
         final RelativeLayout lll22 = (RelativeLayout) findViewById(R.id.rec_view_layout);
@@ -277,7 +279,7 @@ getSupportActionBar().setTitle("");
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbarmainpage);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+            public void onOffsetChanged(final AppBarLayout appBarLayout, int verticalOffset) {
 
                 if (Math.abs(verticalOffset)-appBarLayout.getTotalScrollRange() == 0)
                 {
@@ -313,6 +315,18 @@ getSupportActionBar().setTitle("");
                     navigationView.setNavigationItemSelectedListener(MainPage.this);
                     toolbar.setBackgroundColor(Color.parseColor("#33691e"));
                     toolbar.setLogo(R.drawable.refreshicon);
+                   View logoClick = getToolbarLogoIcon(toolbar);
+
+                   logoClick.setOnClickListener(new View.OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+                           itemSize.clear();
+                           adapter.notifyDataSetChanged();
+                          loadPremium();
+                          wallList.smoothScrollToPosition(0);
+                          appBarLayout.setExpanded(true, true);
+                       }
+                   });
 
 
                 }
@@ -565,6 +579,25 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         });
 
 
+    }
+
+    public static View getToolbarLogoIcon(Toolbar toolbar){
+        //check if contentDescription previously was set
+        boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
+        String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
+        toolbar.setLogoDescription(contentDescription);
+        ArrayList<View> potentialViews = new ArrayList<View>();
+        //find the view based on it's content description, set programatically or with android:contentDescription
+        toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+        //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
+        View logoIcon = null;
+        if(potentialViews.size() > 0){
+            logoIcon = potentialViews.get(0);
+        }
+        //Clear content description if not previously present
+        if(hadContentDescription)
+            toolbar.setLogoDescription(null);
+        return logoIcon;
     }
 
     public static boolean isAppRunning(final Context context, final String packageName) {
