@@ -204,10 +204,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            mDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
-            mDialog.setIndeterminate(true);
-            mDialog.setMessage("Authentication...");
-            mDialog.show();
+            loginProgressBar.setVisibility(View.VISIBLE);
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             GoogleSignInAccount acct = result.getSignInAccount();
 
@@ -220,7 +217,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // ...
                 ApiException e = new ApiException(result.getStatus());
                 Log.e("googleLogin", e.getMessage());
-                mDialog.dismiss();
+                loginProgressBar.setVisibility(View.INVISIBLE);
             }
         } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
@@ -288,7 +285,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             checkLoginPressed = false;
                             checkUserExists();
 
-                            mDialog.dismiss();
+                            loginProgressBar.setVisibility(View.INVISIBLE);
 
                         }
 
@@ -316,7 +313,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         checkUserExists();
 
                     } else {
-                        mDialog.dismiss();
+                        loginProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -348,9 +345,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void checkUserExists() {
-        mDialog.setMessage("Please wait...");
-        if (mDialog != null && !mDialog.isShowing())
-        mDialog.show();
+        loginProgressBar.setVisibility(View.VISIBLE);
+
         if (mAuth.getCurrentUser() != null) {
 
             user_id = mAuth.getCurrentUser().getUid();
@@ -364,7 +360,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                         if (user.isEmailVerified() && document.contains("username")) {
+                            if (user.isEmailVerified() && document.contains("username")) {
                                 String current_userID = mAuth.getCurrentUser().getUid();
                                 String device_id = FirebaseInstanceId.getInstance().getToken();
 
@@ -386,24 +382,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 });
                                 Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                                 startActivity(setupIntent);
-                                mDialog.dismiss();
+                                loginProgressBar.setVisibility(View.INVISIBLE);
                                 finish();
                             } else if (user.isEmailVerified() && !document.contains("username")) {
                                 Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                                 intent.putExtra("loginBtnPress", checkLoginPressed);
                                 startActivity(intent);
-                                mDialog.dismiss();
+                                loginProgressBar.setVisibility(View.INVISIBLE);
 
 
                             } else if (!user.isEmailVerified() || !document.contains("username")) {
-                                mDialog.dismiss();
+                                loginProgressBar.setVisibility(View.INVISIBLE);
                                 Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
                             }
                         } else {
                             Intent goToSetUp = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                             goToSetUp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(goToSetUp);
-
 
 
                         }
@@ -458,9 +453,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }); */
         }
     }
+
     public void checkUserExistsFacebook() {
-        mDialog.setMessage("Please wait...");
-        mDialog.show();
+        loginProgressBar.setVisibility(View.VISIBLE);
         if (mAuth.getCurrentUser() != null) {
 
             user_id = mAuth.getCurrentUser().getUid();
@@ -497,7 +492,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     });
                                     Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                                     startActivity(setupIntent);
-                                    mDialog.dismiss();
+                                    loginProgressBar.setVisibility(View.INVISIBLE);
                                     finish();
                                 } else if (!document.contains("username")) {
                                     Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
@@ -505,7 +500,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     intent.putExtra("loginBtnPress", checkLoginPressed);
                                     intent.putExtra("googleLoginPress", checkGoogleSignIn);
                                     intent.putExtra("facebookLoginPress", checkFacebookLogin);
-                                    mDialog.dismiss();
+                                    loginProgressBar.setVisibility(View.INVISIBLE);
                                     finish();
 
                                 }
@@ -523,6 +518,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             });
         }
     }
+
     private void autoLogin() {
 
         if (mAuth.getCurrentUser() != null) {
@@ -545,7 +541,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     CountDownTimer timer = new CountDownTimer(3000, 1000) {
                                         @Override
                                         public void onTick(long l) {
-                                           loginProgressBar.setVisibility(View.VISIBLE);
+                                            loginProgressBar.setVisibility(View.VISIBLE);
                                         }
 
                                         @Override
@@ -581,7 +577,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     CountDownTimer timer = new CountDownTimer(3000, 1000) {
                                         @Override
                                         public void onTick(long l) {
-                                                loginProgressBar.setVisibility(View.VISIBLE);
+                                            loginProgressBar.setVisibility(View.VISIBLE);
                                         }
 
                                         @Override
@@ -608,8 +604,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             });
                                         }
                                     }.start();
-                                }else {
-                                   loginProgressBar.setVisibility(View.INVISIBLE);
+                                } else {
+                                    loginProgressBar.setVisibility(View.INVISIBLE);
 
                                 }
                             }
