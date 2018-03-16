@@ -1228,6 +1228,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ProgressDialog dialog = new ProgressDialog(MainPage.this);
 
                 itemSize.clear();
                 if (task.getException() == null) {

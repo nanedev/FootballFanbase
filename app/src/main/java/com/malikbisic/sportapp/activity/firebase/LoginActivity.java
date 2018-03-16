@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +95,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static boolean checkLoginPressed;
     String getUserEmail;
 
+    ProgressBar loginProgressBar;
     CallbackManager mCallbackManager;
 
     @Override
@@ -114,6 +116,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         emailError = (TextView) findViewById(R.id.emailInfoErrorLogin);
         passwordError = (TextView) findViewById(R.id.passwordInfoErrorLogin);
         mForgotPassword = (TextView) findViewById(R.id.forgot_password);
+        loginProgressBar = (ProgressBar) findViewById(R.id.loginProgress);
 
         Intent intent = getIntent();
         getUserEmail = intent.getStringExtra("email");
@@ -542,8 +545,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     CountDownTimer timer = new CountDownTimer(3000, 1000) {
                                         @Override
                                         public void onTick(long l) {
-                                            mDialog.setMessage("Login...");
-                                            mDialog.show();
+                                           loginProgressBar.setVisibility(View.VISIBLE);
                                         }
 
                                         @Override
@@ -579,15 +581,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     CountDownTimer timer = new CountDownTimer(3000, 1000) {
                                         @Override
                                         public void onTick(long l) {
-                                                mDialog.setMessage("Login...");
-                                                mDialog.show();
+                                                loginProgressBar.setVisibility(View.VISIBLE);
                                         }
 
                                         @Override
                                         public void onFinish() {
                                             Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                                             startActivity(setupIntent);
-                                            mDialog.dismiss();
+                                            loginProgressBar.setVisibility(View.INVISIBLE);
 
                                             Map<String, Object> updateDevideId = new HashMap<>();
                                             updateDevideId.put("device_id", device_id);
@@ -608,7 +609,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         }
                                     }.start();
                                 }else {
-                                    mDialog.dismiss();
+                                   loginProgressBar.setVisibility(View.INVISIBLE);
 
                                 }
                             }
