@@ -27,6 +27,13 @@
         <item name="android:background">@color/primary</item>
     </style>
 
+    <style name="StyleLogin" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogTitleText">Login…</item>
+        <item name="DialogSpotColor">@color/primary</item>
+        <item name="DialogSpotCount">4</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

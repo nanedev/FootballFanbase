@@ -1,11 +1,14 @@
 package com.malikbisic.sportapp.activity.firebase;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +21,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +66,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
+
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 1;
@@ -97,6 +104,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     ProgressBar loginProgressBar;
     CallbackManager mCallbackManager;
+    AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +141,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mReferenceUsers.collection("Users");
         //mReferenceUsers.keepSynced(true);
 
+        dialog = new SpotsDialog(LoginActivity.this, "Login...", R.style.StyleLogin);
 
         mEmailText.setFocusableInTouchMode(true);
         mPasswordText.setFocusableInTouchMode(true);
@@ -345,7 +354,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void checkUserExists() {
-        loginProgressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
 
         if (mAuth.getCurrentUser() != null) {
 
@@ -382,17 +391,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 });
                                 Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                                 startActivity(setupIntent);
-                                loginProgressBar.setVisibility(View.INVISIBLE);
+                                hideProgressBar();
                                 finish();
                             } else if (user.isEmailVerified() && !document.contains("username")) {
                                 Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
                                 intent.putExtra("loginBtnPress", checkLoginPressed);
                                 startActivity(intent);
-                                loginProgressBar.setVisibility(View.INVISIBLE);
+                                hideProgressBar();
 
 
                             } else if (!user.isEmailVerified() || !document.contains("username")) {
-                                loginProgressBar.setVisibility(View.INVISIBLE);
+                                hideProgressBar();
                                 Toast.makeText(LoginActivity.this, "Please verify your email", Toast.LENGTH_LONG).show();
                             }
                         } else {
@@ -455,7 +464,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void checkUserExistsFacebook() {
-        loginProgressBar.setVisibility(View.VISIBLE);
+        showProgressBar();
         if (mAuth.getCurrentUser() != null) {
 
             user_id = mAuth.getCurrentUser().getUid();
@@ -492,7 +501,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     });
                                     Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                                     startActivity(setupIntent);
-                                    loginProgressBar.setVisibility(View.INVISIBLE);
+                                    hideProgressBar();
                                     finish();
                                 } else if (!document.contains("username")) {
                                     Intent intent = new Intent(LoginActivity.this, EnterUsernameForApp.class);
@@ -500,7 +509,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     intent.putExtra("loginBtnPress", checkLoginPressed);
                                     intent.putExtra("googleLoginPress", checkGoogleSignIn);
                                     intent.putExtra("facebookLoginPress", checkFacebookLogin);
-                                    loginProgressBar.setVisibility(View.INVISIBLE);
+                                    hideProgressBar();
                                     finish();
 
                                 }
@@ -541,14 +550,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     CountDownTimer timer = new CountDownTimer(3000, 1000) {
                                         @Override
                                         public void onTick(long l) {
-                                            loginProgressBar.setVisibility(View.VISIBLE);
+                                            showProgressBar();
                                         }
 
                                         @Override
                                         public void onFinish() {
                                             Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                                             startActivity(setupIntent);
-                                            mDialog.dismiss();
+                                           hideProgressBar();
 
                                             Map<String, Object> updateDevideId = new HashMap<>();
                                             updateDevideId.put("device_id", device_id);
@@ -577,14 +586,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     CountDownTimer timer = new CountDownTimer(3000, 1000) {
                                         @Override
                                         public void onTick(long l) {
-                                            loginProgressBar.setVisibility(View.VISIBLE);
+                                            showProgressBar();
                                         }
 
                                         @Override
                                         public void onFinish() {
                                             Intent setupIntent = new Intent(LoginActivity.this, MainPage.class);
                                             startActivity(setupIntent);
-                                            loginProgressBar.setVisibility(View.INVISIBLE);
+                                            hideProgressBar();
 
                                             Map<String, Object> updateDevideId = new HashMap<>();
                                             updateDevideId.put("device_id", device_id);
@@ -605,7 +614,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         }
                                     }.start();
                                 } else {
-                                    loginProgressBar.setVisibility(View.INVISIBLE);
+                                    hideProgressBar();
 
                                 }
                             }
@@ -666,6 +675,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             }); */
 
+    }
+
+    public void showProgressBar(){
+//        loginProgressBar.setVisibility(View.VISIBLE);
+//        LinearLayout parentsLayout = (LinearLayout) findViewById(R.id.parentLayoutLogin);
+//        parentsLayout.setVisibility(View.INVISIBLE);
+
+        dialog.show();
+    }
+
+    public void hideProgressBar(){
+        dialog.dismiss();
+//        loginProgressBar.setVisibility(View.INVISIBLE);
+//        LinearLayout parentsLayout = (LinearLayout) findViewById(R.id.parentLayoutLogin);
+//        parentsLayout.setVisibility(View.VISIBLE);
     }
 
 

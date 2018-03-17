@@ -22,6 +22,7 @@
     <color name="notifnotSeen">#D7D7D7</color>
     <color name="spinnerLoad">#FFFFFF</color>
     <color name="toolbarTransparent">#00FFFFFF</color>
+    <color name="progressbarColorVisible">#00ffffff</color>
 
 
 
