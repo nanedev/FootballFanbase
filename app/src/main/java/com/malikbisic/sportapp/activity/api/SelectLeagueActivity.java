@@ -77,7 +77,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         leagueListView.setAdapter(adapterLeague);
         leagueListView.setLayoutManager(new LinearLayoutManager(this));
 
-        mDialog = new SpotsDialog(SelectLeagueActivity.this,"Loading...", R.style.AppTheme_Dark_Dialog);
+        mDialog = new SpotsDialog(SelectLeagueActivity.this,"Loading...", R.style.StyleLogin);
 
 
         mDialog.show();

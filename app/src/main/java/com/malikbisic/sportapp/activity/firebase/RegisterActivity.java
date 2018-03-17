@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity.firebase;
 
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,8 @@ import com.malikbisic.sportapp.activity.StopAppServices;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
+
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
     private static final String TAG = "RegisterActivity";
@@ -59,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     LinearLayout layout;
 
-    private ProgressDialog progressDialog;
+    private AlertDialog progressDialog;
 
     boolean valid;
 
@@ -104,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         };
 
-        progressDialog = new ProgressDialog(this);
+        progressDialog = new SpotsDialog(this);
         mDatabase = FirebaseDatabase.getInstance();
         db = FirebaseFirestore.getInstance();
         mSignupButton.setOnClickListener(new View.OnClickListener() {
@@ -141,10 +144,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         mSignupButton.setEnabled(false);
 
-        progressDialog = new ProgressDialog(RegisterActivity.this,
+        progressDialog = new SpotsDialog(RegisterActivity.this, "Creating Account...",
                 R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
         registerUser();

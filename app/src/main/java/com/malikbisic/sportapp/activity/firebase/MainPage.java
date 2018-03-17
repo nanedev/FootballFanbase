@@ -111,6 +111,7 @@ import java.util.concurrent.ExecutionException;
 import cn.jzvd.JZVideoPlayerStandard;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import dmax.dialog.SpotsDialog;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 
@@ -173,7 +174,7 @@ public class MainPage extends AppCompatActivity
     boolean isPremium;
     static boolean isNotificationClicked = false;
     public static String myClubName;
-    ProgressDialog pDialog;
+    AlertDialog pDialog;
 
     TextView notificationCounterNumber;
     TextView messageCounterNumber;
@@ -1222,13 +1223,16 @@ captureImage.setOnClickListener(new View.OnClickListener() {
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
 
+        pDialog = new SpotsDialog (MainPage.this, "   ", R.style.StyleLogin);
+//                if (!pDialog.isShowing() && !MainPage.this.isFinishing())
+        pDialog.show();
 
         CollectionReference db = FirebaseFirestore.getInstance().collection("Posting");
 
         db.orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                ProgressDialog dialog = new ProgressDialog(MainPage.this);
+
 
                 itemSize.clear();
                 if (task.getException() == null) {
@@ -1239,6 +1243,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                         Post model = snapshot.toObject(Post.class).withId(snapshot.getId());
                         itemSize.add(model);
                         adapter.notifyDataSetChanged();
+
 
 
                         Log.i("itemCount", String.valueOf(adapter.getItemCount()));
@@ -1279,7 +1284,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                 } else {
                     Log.e("errorPremium", task.getException().getLocalizedMessage());
                 }
-
+                pDialog.dismiss();
 
             }
         });
