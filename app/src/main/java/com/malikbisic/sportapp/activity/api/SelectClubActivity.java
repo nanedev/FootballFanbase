@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity.api;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +35,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import dmax.dialog.SpotsDialog;
+
 public class SelectClubActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/teams";
@@ -45,7 +48,7 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
     RecyclerView clubRecView;
     SearchView searchViewClub;
     Intent myIntent;
-    ProgressDialog mDialog;
+    AlertDialog mDialog;
 
     //nesto
 
@@ -66,9 +69,8 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Search club");
 
-        mDialog = new ProgressDialog(SelectClubActivity.this, R.style.AppTheme_Dark_Dialog);
-        mDialog.setIndeterminate(true);
-        mDialog.setMessage("Loading...");
+        mDialog = new SpotsDialog(SelectClubActivity.this,"Loading...",R.style.StyleLogin);
+
         mDialog.show();
 
 

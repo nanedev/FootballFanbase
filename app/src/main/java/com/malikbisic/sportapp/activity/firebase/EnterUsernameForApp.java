@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity.firebase;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -77,6 +78,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 import id.zelory.compressor.Compressor;
 
 public class EnterUsernameForApp extends AppCompatActivity implements View.OnClickListener {
@@ -117,7 +119,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     private String favoriteClubString;
     private String countryString;
 
-    private ProgressDialog mDialog;
+    private AlertDialog mDialog;
     private static final String TAG = "EnterUsernameForApp";
 
 
@@ -177,7 +179,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         clubLogoImage = (CircleImageView) findViewById(R.id.clubLogo);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        mDialog = new ProgressDialog(this);
+        mDialog = new SpotsDialog(EnterUsernameForApp.this,R.style.StyleLogin);
         addImage = (ImageView) findViewById(R.id.addImage);
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
@@ -378,7 +380,6 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
         }
 
         if (requestCode == RESULT_CLUB && resultCode == RESULT_OK) {
-
             clubName = data.getStringExtra("clubName");
             clubLogo = data.getStringExtra("clubLogo");
 
@@ -421,6 +422,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
 
     public void valid() {
+        mDialog = new SpotsDialog(EnterUsernameForApp.this,"Creating Account...",R.style.StyleLogin);
         valid = true;
         final String username = enterUsername.getText().toString().trim();
         com.google.firebase.firestore.Query query = FirebaseFirestore.getInstance().collection("Users").whereEqualTo("username", username);
@@ -490,10 +492,9 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                 }
 
                 if (valid && validUsername && validBirthday && validCountry && validClub) {
-                    mDialog = new ProgressDialog(EnterUsernameForApp.this,
-                            R.style.AppTheme_Dark_Dialog);
-                    mDialog.setIndeterminate(true);
-                    mDialog.setMessage("Creating Account...");
+                    mDialog = new SpotsDialog(EnterUsernameForApp.this,"Loading...", R.style.StyleLogin);
+
+
                     mDialog.show();
                     if (LoginActivity.checkGoogleSignIn) {
                         googleEnterDatabase();
@@ -535,7 +536,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     public void facebookEnterDatabase() {
 
-
+mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.StyleLogin);
         username = enterUsername.getText().toString().trim();
         userDate = birthday.getText().toString().trim();
         favoriteClubString = favoriteClub.getText().toString().trim();
@@ -552,7 +553,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] thumb_byte = baos.toByteArray();
             profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-            mDialog.setMessage("Registering...");
+
             mDialog.show();
 
             UploadTask task = profileImageRef.putBytes(thumb_byte);
@@ -640,7 +641,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     public void googleEnterDatabase() {
 
-
+mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.StyleLogin);
         username = enterUsername.getText().toString().trim();
         userDate = birthday.getText().toString().trim();
         favoriteClubString = favoriteClub.getText().toString().trim();
@@ -657,7 +658,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] thumb_byte = baos.toByteArray();
             profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-            mDialog.setMessage("Registering...");
+
             mDialog.show();
 
             UploadTask task = profileImageRef.putBytes(thumb_byte);
@@ -817,6 +818,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
     }
 
     public void loginEnterDatabase() {
+        mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.StyleLogin);
         username = enterUsername.getText().toString().trim();
         userDate = birthday.getText().toString().trim();
         favoriteClubString = favoriteClub.getText().toString().trim();
@@ -835,7 +837,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
             byte[] thumb_byte = baos.toByteArray();
 
             profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-            mDialog.setMessage("Registering...");
+
             mDialog.show();
 
             UploadTask task = profileImageRef.putBytes(thumb_byte);

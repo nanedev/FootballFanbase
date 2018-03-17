@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String user_id;
     private String email;
     private String password;
-    private ProgressDialog mDialog;
+
     public static String gFirstName;
     public static String gLastName;
     public static String gUserId;
@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static boolean checkLoginPressed;
     String getUserEmail;
 
-    ProgressBar loginProgressBar;
+
     CallbackManager mCallbackManager;
     AlertDialog dialog;
 
@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         emailError = (TextView) findViewById(R.id.emailInfoErrorLogin);
         passwordError = (TextView) findViewById(R.id.passwordInfoErrorLogin);
         mForgotPassword = (TextView) findViewById(R.id.forgot_password);
-        loginProgressBar = (ProgressBar) findViewById(R.id.loginProgress);
+
 
         Intent intent = getIntent();
         getUserEmail = intent.getStringExtra("email");
@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mSignUpLink.setOnClickListener(this);
         mForgotPassword.setOnClickListener(this);
         googleSignIn.setOnClickListener(this);
-        mDialog = new ProgressDialog(this);
+
         mReferenceUsers = FirebaseFirestore.getInstance();
         mReferenceUsers.collection("Users");
         //mReferenceUsers.keepSynced(true);
@@ -294,7 +294,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             checkLoginPressed = false;
                             checkUserExists();
 
-                            loginProgressBar.setVisibility(View.INVISIBLE);
+
 
                         }
 
@@ -322,7 +322,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         checkUserExists();
 
                     } else {
-                        loginProgressBar.setVisibility(View.INVISIBLE);
+
                         Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -682,9 +682,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //        LinearLayout parentsLayout = (LinearLayout) findViewById(R.id.parentLayoutLogin);
 //        parentsLayout.setVisibility(View.INVISIBLE);
 
-        dialog.show();
+        if (dialog != null && !dialog.isShowing() && !this.isFinishing())
+            dialog.show();
     }
-
     public void hideProgressBar(){
         dialog.dismiss();
 //        loginProgressBar.setVisibility(View.INVISIBLE);
@@ -766,6 +766,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
+        dialog.dismiss();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dialog.dismiss();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dialog.dismiss();
     }
 
     @Override

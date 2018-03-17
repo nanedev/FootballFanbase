@@ -91,6 +91,7 @@ public class NotificationFragment extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
+        notificationRecView.setLayoutManager(layoutManager);
 
         notificationRecView.setLayoutManager(layoutManager);
 

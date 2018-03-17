@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity.api;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -54,6 +55,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 
 public class SearchableCountry extends AppCompatActivity implements SearchView.OnQueryTextListener {
     RecyclerView recyclerView;
@@ -62,7 +64,7 @@ public class SearchableCountry extends AppCompatActivity implements SearchView.O
     ArrayList<CountryModel> countryList = new ArrayList<>();
 SearchView searchView;
     String url;
-    ProgressDialog mDialog;
+    AlertDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +84,9 @@ SearchView searchView;
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Search country");
 
-        mDialog = new ProgressDialog(SearchableCountry.this, R.style.AppTheme_Dark_Dialog);
-        mDialog.setIndeterminate(true);
-        mDialog.setMessage("Loading...");
+        mDialog = new SpotsDialog(SearchableCountry.this,"Loading...", R.style.StyleLogin);
+
+
         mDialog.show();
 
 

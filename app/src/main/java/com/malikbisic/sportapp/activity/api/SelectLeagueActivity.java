@@ -1,7 +1,8 @@
 package com.malikbisic.sportapp.activity.api;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
+
 import android.content.Intent;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
@@ -46,6 +47,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
 
 public class SelectLeagueActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -57,7 +59,7 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
 
     LeagueAdapter adapterLeague;
     SearchView mSearchView;
-    ProgressDialog mDialog;
+    AlertDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +77,9 @@ public class SelectLeagueActivity extends AppCompatActivity implements SearchVie
         leagueListView.setAdapter(adapterLeague);
         leagueListView.setLayoutManager(new LinearLayoutManager(this));
 
-        mDialog = new ProgressDialog(SelectLeagueActivity.this, R.style.AppTheme_Dark_Dialog);
-        mDialog.setIndeterminate(true);
-        mDialog.setMessage("Loading...");
+        mDialog = new SpotsDialog(SelectLeagueActivity.this,"Loading...", R.style.AppTheme_Dark_Dialog);
+
+
         mDialog.show();
 
 
