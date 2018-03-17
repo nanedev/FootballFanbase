@@ -12,10 +12,13 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -220,7 +223,7 @@ public class MainPage extends AppCompatActivity
     String lastMonthUpdate = "noData";
     String countryName;
     RelativeLayout captureImage;
-
+    AlertDialog dialogNetwork;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -580,6 +583,16 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         });
 
 
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
+           return true;
+        } else {
+            return false;
+        }
     }
 
     public static View getToolbarLogoIcon(Toolbar toolbar){
@@ -1107,7 +1120,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
 
             Intent intent = new Intent(MainPage.this,RankingsActivity.class);
             startActivity(intent);
-            
+
 
         }else if (id == R.id.nav_notifications) {
            /* NotificationFragment notificationFragment = new NotificationFragment();
@@ -1304,67 +1317,120 @@ captureImage.setOnClickListener(new View.OnClickListener() {
 
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
+        final TextView network = (TextView) findViewById(R.id.noInternetTxt);
 
-        FirebaseFirestore checkPremiumUser = FirebaseFirestore.getInstance();
-        checkPremiumUser.collection("Users").document(myUserId)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        network.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.getResult().exists()) {
-                    model = task.getResult().toObject(UsersModel.class);
+            public void onClick(View v) {
+                if (isNetworkAvailable()){
+                    network.setVisibility(View.GONE);
+                    wallList.setVisibility(View.VISIBLE);
+                    loadPremium();
+                } else {
+                    dialogNetwork = new SpotsDialog(MainPage.this, "Please wait...");
+                    dialogNetwork.show();
+                    new CountDownTimer(4000, 1000 + 100) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
 
-                    isPremium = model.isPremium();
+                        }
 
-
-                    if (isPremium) {
-
-                        loadPremium();
-
-
-                        adapter.setOnLoadMore(new OnLoadMoreListener() {
-                            @Override
-                            public void onLoadMore() {
-
-
-                                wallList.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        itemSize.add(null);
-                                        adapter.notifyItemInserted(itemSize.size() - 1);
-                                    }
-                                });
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        premiumUsersLoadMore();
-
-
-                                    }
-                                }, 5000);
-
-                            }
-                        });
-
-                        swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                            @Override
-                            public void onRefresh() {
-
-                                itemSize.clear();
-                                loadPremium();
-                            }
-                        });
-
-
-                    } else {
-                        freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
-                    }
+                        @Override
+                        public void onFinish() {
+                            dialogNetwork.dismiss();
+                            network.setVisibility(View.VISIBLE);
+                            wallList.setVisibility(View.GONE);
+                        }
+                    }.start();
                 }
             }
         });
 
-        firstTimeOpened = false;
+        if (isNetworkAvailable()){
+            network.setVisibility(View.GONE);
+            wallList.setVisibility(View.VISIBLE);
+            loadPremium();
+        } else {
+            dialogNetwork = new SpotsDialog(MainPage.this, "Please wait...");
+            dialogNetwork.show();
+            new CountDownTimer(4000, 1000 + 100) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    dialogNetwork.dismiss();
+                    network.setVisibility(View.VISIBLE);
+                    wallList.setVisibility(View.GONE);
+                }
+            }.start();
+        }
+            adapter.setOnLoadMore(new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
+
+
+                    wallList.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            itemSize.add(null);
+                            adapter.notifyItemInserted(itemSize.size() - 1);
+                        }
+                    });
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            premiumUsersLoadMore();
+
+
+                        }
+                    }, 5000);
+
+                }
+            });
+
+
+//            FirebaseFirestore checkPremiumUser = FirebaseFirestore.getInstance();
+//        checkPremiumUser.collection("Users").document(myUserId)
+//                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.getResult().exists()) {
+//                    model = task.getResult().toObject(UsersModel.class);
+//
+//                    isPremium = model.isPremium();
+//
+//
+//                    if (isPremium) {
+//
+//                        }
+//
+//
+//
+//
+//
+//                        swipeRefreshLayoutPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//                            @Override
+//                            public void onRefresh() {
+//
+//                                itemSize.clear();
+//                                loadPremium();
+//                            }
+//                        });
+//
+//
+//                    } else {
+//                        freeUser.freeUsers(wallList, getApplicationContext(), MainPage.this, model);
+//                    }
+//                }
+//            }
+//        });
+
+            firstTimeOpened = false;
 
 
     }

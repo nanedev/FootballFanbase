@@ -89,4 +89,5 @@
        <i> ©FootballFanbase </i>
     </string>
     <string name="enter_a_message_aboutChat">Enter a message...</string>
+    <string name="no_internet_connection">No internet connection! \n Tap to retry</string>
 </resources>
