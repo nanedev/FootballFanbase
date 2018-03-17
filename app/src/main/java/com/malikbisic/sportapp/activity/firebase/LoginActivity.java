@@ -213,7 +213,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            loginProgressBar.setVisibility(View.VISIBLE);
+            showProgressBar();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             GoogleSignInAccount acct = result.getSignInAccount();
 
@@ -226,7 +226,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // ...
                 ApiException e = new ApiException(result.getStatus());
                 Log.e("googleLogin", e.getMessage());
-                loginProgressBar.setVisibility(View.INVISIBLE);
+                hideProgressBar();
             }
         } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
