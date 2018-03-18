@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -17,12 +18,18 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -38,6 +45,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
+import com.rockerhieu.emojicon.EmojiconEditText;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
+import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,12 +68,12 @@ import static com.iceteck.silicompressorr.FileUtils.isGooglePhotosUri;
 import static com.iceteck.silicompressorr.Util.isMediaDocument;
 import static com.malikbisic.sportapp.BuildConfig.DEBUG;
 
-public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickListener {
+public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickListener,EmojiconsFragment.OnEmojiconBackspaceClickedListener,EmojiconGridFragment.OnEmojiconClickedListener {
 
     private Intent myIntent;
     private ImageView photoSelected;
     private JZVideoPlayerStandard videoSelected;
-    private EditText saySomething;
+    private EmojiconEditText saySomething;
 
     ProgressDialog pDialog;
     ProgressDialog postingDialog;
@@ -72,14 +84,18 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     private FirebaseStorage mStorage;
 
     FirebaseFirestore postingCollection;
-
+    Animation slideUpAnimation;
 
     private FirebaseAuth mAuth;
     private static final String TAG = "AddPhotoOrVideo";
     String videoSize;
     RelativeLayout layout;
 Toolbar addPhotoVideoToolbar;
-
+FrameLayout emoticonsPhoto;
+ImageView smajlic;
+RelativeLayout layoutVideoPhot;
+    boolean firstClickSmile = true;
+    boolean secondClickSmile = false;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,12 +109,15 @@ Toolbar addPhotoVideoToolbar;
         mStorage = FirebaseStorage.getInstance();
         postingCollection = FirebaseFirestore.getInstance();
         photoSelected = (ImageView) findViewById(R.id.post_image);
+        emoticonsPhoto = (FrameLayout)findViewById(R.id.emojiconsPhotoVideo);
         videoSelected = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.post_video);
-        saySomething = (EditText) findViewById(R.id.tell_something_about_video_image);
+        saySomething = (EmojiconEditText) findViewById(R.id.tell_something_about_video_image);
         postingDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
         mAuth = FirebaseAuth.getInstance();
+        smajlic = (ImageView) findViewById(R.id.smileinphoto);
         layout = (RelativeLayout) findViewById(R.id.container);
         addPhotoVideoToolbar = (Toolbar) findViewById(R.id.addPhotoVideoToolbar);
+        layoutVideoPhot = (RelativeLayout) findViewById(R.id.layoutvideophoto);
         setSupportActionBar(addPhotoVideoToolbar);
         getSupportActionBar().setTitle("Post");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -110,7 +129,61 @@ Toolbar addPhotoVideoToolbar;
             photoSelected.setVisibility(View.VISIBLE);
             photoSelected.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             Uri imageUri = myIntent.getData();
-            photoSelected.setImageURI(imageUri);
+            slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                    R.anim.anmation_drom_down_to_top);
+
+            Picasso
+                    .with(AddPhotoOrVideo.this)
+                    .load(imageUri)
+                    .fit()
+                    .centerCrop()
+                    // call .centerInside() or .centerCrop() to avoid a stretched image
+                    .into(photoSelected);
+
+
+            saySomething.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+smajlic.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        if (firstClickSmile) {
+            firstClickSmile = false;
+            secondClickSmile = true;
+layoutVideoPhot.setVisibility(View.GONE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+            emoticonsPhoto.startAnimation(slideUpAnimation);
+            emoticonsPhoto.setVisibility(View.VISIBLE);
+        } else if (secondClickSmile) {
+            firstClickSmile = true;
+            secondClickSmile = false;
+layoutVideoPhot.setVisibility(View.VISIBLE);
+            saySomething.clearFocus();
+          /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
+            emoticonsPhoto.setVisibility(View.GONE);
+
+
+        }
+    }
+});
+
+            setEmojiconFragment(false);
 
         } else if (!MainPage.photoSelected) {
             photoSelected.setVisibility(View.GONE);
@@ -395,6 +468,15 @@ Toolbar addPhotoVideoToolbar;
     }
 
 
+    private void setEmojiconFragment(boolean useSystemDefault){
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.emojiconsPhotoVideo, EmojiconsFragment.newInstance(useSystemDefault))
+                .commit();
+    }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String getPath(final Context context, final Uri uri) {
@@ -468,4 +550,13 @@ Toolbar addPhotoVideoToolbar;
         return null;
     }
 
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+        EmojiconsFragment.input(saySomething,emojicon);
+    }
+
+    @Override
+    public void onEmojiconBackspaceClicked(View v) {
+EmojiconsFragment.backspace(saySomething);
+    }
 }

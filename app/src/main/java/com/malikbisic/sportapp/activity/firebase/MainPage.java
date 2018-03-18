@@ -93,6 +93,9 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.listener.ScrollListener;
 import com.malikbisic.sportapp.model.firebase.Post;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
+import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
@@ -119,7 +122,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class MainPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher{
 
 
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -186,6 +189,8 @@ public class MainPage extends AppCompatActivity
 
     List<Post> itemSize = new ArrayList<>();
     MainPageAdapter adapter;
+    RelativeLayout profileImageLayout;
+    View verticalLine;
 
 
     private static final int TOTAL_ITEM_LOAD = 5;
@@ -224,6 +229,11 @@ public class MainPage extends AppCompatActivity
     String countryName;
     RelativeLayout captureImage;
     AlertDialog dialogNetwork;
+    RelativeLayout profileInToolbar;
+    CircleImageView profileImageInToolbar;
+    TextView usernameInToolbar;
+    ImageView emoticonImage;
+    CircleImageView clubLogoInToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -258,6 +268,10 @@ getSupportActionBar().setTitle("");
         //linearLayoutManager.setStackFromEnd(true);
         //linearLayoutManager.setReverseLayout(true);
         captureImage = (RelativeLayout) findViewById(R.id.takephotolayout);
+        profileInToolbar = (RelativeLayout) findViewById(R.id.layoutprofiletoolbar);
+        profileImageInToolbar = (CircleImageView) findViewById(R.id.profilna);
+        usernameInToolbar = (TextView) findViewById(R.id.usernameintoolbar);
+        clubLogoInToolbar = (CircleImageView) findViewById(R.id.logointoolbarclub);
         wallList.setLayoutManager(linearLayoutManager);
         wallList.setItemViewCacheSize(20);
         wallList.setDrawingCacheEnabled(true);
@@ -268,6 +282,9 @@ getSupportActionBar().setTitle("");
         nowDate = new Date();
         handler = new Handler();
         premiumUsers = new PremiumUsers();
+        profileImageLayout = (RelativeLayout)findViewById(R.id.layout_for_photo_and_username);
+        verticalLine = findViewById(R.id.verticalseparatormainpage);
+        emoticonImage = (ImageView) findViewById(R.id.emoticonmainpage);
         freeUser = new FreeUser();
         adapter = new MainPageAdapter(itemSize, getApplicationContext(), MainPage.this, wallList, postKey);
         wallList.setAdapter(adapter);
@@ -301,6 +318,16 @@ getSupportActionBar().setTitle("");
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     getSupportActionBar().setHomeAsUpIndicator(R.drawable.hamburgericongreen);
 
+                    profileInToolbar.setVisibility(View.VISIBLE);
+                    Picasso.with(getApplicationContext())
+                            .load(profielImage)
+                            .into(profileImageInToolbar);
+
+                    Picasso.with(getApplicationContext())
+                            .load(clubHeaderString)
+                            .into(clubLogoInToolbar);
+
+                    usernameInToolbar.setText(usernameInfo);
                     navigationView= (NavigationView) findViewById(R.id.nav_view);
                     navigationView.setNavigationItemSelectedListener(MainPage.this);
 
@@ -320,7 +347,7 @@ getSupportActionBar().setTitle("");
                     toolbar.setBackgroundColor(Color.parseColor("#33691e"));
                     toolbar.setLogo(R.drawable.refreshicon);
                    View logoClick = getToolbarLogoIcon(toolbar);
-
+                    profileInToolbar.setVisibility(View.GONE);
                    logoClick.setOnClickListener(new View.OnClickListener() {
                        @Override
                        public void onClick(View v) {
@@ -398,7 +425,12 @@ getSupportActionBar().setTitle("");
                 return false;
             }
         });
+postText.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
 
+    }
+});
 
         galleryIcon.setOnClickListener(this);
         videoIcon.setOnClickListener(this);
@@ -1656,7 +1688,9 @@ captureImage.setOnClickListener(new View.OnClickListener() {
     }
 
 
-private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
+
+
+    private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
 
     @Override

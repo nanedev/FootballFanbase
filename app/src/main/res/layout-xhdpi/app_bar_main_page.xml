@@ -71,6 +71,16 @@
                     android:layout_toRightOf="@id/layout_for_photo_and_username"
                     android:background="@color/primary" />
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/emoticonmainpage"
+                    android:src="@drawable/smajlic"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:padding="10dp"
+                    android:visibility="gone"/>
+
                 <EditText
                     android:id="@+id/postOnlyText"
                     android:layout_width="match_parent"
@@ -86,8 +96,6 @@
                     android:ems="10"
                     android:gravity="top"
                     android:hint="Post something"
-                    android:textColorHint="#000000"
-                    android:focusable="true"
                     android:inputType="textMultiLine"
                     android:padding="5dp"
                     android:textColor="@color/black"
@@ -426,8 +434,54 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:layout_collapseMode="pin"/>
+                app:layout_collapseMode="pin">
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/layoutprofiletoolbar"
+
+                    android:visibility="visible"
+                    app:layout_collapseMode="pin"
+
+                    >
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp"
+                        android:id="@+id/profilna"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/usernameintoolbar"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/profilna"
+                        android:layout_toEndOf="@+id/profilna"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/primary"/>
+
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/logointoolbarclub"
+                        android:layout_toRightOf="@+id/usernameintoolbar"
+                        android:layout_toEndOf="@+id/usernameintoolbar"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_centerVertical="true"
+                        />
+
+
+                </RelativeLayout>
+            </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
 
 
