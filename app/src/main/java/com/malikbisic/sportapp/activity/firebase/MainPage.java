@@ -50,6 +50,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,6 +97,7 @@ import com.malikbisic.sportapp.model.firebase.UsersModel;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
@@ -495,7 +497,18 @@ galleryIcon.setOnClickListener(new View.OnClickListener() {
 
                                         Picasso.with(getApplicationContext())
                                                 .load(profielImage)
-                                                .into(userProfileImage);
+                                                .into(userProfileImage, new Callback() {
+                                                    @Override
+                                                    public void onSuccess() {
+                                                        ProgressBar progressBarProfile = (ProgressBar) findViewById(R.id. loadImageProgressProfile);
+                                                        progressBarProfile.setVisibility(View.GONE);
+                                                    }
+
+                                                    @Override
+                                                    public void onError() {
+
+                                                    }
+                                                });
 
                                         country = String.valueOf(value.get("flag"));
                                         countryName = String.valueOf(value.get("country"));

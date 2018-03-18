@@ -59,6 +59,16 @@
                         android:text="username"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
+
+                    <ProgressBar
+                        android:id="@+id/loadImageProgressProfile"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="11dp"
+                        android:background="@drawable/progress_load_image" />
                 </RelativeLayout>
 
                 <View

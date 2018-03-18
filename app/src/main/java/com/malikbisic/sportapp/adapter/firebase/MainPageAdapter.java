@@ -35,6 +35,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
@@ -72,6 +73,7 @@ import com.malikbisic.sportapp.activity.firebase.Username_Likes_Activity;
 import com.malikbisic.sportapp.model.firebase.Post;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -1447,7 +1449,18 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         public void setProfileImage(Context ctx, String profileImage) {
 
-            Picasso.with(ctx).load(profileImage).into(post_profile_image);
+            Picasso.with(ctx).load(profileImage).into(post_profile_image, new Callback() {
+                @Override
+                public void onSuccess() {
+                    ProgressBar loadImage = mView.findViewById(R.id.loadImageProgressWall);
+                    loadImage.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
 
         }
 
@@ -1495,6 +1508,20 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         .asBitmap()
                         .override(720, 640)
                         .centerCrop()
+                        .listener(new RequestListener<String, Bitmap>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                ProgressBar loadImageProgress = mView.findViewById(R.id.loadImageProgressWallImage);
+                                loadImageProgress.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -1565,7 +1592,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
     }
 
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {
-        public ProgressBar progressBar;
+        public static ProgressBar progressBar;
 
         public ProgressViewHolder(View v) {
             super(v);
