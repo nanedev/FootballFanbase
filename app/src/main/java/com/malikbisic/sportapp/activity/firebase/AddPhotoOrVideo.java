@@ -163,12 +163,14 @@ smajlic.setOnClickListener(new View.OnClickListener() {
         if (firstClickSmile) {
             firstClickSmile = false;
             secondClickSmile = true;
-layoutVideoPhot.setVisibility(View.GONE);
+
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
             emoticonsPhoto.startAnimation(slideUpAnimation);
             emoticonsPhoto.setVisibility(View.VISIBLE);
+            layoutVideoPhot.setVisibility(View.GONE);
+
         } else if (secondClickSmile) {
             firstClickSmile = true;
             secondClickSmile = false;
