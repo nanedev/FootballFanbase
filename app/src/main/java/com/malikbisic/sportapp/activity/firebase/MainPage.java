@@ -146,7 +146,7 @@ public class MainPage extends AppCompatActivity
     private RelativeLayout galleryIcon;
     private RelativeLayout videoIcon;
     private RelativeLayout audioIcon;
-    private EditText postText;
+    private RelativeLayout postText;
     MenuItem myMenu;
     private ProgressDialog postingDialog;
     private RecyclerView wallList;
@@ -259,7 +259,7 @@ getSupportActionBar().setTitle("");
         galleryIcon = (RelativeLayout) findViewById(R.id.gallery_icon_content_main);
         videoIcon = (RelativeLayout) findViewById(R.id.vide_icon_content_main);
         audioIcon = (RelativeLayout) findViewById(R.id.talk_icon_content_main);
-        postText = (EditText) findViewById(R.id.postOnlyText);
+        postText = (RelativeLayout) findViewById(R.id.postOnlyText);
         backgroundUserPost = (RelativeLayout) findViewById(R.id.relativeLayout);
         calendar = Calendar.getInstance();
         postingDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
@@ -292,7 +292,7 @@ getSupportActionBar().setTitle("");
         wallList.setAdapter(adapter);
         swipeRefreshLayoutPost = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_post);
         itemSize.clear();
-        postText.clearFocus();
+
         swipeRefreshLayoutPost.setEnabled(false);
 
         final RelativeLayout lll = (RelativeLayout) findViewById(R.id.relativeLayout);
@@ -405,7 +405,7 @@ getSupportActionBar().setTitle("");
         });
 
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         final String action = intent.getAction();
 
@@ -416,8 +416,8 @@ getSupportActionBar().setTitle("");
                 startActivity(openPhoto);
             }
         }
-        postText.addTextChangedListener(this);
-        postText.setOnKeyListener(new View.OnKeyListener() {
+
+ /*       postText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
 
@@ -426,13 +426,18 @@ getSupportActionBar().setTitle("");
 
                 return false;
             }
-        });
-postText.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
+        });*/
 
-    }
-});
+        postText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(MainPage.this,OnlyPostActivity.class);
+                intent1.putExtra("profilna",profielImage);
+                intent1.putExtra("username",usernameInfo);
+                startActivity(intent1);
+            }
+        });
+
 
         galleryIcon.setOnClickListener(this);
         videoIcon.setOnClickListener(this);
@@ -1064,7 +1069,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.postText) {
-            String textPost = postText.getText().toString().trim();
+         /*   String textPost = postText.getText().toString().trim();
             final String country = MainPage.country;
             final String clubLogo = MainPage.clubHeaderString;
             postingDialog.setMessage("Posting...");
@@ -1094,8 +1099,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                 }
             });
 
-
-            /*newPost.updateChildren(textMap, new DatabaseReference.CompletionListener() {
+            *//*newPost.updateChildren(textMap, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError != null) {
@@ -1105,9 +1109,9 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                         postText.setText("");
                     }
                 }
-            }); */
+            }); *//*
 
-            return true;
+            return true;*/
         }
 
 
@@ -1684,7 +1688,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-
+/*
         if (myMenu != null) {
 
             if (!postText.getText().toString().trim().isEmpty() && postText.getText().toString().trim().length() >= 3) {
@@ -1692,7 +1696,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             } else if (postText.getText().toString().trim().length() < 3) {
                 myMenu.setEnabled(false);
             }
-        }
+        }*/
     }
 
     @Override

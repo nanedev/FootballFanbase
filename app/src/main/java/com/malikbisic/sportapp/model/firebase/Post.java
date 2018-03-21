@@ -21,6 +21,8 @@ public class Post {
     private String descVideo;
     private String descForPhoto;
     private String desc;
+    private String descWithBackground;
+    private int idResource;
     private String uid;
     private String country;
     private Date time;
@@ -43,7 +45,7 @@ public class Post {
         return (T) this;
     }
 
-    public Post (String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key, Date time, String systemImage, String systemText, boolean isSystem, Date systemTime) {
+    public Post (String username, String profileImage, String descForAudio, String descVideo, String descForPhoto, String photoPost, String videoPost, String audioFile, String desc, String uid, String country,String clubLogo, String key, Date time, String systemImage, String systemText, boolean isSystem, Date systemTime,String descWithBackground,int idResource) {
         this.username = username;
         this.profileImage = profileImage;
         this.descForAudio = descForAudio;
@@ -62,6 +64,24 @@ public class Post {
         this.systemText = systemText;
         this.isSystemView = isSystem;
         this.systemTime = systemTime;
+        this.descWithBackground = descWithBackground;
+        this.idResource = idResource;
+    }
+
+    public String getDescWithBackground() {
+        return descWithBackground;
+    }
+
+    public void setDescWithBackground(String descWithBackground) {
+        this.descWithBackground = descWithBackground;
+    }
+
+    public int getIdResource() {
+        return idResource;
+    }
+
+    public void setIdResource(int idResource) {
+        this.idResource = idResource;
     }
 
     public Date getSystemTime() {

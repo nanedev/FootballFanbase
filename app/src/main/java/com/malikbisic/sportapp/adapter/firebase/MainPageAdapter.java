@@ -264,7 +264,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).setClubLogo(ctx, model.getClubLogo());
             ((MainPageAdapter.PostViewHolder) holder).setCountry(ctx, model.getCountry());
             ((MainPageAdapter.PostViewHolder) holder).setTimeAgo(model.getTime(), ctx);
-
+            ((MainPageAdapter.PostViewHolder) holder).setDescWithBackground(model.getDescWithBackground());
+            ((MainPageAdapter.PostViewHolder) holder).setIdResource(model.getIdResource());
             ((MainPageAdapter.PostViewHolder) holder).setSystemView(ctx, model.getSystemText(), model.isSystemView(), model.getSystemImage(), model.getTime());
             ((MainPageAdapter.PostViewHolder) holder).setSystemNumberComments(post_key, activity);
 
@@ -1064,6 +1065,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         TextView systemNumberComments;
         TextView systemCommentsTextview;
         RelativeLayout systemNumberCommentsLayout;
+        RelativeLayout postWithBackgroundLayout;
+        TextView posttextWithbackground;
+
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -1123,6 +1127,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             systemCommentsTextview = (TextView) mView.findViewById(R.id.systemcomments_textview);
             systemNumberCommentsLayout = (RelativeLayout) mView.findViewById(R.id.systemNumberCommentsLayout);
             systemNumberComments = (TextView) mView.findViewById(R.id.systemNumberComments);
+
+            postWithBackgroundLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_postWithBackground);
+            posttextWithbackground = (TextView) mView.findViewById(R.id.post_text_main_pageWithBackground);
 
         }
 
@@ -1218,6 +1225,22 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             });
         }
 
+        public void setDescWithBackground(String descWithBackground){
+            if (descWithBackground != null){
+
+                posttextWithbackground.setText(descWithBackground);
+
+            }
+
+        }
+
+        public void setIdResource(int idResource){
+            if (idResource != 0){
+                postWithBackgroundLayout.setVisibility(View.VISIBLE);
+                postWithBackgroundLayout.setBackgroundResource(idResource);
+
+            }
+        }
 
         public void setNumberComments(String post_key, Activity activity) {
             numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").addSnapshotListener(activity, new EventListener<QuerySnapshot>() {

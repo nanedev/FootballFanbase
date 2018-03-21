@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.malikbisic.sportapp.activity.firebase.OnlyPostActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarlayoutonlypost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/onlyposttoolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/pofileImageOnlyPost"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerVertical="true" />
+
+                <TextView
+                    android:id="@+id/usernameOnlyPost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/pofileImageOnlyPost"
+                    android:layout_toRightOf="@+id/pofileImageOnlyPost"
+                    android:text="username"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+</RelativeLayout>
+
+
+                <ImageView
+                    android:id="@+id/onlypostsend"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:rotation="360"
+                    android:src="@drawable/ic_send_white_24dp" />
+
+
+            </RelativeLayout>
+
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/containerlayoutonlypost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/smilelayout"
+        android:layout_below="@+id/appbarlayoutonlypost">
+
+
+        <View
+            android:id="@+id/nekalinija1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/appbarlayoutonlypost"
+            android:background="@color/white" />
+
+        <RelativeLayout
+            android:id="@+id/edittextlayoutonlypost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/nekalinija1">
+
+
+            <com.rockerhieu.emojicon.EmojiconEditText
+                android:id="@+id/onlypostedittext"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/only_post_editext_shape"
+                android:gravity="top"
+                android:hint="Say something...."
+                android:inputType="textMultiLine"
+                android:lineSpacingExtra="5dp"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textCursorDrawable="@null"
+                emojicon:emojiconAlignment="baseline"
+                emojicon:emojiconSize="20sp" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/edittextlayoutonlypostWithBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/nekalinija1"
+            android:visibility="gone">
+
+
+            <com.rockerhieu.emojicon.EmojiconEditText
+                android:id="@+id/onlypostedittextWithBackground"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical|center_horizontal"
+                android:hint="Say something...."
+                android:inputType="textMultiLine"
+                android:lineSpacingExtra="5dp"
+                android:padding="10dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textCursorDrawable="@null"
+                emojicon:emojiconAlignment="baseline"
+                emojicon:emojiconSize="26sp" />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/containerlayoutonlypost"
+        android:background="@color/primary" />
+
+
+    <RelativeLayout
+        android:id="@+id/smilelayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:id="@+id/neznija"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/addtoposttekst"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:text="Add to post"
+                android:textColor="@color/primary"
+
+                android:textStyle="bold" />
+
+
+            <RelativeLayout
+                android:id="@+id/addtopostlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/addtoposttekst"
+                android:padding="10dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
+
+                    <ImageButton
+                        android:id="@+id/smileImage"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/send_message_shape"
+                        android:src="@drawable/smileff" />
+
+
+                    <View
+                        android:id="@+id/linija1"
+                        android:layout_width="40dp"
+                        android:layout_height="1dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/smileImage"
+                        android:layout_toRightOf="@+id/smileImage"
+                        android:background="@color/primary" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/choosebackground"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_toEndOf="@+id/linija1"
+                        android:layout_toRightOf="@+id/linija1"
+                        android:background="@drawable/choose_background_shape" />
+
+                    <View
+                        android:id="@+id/linija2"
+                        android:layout_width="40dp"
+                        android:layout_height="1dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/choosebackground"
+                        android:layout_toRightOf="@+id/choosebackground"
+                        android:background="@color/primary" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/chooseLogo"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_toEndOf="@+id/linija2"
+                        android:layout_toRightOf="@+id/linija2"
+                        android:background="@drawable/choose_background_shape" />
+
+                    <View
+                        android:id="@+id/linija3"
+                        android:layout_width="40dp"
+                        android:layout_height="1dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/chooseLogo"
+                        android:layout_toRightOf="@+id/chooseLogo"
+                        android:background="@color/primary" />
+
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/choosePlayer"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_toEndOf="@+id/linija3"
+                        android:layout_toRightOf="@+id/linija3"
+                        android:background="@drawable/choose_background_shape" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/emojiconsOnlyPost"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/neznija"
+            android:background="@color/white"
+            android:visibility="gone">
+
+        </FrameLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>

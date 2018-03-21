@@ -114,7 +114,6 @@
                         android:layout_marginStart="10dp"
 
                         />
-
                     <ProgressBar
                         android:id="@+id/loadImageProgressWall"
                         style="?android:attr/progressBarStyle"
@@ -126,7 +125,6 @@
                         android:layout_toLeftOf="@+id/layoutusernametimeago"
                         android:layout_toStartOf="@+id/layoutusernametimeago"
                         android:background="@drawable/progress_load_image" />
-
 
                     <RelativeLayout
                         android:id="@+id/layoutusernametimeago"
@@ -291,7 +289,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layout_for_text_image"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <com.malikbisic.sportapp.utils.DynamicImageView
                     android:id="@+id/posted_image"
@@ -340,7 +338,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_below="@+id/layout_for_video_text"
-                android:visibility="gone"
 
                 >
 
@@ -374,6 +371,32 @@
                     android:textSize="20sp"
                     emojicon:emojiconAlignment="baseline"
                     emojicon:emojiconSize="20sp" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/layout_for_only_postWithBackground"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:visibility="gone">
+
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    android:id="@+id/post_text_main_pageWithBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:lineSpacingExtra="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="30sp"
+                    emojicon:emojiconAlignment="baseline"
+                    emojicon:emojiconSize="36sp" />
 
             </RelativeLayout>
 

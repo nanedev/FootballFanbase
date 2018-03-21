@@ -157,6 +157,35 @@ RelativeLayout layoutVideoPhot;
 
                 }
             });
+
+            saySomething.clearFocus();
+            saySomething.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        emoticonsPhoto.setVisibility(View.GONE);
+                        layoutVideoPhot.setVisibility(View.VISIBLE);
+                        firstClickSmile = true;
+
+
+                    }
+
+                }
+            });
+
+
+            saySomething.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    saySomething.setFocusable(true);
+                    emoticonsPhoto.setVisibility(View.GONE);
+                    layoutVideoPhot.setVisibility(View.VISIBLE);
+                    firstClickSmile = true;
+
+                }
+            });
+
+
 smajlic.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
@@ -190,6 +219,9 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
         } else if (!MainPage.photoSelected) {
             photoSelected.setVisibility(View.GONE);
 
+            slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                    R.anim.anmation_drom_down_to_top);
+
             pDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
             pDialog.setMessage("Buffering");
             pDialog.setIndeterminate(false);
@@ -199,6 +231,81 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
 
             try {
                 pDialog.dismiss();
+
+                saySomething.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+                saySomething.clearFocus();
+                saySomething.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (hasFocus) {
+                            emoticonsPhoto.setVisibility(View.GONE);
+                            videoSelected.setVisibility(View.VISIBLE);
+                            firstClickSmile = true;
+
+
+                        }
+
+                    }
+                });
+
+
+                saySomething.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        saySomething.setFocusable(true);
+                        emoticonsPhoto.setVisibility(View.GONE);
+                        videoSelected.setVisibility(View.VISIBLE);
+                        firstClickSmile = true;
+
+                    }
+                });
+
+
+                smajlic.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (firstClickSmile) {
+                            firstClickSmile = false;
+                            secondClickSmile = true;
+
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                            emoticonsPhoto.startAnimation(slideUpAnimation);
+                            emoticonsPhoto.setVisibility(View.VISIBLE);
+                            videoSelected.setVisibility(View.GONE);
+
+                        } else if (secondClickSmile) {
+                            firstClickSmile = true;
+                            secondClickSmile = false;
+                            videoSelected.setVisibility(View.VISIBLE);
+                            saySomething.clearFocus();
+          /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
+                            emoticonsPhoto.setVisibility(View.GONE);
+
+
+                        }
+                    }
+                });
+
+                setEmojiconFragment(false);
                 videoSelected.setVisibility(View.VISIBLE);
                 Uri video = myIntent.getData(); //Uri.parse(myIntent.getStringExtra("video-uri_selected"));
 
