@@ -458,5 +458,10 @@ public class NotificationFragment extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent backToMain = new Intent(NotificationFragment.this, MainPage.class);
+        startActivity(backToMain);
 
+    }
 }

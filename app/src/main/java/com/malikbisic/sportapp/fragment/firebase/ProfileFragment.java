@@ -205,12 +205,15 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
     String playerID;
     private DiscreteScrollView itemPicker;
     private InfiniteScrollAdapter infiniteAdapter;
-RelativeLayout layoutForTopTenPlayers;
+    RelativeLayout layoutForTopTenPlayers;
     TextView totalPointsTextview;
     int pos = 1;
     RelativeLayout layoutForWinner;
     RelativeLayout votesLayout;
+    TextView numberPosClubTextview;
+    String myClubName;
 
+    int clubPOS = 1;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -233,7 +236,7 @@ RelativeLayout layoutForTopTenPlayers;
         itemPicker.setNestedScrollingEnabled(false);
         itemPicker.setOrientation(Orientation.HORIZONTAL);
         itemPicker.addOnItemChangedListener(this);
-        infiniteAdapter = InfiniteScrollAdapter.wrap(new PlayerFirebaseAdapter(list,ProfileFragment.this));
+        infiniteAdapter = InfiniteScrollAdapter.wrap(new PlayerFirebaseAdapter(list, ProfileFragment.this));
         itemPicker.setAdapter(infiniteAdapter);
         itemPicker.setItemTransformer(new ScaleTransformer.Builder()
                 .setMinScale(0.8f)
@@ -271,11 +274,12 @@ RelativeLayout layoutForTopTenPlayers;
         thisMonhtNumberLikes = (TextView) findViewById(R.id.likesinprofilefragment);
         thisMonthNumberDislikes = (TextView) findViewById(R.id.dislikesinporiflefragment);
         winnerImage = (RelativeLayout) findViewById(R.id.layoutForImageOFWinner);
-layoutForTopTenPlayers = (RelativeLayout) findViewById(R.id.parentForListplayers);
-votesLayout = (RelativeLayout) findViewById(R.id.goalslayout);
-layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
+        layoutForTopTenPlayers = (RelativeLayout) findViewById(R.id.parentForListplayers);
+        votesLayout = (RelativeLayout) findViewById(R.id.goalslayout);
+        layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
         totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumber);
         postLayout = (RelativeLayout) findViewById(R.id.postlayout);
+        numberPosClubTextview = (TextView) findViewById(R.id.teamposnumber);
         backarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,7 +287,6 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
                 startActivity(intent);
             }
         });
-
 
 
         showInfo.setOnClickListener(new View.OnClickListener() {
@@ -294,10 +297,10 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
         });
 
 
-
         numberPost();
         totalUserPoints();
         playerWinner();
+
 
         postLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -393,8 +396,8 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
 
 
                         //birthday.setText(String.valueOf(value.get("date")));
-                        //club.setText(String.valueOf(value.get("favoriteClub")));
-
+                        myClubName = String.valueOf(value.get("favoriteClub"));
+                        teamPosition();
 
                         flagImageFirebase = String.valueOf(value.get("flag"));
                         Log.i("flag uri", flagImageFirebase);
@@ -482,7 +485,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
 
     };
 
-    public void playerWinner(){
+    public void playerWinner() {
         final TextView playerNameTextview = (TextView) findViewById(R.id.playernamewinner);
         final ImageView playerImageImageview = (ImageView) findViewById(R.id.playerImageWinner);
         final TextView playerPointsTextview = (TextView) findViewById(R.id.pointsNumberWinner);
@@ -497,7 +500,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {
-                if (task.getResult().isEmpty()){
+                if (task.getResult().isEmpty()) {
                     layoutForWinner.setVisibility(View.GONE);
                 }
                 String playName;
@@ -519,7 +522,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
 
                     }
 
-                    String urlClubCountryPlayer = "https://soccer.sportmonks.com/api/v2.0/players/"+playerID+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=team";
+                    String urlClubCountryPlayer = "https://soccer.sportmonks.com/api/v2.0/players/" + playerID + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=team";
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, urlClubCountryPlayer, null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -617,7 +620,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
                             votesLayout.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(ProfileFragment.this,UserVotesActivity.class);
+                                    Intent intent = new Intent(ProfileFragment.this, UserVotesActivity.class);
                                     intent.putExtra("playerID", playerID);
                                     startActivity(intent);
                                 }
@@ -632,7 +635,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
     }
 
     public void updateListPlayer() {
-        DateFormat currentDateFormat = new SimpleDateFormat("MMMM",Locale.getDefault());
+        DateFormat currentDateFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
         final Date currentDate = new Date();
 
         final String currentMonth = currentDateFormat.format(currentDate);
@@ -641,7 +644,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {
-                if (task.getResult().isEmpty()){
+                if (task.getResult().isEmpty()) {
                     layoutForTopTenPlayers.setVisibility(View.GONE);
                 }
                 String playName;
@@ -667,6 +670,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
             }
         });
     }
+
     private void onItemChanged(PlayerModel item) {
         TextView namePlayer = (TextView) findViewById(R.id.playerName);
         namePlayer.setText(item.getName());
@@ -743,7 +747,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
                                 postingImageUpdate.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        for (DocumentSnapshot snapshot : task.getResult()){
+                                        for (DocumentSnapshot snapshot : task.getResult()) {
                                             String postID = snapshot.getId();
 
                                             DocumentReference changeprofilePost = db.collection("Posting").document(postID);
@@ -826,7 +830,8 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
                     flagUser = String.valueOf(value.get("flag"));
                     logoClubUser = String.valueOf(value.get("favoriteClubLogo"));
                     logoClubImg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    clubtextview.setText(String.valueOf(value.get("favoriteClub")));
+                    myClubName = String.valueOf(value.get("favoriteClub"));
+                    clubtextview.setText(myClubName);
                     Picasso.with(ProfileFragment.this).load(logoClubUser).into(logoClubImg);
                     genderText.setText(String.valueOf(value.get("gender")));
                     if (String.valueOf(value.get("gender")).equals("Male")) {
@@ -919,6 +924,28 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
 
     }
 
+    public void teamPosition() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query teamPosition = db.collection("ClubTable");
+        teamPosition.orderBy("numberClubFan", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                Map<String, Object> mapClubPosition = new HashMap<>();
+                mapClubPosition.clear();
+                clubPOS = 1;
+                for (DocumentSnapshot snapshot : task.getResult()) {
+                    String clubID = snapshot.getId();
+
+                    mapClubPosition.put(clubID, clubPOS);
+                    clubPOS++;
+                }
+
+                numberPosClubTextview.setText(String.valueOf(mapClubPosition.get(myClubName)));
+
+            }
+        });
+    }
+
     @Override
     public void onPause() {
 
@@ -946,29 +973,30 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
         points.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.getResult().exists()){
-                long likeNumber = task.getResult().getLong("currentMonthPoints.likePoints");
-                long dislikeNumber = task.getResult().getLong("currentMonthPoints.dislikePoints");
-                long totalNumber = task.getResult().getLong("currentMonthPoints.totalPoints");
+                if (task.getResult().exists()) {
+                    long likeNumber = task.getResult().getLong("currentMonthPoints.likePoints");
+                    long dislikeNumber = task.getResult().getLong("currentMonthPoints.dislikePoints");
+                    long totalNumber = task.getResult().getLong("currentMonthPoints.totalPoints");
 
-                if (likeNumber == 0) {
-                    thisMonhtNumberLikes.setText("0");
-                }
-                if (dislikeNumber == 0) {
-                    thisMonthNumberDislikes.setText("0");
-                }
-                thisMonhtNumberLikes.setText(String.valueOf(likeNumber));
-                thisMonthNumberDislikes.setText(String.valueOf(dislikeNumber));
+                    if (likeNumber == 0) {
+                        thisMonhtNumberLikes.setText("0");
+                    }
+                    if (dislikeNumber == 0) {
+                        thisMonthNumberDislikes.setText("0");
+                    }
+                    thisMonhtNumberLikes.setText(String.valueOf(likeNumber));
+                    thisMonthNumberDislikes.setText(String.valueOf(dislikeNumber));
 
-                if (totalNumber <= 0) {
-                    userPointsTextView.setText("0");
-                }
-                if (totalNumber > 0) {
-                    userPointsTextView.setText(String.valueOf(totalNumber));
-                }
+                    if (totalNumber <= 0) {
+                        userPointsTextView.setText("0");
+                    }
+                    if (totalNumber > 0) {
+                        userPointsTextView.setText(String.valueOf(totalNumber));
+                    }
 
 
-            }}
+                }
+            }
         });
 
     }
@@ -992,7 +1020,7 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
                             public void onComplete(@NonNull final Task<QuerySnapshot> task2) {
                                 if (task2.getException() == null) {
 
-                                    for (final DocumentSnapshot snapshot1 : task2.getResult()){
+                                    for (final DocumentSnapshot snapshot1 : task2.getResult()) {
 
                                         db.collection("Posting").document(postID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                             @Override
@@ -1000,8 +1028,8 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
 
                                                 String nekistring = String.valueOf(documentSnapshot.getData().get("uid"));
 
-                                                if (!snapshot1.getId().equals(nekistring)){
-                                                    Log.i("proba",snapshot1.getId());
+                                                if (!snapshot1.getId().equals(nekistring)) {
+                                                    Log.i("proba", snapshot1.getId());
                                                     numberLikes = task2.getResult().size();
 
                                                     totalLikes += numberLikes;
@@ -1012,11 +1040,6 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
 
 
                                     }
-
-
-
-
-
 
 
                                     CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
@@ -1067,6 +1090,13 @@ layoutForWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
 
         int positionInDataSet = infiniteAdapter.getRealPosition(adapterPosition);
         onItemChanged(list.get(positionInDataSet));
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent backToMain = new Intent(ProfileFragment.this, MainPage.class);
+        startActivity(backToMain);
     }
 }
 

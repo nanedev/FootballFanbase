@@ -34,6 +34,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +53,7 @@ import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -68,7 +73,7 @@ import static com.iceteck.silicompressorr.FileUtils.isGooglePhotosUri;
 import static com.iceteck.silicompressorr.Util.isMediaDocument;
 import static com.malikbisic.sportapp.BuildConfig.DEBUG;
 
-public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickListener,EmojiconsFragment.OnEmojiconBackspaceClickedListener,EmojiconGridFragment.OnEmojiconClickedListener {
+public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, EmojiconGridFragment.OnEmojiconClickedListener {
 
     private Intent myIntent;
     private ImageView photoSelected;
@@ -90,12 +95,13 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     private static final String TAG = "AddPhotoOrVideo";
     String videoSize;
     RelativeLayout layout;
-Toolbar addPhotoVideoToolbar;
-FrameLayout emoticonsPhoto;
-ImageView smajlic;
-RelativeLayout layoutVideoPhot;
+    Toolbar addPhotoVideoToolbar;
+    FrameLayout emoticonsPhoto;
+    ImageView smajlic;
+    RelativeLayout layoutVideoPhot;
     boolean firstClickSmile = true;
     boolean secondClickSmile = false;
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,10 +115,10 @@ RelativeLayout layoutVideoPhot;
         mStorage = FirebaseStorage.getInstance();
         postingCollection = FirebaseFirestore.getInstance();
         photoSelected = (ImageView) findViewById(R.id.post_image);
-        emoticonsPhoto = (FrameLayout)findViewById(R.id.emojiconsPhotoVideo);
+        emoticonsPhoto = (FrameLayout) findViewById(R.id.emojiconsPhotoVideo);
         videoSelected = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.post_video);
         saySomething = (EmojiconEditText) findViewById(R.id.tell_something_about_video_image);
-        postingDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
+        postingDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
         mAuth = FirebaseAuth.getInstance();
         smajlic = (ImageView) findViewById(R.id.smileinphoto);
         layout = (RelativeLayout) findViewById(R.id.container);
@@ -128,18 +134,20 @@ RelativeLayout layoutVideoPhot;
             videoSelected.setVisibility(View.GONE);
             photoSelected.setVisibility(View.VISIBLE);
             photoSelected.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            Uri imageUri = myIntent.getData();
+            Uri imageUri = Uri.parse(myIntent.getStringExtra("imageURI"));
             slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                     R.anim.anmation_drom_down_to_top);
 
-            Picasso
-                    .with(AddPhotoOrVideo.this)
-                    .load(imageUri)
-                    .fit()
-                    .centerCrop()
-                    // call .centerInside() or .centerCrop() to avoid a stretched image
-                    .into(photoSelected);
+//            Picasso
+//                    .with(AddPhotoOrVideo.this)
+//                    .load(imageUri)
+//                    .fit()
+//                    .centerCrop()
+//                    .
+//                    // call .centerInside() or .centerCrop() to avoid a stretched image
+//                    .into(photoSelected);
 
+            Glide.with(this).load(imageUri.toString()).centerCrop().into(photoSelected);
 
             saySomething.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -157,72 +165,40 @@ RelativeLayout layoutVideoPhot;
 
                 }
             });
-
-            saySomething.clearFocus();
-            saySomething.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            smajlic.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        emoticonsPhoto.setVisibility(View.GONE);
-                        layoutVideoPhot.setVisibility(View.VISIBLE);
+                public void onClick(View view) {
+                    if (firstClickSmile) {
+                        firstClickSmile = false;
+                        secondClickSmile = true;
+
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                        emoticonsPhoto.startAnimation(slideUpAnimation);
+                        emoticonsPhoto.setVisibility(View.VISIBLE);
+                        layoutVideoPhot.setVisibility(View.GONE);
+
+                    } else if (secondClickSmile) {
                         firstClickSmile = true;
+                        secondClickSmile = false;
+                        layoutVideoPhot.setVisibility(View.VISIBLE);
+                        saySomething.clearFocus();
+          /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
+                        emoticonsPhoto.setVisibility(View.GONE);
 
 
                     }
-
                 }
             });
-
-
-            saySomething.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    saySomething.setFocusable(true);
-                    emoticonsPhoto.setVisibility(View.GONE);
-                    layoutVideoPhot.setVisibility(View.VISIBLE);
-                    firstClickSmile = true;
-
-                }
-            });
-
-
-smajlic.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        if (firstClickSmile) {
-            firstClickSmile = false;
-            secondClickSmile = true;
-
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-            emoticonsPhoto.startAnimation(slideUpAnimation);
-            emoticonsPhoto.setVisibility(View.VISIBLE);
-            layoutVideoPhot.setVisibility(View.GONE);
-
-        } else if (secondClickSmile) {
-            firstClickSmile = true;
-            secondClickSmile = false;
-layoutVideoPhot.setVisibility(View.VISIBLE);
-            saySomething.clearFocus();
-          /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
-            emoticonsPhoto.setVisibility(View.GONE);
-
-
-        }
-    }
-});
 
             setEmojiconFragment(false);
 
         } else if (!MainPage.photoSelected) {
             photoSelected.setVisibility(View.GONE);
 
-            slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
-                    R.anim.anmation_drom_down_to_top);
-
-            pDialog = new ProgressDialog(this,R.style.AppTheme_Dark_Dialog);
+            pDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
             pDialog.setMessage("Buffering");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
@@ -231,81 +207,6 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
 
             try {
                 pDialog.dismiss();
-
-                saySomething.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-
-                    }
-                });
-
-                saySomething.clearFocus();
-                saySomething.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (hasFocus) {
-                            emoticonsPhoto.setVisibility(View.GONE);
-                            videoSelected.setVisibility(View.VISIBLE);
-                            firstClickSmile = true;
-
-
-                        }
-
-                    }
-                });
-
-
-                saySomething.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        saySomething.setFocusable(true);
-                        emoticonsPhoto.setVisibility(View.GONE);
-                        videoSelected.setVisibility(View.VISIBLE);
-                        firstClickSmile = true;
-
-                    }
-                });
-
-
-                smajlic.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (firstClickSmile) {
-                            firstClickSmile = false;
-                            secondClickSmile = true;
-
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-                            emoticonsPhoto.startAnimation(slideUpAnimation);
-                            emoticonsPhoto.setVisibility(View.VISIBLE);
-                            videoSelected.setVisibility(View.GONE);
-
-                        } else if (secondClickSmile) {
-                            firstClickSmile = true;
-                            secondClickSmile = false;
-                            videoSelected.setVisibility(View.VISIBLE);
-                            saySomething.clearFocus();
-          /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
-                            emoticonsPhoto.setVisibility(View.GONE);
-
-
-                        }
-                    }
-                });
-
-                setEmojiconFragment(false);
                 videoSelected.setVisibility(View.VISIBLE);
                 Uri video = myIntent.getData(); //Uri.parse(myIntent.getStringExtra("video-uri_selected"));
 
@@ -341,8 +242,6 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
     public void onClick(View view) {
 
 
-
-
     }
 
 
@@ -360,10 +259,10 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
         if (id == R.id.save_edit_text) {
             if (MainPage.photoSelected) {
                 try {
-                    Uri imageUri = myIntent.getData();
+                    Uri imageUri = Uri.parse(myIntent.getStringExtra("imageURI"));
                     File imagePath = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        imagePath = new File(getRealPathFromURI(imageUri));
+                        imagePath = new File(imageUri.getPath());
                     }
                     Log.i("imagePath", imagePath.getPath());
 
@@ -395,7 +294,7 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
 
-                            Map<String,Object> imagePost = new HashMap<>();
+                            Map<String, Object> imagePost = new HashMap<>();
 
                             imagePost.put("username", username);
                             imagePost.put("profileImage", profileImage);
@@ -411,7 +310,7 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
                                 public void onSuccess(DocumentReference documentReference) {
 
                                     String key = documentReference.getId();
-                                    Map<String,Object> keyUpdate = new HashMap<>();
+                                    Map<String, Object> keyUpdate = new HashMap<>();
                                     keyUpdate.put("key", key);
                                     postingCollection.collection("Posting").document(key).update(keyUpdate);
 
@@ -468,14 +367,12 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
                     postingDialog.show();
 
 
-
-
                     postVideo.putFile(videoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Uri downloadUri = taskSnapshot.getDownloadUrl();
 
-                            Map<String,Object> videoPost = new HashMap<>();
+                            Map<String, Object> videoPost = new HashMap<>();
 
                             videoPost.put("descVideo", aboutVideoText);
                             videoPost.put("username", username);
@@ -492,7 +389,7 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
                                 public void onSuccess(DocumentReference documentReference) {
 
                                     String key = documentReference.getId();
-                                    Map<String,Object> keyUpdate = new HashMap<>();
+                                    Map<String, Object> keyUpdate = new HashMap<>();
                                     keyUpdate.put("key", key);
                                     postingCollection.collection("Posting").document(key).update(keyUpdate);
 
@@ -526,12 +423,10 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
         }
 
 
-
         return super.onOptionsItemSelected(item);
 
 
     }
-
 
 
     @Override
@@ -577,14 +472,13 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
     }
 
 
-    private void setEmojiconFragment(boolean useSystemDefault){
+    private void setEmojiconFragment(boolean useSystemDefault) {
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.emojiconsPhotoVideo, EmojiconsFragment.newInstance(useSystemDefault))
                 .commit();
     }
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -607,7 +501,7 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
 
             // ExternalStorageProvider
-         if (isExternalStorageDocument(uri)) {
+            if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
@@ -635,7 +529,7 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
@@ -661,11 +555,11 @@ layoutVideoPhot.setVisibility(View.VISIBLE);
 
     @Override
     public void onEmojiconClicked(Emojicon emojicon) {
-        EmojiconsFragment.input(saySomething,emojicon);
+        EmojiconsFragment.input(saySomething, emojicon);
     }
 
     @Override
     public void onEmojiconBackspaceClicked(View v) {
-EmojiconsFragment.backspace(saySomething);
+        EmojiconsFragment.backspace(saySomething);
     }
 }

@@ -282,6 +282,16 @@
             android:theme="@style/AppTheme.Dark"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".activity.firebase.BackgroundPostActivity"></activity>
+        <activity
+            android:name=".activity.firebase.PhotoPostSelectActivity"
+            android:parentActivityName=".activity.firebase.MainPage"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".activity.firebase.VideoPostSelectActivity"
+            android:parentActivityName=".activity.firebase.MainPage"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
     </application>
 
 </manifest>

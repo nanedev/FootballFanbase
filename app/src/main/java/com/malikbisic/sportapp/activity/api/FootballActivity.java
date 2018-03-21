@@ -10,10 +10,12 @@ import android.os.Bundle;
 
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
+import com.malikbisic.sportapp.activity.firebase.MainPage;
 import com.malikbisic.sportapp.fragment.api.FragmentAllFixtures;
 import com.malikbisic.sportapp.fragment.api.FragmentAllMatches;
 import com.malikbisic.sportapp.fragment.api.FragmentMyClubMatches;
 import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
+import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 
 public class FootballActivity extends AppCompatActivity {
     private ViewPager mViewPager;
@@ -51,5 +53,11 @@ public class FootballActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
 
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent backToMain = new Intent(FootballActivity.this, MainPage.class);
+        startActivity(backToMain);
     }
+}
 

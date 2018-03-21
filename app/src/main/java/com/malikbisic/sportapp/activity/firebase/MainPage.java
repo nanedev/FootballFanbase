@@ -447,10 +447,17 @@ galleryIcon.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
         if (Build.VERSION.SDK_INT < 19) {
-            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
-            photoSelected = true;
-            openGallery.setType("image/*");
-            startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
+
+            Intent imageIntent = new Intent(MainPage.this, PhotoPostSelectActivity.class);
+            imageIntent.putExtra("username", usernameInfo);
+            imageIntent.putExtra("profileImage", profielImage);
+            imageIntent.putExtra("country", country);
+            imageIntent.putExtra("clubheader", clubHeaderString);
+            startActivity(imageIntent);
+//            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+//            photoSelected = true;
+//            openGallery.setType("image/*");
+//            startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
         } else {
             photoSelected = true;
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -962,15 +969,21 @@ captureImage.setOnClickListener(new View.OnClickListener() {
 
             } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
                 Uri videoUri = data.getData();
-                Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
-                goToAddPhotoOrVideo.setData(videoUri);
-                goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
-                goToAddPhotoOrVideo.putExtra("username", usernameInfo);
-                goToAddPhotoOrVideo.putExtra("profileImage", profielImage);
-                goToAddPhotoOrVideo.putExtra("country", country);
-                goToAddPhotoOrVideo.putExtra("clubheader", clubHeaderString);
-                Log.i("uri video", String.valueOf(videoUri));
-                startActivity(goToAddPhotoOrVideo);
+                Log.i("vidoeURL", videoUri.toString());
+                if (videoUri.toString().contains("com.google.android.apps.docs.storage")){
+
+                    Toast.makeText(MainPage.this, "Can't open video from google drive", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
+                    goToAddPhotoOrVideo.setData(videoUri);
+                    goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
+                    goToAddPhotoOrVideo.putExtra("username", usernameInfo);
+                    goToAddPhotoOrVideo.putExtra("profileImage", profielImage);
+                    goToAddPhotoOrVideo.putExtra("country", country);
+                    goToAddPhotoOrVideo.putExtra("clubheader", clubHeaderString);
+                    Log.i("uri video", String.valueOf(videoUri));
+                    startActivity(goToAddPhotoOrVideo);
+                }
 
 
             } else    if (requestCode == CAMERA_REQUEST) {

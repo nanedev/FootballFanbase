@@ -13,6 +13,7 @@ import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
 import com.malikbisic.sportapp.fragment.api.FragmentAllFixtures;
 import com.malikbisic.sportapp.fragment.api.FragmentAllMatches;
 import com.malikbisic.sportapp.fragment.api.FragmentMyClubMatches;
+import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 import com.malikbisic.sportapp.fragment.firebase.RankingAllTimeFragment;
 import com.malikbisic.sportapp.fragment.firebase.RankingMonthFragment;
 
@@ -55,5 +56,11 @@ public class RankingsActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent backToMain = new Intent(RankingsActivity.this, MainPage.class);
+        startActivity(backToMain);
     }
 }
