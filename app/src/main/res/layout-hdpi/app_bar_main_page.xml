@@ -91,7 +91,7 @@
                     android:padding="10dp"
                     android:visibility="gone"/>
 
-                <EditText
+                <RelativeLayout
                     android:id="@+id/postOnlyText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -101,16 +101,15 @@
                     android:layout_marginStart="5dp"
                     android:layout_toEndOf="@id/verticalseparatormainpage"
                     android:layout_toRightOf="@id/verticalseparatormainpage"
-                    android:background="@null"
-                    android:cursorVisible="true"
-                    android:ems="10"
-                    android:gravity="top"
-                    android:hint="Post something"
-                    android:inputType="textMultiLine"
-                    android:padding="5dp"
-                    android:textColor="@color/black"
-                    android:textColorLink="#1a237e"
-                    android:textCursorDrawable="@null" />
+                    android:padding="5dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:text="Post something..."/>
+                </RelativeLayout>
 
                 <View
                     android:id="@+id/horizontal_line_content_main"
