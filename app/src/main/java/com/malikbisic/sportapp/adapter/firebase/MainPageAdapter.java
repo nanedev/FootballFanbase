@@ -402,7 +402,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).like_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    if (!((PostViewHolder) holder).isDislikeClicked){
+
                     like_process = true;
 
 
@@ -483,7 +483,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                         }
                     });
                 }
-                }
+
             });
 
 
@@ -502,8 +502,9 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             ((MainPageAdapter.PostViewHolder) holder).dislike_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!((PostViewHolder) holder).isLikeClicked) {
+
                         dislike_process = true;
+
                /* ((MainPageAdapter.PostViewHolder) holder).setNumberDislikes(post_key, activity);*/
 
 
@@ -573,55 +574,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                                 }
                             }
                         });
-                    }
+
                 }
             });
 
-            ((MainPageAdapter.PostViewHolder) holder).like_button.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        ((PostViewHolder) holder).isLikeClicked = true;
-                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                        new CountDownTimer(2000, 1000) {
-                            @Override
-                            public void onTick(long millisUntilFinished) {
 
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                ((PostViewHolder) holder).isLikeClicked = false;
-                            }
-                        }.start();
-
-                    }
-                    return false;
-                }
-            });
-
-            ((PostViewHolder) holder).dislike_button.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        ((PostViewHolder) holder).isDislikeClicked = true;
-                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                        new CountDownTimer(2000, 1000) {
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                ((PostViewHolder) holder).isDislikeClicked = false;
-                            }
-                        }.start();
-
-                    }
-                    return false;
-                }
-            });
 /*
             ((MainPageAdapter.PostViewHolder) holder).comments.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1120,7 +1077,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         RelativeLayout postWithBackgroundLayout;
         TextView posttextWithbackground;
 
-        boolean isLikeClicked, isDislikeClicked;
+        boolean isLikeClicked = true, isDislikeClicked = true;
 
 
         public PostViewHolder(View itemView) {
@@ -1281,9 +1238,11 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         public void setDescWithBackground(String descWithBackground) {
             if (descWithBackground != null) {
-
+postWithBackgroundLayout.setVisibility(View.VISIBLE);
                 posttextWithbackground.setText(descWithBackground);
 
+            }else {
+                postWithBackgroundLayout.setVisibility(View.GONE);
             }
 
         }
@@ -1293,6 +1252,8 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 postWithBackgroundLayout.setVisibility(View.VISIBLE);
                 postWithBackgroundLayout.setBackgroundResource(idResource);
 
+            } else {
+                postWithBackgroundLayout.setVisibility(View.GONE);
             }
         }
 
