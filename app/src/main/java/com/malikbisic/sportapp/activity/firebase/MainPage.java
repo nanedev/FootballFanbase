@@ -124,7 +124,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class MainPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher{
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, TextWatcher {
 
 
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -207,7 +207,7 @@ public class MainPage extends AppCompatActivity
     protected Handler handler;
     private int countItem;
     boolean firstTimeOpened = true;
-    boolean fromMainPage=true;
+    boolean fromMainPage = true;
 
     PremiumUsers premiumUsers;
     FreeUser freeUser;
@@ -236,6 +236,7 @@ public class MainPage extends AppCompatActivity
     TextView usernameInToolbar;
     ImageView emoticonImage;
     CircleImageView clubLogoInToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -244,8 +245,8 @@ public class MainPage extends AppCompatActivity
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.refreshicon);
 
-    setSupportActionBar(toolbar);
-getSupportActionBar().setTitle("");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
 
 
         Intent closeAPP = new Intent(this, StopAppServices.class);
@@ -284,7 +285,7 @@ getSupportActionBar().setTitle("");
         nowDate = new Date();
         handler = new Handler();
         premiumUsers = new PremiumUsers();
-        profileImageLayout = (RelativeLayout)findViewById(R.id.layout_for_photo_and_username);
+        profileImageLayout = (RelativeLayout) findViewById(R.id.layout_for_photo_and_username);
         verticalLine = findViewById(R.id.verticalseparatormainpage);
         emoticonImage = (ImageView) findViewById(R.id.emoticonmainpage);
         freeUser = new FreeUser();
@@ -304,15 +305,14 @@ getSupportActionBar().setTitle("");
             @Override
             public void onOffsetChanged(final AppBarLayout appBarLayout, int verticalOffset) {
 
-                if (Math.abs(verticalOffset)-appBarLayout.getTotalScrollRange() == 0)
-                {
+                if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
                     //  Collapsed
                     toolbar.setLogo(R.drawable.refreshbtngreen);
                     toolbar.setBackgroundColor(Color.parseColor("#ffffff"));
 
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                            MainPage.this, drawer,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                            MainPage.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
                     drawer.addDrawerListener(toggle);
                     toggle.syncState();
 
@@ -330,13 +330,11 @@ getSupportActionBar().setTitle("");
                             .into(clubLogoInToolbar);
 
                     usernameInToolbar.setText(usernameInfo);
-                    navigationView= (NavigationView) findViewById(R.id.nav_view);
+                    navigationView = (NavigationView) findViewById(R.id.nav_view);
                     navigationView.setNavigationItemSelectedListener(MainPage.this);
 
 
-                }
-                else
-                {
+                } else {
                     //Expanded
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     toggle = new ActionBarDrawerToggle(
@@ -348,18 +346,19 @@ getSupportActionBar().setTitle("");
                     navigationView.setNavigationItemSelectedListener(MainPage.this);
                     toolbar.setBackgroundColor(Color.parseColor("#33691e"));
                     toolbar.setLogo(R.drawable.refreshicon);
-                   View logoClick = getToolbarLogoIcon(toolbar);
+                    View logoClick = getToolbarLogoIcon(toolbar);
                     profileInToolbar.setVisibility(View.GONE);
-                   logoClick.setOnClickListener(new View.OnClickListener() {
-                       @Override
-                       public void onClick(View v) {
-                           itemSize.clear();
-                           adapter.notifyDataSetChanged();
-                          loadPremium();
-                          wallList.smoothScrollToPosition(0);
-                          appBarLayout.setExpanded(true, true);
-                       }
-                   });
+                    logoClick.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            adapter.isFullLoaded(false);
+                            itemSize.clear();
+                            adapter.notifyDataSetChanged();
+                            loadPremium();
+                            wallList.smoothScrollToPosition(0);
+                            appBarLayout.setExpanded(true, true);
+                        }
+                    });
 
 
                 }
@@ -431,9 +430,9 @@ getSupportActionBar().setTitle("");
         postText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent1 = new Intent(MainPage.this,OnlyPostActivity.class);
-                intent1.putExtra("profilna",profielImage);
-                intent1.putExtra("username",usernameInfo);
+                Intent intent1 = new Intent(MainPage.this, OnlyPostActivity.class);
+                intent1.putExtra("profilna", profielImage);
+                intent1.putExtra("username", usernameInfo);
                 startActivity(intent1);
             }
         });
@@ -443,15 +442,15 @@ getSupportActionBar().setTitle("");
         videoIcon.setOnClickListener(this);
         audioIcon.setOnClickListener(this);
 
-galleryIcon.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Intent imageIntent = new Intent(MainPage.this, PhotoPostSelectActivity.class);
-        imageIntent.putExtra("username", usernameInfo);
-        imageIntent.putExtra("profileImage", profielImage);
-        imageIntent.putExtra("country", country);
-        imageIntent.putExtra("clubheader", clubHeaderString);
-        startActivity(imageIntent);
+        galleryIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent imageIntent = new Intent(MainPage.this, PhotoPostSelectActivity.class);
+                imageIntent.putExtra("username", usernameInfo);
+                imageIntent.putExtra("profileImage", profielImage);
+                imageIntent.putExtra("country", country);
+                imageIntent.putExtra("clubheader", clubHeaderString);
+                startActivity(imageIntent);
 //        if (Build.VERSION.SDK_INT < 19) {
 //
 //
@@ -467,8 +466,8 @@ galleryIcon.setOnClickListener(new View.OnClickListener() {
 //            startActivityForResult(intent, PHOTO_OPEN);
 //
 //        }
-    }
-});
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         likesReference = FirebaseFirestore.getInstance();
@@ -513,7 +512,7 @@ galleryIcon.setOnClickListener(new View.OnClickListener() {
                                                 .into(userProfileImage, new Callback() {
                                                     @Override
                                                     public void onSuccess() {
-                                                        ProgressBar progressBarProfile = (ProgressBar) findViewById(R.id. loadImageProgressProfile);
+                                                        ProgressBar progressBarProfile = (ProgressBar) findViewById(R.id.loadImageProgressProfile);
                                                         progressBarProfile.setVisibility(View.GONE);
                                                     }
 
@@ -579,15 +578,15 @@ galleryIcon.setOnClickListener(new View.OnClickListener() {
             }
         };
 
-captureImage.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-    }
-});
+        captureImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+        });
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -627,14 +626,14 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             getSharedPreferences("check first time", MODE_PRIVATE).edit().putBoolean("isFirstTime", false).commit();
         }
 
-        usersPoint(this,  mAuth.getCurrentUser().getUid());
+        usersPoint(this, mAuth.getCurrentUser().getUid());
 
         FirebaseFirestore iikkk = FirebaseFirestore.getInstance();
         iikkk.collection("UsersChat").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 Log.i("clubID", String.valueOf(documentSnapshots.getDocuments().size()));
-                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()){
+                for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
                     Log.i("clubID", snapshot.getId());
                 }
             }
@@ -647,27 +646,27 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
-           return true;
+            return true;
         } else {
             return false;
         }
     }
 
-    public static View getToolbarLogoIcon(Toolbar toolbar){
+    public static View getToolbarLogoIcon(Toolbar toolbar) {
         //check if contentDescription previously was set
         boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
         String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
         toolbar.setLogoDescription(contentDescription);
         ArrayList<View> potentialViews = new ArrayList<View>();
         //find the view based on it's content description, set programatically or with android:contentDescription
-        toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+        toolbar.findViewsWithText(potentialViews, contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
         //Nav icon is always instantiated at this point because calling setLogoDescription ensures its existence
         View logoIcon = null;
-        if(potentialViews.size() > 0){
+        if (potentialViews.size() > 0) {
             logoIcon = potentialViews.get(0);
         }
         //Clear content description if not previously present
-        if(hadContentDescription)
+        if (hadContentDescription)
             toolbar.setLogoDescription(null);
         return logoIcon;
     }
@@ -675,8 +674,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
     public static boolean isAppRunning(final Context context, final String packageName) {
         final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
-        if (procInfos != null)
-        {
+        if (procInfos != null) {
             for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
                 if (processInfo.processName.equals(packageName)) {
                     return true;
@@ -686,7 +684,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         return false;
     }
 
-    public void usersChatInfo(){
+    public void usersChatInfo() {
       /*  final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
 
         Map<String,String> userChatInfo = new HashMap<>();
@@ -742,7 +740,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onComplete(@NonNull final Task<QuerySnapshot> task) {
 
-            if (task.getException() == null){
+                if (task.getException() == null) {
 
                     for (final DocumentSnapshot snapshot : task.getResult()) {
                         final String postID = snapshot.getId();
@@ -754,135 +752,135 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onComplete(@Nullable Task<QuerySnapshot> task1) {
 
-                                    DateFormat likeDateFormat = new SimpleDateFormat("MMMM",Locale.getDefault());
-                                    for (DocumentSnapshot snap : task1.getResult()) {
-                                        String documentuid = snap.getId();
-                                        if (snap.getDate("timestamp") != null) {
-                                            final Date likeDate = snap.getDate("timestamp");
-                                            String likeMonth = likeDateFormat.format(likeDate);
+                                DateFormat likeDateFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
+                                for (DocumentSnapshot snap : task1.getResult()) {
+                                    String documentuid = snap.getId();
+                                    if (snap.getDate("timestamp") != null) {
+                                        final Date likeDate = snap.getDate("timestamp");
+                                        String likeMonth = likeDateFormat.format(likeDate);
 
-                                            if (likeMonth.equals(currentMonth) && !documentuid.equals(uid)) {
-                                                currentScoreLike++;
-                                            } else if (likeMonth.equals(prevMonth) && !documentuid.equals(uid)) {
-                                                prevMonthScoreLike++;
+                                        if (likeMonth.equals(currentMonth) && !documentuid.equals(uid)) {
+                                            currentScoreLike++;
+                                        } else if (likeMonth.equals(prevMonth) && !documentuid.equals(uid)) {
+                                            prevMonthScoreLike++;
+                                        }
+
+
+                                    } else {
+                                        Log.i("null", postID + " " + snap.getId());
+                                    }
+                                }
+                                CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
+                                dislikeNumber.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@Nullable Task<QuerySnapshot> task2) {
+
+
+                                        if (task2.getException() == null) {
+                                            numberDisliks = task2.getResult().size();
+                                            DateFormat dislikeFormatDate = new SimpleDateFormat("MMMM");
+                                            for (DocumentSnapshot snapshot1 : task2.getResult()) {
+                                                String docUID = snapshot1.getId();
+                                                if (snapshot1.getDate("timestamp") != null) {
+                                                    final Date dislikeDate = snapshot1.getDate("timestamp");
+                                                    String dislikeMonth = dislikeFormatDate.format(dislikeDate);
+
+                                                    if (dislikeMonth.equals(currentMonth) && !docUID.equals(uid)) {
+                                                        currentScoreDisike++;
+                                                    } else if (dislikeMonth.equals(prevMonth) && !docUID.equals(uid)) {
+                                                        prevMonthScoreDisike++;
+                                                    }
+                                                } else {
+                                                    Log.i("nullDIS", postID + " " + snapshot1.getId());
+                                                }
                                             }
 
 
-                                        } else {
-                                            Log.i("null", postID + " " + snap.getId());
-                                        }
-                                    }
-                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
-                                    dislikeNumber.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@Nullable Task<QuerySnapshot> task2) {
+                                            pointsTotalPrevMonth = prevMonthScoreLike - prevMonthScoreDisike;
+                                            pointsTotalCurrentMonth = currentScoreLike - currentScoreDisike;
+                                            if (pointsTotalPrevMonth < 0) {
+                                                pointsTotalPrevMonth = 0;
+                                            }
 
+                                            if (pointsTotalCurrentMonth < 0) {
+                                                pointsTotalCurrentMonth = 0;
+                                            }
+                                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                                            if (task2.getException() == null) {
-                                                numberDisliks = task2.getResult().size();
-                                                DateFormat dislikeFormatDate = new SimpleDateFormat("MMMM");
-                                                for (DocumentSnapshot snapshot1 : task2.getResult()) {
-                                                    String docUID = snapshot1.getId();
-                                                    if (snapshot1.getDate("timestamp") != null) {
-                                                        final Date dislikeDate = snapshot1.getDate("timestamp");
-                                                        String dislikeMonth = dislikeFormatDate.format(dislikeDate);
+                                            Map<String, Object> currentPointsMap = new HashMap<>();
+                                            currentPointsMap.put("likePoints", currentScoreLike);
+                                            currentPointsMap.put("dislikePoints", currentScoreDisike);
+                                            currentPointsMap.put("totalPoints", pointsTotalCurrentMonth);
 
-                                                        if (dislikeMonth.equals(currentMonth) && !docUID.equals(uid)) {
-                                                            currentScoreDisike++;
-                                                        } else if (dislikeMonth.equals(prevMonth) && !docUID.equals(uid)) {
-                                                            prevMonthScoreDisike++;
+                                            Map<String, Object> prevPointsMap = new HashMap<>();
+                                            prevPointsMap.put("likePoints", prevMonthScoreLike);
+                                            prevPointsMap.put("dislikePoints", prevMonthScoreDisike);
+                                            prevPointsMap.put("totalPoints", pointsTotalPrevMonth);
+
+                                            final Map<String, Object> pointsMap = new HashMap<>();
+                                            pointsMap.put("uid", uid);
+                                            pointsMap.put("prevMonthPoints", prevPointsMap);
+                                            pointsMap.put("currentMonthPoints", currentPointsMap);
+                                            pointsMap.put("prevMonthUpdate", prevMonth);
+
+                                            final Map<String, Object> pointsMapCurrentMonth = new HashMap<>();
+                                            pointsMapCurrentMonth.put("uid", uid);
+                                            pointsMapCurrentMonth.put("currentMonthPoints", currentPointsMap);
+
+                                            DocumentReference pointsColl = db.collection("Points").document(uid);
+                                            pointsColl.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task4) {
+                                                    if (task4.getResult().exists()) {
+                                                        lastMonthUpdate = String.valueOf(task4.getResult().get("prevMonthUpdate"));
+                                                    }
+                                                    if (!lastMonthUpdate.equals(prevMonth)) {
+
+                                                        if (task4.getResult().exists()) {
+                                                            DocumentReference ref = db.collection("Points").document(uid);
+                                                            ref.update(pointsMap).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.e("errUpdate", e.getLocalizedMessage());
+                                                                }
+                                                            });
+                                                        } else {
+                                                            DocumentReference ref = db.collection("Points").document(uid);
+                                                            ref.set(pointsMap).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.e("errSet", e.getLocalizedMessage());
+                                                                }
+                                                            });
                                                         }
                                                     } else {
-                                                        Log.i("nullDIS", postID + " " + snapshot1.getId());
+                                                        DocumentReference ref = db.collection("Points").document(uid);
+                                                        ref.update(pointsMapCurrentMonth).addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.e("errUpdateCurr", e.getLocalizedMessage());
+                                                            }
+                                                        });
                                                     }
                                                 }
+                                            });
 
-
-                                                pointsTotalPrevMonth = prevMonthScoreLike - prevMonthScoreDisike;
-                                                pointsTotalCurrentMonth = currentScoreLike - currentScoreDisike;
-                                                if (pointsTotalPrevMonth < 0) {
-                                                    pointsTotalPrevMonth = 0;
-                                                }
-
-                                                if (pointsTotalCurrentMonth < 0){
-                                                    pointsTotalCurrentMonth = 0;
-                                                }
-                                                final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                                                Map<String, Object> currentPointsMap = new HashMap<>();
-                                                currentPointsMap.put("likePoints", currentScoreLike);
-                                                currentPointsMap.put("dislikePoints", currentScoreDisike);
-                                                currentPointsMap.put("totalPoints", pointsTotalCurrentMonth);
-
-                                                Map<String, Object> prevPointsMap = new HashMap<>();
-                                                prevPointsMap.put("likePoints", prevMonthScoreLike);
-                                                prevPointsMap.put("dislikePoints", prevMonthScoreDisike);
-                                                prevPointsMap.put("totalPoints", pointsTotalPrevMonth);
-
-                                                final Map<String, Object> pointsMap = new HashMap<>();
-                                                pointsMap.put("uid", uid);
-                                                pointsMap.put("prevMonthPoints", prevPointsMap);
-                                                pointsMap.put("currentMonthPoints", currentPointsMap);
-                                                pointsMap.put("prevMonthUpdate", prevMonth);
-
-                                                final Map<String, Object> pointsMapCurrentMonth = new HashMap<>();
-                                                pointsMapCurrentMonth.put("uid", uid);
-                                                pointsMapCurrentMonth.put("currentMonthPoints", currentPointsMap);
-
-                                                DocumentReference pointsColl = db.collection("Points").document(uid);
-                                                pointsColl.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task4) {
-                                                        if (task4.getResult().exists()) {
-                                                            lastMonthUpdate = String.valueOf(task4.getResult().get("prevMonthUpdate"));
-                                                        }
-                                                            if (!lastMonthUpdate.equals(prevMonth)) {
-
-                                                                if (task4.getResult().exists()) {
-                                                                    DocumentReference ref = db.collection("Points").document(uid);
-                                                                    ref.update(pointsMap).addOnFailureListener(new OnFailureListener() {
-                                                                        @Override
-                                                                        public void onFailure(@NonNull Exception e) {
-                                                                            Log.e("errUpdate", e.getLocalizedMessage());
-                                                                        }
-                                                                    });
-                                                                } else {
-                                                                    DocumentReference ref = db.collection("Points").document(uid);
-                                                                    ref.set(pointsMap).addOnFailureListener(new OnFailureListener() {
-                                                                        @Override
-                                                                        public void onFailure(@NonNull Exception e) {
-                                                                            Log.e("errSet", e.getLocalizedMessage());
-                                                                        }
-                                                                    });
-                                                                }
-                                                            } else {
-                                                                DocumentReference ref = db.collection("Points").document(uid);
-                                                                ref.update(pointsMapCurrentMonth).addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Log.e("errUpdateCurr", e.getLocalizedMessage());
-                                                                    }
-                                                                });
-                                                            }
-                                                        }
-                                                });
-
-                                            }
                                         }
+                                    }
 
                                 });
 
 
                             }
                         });
+                    }
+
+
                 }
-
-
             }
-        }
-    });
+        });
 
-}
+    }
 
     public void setNumberClubFans() {
 
@@ -971,7 +969,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
                 Uri videoUri = data.getData();
                 Log.i("vidoeURL", videoUri.toString());
-                if (videoUri.toString().contains("com.google.android.apps.docs.storage")){
+                if (videoUri.toString().contains("com.google.android.apps.docs.storage")) {
 
                     Toast.makeText(MainPage.this, "Can't open video from google drive", Toast.LENGTH_LONG).show();
                 } else {
@@ -987,7 +985,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                 }
 
 
-            } else    if (requestCode == CAMERA_REQUEST) {
+            } else if (requestCode == CAMERA_REQUEST) {
                 Bitmap image = null;
                 Uri imageData = null;
                 if (resultCode == RESULT_OK) {
@@ -997,16 +995,16 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                     openCameraSend.setData(imageData);
                     openCameraSend.putExtra("imagedata", image);
                     openCameraSend.putExtra("userIDFromMainPage", mAuth.getCurrentUser().getUid());
-                    openCameraSend.putExtra("fromMainPage",fromMainPage);
-                    openCameraSend.putExtra("username",usernameInfo);
-                    openCameraSend.putExtra("profileImage",profielImage);
-                    openCameraSend.putExtra("country",country);
-                    openCameraSend.putExtra("clubHeader",clubHeaderString);
-                    openCameraSend.putExtra("clubName",MainPage.myClubName);
-                    openCameraSend.putExtra("postkey",postKey);
+                    openCameraSend.putExtra("fromMainPage", fromMainPage);
+                    openCameraSend.putExtra("username", usernameInfo);
+                    openCameraSend.putExtra("profileImage", profielImage);
+                    openCameraSend.putExtra("country", country);
+                    openCameraSend.putExtra("clubHeader", clubHeaderString);
+                    openCameraSend.putExtra("clubName", MainPage.myClubName);
+                    openCameraSend.putExtra("postkey", postKey);
                     startActivityForResult(openCameraSend, 1);
                 }
-            }else {
+            } else {
 
                 for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                     fragment.onActivityResult(requestCode, resultCode, data);
@@ -1167,7 +1165,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             chatNotificationReference.collection("NotificationChat").document(mAuth.getCurrentUser().getUid()).collection("notif-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for (DocumentSnapshot snapshot : task.getResult()){
+                    for (DocumentSnapshot snapshot : task.getResult()) {
                         String docID = snapshot.getId();
 
                         chatNotificationReference.collection("NotificationChat").document(mAuth.getCurrentUser().getUid()).collection("notif-id").document(docID).update("seen", true);
@@ -1179,13 +1177,13 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             Intent intent = new Intent(MainPage.this, FootballActivity.class);
             startActivity(intent);
 
-        }else if (id == R.id.nav_rankings){
+        } else if (id == R.id.nav_rankings) {
 
-            Intent intent = new Intent(MainPage.this,RankingsActivity.class);
+            Intent intent = new Intent(MainPage.this, RankingsActivity.class);
             startActivity(intent);
 
 
-        }else if (id == R.id.nav_notifications) {
+        } else if (id == R.id.nav_notifications) {
            /* NotificationFragment notificationFragment = new NotificationFragment();
 
             FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
@@ -1299,7 +1297,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
 
-        pDialog = new SpotsDialog (MainPage.this, "   ", R.style.StyleLogin);
+        pDialog = new SpotsDialog(MainPage.this, "   ", R.style.StyleLogin);
 //                if (!pDialog.isShowing() && !MainPage.this.isFinishing())
         pDialog.show();
 
@@ -1321,7 +1319,6 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                         adapter.notifyDataSetChanged();
 
 
-
                         Log.i("itemCount", String.valueOf(adapter.getItemCount()));
 
 
@@ -1337,7 +1334,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                             .orderBy("time", com.google.firebase.firestore.Query.Direction.DESCENDING);
                     next.addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
-                        public void onEvent (@NonNull QuerySnapshot querySnapshot2, FirebaseFirestoreException e) {
+                        public void onEvent(@NonNull QuerySnapshot querySnapshot2, FirebaseFirestoreException e) {
                             if (e == null) {
 
                                 if (querySnapshot2.size() != 0 && !querySnapshot2.isEmpty() && querySnapshot2.size() >= 2) {
@@ -1385,7 +1382,8 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         network.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isNetworkAvailable()){
+
+                if (isNetworkAvailable()) {
                     network.setVisibility(View.GONE);
                     wallList.setVisibility(View.VISIBLE);
                     loadPremium();
@@ -1409,7 +1407,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
             }
         });
 
-        if (isNetworkAvailable()){
+        if (isNetworkAvailable()) {
             network.setVisibility(View.GONE);
             wallList.setVisibility(View.VISIBLE);
             loadPremium();
@@ -1430,31 +1428,31 @@ captureImage.setOnClickListener(new View.OnClickListener() {
                 }
             }.start();
         }
-            adapter.setOnLoadMore(new OnLoadMoreListener() {
-                @Override
-                public void onLoadMore() {
+        adapter.setOnLoadMore(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
 
 
-                    wallList.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            itemSize.add(null);
-                            adapter.notifyItemInserted(itemSize.size() - 1);
-                        }
-                    });
+                wallList.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        itemSize.add(null);
+                        adapter.notifyItemInserted(itemSize.size() - 1);
+                    }
+                });
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                            premiumUsersLoadMore();
+                        premiumUsersLoadMore();
 
 
-                        }
-                    }, 5000);
+                    }
+                }, 5000);
 
-                }
-            });
+            }
+        });
 
 
 //            FirebaseFirestore checkPremiumUser = FirebaseFirestore.getInstance();
@@ -1493,7 +1491,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
 //            }
 //        });
 
-            firstTimeOpened = false;
+        firstTimeOpened = false;
 
 
     }
@@ -1600,7 +1598,7 @@ captureImage.setOnClickListener(new View.OnClickListener() {
         });
     }
 
-    public void messageCounter(){
+    public void messageCounter() {
         FirebaseUser user = mAuth.getCurrentUser();
         final String myUserId = user.getUid();
         messageCounterNumber.setGravity(Gravity.CENTER_VERTICAL);
@@ -1719,50 +1717,48 @@ captureImage.setOnClickListener(new View.OnClickListener() {
     }
 
 
-
-
     private class HttpImageRequestTask extends AsyncTask<String, Void, Drawable> {
 
 
-    @Override
-    protected Drawable doInBackground(String... params) {
-        try {
+        @Override
+        protected Drawable doInBackground(String... params) {
+            try {
 
 
-            URL url = new URL(params[0]);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = urlConnection.getInputStream();
-            SVG svg = SVG.getFromInputStream(inputStream);
-            Drawable drawable = new PictureDrawable(svg.renderToPicture());
+                URL url = new URL(params[0]);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = urlConnection.getInputStream();
+                SVG svg = SVG.getFromInputStream(inputStream);
+                Drawable drawable = new PictureDrawable(svg.renderToPicture());
 
-            return drawable;
-        } catch (Exception e) {
-            Log.e("MainActivity", e.getMessage(), e);
+                return drawable;
+            } catch (Exception e) {
+                Log.e("MainActivity", e.getMessage(), e);
+            }
+
+            return null;
         }
 
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Drawable drawable) {
-        // Update the view
-        updateImageView(drawable);
-
-
-    }
-
-    private void updateImageView(Drawable drawable) {
-        if (drawable != null) {
-
-            // Try using your library and adding this layer type before switching your SVG parsing
-            countryHeader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            countryHeader.setImageDrawable(drawable);
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            // Update the view
+            updateImageView(drawable);
 
 
         }
-    }
 
-}
+        private void updateImageView(Drawable drawable) {
+            if (drawable != null) {
+
+                // Try using your library and adding this layer type before switching your SVG parsing
+                countryHeader.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                countryHeader.setImageDrawable(drawable);
+
+
+            }
+        }
+
+    }
 
     public void backgroundImage() {
         HttpImageRequestTask imageRequestTask = new HttpImageRequestTask();
