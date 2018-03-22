@@ -446,26 +446,27 @@ getSupportActionBar().setTitle("");
 galleryIcon.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
-        if (Build.VERSION.SDK_INT < 19) {
-
-            Intent imageIntent = new Intent(MainPage.this, PhotoPostSelectActivity.class);
-            imageIntent.putExtra("username", usernameInfo);
-            imageIntent.putExtra("profileImage", profielImage);
-            imageIntent.putExtra("country", country);
-            imageIntent.putExtra("clubheader", clubHeaderString);
-            startActivity(imageIntent);
-//            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent imageIntent = new Intent(MainPage.this, PhotoPostSelectActivity.class);
+        imageIntent.putExtra("username", usernameInfo);
+        imageIntent.putExtra("profileImage", profielImage);
+        imageIntent.putExtra("country", country);
+        imageIntent.putExtra("clubheader", clubHeaderString);
+        startActivity(imageIntent);
+//        if (Build.VERSION.SDK_INT < 19) {
+//
+//
+////            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+////            photoSelected = true;
+////            openGallery.setType("image/*");
+////            startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
+//        } else {
 //            photoSelected = true;
-//            openGallery.setType("image/*");
-//            startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
-        } else {
-            photoSelected = true;
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-            startActivityForResult(intent, PHOTO_OPEN);
-
-        }
+//            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//            intent.addCategory(Intent.CATEGORY_OPENABLE);
+//            intent.setType("image/*");
+//            startActivityForResult(intent, PHOTO_OPEN);
+//
+//        }
     }
 });
         mAuth = FirebaseAuth.getInstance();
