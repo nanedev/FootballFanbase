@@ -161,7 +161,7 @@
             android:id="@+id/neznija"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:padding="5dp">
 
             <TextView
                 android:id="@+id/addtoposttekst"
@@ -180,7 +180,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/addtoposttekst"
-                android:padding="10dp">
+                android:padding="5dp">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -197,7 +197,7 @@
 
                     <View
                         android:id="@+id/linija1"
-                        android:layout_width="40dp"
+                        android:layout_width="20dp"
                         android:layout_height="1dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/smileImage"
@@ -210,42 +210,86 @@
                         android:layout_height="40dp"
                         android:layout_toEndOf="@+id/linija1"
                         android:layout_toRightOf="@+id/linija1"
+
                         android:background="@drawable/choose_background_shape" />
 
                     <View
                         android:id="@+id/linija2"
-                        android:layout_width="40dp"
+                        android:layout_width="20dp"
                         android:layout_height="1dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/choosebackground"
                         android:layout_toRightOf="@+id/choosebackground"
                         android:background="@color/primary" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/chooseLogo"
+                    <ImageButton
+                        android:id="@+id/plus_btn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_toEndOf="@+id/linija2"
                         android:layout_toRightOf="@+id/linija2"
-                        android:background="@drawable/choose_background_shape" />
+                        android:background="@drawable/send_message_shape"
+                        android:src="@drawable/galleryff" />
 
                     <View
                         android:id="@+id/linija3"
-                        android:layout_width="40dp"
+                        android:layout_width="20dp"
                         android:layout_height="1dp"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/chooseLogo"
-                        android:layout_toRightOf="@+id/chooseLogo"
+                        android:layout_toEndOf="@+id/plus_btn"
+                        android:layout_toRightOf="@+id/plus_btn"
                         android:background="@color/primary" />
 
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/choosePlayer"
+
+                    <ImageButton
+                        android:id="@+id/video_btn"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_toEndOf="@+id/linija3"
                         android:layout_toRightOf="@+id/linija3"
-                        android:background="@drawable/choose_background_shape" />
+                        android:background="@drawable/send_message_shape"
+                        android:src="@drawable/videoproba" />
+
+                    <View
+                        android:id="@+id/linija4"
+                        android:layout_width="20dp"
+                        android:layout_height="1dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/video_btn"
+                        android:layout_toRightOf="@+id/video_btn"
+                        android:background="@color/primary" />
+
+
+
+                    <ImageButton
+                        android:id="@+id/take_photo_btn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_toEndOf="@+id/linija4"
+                        android:layout_toRightOf="@+id/linija4"
+                        android:background="@drawable/send_message_shape"
+                        android:src="@drawable/cameraff" />
+
+                    <View
+                        android:id="@+id/linija5"
+                        android:layout_width="20dp"
+                        android:layout_height="1dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/take_photo_btn"
+                        android:layout_toRightOf="@+id/take_photo_btn"
+                        android:background="@color/primary" />
+
+
+
+                    <ImageButton
+                        android:id="@+id/audiobtn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_toEndOf="@+id/linija5"
+                        android:layout_toRightOf="@+id/linija5"
+                        android:background="@drawable/send_message_shape"
+                        android:src="@drawable/microphoneff" />
 
                 </RelativeLayout>
 

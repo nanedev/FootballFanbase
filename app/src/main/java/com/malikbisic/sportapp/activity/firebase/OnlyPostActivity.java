@@ -1,16 +1,21 @@
 package com.malikbisic.sportapp.activity.firebase;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -41,7 +46,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import dmax.dialog.SpotsDialog;
 
-public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, EmojiconsFragment.OnEmojiconBackspaceClickedListener, EmojiconGridFragment.OnEmojiconClickedListener {
+public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, EmojiconsFragment.OnEmojiconBackspaceClickedListener, EmojiconGridFragment.OnEmojiconClickedListener, View.OnClickListener {
     Toolbar onlyposttoolbar;
     EmojiconEditText onlyposteditText;
     ImageButton smajliBtn;
@@ -60,10 +65,22 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
     Animation slideUpAnimation;
     CircleImageView backgroundsClick;
     int imageBacgkround;
-RelativeLayout layoutForPost;
-String withoutBackground;
-RelativeLayout postWithBackgroundLayout;
-EmojiconEditText editTextWithBackground;
+    RelativeLayout layoutForPost;
+    String withoutBackground;
+    RelativeLayout postWithBackgroundLayout;
+    EmojiconEditText editTextWithBackground;
+
+    private static final int PHOTO_OPEN = 1;
+    private static final int PHOTO_OPEN_ON_OLDER_PHONES = 3;
+    private static final int VIDEO_OPEN = 2;
+    public static int CAMERA_REQUEST = 32;
+
+    boolean photoSelected;
+
+    ImageButton galleryIcon;
+    ImageButton videoIcon;
+    ImageButton audioIcon;
+    ImageButton captureImage;
 
 
     @Override
@@ -80,7 +97,12 @@ EmojiconEditText editTextWithBackground;
         smajliBtn = (ImageButton) findViewById(R.id.smileImage);
         layoutForPost = (RelativeLayout) findViewById(R.id.edittextlayoutonlypost);
         usernameOnlyPost = (TextView) findViewById(R.id.usernameOnlyPost);
-        postWithBackgroundLayout = (RelativeLayout)findViewById(R.id.edittextlayoutonlypostWithBackground);
+        postWithBackgroundLayout = (RelativeLayout) findViewById(R.id.edittextlayoutonlypostWithBackground);
+        galleryIcon = (ImageButton) findViewById(R.id.plus_btn);
+        videoIcon = (ImageButton) findViewById(R.id.video_btn);
+        audioIcon = (ImageButton) findViewById(R.id.audiobtn);
+        captureImage = (ImageButton) findViewById(R.id.take_photo_btn);
+
         postingDialog = new SpotsDialog(OnlyPostActivity.this, "Posting...", R.style.StyleLogin);
         getIntent = getIntent();
         editTextWithBackground = (EmojiconEditText) findViewById(R.id.onlypostedittextWithBackground);
@@ -91,7 +113,7 @@ EmojiconEditText editTextWithBackground;
         send = (ImageView) findViewById(R.id.onlypostsend);
         emoticonsOnlyPost = (FrameLayout) findViewById(R.id.emojiconsOnlyPost);
         onlyposteditText.addTextChangedListener(this);
- withoutBackground = getIntent.getStringExtra("defaultBackground");
+        withoutBackground = getIntent.getStringExtra("defaultBackground");
         send.setRotation(300);
         if (getIntent().getIntExtra("imageRes", 0) != 0) {
             withoutBackground = null;
@@ -99,12 +121,12 @@ EmojiconEditText editTextWithBackground;
             postWithBackgroundLayout.setVisibility(View.VISIBLE);
             imageBacgkround = getIntent.getIntExtra("imageRes", 0);
             postWithBackgroundLayout.setBackgroundResource(imageBacgkround);
-        }else if (withoutBackground != null){
+        } else if (withoutBackground != null) {
             layoutForPost.setVisibility(View.VISIBLE);
             postWithBackgroundLayout.setVisibility(View.GONE);
         }
 
-        if (postWithBackgroundLayout.getVisibility() == View.VISIBLE){
+        if (postWithBackgroundLayout.getVisibility() == View.VISIBLE) {
             editTextWithBackground.addTextChangedListener(this);
             editTextWithBackground.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -126,7 +148,7 @@ EmojiconEditText editTextWithBackground;
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
                         emoticonsOnlyPost.setVisibility(View.GONE);
-editTextWithBackground.setHint("");
+                        editTextWithBackground.setHint("");
                         firstClickSmile = true;
 
 
@@ -163,7 +185,6 @@ editTextWithBackground.setHint("");
                 }
             });
         }
-
 
 
         slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -239,6 +260,37 @@ editTextWithBackground.setHint("");
             }
         });
 
+        videoIcon.setOnClickListener(this);
+        captureImage.setOnClickListener(this);
+        audioIcon.setOnClickListener(this);
+
+
+        galleryIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent imageIntent = new Intent(OnlyPostActivity.this, PhotoPostSelectActivity.class);
+                imageIntent.putExtra("username", MainPage.usernameInfo);
+                imageIntent.putExtra("profileImage", MainPage.profielImage);
+                imageIntent.putExtra("country", MainPage.country);
+                imageIntent.putExtra("clubheader", MainPage.clubHeaderString);
+                startActivity(imageIntent);
+//        if (Build.VERSION.SDK_INT < 19) {
+//
+//
+////            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
+////            photoSelected = true;
+////            openGallery.setType("image/*");
+////            startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
+//        } else {
+//            photoSelected = true;
+//            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//            intent.addCategory(Intent.CATEGORY_OPENABLE);
+//            intent.setType("image/*");
+//            startActivityForResult(intent, PHOTO_OPEN);
+//
+//        }
+            }
+        });
 
     }
 
@@ -301,7 +353,7 @@ editTextWithBackground.setHint("");
         }
 
 
-        if (postWithBackgroundLayout.getVisibility() == View.VISIBLE){
+        if (postWithBackgroundLayout.getVisibility() == View.VISIBLE) {
 
             if (!editTextWithBackground.getText().toString().trim().isEmpty() && editTextWithBackground.getText().toString().trim().length() >= 1) {
                 send.setRotation(0);
@@ -321,7 +373,7 @@ editTextWithBackground.setHint("");
                         textMap.put("time", FieldValue.serverTimestamp());
                         textMap.put("clubLogo", clubLogo);
                         textMap.put("favoritePostClub", MainPage.myClubName);
-                        textMap.put("idResource",imageBacgkround);
+                        textMap.put("idResource", imageBacgkround);
                         postingDatabase.collection("Posting").add(textMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -365,7 +417,7 @@ editTextWithBackground.setHint("");
     public void onEmojiconClicked(Emojicon emojicon) {
         EmojiconsFragment.input(onlyposteditText, emojicon);
 
-        if (postWithBackgroundLayout.getVisibility() == View.VISIBLE){
+        if (postWithBackgroundLayout.getVisibility() == View.VISIBLE) {
             EmojiconsFragment.input(editTextWithBackground, emojicon);
         }
     }
@@ -373,7 +425,7 @@ editTextWithBackground.setHint("");
     @Override
     public void onEmojiconBackspaceClicked(View v) {
         EmojiconsFragment.backspace(onlyposteditText);
-        if (postWithBackgroundLayout.getVisibility() == View.VISIBLE){
+        if (postWithBackgroundLayout.getVisibility() == View.VISIBLE) {
             EmojiconsFragment.backspace(editTextWithBackground);
         }
     }
@@ -384,5 +436,94 @@ editTextWithBackground.setHint("");
                 .beginTransaction()
                 .replace(R.id.emojiconsOnlyPost, EmojiconsFragment.newInstance(useSystemDefault))
                 .commit();
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (data != null) {
+            if (requestCode == PHOTO_OPEN || requestCode == PHOTO_OPEN_ON_OLDER_PHONES && resultCode == RESULT_OK) {
+
+                Uri imageUri = data.getData();
+                Intent goToAddPhotoOrVideo = new Intent(OnlyPostActivity.this, AddPhotoOrVideo.class);
+                goToAddPhotoOrVideo.setData(imageUri);
+                goToAddPhotoOrVideo.putExtra("username", MainPage.usernameInfo);
+                goToAddPhotoOrVideo.putExtra("profileImage", MainPage.profielImage);
+                goToAddPhotoOrVideo.putExtra("country", MainPage.country);
+                goToAddPhotoOrVideo.putExtra("clubheader", MainPage.clubHeaderString);
+                startActivity(goToAddPhotoOrVideo);
+                Log.i("uri photo", String.valueOf(imageUri));
+
+            } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
+                Uri videoUri = data.getData();
+                Log.i("vidoeURL", videoUri.toString());
+                if (videoUri.toString().contains("com.google.android.apps.docs.storage")) {
+
+                    Toast.makeText(OnlyPostActivity.this, "Can't open video from google drive", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent goToAddPhotoOrVideo = new Intent(OnlyPostActivity.this, AddPhotoOrVideo.class);
+                    goToAddPhotoOrVideo.setData(videoUri);
+                    goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
+                    goToAddPhotoOrVideo.putExtra("username", MainPage.usernameInfo);
+                    goToAddPhotoOrVideo.putExtra("profileImage", MainPage.profielImage);
+                    goToAddPhotoOrVideo.putExtra("country", MainPage.country);
+                    goToAddPhotoOrVideo.putExtra("clubheader", MainPage.clubHeaderString);
+                    Log.i("uri video", String.valueOf(videoUri));
+                    startActivity(goToAddPhotoOrVideo);
+                }
+
+
+            } else if (requestCode == CAMERA_REQUEST) {
+                Bitmap image = null;
+                Uri imageData = null;
+                if (resultCode == RESULT_OK) {
+                    image = (Bitmap) data.getExtras().get("data");
+                    imageData = data.getData();
+                    Intent openCameraSend = new Intent(OnlyPostActivity.this, CaptureImageSendChatActivity.class);
+                    openCameraSend.setData(imageData);
+                    openCameraSend.putExtra("imagedata", image);
+                    openCameraSend.putExtra("userIDFromMainPage", mauth.getCurrentUser().getUid());
+                    openCameraSend.putExtra("fromMainPage", MainPage.fromMainPage);
+                    openCameraSend.putExtra("username", MainPage.usernameInfo);
+                    openCameraSend.putExtra("profileImage", MainPage.profielImage);
+                    openCameraSend.putExtra("country", MainPage.country);
+                    openCameraSend.putExtra("clubHeader", MainPage.clubHeaderString);
+                    openCameraSend.putExtra("clubName", MainPage.myClubName);
+                    openCameraSend.putExtra("postkey", MainPage.postKey);
+                    startActivityForResult(openCameraSend, 1);
+                }
+            } else {
+
+                for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                    fragment.onActivityResult(requestCode, resultCode, data);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+
+
+        if (view.getId() == R.id.take_photo_btn) {
+
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+        } else if (view.getId() == R.id.video_btn) {
+            Intent intent = new Intent();
+            photoSelected = false;
+            intent.setType("video/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Complete action using"), VIDEO_OPEN);
+
+        } else if (view.getId() == R.id.audiobtn) {
+
+            Intent intent = new Intent(OnlyPostActivity.this, RecordAudio.class);
+            startActivity(intent);
+        }
+
     }
 }

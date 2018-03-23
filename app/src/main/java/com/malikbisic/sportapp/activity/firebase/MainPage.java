@@ -143,9 +143,6 @@ public class MainPage extends AppCompatActivity
     private ImageView backgroundHeader;
     private ImageView userProfileImage;
     private TextView usernameuser;
-    private RelativeLayout galleryIcon;
-    private RelativeLayout videoIcon;
-    private RelativeLayout audioIcon;
     private RelativeLayout postText;
     MenuItem myMenu;
     private ProgressDialog postingDialog;
@@ -164,9 +161,6 @@ public class MainPage extends AppCompatActivity
     Date trialDate;
     DateFormat dateFormat;
     Calendar calendar;
-    private static final int PHOTO_OPEN = 1;
-    private static final int PHOTO_OPEN_ON_OLDER_PHONES = 3;
-    private static final int VIDEO_OPEN = 2;
     boolean pause_state;
     boolean play_state;
     TextView loadMorePress;
@@ -207,11 +201,11 @@ public class MainPage extends AppCompatActivity
     protected Handler handler;
     private int countItem;
     boolean firstTimeOpened = true;
-    boolean fromMainPage = true;
+    static boolean fromMainPage = true;
 
     PremiumUsers premiumUsers;
     FreeUser freeUser;
-    String postKey;
+    static String postKey;
     ActionBarDrawerToggle toggle;
     int id;
 
@@ -219,7 +213,7 @@ public class MainPage extends AppCompatActivity
     DocumentSnapshot prevItemVisible;
     SwipeRefreshLayout swipeRefreshLayoutPost;
     int size;
-    public static int CAMERA_REQUEST = 32;
+
     int numberLikes;
     int numberDisliks;
     int totalLikes, totalDislikes, pointsTotalCurrentMonth, pointsTotalPrevMonth;
@@ -229,7 +223,6 @@ public class MainPage extends AppCompatActivity
     int prevMonthScoreDisike = 0;
     String lastMonthUpdate = "noData";
     String countryName;
-    RelativeLayout captureImage;
     AlertDialog dialogNetwork;
     RelativeLayout profileInToolbar;
     CircleImageView profileImageInToolbar;
@@ -257,9 +250,6 @@ public class MainPage extends AppCompatActivity
         profileUsers = FirebaseDatabase.getInstance().getReference();
         userProfileImage = (ImageView) findViewById(R.id.userProfilImage);
         usernameuser = (TextView) findViewById(R.id.user_username);
-        galleryIcon = (RelativeLayout) findViewById(R.id.gallery_icon_content_main);
-        videoIcon = (RelativeLayout) findViewById(R.id.vide_icon_content_main);
-        audioIcon = (RelativeLayout) findViewById(R.id.talk_icon_content_main);
         postText = (RelativeLayout) findViewById(R.id.postOnlyText);
         backgroundUserPost = (RelativeLayout) findViewById(R.id.relativeLayout);
         calendar = Calendar.getInstance();
@@ -270,7 +260,6 @@ public class MainPage extends AppCompatActivity
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         //linearLayoutManager.setStackFromEnd(true);
         //linearLayoutManager.setReverseLayout(true);
-        captureImage = (RelativeLayout) findViewById(R.id.takephotolayout);
         profileInToolbar = (RelativeLayout) findViewById(R.id.layoutprofiletoolbar);
         profileImageInToolbar = (CircleImageView) findViewById(R.id.profilna);
         usernameInToolbar = (TextView) findViewById(R.id.usernameintoolbar);
@@ -438,36 +427,6 @@ public class MainPage extends AppCompatActivity
         });
 
 
-        galleryIcon.setOnClickListener(this);
-        videoIcon.setOnClickListener(this);
-        audioIcon.setOnClickListener(this);
-
-        galleryIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent imageIntent = new Intent(MainPage.this, PhotoPostSelectActivity.class);
-                imageIntent.putExtra("username", usernameInfo);
-                imageIntent.putExtra("profileImage", profielImage);
-                imageIntent.putExtra("country", country);
-                imageIntent.putExtra("clubheader", clubHeaderString);
-                startActivity(imageIntent);
-//        if (Build.VERSION.SDK_INT < 19) {
-//
-//
-////            Intent openGallery = new Intent(Intent.ACTION_GET_CONTENT);
-////            photoSelected = true;
-////            openGallery.setType("image/*");
-////            startActivityForResult(openGallery, PHOTO_OPEN_ON_OLDER_PHONES);
-//        } else {
-//            photoSelected = true;
-//            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//            intent.addCategory(Intent.CATEGORY_OPENABLE);
-//            intent.setType("image/*");
-//            startActivityForResult(intent, PHOTO_OPEN);
-//
-//        }
-            }
-        });
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         likesReference = FirebaseFirestore.getInstance();
@@ -578,13 +537,6 @@ public class MainPage extends AppCompatActivity
             }
         };
 
-        captureImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
@@ -953,64 +905,11 @@ public class MainPage extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data != null) {
-            if (requestCode == PHOTO_OPEN || requestCode == PHOTO_OPEN_ON_OLDER_PHONES && resultCode == RESULT_OK) {
 
-                Uri imageUri = data.getData();
-                Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
-                goToAddPhotoOrVideo.setData(imageUri);
-                goToAddPhotoOrVideo.putExtra("username", usernameInfo);
-                goToAddPhotoOrVideo.putExtra("profileImage", profielImage);
-                goToAddPhotoOrVideo.putExtra("country", country);
-                goToAddPhotoOrVideo.putExtra("clubheader", clubHeaderString);
-                startActivity(goToAddPhotoOrVideo);
-                Log.i("uri photo", String.valueOf(imageUri));
-
-            } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
-                Uri videoUri = data.getData();
-                Log.i("vidoeURL", videoUri.toString());
-                if (videoUri.toString().contains("com.google.android.apps.docs.storage")) {
-
-                    Toast.makeText(MainPage.this, "Can't open video from google drive", Toast.LENGTH_LONG).show();
-                } else {
-                    Intent goToAddPhotoOrVideo = new Intent(MainPage.this, AddPhotoOrVideo.class);
-                    goToAddPhotoOrVideo.setData(videoUri);
-                    goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
-                    goToAddPhotoOrVideo.putExtra("username", usernameInfo);
-                    goToAddPhotoOrVideo.putExtra("profileImage", profielImage);
-                    goToAddPhotoOrVideo.putExtra("country", country);
-                    goToAddPhotoOrVideo.putExtra("clubheader", clubHeaderString);
-                    Log.i("uri video", String.valueOf(videoUri));
-                    startActivity(goToAddPhotoOrVideo);
-                }
-
-
-            } else if (requestCode == CAMERA_REQUEST) {
-                Bitmap image = null;
-                Uri imageData = null;
-                if (resultCode == RESULT_OK) {
-                    image = (Bitmap) data.getExtras().get("data");
-                    imageData = data.getData();
-                    Intent openCameraSend = new Intent(MainPage.this, CaptureImageSendChatActivity.class);
-                    openCameraSend.setData(imageData);
-                    openCameraSend.putExtra("imagedata", image);
-                    openCameraSend.putExtra("userIDFromMainPage", mAuth.getCurrentUser().getUid());
-                    openCameraSend.putExtra("fromMainPage", fromMainPage);
-                    openCameraSend.putExtra("username", usernameInfo);
-                    openCameraSend.putExtra("profileImage", profielImage);
-                    openCameraSend.putExtra("country", country);
-                    openCameraSend.putExtra("clubHeader", clubHeaderString);
-                    openCameraSend.putExtra("clubName", MainPage.myClubName);
-                    openCameraSend.putExtra("postkey", postKey);
-                    startActivityForResult(openCameraSend, 1);
-                }
-            } else {
-
-                for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                    fragment.onActivityResult(requestCode, resultCode, data);
-                }
-            }
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            fragment.onActivityResult(requestCode, resultCode, data);
         }
+
     }
 
     @Override
@@ -1672,22 +1571,6 @@ public class MainPage extends AppCompatActivity
     @Override
     public void onClick(View view) {
 
-
-        if (view.getId() == R.id.gallery_icon_content_main) {
-
-
-        } else if (view.getId() == R.id.vide_icon_content_main) {
-            Intent intent = new Intent();
-            photoSelected = false;
-            intent.setType("video/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Complete action using"), VIDEO_OPEN);
-
-        } else if (view.getId() == R.id.talk_icon_content_main) {
-
-            Intent intent = new Intent(MainPage.this, RecordAudio.class);
-            startActivity(intent);
-        }
 
     }
 
