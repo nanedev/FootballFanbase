@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="12dp"
+android:layout_marginTop="10dp"
     android:background="#ffffff">
 
 
@@ -467,7 +467,7 @@
 
 
                 <RelativeLayout
-                    android:id="@+id/layoutcommentsNumber"
+                    android:id="@+id/layoutcommentsNumberUsersPosts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"

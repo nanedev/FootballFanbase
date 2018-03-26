@@ -35,8 +35,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -59,10 +61,13 @@ import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.model.firebase.Post;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
+import com.malikbisic.sportapp.utils.PostingTimeAgo;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -255,7 +260,7 @@ public class MyPostsActivity extends AppCompatActivity {
                             }
                         });
 
-                        viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
+                        viewHolder.layoutForNumberLikes.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent listUsername = new Intent(MyPostsActivity.this, Username_Likes_Activity.class);
@@ -264,7 +269,7 @@ public class MyPostsActivity extends AppCompatActivity {
                             }
                         });
 
-                        viewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+                        viewHolder.layoutForNumberDislikes.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent listUsername = new Intent(MyPostsActivity.this, Username_Dislikes_Activity.class);
@@ -500,29 +505,16 @@ public class MyPostsActivity extends AppCompatActivity {
                             }
                         });
 
-
-                        viewHolder.comments.setOnClickListener(new View.OnClickListener() {
+                        viewHolder.layoutForNumberComments.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent openCom = new Intent(getApplicationContext(), CommentsActivity.class);
+                                Intent openCom = new Intent(MyPostsActivity.this, CommentsActivity.class);
                                 openCom.putExtra("keyComment", post_key);
                                 openCom.putExtra("profileComment", MainPage.profielImage);
                                 openCom.putExtra("username", MainPage.usernameInfo);
                                 startActivity(openCom);
                             }
                         });
-
-                        viewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent openCom = new Intent(getApplicationContext(), CommentsActivity.class);
-                                openCom.putExtra("keyComment", post_key);
-                                openCom.putExtra("profileComment", MainPage.profielImage);
-                                openCom.putExtra("username", MainPage.usernameInfo);
-                                startActivity(openCom);
-                            }
-                        });
-
 
                         viewHolder.openComment.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -657,6 +649,14 @@ public class MyPostsActivity extends AppCompatActivity {
         boolean isPremium;
         int numberLikes;
         int numberDislikes;
+        RelativeLayout layoutForNumberLikes;
+        TextView timeAgoTextView;
+        RelativeLayout layoutForNumberComments;
+        TextView likeBtnTxt;
+        RelativeLayout layoutForNumberDislikes;
+        TextView dislikeBtnText;
+        RelativeLayout postWithBackgroundLayout;
+        TextView posttextWithbackground;
 
         public PostViewHolder(View itemView) {
             super(itemView);
@@ -700,116 +700,127 @@ public class MyPostsActivity extends AppCompatActivity {
             postBackgroundImage = (ImageView) mView.findViewById(R.id.image_post_background_my_posts);
             comments = (TextView) mView.findViewById(R.id.comments_textview_my_posts);
             numberComments = (TextView) mView.findViewById(R.id.number_comments_my_posts);
+            layoutForNumberLikes = (RelativeLayout) mView.findViewById(R.id.layoutlikenumberMyPosts);
+            timeAgoTextView = (TextView) mView.findViewById(R.id.postAgoTimeMyPostst);
+            layoutForNumberComments = (RelativeLayout) mView.findViewById(R.id.layoutcommentsNumberMyPosts);
 
-
-
+            likeBtnTxt = (TextView) mView.findViewById(R.id.likesomethingMyPosts);
+            layoutForNumberDislikes = (RelativeLayout) mView.findViewById(R.id.layoutnumberdislikesMyPosts);
+            dislikeBtnText = (TextView) mView.findViewById(R.id.disliketekstMyPosts);
+            postWithBackgroundLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_only_postWithBackgroundMyPosts);
+            posttextWithbackground = (TextView) mView.findViewById(R.id.post_text_main_pageWithBackgroundMyPOsts);
         }
 
         public void setNumberLikes(final String post_key, Activity activity) {
 
             CollectionReference col = likeReference.collection("Likes").document(post_key).collection("like-id");
-            col.addSnapshotListener(activity,new EventListener<QuerySnapshot>() {
+            col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    numberLikes = documentSnapshots.size();
-                    if (numberLikes == 0) {
-                        numberofLikes.setText("");
-                    } else {
-                        numberofLikes.setText(String.valueOf(numberLikes));
+
+                    if (e == null) {
+                        if (documentSnapshots.isEmpty()) {
+                            layoutForNumberLikes.setVisibility(View.GONE);
+                        }
+                        numberLikes = documentSnapshots.size();
+                        if (numberLikes == 0) {
+                            numberofLikes.setText("");
+                            layoutForNumberLikes.setVisibility(View.GONE);
+                        } else {
+                            numberofLikes.setText(String.valueOf(numberLikes));
+                            layoutForNumberLikes.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
             });
-
-
-           /* col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-                    numberLikes = querySnapshot.getResult().size();
-
-
-                    if (numberLikes == 0) {
-                        numberofLikes.setText("");
-                    } else {
-                        numberofLikes.setText(String.valueOf(numberLikes));
-                    }
-                }
-
-            });*/
         }
 
-
+        public void setTimeAgo(Date time, Context ctx) {
+            PostingTimeAgo getTimeAgo = new PostingTimeAgo();
+            //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
+            if (time != null) {
+                long lastTime = time.getTime();
+                String lastStringTime = getTimeAgo.getTimeAgo(lastTime, ctx);
+                timeAgoTextView.setText(lastStringTime);
+            }
+        }
 
         public void setNumberComments(String post_key, Activity activity) {
-            numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").addSnapshotListener(activity,new EventListener<QuerySnapshot>() {
+            numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    int numberOfComments = documentSnapshots.getDocuments().size();
 
-                    if (numberOfComments == 0) {
+                    if (e == null) {
+                        if (documentSnapshots.isEmpty()) {
+                            comments.setVisibility(View.GONE);
+                            layoutForNumberComments.setVisibility(View.GONE);
+                        }
+                        int numberOfComments = documentSnapshots.getDocuments().size();
 
-                        comments.setVisibility(View.GONE);
-                        numberComments.setText("");
-                    } else if (numberOfComments == 1) {
 
-                        comments.setText("Comment");
-                        numberComments.setText(String.valueOf(numberOfComments));
-                    } else {
-                        comments.setText("Comments");
-                        numberComments.setText(String.valueOf(numberOfComments));
+                        if (numberOfComments == 0) {
 
+                            comments.setVisibility(View.GONE);
+                            numberComments.setText("");
+                            layoutForNumberComments.setVisibility(View.GONE);
+                        } else if (numberOfComments == 1) {
+
+                            comments.setText("Comment");
+                            comments.setVisibility(View.VISIBLE);
+                            layoutForNumberComments.setVisibility(View.VISIBLE);
+                            numberComments.setText(String.valueOf(numberOfComments));
+                        } else {
+                            comments.setText("Comments");
+                            comments.setVisibility(View.VISIBLE);
+                            layoutForNumberComments.setVisibility(View.VISIBLE);
+                            numberComments.setText(String.valueOf(numberOfComments));
+
+                        }
                     }
                 }
             });
-
-      /*      numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-
-                    int numberOfComments = querySnapshot.getResult().size();
-
-                    if (numberOfComments == 0) {
-
-                        comments.setVisibility(View.GONE);
-                        numberComments.setText("");
-                    } else if (numberOfComments == 1) {
-
-                        comments.setText("Comment");
-                        numberComments.setText(String.valueOf(numberOfComments));
-                    } else {
-                        comments.setText("Comments");
-                        numberComments.setText(String.valueOf(numberOfComments));
-
-                    }
-                }
-            });*/
         }
 
 
         public void setLikeBtn(final String post_key, Activity activity) {
-            String uid = mAuth.getCurrentUser().getUid();
-            Log.i("uid", uid);
-            final DocumentReference doc = likeReference.collection("Likes").document(post_key).collection("like-id").document(uid);
-            doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+            if (mAuth.getCurrentUser() != null) {
+                String uid = mAuth.getCurrentUser().getUid();
+                Log.i("uid", uid);
+                final DocumentReference doc = likeReference.collection("Likes").document(post_key).collection("like-id").document(uid);
+                doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
-                    if (documentSnapshot.exists()) {
-
-                        dislike_button.setClickable(false);
-                        like_button.setActivated(true);
-                        Log.i("key like ima ", post_key);
+                        if (documentSnapshot.exists()) {
 
 
-                    } else {
-                        dislike_button.setClickable(true);
-                        like_button.setActivated(false);
-                        Log.i("key like nema ", post_key);
+                            dislike_button.setClickable(false);
+                            like_button.setActivated(true);
+                            if (like_button.isActivated()) {
+
+                                like_button.setImageResource(R.drawable.thumbup);
+                                likeBtnTxt.setText("Liked");
+                                Log.i(" buttonLIKE ", "activate");
+
+                            }
+                            Log.i("key like ima ", "KLIKNO");
+
+
+                        } else {
+                            dislike_button.setClickable(true);
+                            like_button.setActivated(false);
+                            if (!like_button.isActivated()) {
+                                like_button.setImageResource(R.drawable.thumbupgreen);
+                                likeBtnTxt.setText("Like");
+                                Log.i(" buttonLIKE ", "deactivate");
+
+                            }
+                            Log.i("key like nema ", "KLIKNO");
+                        }
+
                     }
-
-                }
-            });
+                });
+            }
         }
         public void setNumberDislikes(String post_key, Activity activity) {
 
@@ -817,32 +828,25 @@ public class MyPostsActivity extends AppCompatActivity {
             col.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    numberDislikes = documentSnapshots.getDocuments().size();
+
+                    if (e == null) {
+                        if (documentSnapshots.isEmpty()) {
+                            layoutForNumberDislikes.setVisibility(View.GONE);
+                        }
+                        numberDislikes = documentSnapshots.getDocuments().size();
 
 
-                    if (numberDislikes == 0) {
-                        numberOfDislikes.setText("");
-                    } else {
-                        numberOfDislikes.setText(String.valueOf(numberDislikes));
+                        if (numberDislikes == 0) {
+                            numberOfDislikes.setText("");
+                            layoutForNumberDislikes.setVisibility(View.GONE);
+                        } else {
+                            numberOfDislikes.setText(String.valueOf(numberDislikes));
+                            layoutForNumberDislikes.setVisibility(View.VISIBLE);
+                        }
+
                     }
-
                 }
             });
-            /*     col.get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-                    numberDislikes = querySnapshot.getResult().size();
-
-
-                    if (numberDislikes == 0) {
-                        numberOfDislikes.setText("");
-                    } else {
-                        numberOfDislikes.setText(String.valueOf(numberDislikes));
-                    }
-                }
-
-            });*/
         }
 
 
@@ -856,11 +860,21 @@ public class MyPostsActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         dislike_button.setActivated(true);
                         like_button.setClickable(false);
+
+                        if (dislike_button.isActivated()) {
+                            dislike_button.setImageResource(R.drawable.thumbdown);
+                            dislikeBtnText.setText("Disliked");
+
+                        }
                         Log.i("key dislike ima ", post_key);
 
                     } else {
                         dislike_button.setActivated(false);
                         like_button.setClickable(true);
+                        if (!dislike_button.isActivated()) {
+                            dislike_button.setImageResource(R.drawable.thumbdowngreen);
+                            dislikeBtnText.setText("Dislike");
+                        }
                         Log.i("key dislike nema ", post_key);
                     }
                 }
@@ -925,7 +939,19 @@ public class MyPostsActivity extends AppCompatActivity {
 
         public void setProfileImage(Context ctx, String profileImage) {
 
-            Picasso.with(ctx).load(profileImage).into(post_profile_image);
+            Picasso.with(ctx).load(profileImage).into(post_profile_image, new Callback() {
+                @Override
+                public void onSuccess() {
+                    ProgressBar loadImage = mView.findViewById(R.id.loadImageProgressWallMyPosts);
+                    loadImage.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+
 
         }
 
@@ -958,12 +984,13 @@ public class MyPostsActivity extends AppCompatActivity {
                         .load(uri)
                         .into(postBackgroundImage);
                 postBackgroundImage.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                postBackgroundImage.setAlpha(0.4f);
+                postBackgroundImage.setAlpha(0.99f);
             }
         }
 
 
         public void setPhotoPost(Context ctx, String photoPost) {
+
 
             if (photoPost != null) {
                 layoutPhoto.setVisibility(View.VISIBLE);
@@ -973,6 +1000,20 @@ public class MyPostsActivity extends AppCompatActivity {
                         .asBitmap()
                         .override(720, 640)
                         .centerCrop()
+                        .listener(new RequestListener<String, Bitmap>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                ProgressBar loadImageProgress = mView.findViewById(R.id.loadImageProgressWallImageMyPosts);
+                                loadImageProgress.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -997,7 +1038,6 @@ public class MyPostsActivity extends AppCompatActivity {
                 layoutPhoto.setVisibility(View.GONE);
                 // loadPhoto.setVisibility(View.GONE);
             }
-
         }
 
         public void setVideoPost(Context ctx, String videoPost) {
@@ -1036,6 +1076,27 @@ public class MyPostsActivity extends AppCompatActivity {
                 audioLayout.setVisibility(View.GONE);
             }
 
+        }
+
+        public void setDescWithBackground(String descWithBackground) {
+            if (descWithBackground != null) {
+                postWithBackgroundLayout.setVisibility(View.VISIBLE);
+                posttextWithbackground.setText(descWithBackground);
+
+            } else {
+                postWithBackgroundLayout.setVisibility(View.GONE);
+            }
+
+        }
+
+        public void setIdResource(int idResource) {
+            if (idResource != 0) {
+                postWithBackgroundLayout.setVisibility(View.VISIBLE);
+                postWithBackgroundLayout.setBackgroundResource(idResource);
+
+            } else {
+                postWithBackgroundLayout.setVisibility(View.GONE);
+            }
         }
     }
 }

@@ -276,7 +276,7 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
                     }
                 });
 
-                viewHolder.numberofLikes.setOnClickListener(new View.OnClickListener() {
+                viewHolder.layoutForNumberLikes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent listUsername = new Intent(SeeUsersPostsActivity.this, Username_Likes_Activity.class);
@@ -285,7 +285,7 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
                     }
                 });
 
-                viewHolder.numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+                viewHolder.layoutForNumberDislikes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent listUsername = new Intent(SeeUsersPostsActivity.this, Username_Dislikes_Activity.class);
@@ -475,28 +475,17 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
                     }
                 });
 
-
-                viewHolder.comments.setOnClickListener(new View.OnClickListener() {
+               viewHolder.layoutForNumberComments.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent openCom = new Intent(getApplicationContext(), CommentsActivity.class);
+                        Intent openCom = new Intent(SeeUsersPostsActivity.this, CommentsActivity.class);
                         openCom.putExtra("keyComment", post_key);
                         openCom.putExtra("profileComment", MainPage.profielImage);
                         openCom.putExtra("username", MainPage.usernameInfo);
-                        startActivity(openCom);
+                     startActivity(openCom);
                     }
                 });
 
-                viewHolder.numberComments.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent openCom = new Intent(getApplicationContext(), CommentsActivity.class);
-                        openCom.putExtra("keyComment", post_key);
-                        openCom.putExtra("profileComment", MainPage.profielImage);
-                        openCom.putExtra("username", MainPage.usernameInfo);
-                        startActivity(openCom);
-                    }
-                });
 
 
                 viewHolder.openComment.setOnClickListener(new View.OnClickListener() {
@@ -1023,7 +1012,7 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
 
         TextView posttextWithbackground;
         TextView timeAgoTextView;
-
+        RelativeLayout layoutForNumberComments;
         public PostViewHolder(View itemView) {
             super(itemView);
 
@@ -1080,6 +1069,8 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
 
 
             timeAgoTextView = (TextView) mView.findViewById(R.id.postAgoTimeUsersPost);
+
+            layoutForNumberComments = (RelativeLayout) mView.findViewById(R.id.layoutcommentsNumberUsersPosts);
         }
 
         public void setNumberLikes(final String post_key, Activity activity) {
@@ -1121,46 +1112,36 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
             numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    int numberOfComments = documentSnapshots.getDocuments().size();
 
-                    if (numberOfComments == 0) {
+                    if (e == null) {
+                        if (documentSnapshots.isEmpty()) {
+                            comments.setVisibility(View.GONE);
+                            layoutForNumberComments.setVisibility(View.GONE);
+                        }
+                        int numberOfComments = documentSnapshots.getDocuments().size();
 
-                        comments.setVisibility(View.GONE);
-                        numberComments.setText("");
-                    } else if (numberOfComments == 1) {
 
-                        comments.setText("Comment");
-                        numberComments.setText(String.valueOf(numberOfComments));
-                    } else {
-                        comments.setText("Comments");
-                        numberComments.setText(String.valueOf(numberOfComments));
+                        if (numberOfComments == 0) {
 
+                            comments.setVisibility(View.GONE);
+                            numberComments.setText("");
+                            layoutForNumberComments.setVisibility(View.GONE);
+                        } else if (numberOfComments == 1) {
+
+                            comments.setText("Comment");
+                            comments.setVisibility(View.VISIBLE);
+                            layoutForNumberComments.setVisibility(View.VISIBLE);
+                            numberComments.setText(String.valueOf(numberOfComments));
+                        } else {
+                            comments.setText("Comments");
+                            comments.setVisibility(View.VISIBLE);
+                            layoutForNumberComments.setVisibility(View.VISIBLE);
+                            numberComments.setText(String.valueOf(numberOfComments));
+
+                        }
                     }
                 }
             });
-
-      /*      numberCommentsReference.collection("Comments").document(post_key).collection("comment-id").get().addOnCompleteListener(activity, new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(Task<QuerySnapshot> querySnapshot) {
-
-
-                    int numberOfComments = querySnapshot.getResult().size();
-
-                    if (numberOfComments == 0) {
-
-                        comments.setVisibility(View.GONE);
-                        numberComments.setText("");
-                    } else if (numberOfComments == 1) {
-
-                        comments.setText("Comment");
-                        numberComments.setText(String.valueOf(numberOfComments));
-                    } else {
-                        comments.setText("Comments");
-                        numberComments.setText(String.valueOf(numberOfComments));
-
-                    }
-                }
-            });*/
         }
 
 
