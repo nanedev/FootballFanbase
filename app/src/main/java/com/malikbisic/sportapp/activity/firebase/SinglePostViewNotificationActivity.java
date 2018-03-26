@@ -31,8 +31,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.caverock.androidsvg.SVG;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -57,11 +59,14 @@ import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.model.firebase.Post;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
+import com.malikbisic.sportapp.utils.PostingTimeAgo;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -75,7 +80,7 @@ import static com.malikbisic.sportapp.activity.firebase.MainPage.uid;
 
 
 public class SinglePostViewNotificationActivity extends AppCompatActivity {
-ArrayList<Post> postList = new ArrayList<>();
+    ArrayList<Post> postList = new ArrayList<>();
     public Button play_button;
     public MediaPlayer mPlayer;
     cn.jzvd.JZVideoPlayerStandard videoView;
@@ -107,7 +112,7 @@ ArrayList<Post> postList = new ArrayList<>();
     ImageView post_profile_image;
     RelativeLayout layoutForPost;
     RelativeLayout backgroundImage;
-    ImageView postBackgroundImage;
+    CircleImageView postBackgroundImage;
     CircleImageView post_clubLogo;
     TextView comments;
     TextView numberComments;
@@ -135,7 +140,11 @@ ArrayList<Post> postList = new ArrayList<>();
     CollectionReference notificationReference;
 
     RelativeLayout rowLAyout;
-
+    TextView timeAgoTxt;
+    TextView likeBtnTekst;
+    TextView dislikeBtnTekst;
+    RelativeLayout postWithBackgroundLayout;
+    TextView posttextWithbackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +179,7 @@ ArrayList<Post> postList = new ArrayList<>();
         layoutVideo = (FrameLayout) findViewById(R.id.framelayoutSinglePost);
         //loadPhoto = (ProgressBar) mView.findViewById(R.id.post_photo_bar_load);
         layoutVideoText = (RelativeLayout) findViewById(R.id.layout_for_video_textSinglePost);
+        timeAgoTxt = (TextView) findViewById(R.id.postAgoTime);
 
         likeReference = mReference.collection("Likes");
         dislikeReference = mReference.collection("Dislikes");
@@ -189,14 +199,18 @@ ArrayList<Post> postList = new ArrayList<>();
         post_username = (TextView) findViewById(R.id.username_wallSinglePost);
         post_profile_image = (ImageView) findViewById(R.id.profile_image_wallSinglePost);
         post_clubLogo = (CircleImageView) findViewById(R.id.clubLogoPostSinglePost);
-        postBackgroundImage = (ImageView) findViewById(R.id.image_post_backgroundSinglePost);
+        postWithBackgroundLayout = (RelativeLayout) findViewById(R.id.layout_for_only_postWithBackgroundSinglePost);
+        posttextWithbackground = (TextView) findViewById(R.id.post_text_main_pageWithBackgroundSinglePost);
         comments = (TextView) findViewById(R.id.comments_textviewSinglePost);
         numberComments = (TextView) findViewById(R.id.number_commentsSinglePost);
+        likeBtnTekst = (TextView) findViewById(R.id.likesomethingSinglePost);
+        dislikeBtnTekst = (TextView) findViewById(R.id.disliketekstSinglePost);
+        postBackgroundImage = (CircleImageView) findViewById(R.id.image_post_background);
 
         mDatabase = FirebaseDatabase.getInstance();
         likesReference = mReference.collection("Likes");
         dislikeReference = mReference.collection("Dislikes");
-rowLAyout = (RelativeLayout) findViewById(R.id.row_layout_relative_notif);
+        rowLAyout = (RelativeLayout) findViewById(R.id.row_layout_relative_notif);
 
         retrieveDataPost();
 
@@ -225,6 +239,10 @@ rowLAyout = (RelativeLayout) findViewById(R.id.row_layout_relative_notif);
                     setDislikeBtn(key, SinglePostViewNotificationActivity.this);
                     setNumberComments(key, SinglePostViewNotificationActivity.this);
                     setNumberDislikes(key, SinglePostViewNotificationActivity.this);
+                    setTimeAgo(model.getTime(), SinglePostViewNotificationActivity.this);
+                    setCountry(SinglePostViewNotificationActivity.this, model.getCountry());
+                    setDescWithBackground(model.getDescWithBackground());
+                    setIdResource(model.getIdResource());
 
                     setClubLogo(getApplicationContext(), model.getClubLogo());
 
@@ -339,18 +357,18 @@ rowLAyout = (RelativeLayout) findViewById(R.id.row_layout_relative_notif);
                             Intent listUsername = new Intent(SinglePostViewNotificationActivity.this, Username_Likes_Activity.class);
                             listUsername.putExtra("post_key", key);
                             listUsername.putExtra("openActivityToBack", "mainPage");
-                           startActivity(listUsername);
+                            startActivity(listUsername);
                         }
                     });
-numberOfDislikes.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Intent listUsername = new Intent(SinglePostViewNotificationActivity.this, Username_Dislikes_Activity.class);
-        listUsername.putExtra("post_key", key);
-        listUsername.putExtra("openActivityToBack", "mainPage");
-        startActivity(listUsername);
-    }
-});
+                    numberOfDislikes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent listUsername = new Intent(SinglePostViewNotificationActivity.this, Username_Dislikes_Activity.class);
+                            listUsername.putExtra("post_key", key);
+                            listUsername.putExtra("openActivityToBack", "mainPage");
+                            startActivity(listUsername);
+                        }
+                    });
 
 
                     like_button.setOnClickListener(new View.OnClickListener() {
@@ -520,16 +538,16 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                         }
                     });
 
-                    comments.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent openCom = new Intent(SinglePostViewNotificationActivity.this, CommentsActivity.class);
-                            openCom.putExtra("keyComment", key);
-                            openCom.putExtra("profileComment", MainPage.profielImage);
-                            openCom.putExtra("username", MainPage.usernameInfo);
-                            startActivity(openCom);
-                        }
-                    });
+//                    comments.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Intent openCom = new Intent(SinglePostViewNotificationActivity.this, CommentsActivity.class);
+//                            openCom.putExtra("keyComment", key);
+//                            openCom.putExtra("profileComment", MainPage.profielImage);
+//                            openCom.putExtra("username", MainPage.usernameInfo);
+//                            startActivity(openCom);
+//                        }
+//                    });
 
                     numberComments.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -564,13 +582,13 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
 
                                         arrow_down.setVisibility(View.VISIBLE);
 
-                                       arrow_down.setOnClickListener(new View.OnClickListener() {
+                                        arrow_down.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
 
 
                                                 final String[] items = {"Edit post", "Delete post", "Cancel"};
-                                                android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(SinglePostViewNotificationActivity.this,R.style.AppTheme_Dark_Dialog);
+                                                android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(SinglePostViewNotificationActivity.this, R.style.AppTheme_Dark_Dialog);
 
                                                 dialog.setItems(items, new DialogInterface.OnClickListener() {
                                                     @Override
@@ -588,10 +606,9 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                                                                 public void onSuccess(Void aVoid) {
                                                                     Toast.makeText(SinglePostViewNotificationActivity.this, "Post deleted", Toast.LENGTH_LONG).show();
                                                                     rowLAyout.setVisibility(View.GONE);
-                                                                    Intent intent = new Intent(SinglePostViewNotificationActivity.this,MainPage.class);
+                                                                    Intent intent = new Intent(SinglePostViewNotificationActivity.this, MainPage.class);
                                                                     startActivity(intent);
                                                                     finish();
-
 
 
                                                                 }
@@ -621,7 +638,6 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                         }
 
                     });
-
 
 
                     post_username.setOnClickListener(new View.OnClickListener() {
@@ -752,6 +768,16 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
         });
     }
 
+    public void setTimeAgo(Date time, Context ctx) {
+        PostingTimeAgo getTimeAgo = new PostingTimeAgo();
+        //Date time = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault()).parse(str_date);
+        if (time != null) {
+            long lastTime = time.getTime();
+            String lastStringTime = getTimeAgo.getTimeAgo(lastTime, ctx);
+            timeAgoTxt.setText(lastStringTime);
+        }
+    }
+
 
     public void setNumberLikes(final String post_key, Activity activity) {
         CollectionReference col = FirebaseFirestore.getInstance().collection("Likes").document(post_key).collection("like-id");
@@ -770,6 +796,26 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
 
     }
 
+    public void setDescWithBackground(String descWithBackground) {
+        if (descWithBackground != null) {
+            postWithBackgroundLayout.setVisibility(View.VISIBLE);
+            posttextWithbackground.setText(descWithBackground);
+
+        } else {
+            postWithBackgroundLayout.setVisibility(View.GONE);
+        }
+
+    }
+
+    public void setIdResource(int idResource) {
+        if (idResource != 0) {
+            postWithBackgroundLayout.setVisibility(View.VISIBLE);
+            postWithBackgroundLayout.setBackgroundResource(idResource);
+
+        } else {
+            postWithBackgroundLayout.setVisibility(View.GONE);
+        }
+    }
 
     public void setNumberComments(String post_key, Activity activity) {
 
@@ -798,28 +844,42 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
 
 
     public void setLikeBtn(final String post_key, Activity activity) {
-        String uid = mAuth.getCurrentUser().getUid();
-        Log.i("uid", uid);
-        final DocumentReference doc = likeReference.document(post_key).collection("like-id").document(uid);
-        doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+        if (!mAuth.getCurrentUser().getUid().isEmpty()) {
+            String uid = mAuth.getCurrentUser().getUid();
+            Log.i("uid", uid);
+            final DocumentReference doc = likeReference.document(post_key).collection("like-id").document(uid);
+            doc.addSnapshotListener(activity, new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
-                if (documentSnapshot.exists()) {
-
-                    dislike_button.setClickable(false);
-                    like_button.setActivated(true);
-                    Log.i("key like ima ", post_key);
+                    if (documentSnapshot.exists()) {
 
 
-                } else {
-                    dislike_button.setClickable(true);
-                    like_button.setActivated(false);
-                    Log.i("key like nema ", post_key);
+                        dislike_button.setClickable(false);
+                        like_button.setActivated(true);
+                        if (like_button.isActivated()) {
+
+                            like_button.setImageResource(R.drawable.thumbup);
+                            likeBtnTekst.setText("Liked");
+
+                        }
+                        Log.i("key like ima ", post_key);
+
+
+                    } else {
+                        dislike_button.setClickable(true);
+                        like_button.setActivated(false);
+                        if (!like_button.isActivated()) {
+                            like_button.setImageResource(R.drawable.thumbupgreen);
+                            likeBtnTekst.setText("Like");
+
+                        }
+                        Log.i("key like nema ", post_key);
+                    }
+
                 }
-
-            }
-        });
+            });
+        }
     }
 
     public void setNumberDislikes(String post_key, Activity activity) {
@@ -851,11 +911,21 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                 if (documentSnapshot.exists()) {
                     dislike_button.setActivated(true);
                     like_button.setClickable(false);
+
+                    if (dislike_button.isActivated()) {
+                        dislike_button.setImageResource(R.drawable.thumbdown);
+                        dislikeBtnTekst.setText("Disliked");
+
+                    }
                     Log.i("key dislike ima ", post_key);
 
                 } else {
                     dislike_button.setActivated(false);
                     like_button.setClickable(true);
+                    if (!dislike_button.isActivated()) {
+                        dislike_button.setImageResource(R.drawable.thumbdowngreen);
+                        dislikeBtnTekst.setText("Dislike");
+                    }
                     Log.i("key dislike nema ", post_key);
                 }
             }
@@ -923,7 +993,18 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
 
     public void setProfileImage(Context ctx, String profileImage) {
 
-        Picasso.with(ctx).load(profileImage).into(post_profile_image);
+        Picasso.with(ctx).load(profileImage).into(post_profile_image, new Callback() {
+            @Override
+            public void onSuccess() {
+                ProgressBar loadImage = (ProgressBar) findViewById(R.id.loadImageProgressWallSinglePost);
+                loadImage.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
 
     }
 
@@ -972,6 +1053,19 @@ numberOfDislikes.setOnClickListener(new View.OnClickListener() {
                     .asBitmap()
                     .override(720, 640)
                     .centerCrop()
+                    .listener(new RequestListener<String, Bitmap>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            ProgressBar loadImageProgress = (ProgressBar) findViewById(R.id.loadImageProgressWallImageSinglePost);
+                            loadImageProgress.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {

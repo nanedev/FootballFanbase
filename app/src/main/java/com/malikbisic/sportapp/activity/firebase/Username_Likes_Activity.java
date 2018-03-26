@@ -56,6 +56,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
     String userId;
     UsersModel usersModel;
     String usernameUser;
+    String userIDUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
         };
 
         userId = mAuth.getCurrentUser().getUid();
+        userIDUsers = myIntent.getStringExtra("userID");
 
         query = likesReferences;
 
@@ -390,15 +392,7 @@ public class Username_Likes_Activity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
 
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("result", "nesto");
-        setResult(RESULT_OK, returnIntent);
-        finish();
-    }
 
     @Nullable
     @Override
@@ -413,6 +407,11 @@ public class Username_Likes_Activity extends AppCompatActivity {
             Intent backComments = new Intent(Username_Likes_Activity.this, CommentsActivity.class);
             backComments.putExtra("keyComment", postKey);
             startActivity(backComments);
+            finish();
+        } else if (openActivity.equals("seeUsers")) {
+            Intent backSeeUser = new Intent(Username_Likes_Activity.this, SeeUsersPostsActivity.class);
+            backSeeUser.putExtra("userProfileUid", userIDUsers);
+            startActivity(backSeeUser);
             finish();
         }
 

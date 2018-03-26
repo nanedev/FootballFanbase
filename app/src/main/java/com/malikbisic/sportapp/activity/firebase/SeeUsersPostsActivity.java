@@ -281,6 +281,8 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent listUsername = new Intent(SeeUsersPostsActivity.this, Username_Likes_Activity.class);
                         listUsername.putExtra("post_key", post_key);
+                        listUsername.putExtra("openActivityToBack", "seeUsers");
+                        listUsername.putExtra("userID", uid);
                         startActivity(listUsername);
                     }
                 });
@@ -290,6 +292,8 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent listUsername = new Intent(SeeUsersPostsActivity.this, Username_Dislikes_Activity.class);
                         listUsername.putExtra("post_key", post_key);
+                        listUsername.putExtra("openActivityToBack", "seeUsers");
+                        listUsername.putExtra("userID", uid);
                         startActivity(listUsername);
                     }
                 });
@@ -482,6 +486,8 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
                         openCom.putExtra("keyComment", post_key);
                         openCom.putExtra("profileComment", MainPage.profielImage);
                         openCom.putExtra("username", MainPage.usernameInfo);
+                        openCom.putExtra("userID", uid);
+                        openCom.putExtra("openActivityToBack", "seeUsers");
                      startActivity(openCom);
                     }
                 });
@@ -496,6 +502,8 @@ public class SeeUsersPostsActivity extends AppCompatActivity {
                         openCom.putExtra("keyComment", post_key);
                         openCom.putExtra("profileComment", MainPage.profielImage);
                         openCom.putExtra("username", MainPage.usernameInfo);
+                        openCom.putExtra("userID", uid);
+                        openCom.putExtra("openActivityToBack", "seeUsers");
                         startActivity(openCom);
                     }
                 });

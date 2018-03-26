@@ -556,4 +556,10 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent backToMain = new Intent(OnlyPostActivity.this, MainPage.class);
+        startActivity(backToMain);
+    }
 }

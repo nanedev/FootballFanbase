@@ -50,6 +50,7 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
     String postKey = "";
 
     Query query;
+    String userIDUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
         postKey = myIntent.getStringExtra("keyPost");
         String post_keyComments = myIntent.getStringExtra("post_keyComment");
         boolean isComment = myIntent.getBooleanExtra("isDislikeComment", false);
+        userIDUser = myIntent.getStringExtra("userID");
 
         if (isComment) {
             query = FirebaseFirestore.getInstance().collection("DislikesComments").document(post_keyComments).collection("dislike-id");
@@ -273,6 +275,11 @@ public class Username_Dislikes_Activity extends AppCompatActivity {
             Intent backComments = new Intent(Username_Dislikes_Activity.this, CommentsActivity.class);
             backComments.putExtra("keyComment", postKey);
             startActivity(backComments);
+            finish();
+        }else if (openActivity.equals("seeUsers")){
+            Intent backSeeUser = new Intent(Username_Dislikes_Activity.this, SeeUsersPostsActivity.class);
+            backSeeUser.putExtra("userProfileUid", userIDUser);
+            startActivity(backSeeUser);
             finish();
         }
 

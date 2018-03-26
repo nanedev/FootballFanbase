@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -77,6 +78,10 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     boolean dislike_process = false;
     boolean isSystemComment;
     LinearLayoutManager linearLayoutManager;
+
+    String backToActivity;
+    String usersID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +104,8 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         likesReference = FirebaseFirestore.getInstance();
         dislikeReference = FirebaseFirestore.getInstance();
         mReference = FirebaseFirestore.getInstance();
+        backToActivity = myIntent.getStringExtra("openActivityToBack");
+        usersID = myIntent.getStringExtra("userID");
 
 
         if (key == null && keyNotifPush != null) {
@@ -140,7 +147,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         final Query query = getCommentRef.orderBy("time", Query.Direction.DESCENDING);
 
         comments.setHasFixedSize(true);
-    linearLayoutManager  = new LinearLayoutManager(this);
+        linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         comments.setLayoutManager(linearLayoutManager);
 
@@ -178,7 +185,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                         final String username = viewHolder.usernameTxt.getText().toString().trim();
                         Log.i("username", username);
 
-                        profileUsers.collection("Users").addSnapshotListener(CommentsActivity.this,new EventListener<QuerySnapshot>() {
+                        profileUsers.collection("Users").addSnapshotListener(CommentsActivity.this, new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(QuerySnapshot dataSnapshot, FirebaseFirestoreException e) {
 
@@ -231,7 +238,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 });
 
                 final FirebaseFirestore commentsUsers = FirebaseFirestore.getInstance();
-                commentsUsers.collection("Comments").document(key).collection("comment-id").document(post_key_comments).addSnapshotListener(CommentsActivity.this,new EventListener<DocumentSnapshot>() {
+                commentsUsers.collection("Comments").document(key).collection("comment-id").document(post_key_comments).addSnapshotListener(CommentsActivity.this, new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(DocumentSnapshot querySnapshot, FirebaseFirestoreException e) {
 
@@ -283,7 +290,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                                                             replyRef.collection("CommentsInComments").document(post_key_comments).collection("reply-id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                    for (DocumentSnapshot snapshot : task.getResult()){
+                                                                    for (DocumentSnapshot snapshot : task.getResult()) {
                                                                         String id = snapshot.getId();
                                                                         replyRef.collection("CommentsInComments").document(post_key_comments).collection("reply-id").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
@@ -330,7 +337,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
                         like_process = true;
                         viewHolder.setNumberLikes(post_key_comments, CommentsActivity.this);
-                        likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(uid).addSnapshotListener(CommentsActivity.this,new EventListener<DocumentSnapshot>() {
+                        likesReference.collection("LikeComments").document(post_key_comments).collection("like-id").document(uid).addSnapshotListener(CommentsActivity.this, new EventListener<DocumentSnapshot>() {
                             @Override
                             public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
 
@@ -368,7 +375,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
 
                                         CollectionReference getIduserpost = FirebaseFirestore.getInstance().collection("Comments").document(key).collection("comment-id");
-                                        getIduserpost.document(post_key_comments).addSnapshotListener(CommentsActivity.this,new EventListener<DocumentSnapshot>() {
+                                        getIduserpost.document(post_key_comments).addSnapshotListener(CommentsActivity.this, new EventListener<DocumentSnapshot>() {
                                             @Override
                                             public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
 
@@ -598,7 +605,6 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         populate.notifyDataSetChanged();
 
 
-
     }
 
 
@@ -620,11 +626,11 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             commentsMap.put("profileImage", profileImage);
             commentsMap.put("username", username);
             commentsMap.put("uid", auth.getCurrentUser().getUid());
-            commentsMap.put("time",FieldValue.serverTimestamp());
+            commentsMap.put("time", FieldValue.serverTimestamp());
             post_comment.add(commentsMap);
 
             FirebaseFirestore getIduserpost = FirebaseFirestore.getInstance();
-            getIduserpost.collection("Posting").document(key).addSnapshotListener(CommentsActivity.this,new EventListener<DocumentSnapshot>() {
+            getIduserpost.collection("Posting").document(key).addSnapshotListener(CommentsActivity.this, new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
 
@@ -828,7 +834,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                     if (e == null) {
-                        if (documentSnapshots.isEmpty()){
+                        if (documentSnapshots.isEmpty()) {
                             commentsReplyNumber.setVisibility(View.GONE);
                         }
                         long numberOfComments = documentSnapshots.size();
@@ -857,12 +863,22 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    @Nullable
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public Intent getParentActivityIntent() {
 
-        Intent backMainPage = new Intent(CommentsActivity.this, MainPage.class);
-        startActivity(backMainPage);
-        finish();
+        if (backToActivity.equals("mainPage")) {
+            Intent backMainPage = new Intent(CommentsActivity.this, MainPage.class);
+            startActivity(backMainPage);
+            finish();
+        } else if (backToActivity.equals("seeUsers")){
+            Intent backToSeeUsers = new Intent(CommentsActivity.this, SeeUsersPostsActivity.class);
+            backToSeeUsers.putExtra("userProfileUid", usersID);
+            startActivity(backToSeeUsers);
+            finish();
+        }
+
+
+        return super.getParentActivityIntent();
     }
 }

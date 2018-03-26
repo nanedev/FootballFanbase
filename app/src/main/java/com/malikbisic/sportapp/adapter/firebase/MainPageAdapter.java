@@ -503,77 +503,77 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View v) {
 
-                        dislike_process = true;
+                    dislike_process = true;
 
                /* ((MainPageAdapter.PostViewHolder) holder).setNumberDislikes(post_key, activity);*/
 
 
-                        dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                            @Override
-                            public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
-                                if (dislike_process) {
+                    dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(DocumentSnapshot documentSnapshots, FirebaseFirestoreException e) {
+                            if (dislike_process) {
 
 
-                                    if (documentSnapshots.exists()) {
-                                        dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                Log.i("deleteDislike", "complete");
+                                if (documentSnapshots.exists()) {
+                                    dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.i("deleteDislike", "complete");
 
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.e("deletedislike", e.getLocalizedMessage());
-                                            }
-                                        });
-                                        dislike_process = false;
-
-
-                                    } else {
-
-                                        Map<String, Object> userDislikeInfo = new HashMap<>();
-                                        userDislikeInfo.put("username", MainPage.usernameInfo);
-                                        userDislikeInfo.put("photoProfile", MainPage.profielImage);
-                                        userDislikeInfo.put("timestamp", FieldValue.serverTimestamp());
-
-                                        final DocumentReference newPost = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid);
-                                        newPost.set(userDislikeInfo);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("deletedislike", e.getLocalizedMessage());
+                                        }
+                                    });
+                                    dislike_process = false;
 
 
-                                        FirebaseFirestore getIduserpost = postingDatabase;
-                                        getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+                                } else {
 
-                                                if (dataSnapshot.exists()) {
-                                                    String userpostUID = dataSnapshot.getString("uid");
+                                    Map<String, Object> userDislikeInfo = new HashMap<>();
+                                    userDislikeInfo.put("username", MainPage.usernameInfo);
+                                    userDislikeInfo.put("photoProfile", MainPage.profielImage);
+                                    userDislikeInfo.put("timestamp", FieldValue.serverTimestamp());
 
-                                                    Map<String, Object> notifMap = new HashMap<>();
-                                                    notifMap.put("action", "disliked");
-                                                    notifMap.put("uid", uid);
-                                                    notifMap.put("seen", false);
-                                                    notifMap.put("whatIS", "post");
-                                                    notifMap.put("timestamp", FieldValue.serverTimestamp());
-                                                    notifMap.put("post_key", post_key);
-                                                    if (!userpostUID.equals(uid)) {
-                                                        CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
-                                                        notifSet.add(notifMap);
-                                                    }
+                                    final DocumentReference newPost = dislikeReference.collection("Dislikes").document(post_key).collection("dislike-id").document(uid);
+                                    newPost.set(userDislikeInfo);
+
+
+                                    FirebaseFirestore getIduserpost = postingDatabase;
+                                    getIduserpost.collection("Posting").document(post_key).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onEvent(DocumentSnapshot dataSnapshot, FirebaseFirestoreException e) {
+
+                                            if (dataSnapshot.exists()) {
+                                                String userpostUID = dataSnapshot.getString("uid");
+
+                                                Map<String, Object> notifMap = new HashMap<>();
+                                                notifMap.put("action", "disliked");
+                                                notifMap.put("uid", uid);
+                                                notifMap.put("seen", false);
+                                                notifMap.put("whatIS", "post");
+                                                notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                                notifMap.put("post_key", post_key);
+                                                if (!userpostUID.equals(uid)) {
+                                                    CollectionReference notifSet = notificationReference.collection("Notification").document(userpostUID).collection("notif-id");
+                                                    notifSet.add(notifMap);
                                                 }
-
                                             }
 
-                                        });
+                                        }
+
+                                    });
 
 
-                                        dislike_process = false;
+                                    dislike_process = false;
 
 
-                                    }
                                 }
                             }
-                        });
+                        }
+                    });
 
                 }
             });
@@ -598,6 +598,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     openCom.putExtra("keyComment", post_key);
                     openCom.putExtra("profileComment", MainPage.profielImage);
                     openCom.putExtra("username", MainPage.usernameInfo);
+                    openCom.putExtra("openActivityToBack", "mainPage");
                     activity.startActivity(openCom);
                 }
             });
@@ -611,6 +612,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     openCom.putExtra("keyComment", post_key);
                     openCom.putExtra("profileComment", MainPage.profielImage);
                     openCom.putExtra("username", MainPage.usernameInfo);
+                    openCom.putExtra("openActivityToBack", "mainPage");
                     activity.startActivity(openCom);
                 }
             });
@@ -623,6 +625,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                     openCom.putExtra("keyComment", post_key);
                     openCom.putExtra("profileComment", MainPage.profielImage);
                     openCom.putExtra("username", MainPage.usernameInfo);
+                    openCom.putExtra("openActivityToBack", "mainPage");
                     openCom.putExtra("isCommentSystem", true);
                     activity.startActivity(openCom);
                 }
@@ -1238,10 +1241,10 @@ public class MainPageAdapter extends RecyclerView.Adapter {
 
         public void setDescWithBackground(String descWithBackground) {
             if (descWithBackground != null) {
-postWithBackgroundLayout.setVisibility(View.VISIBLE);
+                postWithBackgroundLayout.setVisibility(View.VISIBLE);
                 posttextWithbackground.setText(descWithBackground);
 
-            }else {
+            } else {
                 postWithBackgroundLayout.setVisibility(View.GONE);
             }
 
