@@ -157,6 +157,9 @@ public class MyPostsActivity extends AppCompatActivity {
                         viewHolder.setAudioFile(getApplicationContext(), model.getAudioFile());
                         viewHolder.setCountry(getApplicationContext(),model.getCountry());
                         viewHolder.setLikeBtn(post_key,MyPostsActivity.this);
+                        viewHolder.setDescWithBackground(model.getDescWithBackground());
+                        viewHolder.setIdResource(model.getIdResource());
+                        viewHolder.setTimeAgo(model.getTime(),MyPostsActivity.this);
                         viewHolder.setNumberLikes(post_key,MyPostsActivity.this);
                         viewHolder.setDesc(model.getDesc());
                         viewHolder.setDislikeBtn(post_key,MyPostsActivity.this);
