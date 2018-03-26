@@ -45,7 +45,7 @@ public class UserVotesActivity extends AppCompatActivity {
         final String prevMonth = prevDate.toString("MMMM");
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("PlayerPoints").document("February").collection("player-id").document(playerID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("PlayerPoints").document(prevMonth).collection("player-id").document(playerID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 

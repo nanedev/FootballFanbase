@@ -68,95 +68,96 @@ public class BadgeServices extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         notificationId = new Random().nextInt(60000);
         String action = remoteMessage.getData().get("action");
-        if (action.equals("chat")){
-            Bitmap bitmap = getBitmapfromUrl(remoteMessage.getData().get("profileImage"));
-            String username = remoteMessage.getData().get("username");
-            String from_user_id = remoteMessage.getData().get("userId");
-            String clickAction = remoteMessage.getNotification().getClickAction();
+        if (action != null) {
+            if (action.equals("chat")) {
+                Bitmap bitmap = getBitmapfromUrl(remoteMessage.getData().get("profileImage"));
+                String username = remoteMessage.getData().get("username");
+                String from_user_id = remoteMessage.getData().get("userId");
+                String clickAction = remoteMessage.getNotification().getClickAction();
 
 
-            Uri defaulSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Notification.Builder builder = new Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
-                    .setLargeIcon(getCircleBitmap(bitmap))
+                Uri defaulSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Notification.Builder builder = new Notification.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setLargeIcon(getCircleBitmap(bitmap))
 
-                    .setContentTitle("Football fanbase")
-                    .setContentText(remoteMessage.getNotification().getBody())
-                    .setAutoCancel(true)
-                    .setSound(defaulSoundUri);
-
-
-            Intent resultIntent = new Intent(clickAction);
-            resultIntent.putExtra("userId", from_user_id);
-            resultIntent.putExtra("username", username);
-
-// Because clicking the notification opens a new ("special") activity, there's
-// no need to create an artificial back stack.
-            PendingIntent resultPendingIntent =
-                    PendingIntent.getActivity(
-                            this,
-                            0,
-                            resultIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
+                        .setContentTitle("Football fanbase")
+                        .setContentText(remoteMessage.getNotification().getBody())
+                        .setAutoCancel(true)
+                        .setSound(defaulSoundUri);
 
 
-            builder.setContentIntent(resultPendingIntent);
-
-
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(notificationId /* ID of notification */, builder.build());
-
-
-            mAuth = FirebaseAuth.getInstance();
-
-            FirebaseUser user = mAuth.getCurrentUser();
-            final String myUserId = user.getUid();
-        } else {
-            Bitmap bitmap = getBitmapfromUrl(remoteMessage.getData().get("profileImage"));
-            String postKey = remoteMessage.getData().get("post_key");
-            String from_user_id = remoteMessage.getData().get("from_user_id");
-            String clickAction = remoteMessage.getNotification().getClickAction();
-
-
-            Uri defaulSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Notification.Builder builder = new Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
-                    .setLargeIcon(getCircleBitmap(bitmap))
-
-                    .setContentTitle("Football fanbase")
-                    .setContentText(remoteMessage.getNotification().getBody())
-                    .setAutoCancel(true)
-                    .setSound(defaulSoundUri);
-
-
-            Intent resultIntent = new Intent(clickAction);
-            resultIntent.putExtra("post_key", postKey);
+                Intent resultIntent = new Intent(clickAction);
+                resultIntent.putExtra("userId", from_user_id);
+                resultIntent.putExtra("username", username);
 
 // Because clicking the notification opens a new ("special") activity, there's
 // no need to create an artificial back stack.
-            PendingIntent resultPendingIntent =
-                    PendingIntent.getActivity(
-                            this,
-                            0,
-                            resultIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
+                PendingIntent resultPendingIntent =
+                        PendingIntent.getActivity(
+                                this,
+                                0,
+                                resultIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
 
 
-            builder.setContentIntent(resultPendingIntent);
+                builder.setContentIntent(resultPendingIntent);
 
 
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(notificationId /* ID of notification */, builder.build());
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(notificationId /* ID of notification */, builder.build());
 
 
-            mAuth = FirebaseAuth.getInstance();
+                mAuth = FirebaseAuth.getInstance();
 
-            FirebaseUser user = mAuth.getCurrentUser();
-            final String myUserId = user.getUid();
+                FirebaseUser user = mAuth.getCurrentUser();
+                final String myUserId = user.getUid();
+            } else {
+                Bitmap bitmap = getBitmapfromUrl(remoteMessage.getData().get("profileImage"));
+                String postKey = remoteMessage.getData().get("post_key");
+                String from_user_id = remoteMessage.getData().get("from_user_id");
+                String clickAction = remoteMessage.getNotification().getClickAction();
+
+
+                Uri defaulSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Notification.Builder builder = new Notification.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setLargeIcon(getCircleBitmap(bitmap))
+
+                        .setContentTitle("Football fanbase")
+                        .setContentText(remoteMessage.getNotification().getBody())
+                        .setAutoCancel(true)
+                        .setSound(defaulSoundUri);
+
+
+                Intent resultIntent = new Intent(clickAction);
+                resultIntent.putExtra("post_key", postKey);
+
+// Because clicking the notification opens a new ("special") activity, there's
+// no need to create an artificial back stack.
+                PendingIntent resultPendingIntent =
+                        PendingIntent.getActivity(
+                                this,
+                                0,
+                                resultIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+
+
+                builder.setContentIntent(resultPendingIntent);
+
+
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(notificationId /* ID of notification */, builder.build());
+
+
+                mAuth = FirebaseAuth.getInstance();
+
+                FirebaseUser user = mAuth.getCurrentUser();
+                final String myUserId = user.getUid();
+            }
         }
-
     }
 
     public Bitmap getBitmapfromUrl(String imageUrl) {

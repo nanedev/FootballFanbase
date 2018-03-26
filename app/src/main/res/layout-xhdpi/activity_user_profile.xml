@@ -443,7 +443,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_margin="5dp"
                     android:text="Last month winner by football fans"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary"
                     android:textStyle="bold|italic" />
 
 
@@ -462,7 +462,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:text="Ronaldinho Gaucho"
-                        android:textColor="@color/black"
+                        android:textColor="@color/primary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -513,15 +513,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:text="Goals"
-                            android:textColor="#4dd0e1" />
+                            android:text="@string/votes"
+                            android:textColor="@color/primary" />
 
                         <RelativeLayout
                             android:id="@+id/playerGoalsLayout"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_below="@+id/goalstext"
-                            android:background="@drawable/goals_assists_shape"
+                            android:background="@drawable/post_points_shape"
                             android:padding="5dp">
 
                             <TextView
@@ -530,9 +530,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
                                 android:layout_centerVertical="true"
-
                                 android:text="15"
-                                android:textColor="#4dd0e1"
+                                android:textColor="@color/primary"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
 
@@ -559,15 +558,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:text="Assists"
-                            android:textColor="#4dd0e1" />
+                            android:text="@string/points"
+                            android:textColor="@color/primary" />
 
                         <RelativeLayout
                             android:id="@+id/playerAssistslayout"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_below="@+id/assiststext"
-                            android:background="@drawable/goals_assists_shape"
+                            android:background="@drawable/post_points_shape"
                             android:padding="5dp">
 
                             <TextView
@@ -578,7 +577,7 @@
                                 android:layout_centerVertical="true"
 
                                 android:text="12"
-                                android:textColor="#4dd0e1"
+                                android:textColor="@color/primary"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
 
@@ -599,7 +598,11 @@
                 android:layout_height="1dp"
                 android:layout_below="@+id/parentForWinner"
                 android:background="@color/black" />
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/parentForListplayersUser"
+            android:layout_below="@+id/separator4">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -609,7 +612,7 @@
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold|italic"
                 android:layout_below="@+id/separator4"
-                android:textColor="@color/black"
+                android:textColor="@color/primary"
                 android:layout_margin="10dp"/>
 
             <TextView
@@ -618,7 +621,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/playerlisttext"
-                android:textColor="@color/black"
+                android:textColor="@color/primary"
                 android:textStyle="bold"/>
 
 
@@ -638,7 +641,7 @@
                     app:dsv_orientation="horizontal" />
             </LinearLayout>
 
-
+        </RelativeLayout>
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
 

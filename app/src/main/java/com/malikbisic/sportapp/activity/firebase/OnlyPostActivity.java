@@ -2,11 +2,14 @@ package com.malikbisic.sportapp.activity.firebase;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -81,6 +84,7 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
     ImageButton videoIcon;
     ImageButton audioIcon;
     ImageButton captureImage;
+    Uri  imageUri;
 
 
     @Override
@@ -477,22 +481,33 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
 
             } else if (requestCode == CAMERA_REQUEST) {
                 Bitmap image = null;
-                Uri imageData = null;
+                String imageData = null;
                 if (resultCode == RESULT_OK) {
-                    image = (Bitmap) data.getExtras().get("data");
-                    imageData = data.getData();
-                    Intent openCameraSend = new Intent(OnlyPostActivity.this, CaptureImageSendChatActivity.class);
-                    openCameraSend.setData(imageData);
-                    openCameraSend.putExtra("imagedata", image);
-                    openCameraSend.putExtra("userIDFromMainPage", mauth.getCurrentUser().getUid());
-                    openCameraSend.putExtra("fromMainPage", MainPage.fromMainPage);
-                    openCameraSend.putExtra("username", MainPage.usernameInfo);
-                    openCameraSend.putExtra("profileImage", MainPage.profielImage);
-                    openCameraSend.putExtra("country", MainPage.country);
-                    openCameraSend.putExtra("clubHeader", MainPage.clubHeaderString);
-                    openCameraSend.putExtra("clubName", MainPage.myClubName);
-                    openCameraSend.putExtra("postkey", MainPage.postKey);
-                    startActivityForResult(openCameraSend, 1);
+                    try {
+                        image = MediaStore.Images.Media.getBitmap(
+                                getContentResolver(), imageUri);
+
+                        imageData = getRealPathFromURI(imageUri);
+
+
+                        Intent openCameraSend = new Intent(OnlyPostActivity.this, CaptureImageSendChatActivity.class);
+                        openCameraSend.setData(imageUri);
+                        openCameraSend.putExtra("imagedata", image);
+                        openCameraSend.putExtra("userIDFromMainPage", mauth.getCurrentUser().getUid());
+                        openCameraSend.putExtra("fromMainPage", MainPage.fromMainPage);
+                        openCameraSend.putExtra("username", MainPage.usernameInfo);
+                        openCameraSend.putExtra("profileImage", MainPage.profielImage);
+                        openCameraSend.putExtra("country", MainPage.country);
+                        openCameraSend.putExtra("clubHeader", MainPage.clubHeaderString);
+                        openCameraSend.putExtra("clubName", MainPage.myClubName);
+                        openCameraSend.putExtra("postkey", MainPage.postKey);
+                        startActivity(openCameraSend);
+                    } catch (Exception e) {
+                        Log.i("imageExcp", e.getLocalizedMessage());
+                    }
+
+                } else{
+                    Toast.makeText(OnlyPostActivity.this, "Error", Toast.LENGTH_LONG).show();
                 }
             } else {
 
@@ -509,8 +524,14 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
 
         if (view.getId() == R.id.take_photo_btn) {
 
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+         ContentValues   values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+            imageUri = getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, CAMERA_REQUEST);
 
         } else if (view.getId() == R.id.video_btn) {
             Intent intent = new Intent();
@@ -525,5 +546,14 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
             startActivity(intent);
         }
 
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 }

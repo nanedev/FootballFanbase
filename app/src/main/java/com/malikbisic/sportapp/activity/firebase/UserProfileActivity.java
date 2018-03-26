@@ -157,6 +157,11 @@ TextView totalPointsTextview;
     String playerID;
     int number;
     int pos = 1;
+
+    RelativeLayout layoutforWinner;
+    RelativeLayout layoutForTOP10Player;
+    RelativeLayout votesLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +202,9 @@ TextView totalPointsTextview;
         minAdultAge = new GregorianCalendar();
         userPointsTextView = (TextView) findViewById(R.id.user_points_textview);
         totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumberUsers);
+        layoutforWinner = (RelativeLayout) findViewById(R.id.parentForWinner);
+        layoutForTOP10Player = (RelativeLayout) findViewById(R.id.parentForListplayersUser);
+        votesLayout = (RelativeLayout) findViewById(R.id.goalslayout);
         usersPoint(UserProfileActivity.this);
 
         showInfo.setOnClickListener(new View.OnClickListener() {
@@ -600,11 +608,16 @@ showAlertInfo();
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {
+
+                if (task.getResult().isEmpty()){
+                    layoutforWinner.setVisibility(View.GONE);
+                }
                 String playName;
                 String playerImage;
                 long playerPoints;
                 for (DocumentSnapshot documentSnapshot : task.getResult()) {
                     if (documentSnapshot.exists()) {
+                        layoutforWinner.setVisibility(View.VISIBLE);
                         playerID = documentSnapshot.getId();
                         playName = documentSnapshot.getString("playerName");
                         playerImage = documentSnapshot.getString("playerImage");
@@ -708,7 +721,18 @@ showAlertInfo();
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             long numberVotes = task.getResult().size();
 
+
                             playerVoteTextview.setText(String.valueOf(numberVotes));
+
+                            votesLayout.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(UserProfileActivity.this, UserVotesActivity.class);
+                                    intent.putExtra("playerID", playerID);
+                                    startActivity(intent);
+                                }
+                            });
+
                         }
                     });
 
@@ -727,12 +751,17 @@ showAlertInfo();
         documentReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@Nullable Task<QuerySnapshot> task) {
+
+                if (task.getResult().isEmpty()){
+                    layoutForTOP10Player.setVisibility(View.GONE);
+                }
                 String playName;
                 String playerImage;
                 long playerPoints;
                 int id = 0;
                 for (DocumentSnapshot documentSnapshot : task.getResult()) {
                     if (documentSnapshot.exists()) {
+                        layoutForTOP10Player.setVisibility(View.VISIBLE);
                         id++;
                         playerID = documentSnapshot.getId();
                         playName = documentSnapshot.getString("playerName");
