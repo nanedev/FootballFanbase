@@ -1196,7 +1196,7 @@ public class MainPage extends AppCompatActivity
     public void loadPremium() {
         Log.i("premium users", "YEEEEEES");
 
-        pDialog = new SpotsDialog(MainPage.this, "   ", R.style.StyleLogin);
+        pDialog = new SpotsDialog(MainPage.this, "Please wait", R.style.StyleLogin);
 //                if (!pDialog.isShowing() && !MainPage.this.isFinishing())
         pDialog.show();
 

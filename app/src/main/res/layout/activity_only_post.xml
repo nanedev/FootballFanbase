@@ -76,6 +76,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/smilelayout"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_below="@+id/appbarlayoutonlypost">
 
 
@@ -90,7 +92,8 @@
             android:id="@+id/edittextlayoutonlypost"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/nekalinija1">
+            android:layout_below="@+id/nekalinija1"
+          >
 
 
             <com.rockerhieu.emojicon.EmojiconEditText
@@ -99,6 +102,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/only_post_editext_shape"
                 android:gravity="top"
+
                 android:hint="Say something...."
                 android:inputType="textMultiLine"
                 android:lineSpacingExtra="5dp"
