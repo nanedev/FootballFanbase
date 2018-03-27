@@ -48,6 +48,7 @@ public class UserVotesActivity extends AppCompatActivity {
         db.collection("PlayerPoints").document(prevMonth).collection("player-id").document(playerID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().exists()){
 
                 final String playerName = task.getResult().getString("playerName");
                 final String playerImage = task.getResult().getString("playerImage");
@@ -69,7 +70,7 @@ public class UserVotesActivity extends AppCompatActivity {
                                     String username = task.getResult().getString("username");
                                     String profileImage = task.getResult().getString("profileImage");
 
-                                    UserVoteModel model = new UserVoteModel(profileImage, username, playerImage, playerName, playerPoints);
+                                    UserVoteModel model = new UserVoteModel(profileImage, username, playerImage, playerName, playerPoints + "pts");
                                     userVoteModels.add(model);
                                     adapter.notifyDataSetChanged();
                                 }
@@ -77,7 +78,7 @@ public class UserVotesActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
+            }}
         });
     }
 }

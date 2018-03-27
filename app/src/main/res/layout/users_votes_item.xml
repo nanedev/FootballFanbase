@@ -17,8 +17,8 @@
         android:layout_centerVertical="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:id="@+id/userProfileImage"
             android:layout_centerHorizontal="true"/>
 
@@ -28,6 +28,8 @@
             android:id="@+id/userusername"
             android:layout_below="@+id/userProfileImage"
             android:layout_marginTop="5dp"
+            android:textStyle="bold"
+            android:textColor="@color/primary"
             android:layout_centerHorizontal="true"/>
 
 
@@ -45,14 +47,18 @@
             android:id="@+id/pointsTekst"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            android:textColor="@color/primary"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="------------>"
+            android:textStyle="bold"
+            android:textColor="@color/primary"
             android:layout_below="@+id/pointsTekst"
-            android:layout_centerHorizontal="true"/>
+        />
 
     </RelativeLayout>
 
@@ -66,8 +72,8 @@
         android:layout_alignParentEnd="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:id="@+id/playerImage"
             android:layout_centerHorizontal="true"/>
 
@@ -75,7 +81,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/playerName"
+            android:textStyle="bold"
             android:layout_below="@+id/playerImage"
+            android:textColor="@color/primary"
             android:layout_marginTop="5dp"
             android:layout_centerHorizontal="true"/>
 

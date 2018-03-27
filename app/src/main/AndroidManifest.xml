@@ -289,7 +289,9 @@
             android:parentActivityName=".activity.firebase.ChatMessageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".activity.firebase.UserVotesActivity" />
+        <activity android:name=".activity.firebase.UserVotesActivity"
+            android:theme="@style/AppTheme.Dark"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.firebase.OnlyPostActivity"
             android:theme="@style/AppTheme.Dark"

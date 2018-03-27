@@ -214,6 +214,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
     TextView numberPosClubTextview;
     String myClubName;
     RelativeLayout teamLayoutPos;
+    RelativeLayout pointsLayout;
 
     int clubPOS = 1;
 
@@ -283,6 +284,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         postLayout = (RelativeLayout) findViewById(R.id.postlayout);
         numberPosClubTextview = (TextView) findViewById(R.id.teamposnumber);
         teamLayoutPos = (RelativeLayout) findViewById(R.id.teamLayoutPosition);
+        pointsLayout = (RelativeLayout) findViewById(R.id.assistslayout);
         backarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -624,6 +626,16 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                             votesLayout.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    Intent intent = new Intent(ProfileFragment.this, UserVotesActivity.class);
+                                    intent.putExtra("playerID", playerID);
+                                    startActivity(intent);
+                                }
+                            });
+
+
+                            pointsLayout.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
                                     Intent intent = new Intent(ProfileFragment.this, UserVotesActivity.class);
                                     intent.putExtra("playerID", playerID);
                                     startActivity(intent);
