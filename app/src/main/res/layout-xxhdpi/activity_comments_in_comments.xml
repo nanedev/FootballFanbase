@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/commenInCommenstLayout"
@@ -27,29 +28,94 @@
         </RelativeLayout>
     </RelativeLayout>
     <RelativeLayout
+        android:id="@+id/containercommincommdole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/writeCommentlayout"
-        android:background="#000"
-        android:padding="5dp">
-        <EditText
-            android:id="@+id/writeCommentInComments"
+        android:background="@color/white">
+
+        <View
+            android:id="@+id/bglhg"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/primary" />
+
+        <RelativeLayout
+            android:id="@+id/writeCommentlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/sendCommentInComments"
-            android:layout_toStartOf="@+id/sendCommentInComments"
-            android:ems="10"
-            android:hint="Write a comment"
-            android:inputType="textPersonName" />
+            android:layout_below="@+id/bglhg"
+            android:background="@color/white"
 
-        <ImageButton
-            android:id="@+id/sendCommentInComments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_send_black_24dp"
-            android:layout_alignParentRight="true" />
+            >
+
+            <com.rockerhieu.emojicon.EmojiconEditText
+                android:id="@+id/writeCommentInComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/smileImageCommentsInComments"
+                android:layout_toStartOf="@+id/smileImageCommentsInComments"
+                android:background="@drawable/edittext_chat_shaoe"
+                android:focusable="true"
+                android:hint="Enter message"
+                android:lineSpacingExtra="5dp"
+                android:padding="20dp"
+                android:textAllCaps="false"
+                android:textColor="#000"
+                android:textCursorDrawable="@null"
+                emojicon:emojiconAlignment="baseline"
+                emojicon:emojiconSize="24sp" />
+
+            <RelativeLayout
+                android:id="@+id/sendCommentInComments"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/send_message_shape">
+
+                <ImageView
+
+                    android:id="@+id/sendCommentInCommentBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_send_white_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    />
+
+
+            </RelativeLayout>
+
+
+            <ImageButton
+                android:id="@+id/smileImageCommentsInComments"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/sendCommentInComments"
+                android:layout_toStartOf="@+id/sendCommentInComments"
+                android:background="@drawable/send_message_shape"
+                android:src="@drawable/smileff" />
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/emojiconsCommentsinComments"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/writeCommentlayout"
+            android:background="@color/white"
+            android:visibility="gone">
+
+        </FrameLayout>
     </RelativeLayout>
 
 

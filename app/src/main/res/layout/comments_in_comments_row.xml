@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     app:cardBackgroundColor="#ffffff">
 
     <RelativeLayout
         android:id="@+id/container_comments"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
 
         <RelativeLayout
             android:id="@+id/layout_for_comments_image_username"
@@ -42,14 +43,19 @@
                 android:textColor="#000"
                 android:textStyle="bold" />
 
-            <TextView
+            <com.rockerhieu.emojicon.EmojiconTextView
                 android:id="@+id/textCommentInComments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/username_comment_profile_in_comment"
                 android:layout_alignStart="@+id/username_comment_profile_in_comment"
                 android:layout_below="@+id/username_comment_profile_in_comment"
-                android:layout_marginTop="5dp" />
+                android:layout_marginTop="5dp"
+                android:lineSpacingExtra="5dp"
+                android:textColor="#000000"
+                android:padding="5dp"
+                emojicon:emojiconAlignment="baseline"
+                emojicon:emojiconSize="20sp" />
 
             <ImageView
                 android:id="@+id/down_arrow_comments_in_Comments"
