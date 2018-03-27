@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:emojicon="http://schemas.android.com/tools"
     android:orientation="vertical"
     app:cardBackgroundColor="#ffffff">
 
@@ -47,7 +48,7 @@
             android:src="@drawable/arrow_down"
             android:visibility="gone" />
 
-        <TextView
+        <com.rockerhieu.emojicon.EmojiconTextView
             android:id="@+id/minuteText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +56,10 @@
             android:layout_alignStart="@+id/username_comment_profile"
             android:layout_below="@+id/username_comment_profile"
             android:layout_marginTop="5dp"
-
+            android:lineSpacingExtra="5dp"
+            android:textColor="#000000"
+            emojicon:emojiconAlignment="baseline"
+            emojicon:emojiconSize="30sp"
             />
 
         <TextView
@@ -156,9 +160,9 @@
             android:layout_alignStart="@+id/comment_something_comments"
             android:layout_below="@+id/comment_something_comments"
             android:layout_marginLeft="10dp"
+            android:visibility="gone"
             android:layout_marginStart="10dp"
             android:layout_marginTop="7dp"
-            android:visibility="gone"
             android:textColor="#000" />
 
 

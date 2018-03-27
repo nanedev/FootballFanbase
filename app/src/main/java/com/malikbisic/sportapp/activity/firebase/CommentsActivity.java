@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -12,15 +13,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -46,16 +54,21 @@ import com.malikbisic.sportapp.fragment.firebase.NotificationFragment;
 import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 import com.malikbisic.sportapp.model.firebase.UsersModel;
 import com.malikbisic.sportapp.model.firebase.Comments;
+import com.rockerhieu.emojicon.EmojiconEditText;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
+import com.rockerhieu.emojicon.EmojiconTextView;
+import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommentsActivity extends AppCompatActivity implements View.OnClickListener {
+public class CommentsActivity extends AppCompatActivity implements View.OnClickListener,TextWatcher,EmojiconsFragment.OnEmojiconBackspaceClickedListener,EmojiconGridFragment.OnEmojiconClickedListener {
 
     DatabaseReference setCommentRef;
-    ImageButton sendComment;
-    EditText writeComment;
+    RelativeLayout sendComment;
+    EmojiconEditText writeComment;
     RecyclerView comments;
     FirebaseAuth auth;
     Intent myIntent;
@@ -63,7 +76,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     CollectionReference getCommentRef;
     CollectionReference postingDatabase, notificationReference;
     FirebaseFirestore replyRef;
-
+ImageView sendBtn;
     public static String key;
     String keyNotif;
     String profileImage;
@@ -81,6 +94,12 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
     String backToActivity;
     String usersID;
+
+    ImageButton smajliBtn;
+    boolean firstClickSmile = true;
+    boolean secondClickSmile = false;
+    Animation slideUpAnimation;
+    FrameLayout emoticonsComment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +125,8 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         mReference = FirebaseFirestore.getInstance();
         backToActivity = myIntent.getStringExtra("openActivityToBack");
         usersID = myIntent.getStringExtra("userID");
+
+
 
 
         if (key == null && keyNotifPush != null) {
@@ -134,17 +155,81 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         }
 
 
-        sendComment = (ImageButton) findViewById(R.id.sendComment);
-        writeComment = (EditText) findViewById(R.id.writeComment);
+        sendComment = (RelativeLayout) findViewById(R.id.sendComment);
+        writeComment = (EmojiconEditText) findViewById(R.id.writeComment);
         comments = (RecyclerView) findViewById(R.id.rec_view_comments);
+        emoticonsComment = (FrameLayout) findViewById(R.id.emojiconsComments);
+        smajliBtn = (ImageButton) findViewById(R.id.smileImageComments);
+sendBtn = (ImageView) findViewById(R.id.sendCommentBtn);
 
+sendBtn.setRotation(300);
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
             }
         };
-        final Query query = getCommentRef.orderBy("time", Query.Direction.DESCENDING);
+
+        smajliBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (firstClickSmile) {
+                    firstClickSmile = false;
+                    secondClickSmile = true;
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                    emoticonsComment.startAnimation(slideUpAnimation);
+                    emoticonsComment.setVisibility(View.VISIBLE);
+
+
+                } else if (secondClickSmile) {
+                    firstClickSmile = true;
+                    secondClickSmile = false;
+
+                    writeComment.clearFocus();
+          /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
+                    emoticonsComment.setVisibility(View.GONE);
+
+
+                }
+            }
+        });
+
+        writeComment.addTextChangedListener(this);
+        slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.anmation_drom_down_to_top);
+        writeComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeComment.setFocusable(true);
+                emoticonsComment.setVisibility(View.GONE);
+
+                firstClickSmile = true;
+
+            }
+        });
+
+        writeComment.clearFocus();
+        writeComment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    emoticonsComment.setVisibility(View.GONE);
+
+                    firstClickSmile = true;
+
+
+                }
+
+            }
+        });
+        setEmojiconFragment(false);
+
+
+        final Query query = getCommentRef.orderBy("time", Query.Direction.ASCENDING);
 
         comments.setHasFixedSize(true);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -598,11 +683,32 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
 
         };
 
+        populate.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int friendlyMessageCount = populate.getItemCount();
+                int lastVisiblePosition =
+                        linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                // If the recycler view is initially being loaded or the
+                // user is at the bottom of the list, scroll to the bottom
+                // of the list to show the newly added message.
+
+                if (lastVisiblePosition == 0 ||
+                        (positionStart >= (friendlyMessageCount - 1) &&
+                                lastVisiblePosition == (positionStart - 1))) {
+                    comments.scrollToPosition(positionStart);
+                }
+            }
+        });
+
 
         comments.setAdapter(populate);
 
         populate.startListening();
         populate.notifyDataSetChanged();
+
+
 
 
     }
@@ -619,57 +725,111 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.sendComment) {
-            String textComment = writeComment.getText().toString().trim();
-            CollectionReference post_comment = FirebaseFirestore.getInstance().collection("Comments").document(key).collection("comment-id");
-            Map<String, Object> commentsMap = new HashMap<>();
-            commentsMap.put("textComment", textComment);
-            commentsMap.put("profileImage", profileImage);
-            commentsMap.put("username", username);
-            commentsMap.put("uid", auth.getCurrentUser().getUid());
-            commentsMap.put("time", FieldValue.serverTimestamp());
-            post_comment.add(commentsMap);
 
-            FirebaseFirestore getIduserpost = FirebaseFirestore.getInstance();
-            getIduserpost.collection("Posting").document(key).addSnapshotListener(CommentsActivity.this, new EventListener<DocumentSnapshot>() {
+
+        }
+    }
+
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+        EmojiconsFragment.input(writeComment, emojicon);
+    }
+
+    @Override
+    public void onEmojiconBackspaceClicked(View v) {
+        EmojiconsFragment.backspace(writeComment);
+    }
+
+    private void setEmojiconFragment(boolean useSystemDefault) {
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.emojiconsComments, EmojiconsFragment.newInstance(useSystemDefault))
+                .commit();
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        if (!writeComment.getText().toString().trim().isEmpty() && writeComment.getText().toString().trim().length() >= 1) {
+            sendBtn.setRotation(0);
+            sendComment.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
+                public void onClick(View view) {
+                    String textComment = writeComment.getText().toString().trim();
+                    CollectionReference post_comment = FirebaseFirestore.getInstance().collection("Comments").document(key).collection("comment-id");
+                    Map<String, Object> commentsMap = new HashMap<>();
+                    commentsMap.put("textComment", textComment);
+                    commentsMap.put("profileImage", profileImage);
+                    commentsMap.put("username", username);
+                    commentsMap.put("uid", auth.getCurrentUser().getUid());
+                    commentsMap.put("time", FieldValue.serverTimestamp());
+                    post_comment.add(commentsMap);
 
-                    if (snapshot.exists()) {
-                        String userpostUID = snapshot.getString("uid");
+                    FirebaseFirestore getIduserpost = FirebaseFirestore.getInstance();
+                    getIduserpost.collection("Posting").document(key).addSnapshotListener(CommentsActivity.this, new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(DocumentSnapshot snapshot, FirebaseFirestoreException e) {
+
+                            if (snapshot.exists()) {
+                                String userpostUID = snapshot.getString("uid");
 
 
-                        Map<String, Object> notifMap = new HashMap<>();
-                        notifMap.put("action", "coment");
-                        notifMap.put("uid", auth.getCurrentUser().getUid());
-                        notifMap.put("seen", false);
-                        notifMap.put("whatIS", "post");
-                        notifMap.put("post_key", key);
-                        notifMap.put("timestamp", FieldValue.serverTimestamp());
-                        if (!isSystemComment) {
-                            if (!userpostUID.equals(auth.getCurrentUser().getUid())) {
-                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
-                                notifSet.add(notifMap);
+                                Map<String, Object> notifMap = new HashMap<>();
+                                notifMap.put("action", "coment");
+                                notifMap.put("uid", auth.getCurrentUser().getUid());
+                                notifMap.put("seen", false);
+                                notifMap.put("whatIS", "post");
+                                notifMap.put("post_key", key);
+                                notifMap.put("timestamp", FieldValue.serverTimestamp());
+                                if (!isSystemComment) {
+                                    if (!userpostUID.equals(auth.getCurrentUser().getUid())) {
+                                        CollectionReference notifSet = FirebaseFirestore.getInstance().collection("Notification").document(userpostUID).collection("notif-id");
+                                        notifSet.add(notifMap);
+                                    }
+                                }
+                            }
+
+                            if (e != null) {
+                                Log.e("likeERROR", e.getLocalizedMessage());
                             }
                         }
-                    }
+                    });
 
-                    if (e != null) {
-                        Log.e("likeERROR", e.getLocalizedMessage());
-                    }
+                    writeComment.setText("");
+                    hideSoftKeyboard(CommentsActivity.this);
+                }
+
+
+            });
+
+
+        } else if (writeComment.getText().toString().trim().length() < 1) {
+            sendBtn.setRotation(300);
+            sendComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(CommentsActivity.this, "Can't send empty post", Toast.LENGTH_SHORT).show();
                 }
             });
 
-            writeComment.setText("");
-            hideSoftKeyboard(CommentsActivity.this);
-
         }
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 
     public static class CommentsViewHolder extends RecyclerView.ViewHolder {
         View mView;
         TextView commentSomething;
         ImageView profileImageImg;
-        TextView commentsText;
+        EmojiconTextView commentsText;
         ImageView downArrow;
         TextView usernameTxt;
         FirebaseFirestore database;
@@ -691,7 +851,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             mView = itemView;
 
             profileImageImg = (ImageView) mView.findViewById(R.id.profileComment);
-            commentsText = (TextView) mView.findViewById(R.id.minuteText);
+            commentsText = (EmojiconTextView) mView.findViewById(R.id.minuteText);
             downArrow = (ImageView) mView.findViewById(R.id.down_arrow_comments);
             usernameTxt = (TextView) mView.findViewById(R.id.username_comment_profile);
             likeComments = (TextView) mView.findViewById(R.id.like_comments_wall);
