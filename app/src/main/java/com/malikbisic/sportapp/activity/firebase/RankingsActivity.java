@@ -24,6 +24,9 @@ public class RankingsActivity extends AppCompatActivity {
 
     Toolbar rankingsToolbar;
 
+    Intent myIntent;
+    boolean fromUsersProfile;
+    int clubPosition;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +46,13 @@ public class RankingsActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabsRankings);
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(2);
+        myIntent = getIntent();
+        fromUsersProfile = myIntent.getBooleanExtra("profileUsers", false);
+        clubPosition = myIntent.getIntExtra("clubPosition", 0);
 
-
+        if (fromUsersProfile){
+            viewPager.setCurrentItem(2);
+        }
 
     }
 

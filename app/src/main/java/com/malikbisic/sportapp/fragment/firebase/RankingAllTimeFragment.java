@@ -66,6 +66,9 @@ public class RankingAllTimeFragment extends Fragment {
     TextView playerText;
     TextView clubText;
 
+    boolean fromUsersProfile;
+    int clubPosition;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,7 +81,8 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
         adapter = new PlayersRankingAllTimeAdapter(list,getActivity());
 
 
-
+        fromUsersProfile = getActivity().getIntent().getBooleanExtra("profileUsers", false);
+        clubPosition = getActivity().getIntent().getIntExtra("clubPosition", 0) - 1;
 
         playerRankingRecyclerView.setAdapter(adapter);
 
@@ -102,6 +106,9 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
         recFanClub.setLayoutManager(new LinearLayoutManager(getActivity()));
         recFanClub.setAdapter(clubAdapter);
         clubReference = db.collection("ClubTable");
+
+
+
 
         clubLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,6 +179,32 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
             }
         });
 
+        if (fromUsersProfile){
+
+            final com.google.firebase.firestore.Query queryClub2 = clubReference.orderBy("numberClubFan", com.google.firebase.firestore.Query.Direction.DESCENDING);
+            queryClub2.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (DocumentSnapshot snapshot : task.getResult().getDocuments()){
+                        if (snapshot.exists()){
+                            ClubTable model = snapshot.toObject(ClubTable.class);
+                            listClub.add(model);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            });
+            playerRankingRecyclerView.setVisibility(View.GONE);
+            clubLayout.setActivated(true);
+            clubText.setTextColor(Color.parseColor("#000000"));
+            playersLayout.setActivated(false);
+            playerText.setTextColor(Color.parseColor("#ffffff"));
+            recFanClub.setVisibility(View.VISIBLE);
+            playerRankingRecyclerView.setVisibility(View.GONE);
+
+            recFanClub.smoothScrollToPosition(clubPosition);
+
+        }
 
 
 

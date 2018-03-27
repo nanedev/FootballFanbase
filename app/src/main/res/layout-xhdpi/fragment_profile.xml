@@ -355,6 +355,7 @@
                             android:textColor="@color/primary" />
 
                         <RelativeLayout
+                            android:id="@+id/teamLayoutPosition"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_below="@+id/teamtext"

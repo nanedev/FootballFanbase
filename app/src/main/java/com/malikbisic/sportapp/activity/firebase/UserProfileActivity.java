@@ -88,6 +88,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -162,6 +163,12 @@ TextView totalPointsTextview;
     RelativeLayout layoutForTOP10Player;
     RelativeLayout votesLayout;
 
+    String myClubName;
+    int clubPOS = 1;
+
+    TextView numberPosClubTextview;
+    RelativeLayout teamLayoutPos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +189,8 @@ TextView totalPointsTextview;
         thisMonthNumberDislikes = (TextView) findViewById(R.id.dislikesinporiflefragmentUsers);
         showInfo = (RelativeLayout) findViewById(R.id.inforelativeUsers);
         postNumber = (TextView) findViewById(R.id.postsNumberUsers);
+        numberPosClubTextview = (TextView) findViewById(R.id.teamposnumber);
+        teamLayoutPos = (RelativeLayout) findViewById(R.id.teamLayoutPosition);
 
         numberPost();
         totalUserPoints();
@@ -246,6 +255,8 @@ showAlertInfo();
                 Map<String, Object> value = dataSnapshot.getData();
 
                 profileImage = String.valueOf(value.get("profileImage"));
+                myClubName = String.valueOf(value.get("favoriteClub"));
+                teamPosition();
                 Glide.with(UserProfileActivity.this)
                         .load(profileImage)
                         .into(profile);
@@ -591,6 +602,38 @@ showAlertInfo();
             }
         });
 
+    }
+
+    public void teamPosition() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query teamPosition = db.collection("ClubTable");
+        teamPosition.orderBy("numberClubFan", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                final Map<String, Object> mapClubPosition = new HashMap<>();
+                mapClubPosition.clear();
+                clubPOS = 1;
+                for (DocumentSnapshot snapshot : task.getResult()) {
+                    String clubID = snapshot.getId();
+
+                    mapClubPosition.put(clubID, clubPOS);
+                    clubPOS++;
+                }
+
+                numberPosClubTextview.setText(String.valueOf(mapClubPosition.get(myClubName)));
+
+                teamLayoutPos.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent openRanking = new Intent(UserProfileActivity.this, RankingsActivity.class);
+                        openRanking.putExtra("profileUsers", true);
+                        openRanking.putExtra("clubPosition", (Integer) mapClubPosition.get(myClubName));
+                        startActivity(openRanking);
+                    }
+                });
+
+            }
+        });
     }
 
     public void playerWinner(){

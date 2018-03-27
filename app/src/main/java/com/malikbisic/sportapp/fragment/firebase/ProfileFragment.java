@@ -83,6 +83,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
 import com.malikbisic.sportapp.activity.firebase.MyPostsActivity;
+import com.malikbisic.sportapp.activity.firebase.RankingsActivity;
 import com.malikbisic.sportapp.activity.firebase.UserVotesActivity;
 import com.malikbisic.sportapp.adapter.firebase.PlayerFirebaseAdapter;
 import com.malikbisic.sportapp.adapter.firebase.ProfileFragmentAdapter;
@@ -212,6 +213,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
     RelativeLayout votesLayout;
     TextView numberPosClubTextview;
     String myClubName;
+    RelativeLayout teamLayoutPos;
 
     int clubPOS = 1;
 
@@ -280,6 +282,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         totalPointsTextview = (TextView) findViewById(R.id.totalpointsnumber);
         postLayout = (RelativeLayout) findViewById(R.id.postlayout);
         numberPosClubTextview = (TextView) findViewById(R.id.teamposnumber);
+        teamLayoutPos = (RelativeLayout) findViewById(R.id.teamLayoutPosition);
         backarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -455,6 +458,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                 }
             });
         }
+
 
     }
 
@@ -930,7 +934,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
         teamPosition.orderBy("numberClubFan", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                Map<String, Object> mapClubPosition = new HashMap<>();
+                final Map<String, Object> mapClubPosition = new HashMap<>();
                 mapClubPosition.clear();
                 clubPOS = 1;
                 for (DocumentSnapshot snapshot : task.getResult()) {
@@ -941,6 +945,16 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                 }
 
                 numberPosClubTextview.setText(String.valueOf(mapClubPosition.get(myClubName)));
+
+                teamLayoutPos.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent openRanking = new Intent(ProfileFragment.this, RankingsActivity.class);
+                        openRanking.putExtra("profileUsers", true);
+                        openRanking.putExtra("clubPosition", (Integer) mapClubPosition.get(myClubName));
+                        startActivity(openRanking);
+                    }
+                });
 
             }
         });
