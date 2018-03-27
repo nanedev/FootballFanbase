@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity.firebase;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class RankingsActivity extends AppCompatActivity {
     Intent myIntent;
     boolean fromUsersProfile;
     int clubPosition;
+    String backActivity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +51,7 @@ public class RankingsActivity extends AppCompatActivity {
         myIntent = getIntent();
         fromUsersProfile = myIntent.getBooleanExtra("profileUsers", false);
         clubPosition = myIntent.getIntExtra("clubPosition", 0);
+        backActivity = myIntent.getStringExtra("openActivityToBack");
 
         if (fromUsersProfile){
             viewPager.setCurrentItem(2);
@@ -66,9 +69,20 @@ public class RankingsActivity extends AppCompatActivity {
 
     }
 
+
+    @Nullable
     @Override
-    public void onBackPressed() {
-        Intent backToMain = new Intent(RankingsActivity.this, MainPage.class);
-        startActivity(backToMain);
+    public Intent getParentActivityIntent() {
+        if (backActivity.equals("mainPage")){
+            Intent backToMain = new Intent(RankingsActivity.this, MainPage.class);
+            startActivity(backToMain);
+        } else if (backActivity.equals("profileFragment")){
+            Intent backToProfile = new Intent(RankingsActivity.this, ProfileFragment.class);
+            startActivity(backToProfile);
+        } else if (backActivity.equals("usersActivity")){
+            Intent backToUserActivity = new Intent(RankingsActivity.this, UserProfileActivity.class);
+            startActivity(backToUserActivity);
+        }
+        return super.getParentActivityIntent();
     }
 }

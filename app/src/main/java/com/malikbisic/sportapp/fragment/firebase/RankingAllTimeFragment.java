@@ -45,7 +45,7 @@ public class RankingAllTimeFragment extends Fragment {
     String myUid;
     Handler handler;
 
-    int clubPos = 0;
+
     RecyclerView recFanClub;
     FirebaseFirestore db;
     com.google.firebase.firestore.Query clubReference;
@@ -60,6 +60,11 @@ public class RankingAllTimeFragment extends Fragment {
     ArrayList<PlayerModel> list;
     String playerID;
     int pos = 1;
+
+    int clubPos = 0;
+    String clubName;
+    String clubLogo;
+    long numberClubFan;
 
     RelativeLayout playersLayout;
     RelativeLayout clubLayout;
@@ -171,9 +176,13 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (DocumentSnapshot snapshot : task.getResult().getDocuments()){
                     if (snapshot.exists()){
-                        ClubTable model = snapshot.toObject(ClubTable.class);
-                        listClub.add(model);
-                        adapter.notifyDataSetChanged();
+                        clubPos++;
+                        clubName = snapshot.getString("clubName");
+                        clubLogo = snapshot.getString("clubLogo");
+                        numberClubFan = snapshot.getLong("numberClubFan");
+
+                        listClub.add(new ClubTable(numberClubFan, clubName, clubLogo, clubPos));
+                        clubAdapter.notifyDataSetChanged();
                     }
                 }
             }
@@ -181,19 +190,6 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
 
         if (fromUsersProfile){
 
-            final com.google.firebase.firestore.Query queryClub2 = clubReference.orderBy("numberClubFan", com.google.firebase.firestore.Query.Direction.DESCENDING);
-            queryClub2.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for (DocumentSnapshot snapshot : task.getResult().getDocuments()){
-                        if (snapshot.exists()){
-                            ClubTable model = snapshot.toObject(ClubTable.class);
-                            listClub.add(model);
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            });
             playerRankingRecyclerView.setVisibility(View.GONE);
             clubLayout.setActivated(true);
             clubText.setTextColor(Color.parseColor("#000000"));
@@ -201,7 +197,6 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
             playerText.setTextColor(Color.parseColor("#ffffff"));
             recFanClub.setVisibility(View.VISIBLE);
             playerRankingRecyclerView.setVisibility(View.GONE);
-
             recFanClub.smoothScrollToPosition(clubPosition);
 
         }

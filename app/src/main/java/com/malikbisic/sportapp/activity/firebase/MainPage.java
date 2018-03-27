@@ -1079,6 +1079,7 @@ public class MainPage extends AppCompatActivity
         } else if (id == R.id.nav_rankings) {
 
             Intent intent = new Intent(MainPage.this, RankingsActivity.class);
+            intent.putExtra("openActivityToBack", "mainPage");
             startActivity(intent);
 
 

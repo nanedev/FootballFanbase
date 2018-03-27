@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.adapter.firebase;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -37,11 +38,12 @@ public class FanbaseFanClubAdapter extends RecyclerView.Adapter<FanbaseFanClubTa
         return new FanbaseFanClubTable.ClubTableViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(FanbaseFanClubTable.ClubTableViewHolder viewHolder, int position) {
         ClubTable model = listClub.get(position);
         pos++;
-        viewHolder.positionClub.setText(pos + ".");
+        viewHolder.positionClub.setText(model.getClubPos() + ". ");
         viewHolder.clubName.setText(model.getClubName());
         Picasso.with(ctx).load(model.getClubLogo()).into(viewHolder.clubLogo);
         viewHolder.numberFans.setText("Total fans: " + model.getNumberClubFan());

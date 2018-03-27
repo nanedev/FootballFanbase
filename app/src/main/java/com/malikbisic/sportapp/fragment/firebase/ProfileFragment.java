@@ -952,6 +952,7 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                         Intent openRanking = new Intent(ProfileFragment.this, RankingsActivity.class);
                         openRanking.putExtra("profileUsers", true);
                         openRanking.putExtra("clubPosition", (Integer) mapClubPosition.get(myClubName));
+                        openRanking.putExtra("openActivityToBack", "profileFragment");
                         startActivity(openRanking);
                     }
                 });

@@ -6,25 +6,32 @@ package com.malikbisic.sportapp.model.api;
 
 public class ClubTable {
 
-    int numberClubFan;
+    long numberClubFan;
     String clubName;
     String clubLogo;
+    int clubPos;
 
-    public ClubTable() {
-    }
-
-    public ClubTable(int numbersFans, String numberClubFan, String clubLogo) {
-        this.numberClubFan = numbersFans;
-        this.clubName = numberClubFan;
+    public ClubTable(long numberClubFan, String clubName, String clubLogo, int clubPos) {
+        this.numberClubFan = numberClubFan;
+        this.clubName = clubName;
         this.clubLogo = clubLogo;
+        this.clubPos = clubPos;
     }
 
-    public int getNumberClubFan() {
+    public long getNumberClubFan() {
         return numberClubFan;
     }
 
-    public void setNumberClubFan(int numberClubFan) {
+    public void setNumberClubFan(long numberClubFan) {
         this.numberClubFan = numberClubFan;
+    }
+
+    public int getClubPos() {
+        return clubPos;
+    }
+
+    public void setClubPos(int clubPos) {
+        this.clubPos = clubPos;
     }
 
     public String getClubName() {

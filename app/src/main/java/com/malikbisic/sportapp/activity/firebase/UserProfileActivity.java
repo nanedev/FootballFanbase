@@ -628,6 +628,7 @@ showAlertInfo();
                         Intent openRanking = new Intent(UserProfileActivity.this, RankingsActivity.class);
                         openRanking.putExtra("profileUsers", true);
                         openRanking.putExtra("clubPosition", (Integer) mapClubPosition.get(myClubName));
+                        openRanking.putExtra("openActivityToBack", "usersActivity");
                         startActivity(openRanking);
                     }
                 });
