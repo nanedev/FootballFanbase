@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity.firebase;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,5 +29,11 @@ GridLayoutManager manager;
         adapter = new BackgroundPostAdapter(BackgroundPostActivity.this,backgrounds);
         backgroundsRecyclerview.setAdapter(adapter);
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent backToOnlyPost = new Intent(BackgroundPostActivity.this, OnlyPostActivity.class);
+        startActivity(backToOnlyPost);
     }
 }
