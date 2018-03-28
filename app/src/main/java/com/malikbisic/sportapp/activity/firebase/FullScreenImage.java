@@ -92,7 +92,7 @@ public class FullScreenImage extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.fullScreenImageView);
         uri = intent.getStringExtra("imageURL");
         imageTitle = intent.getStringExtra("title");
-        Glide.with(this).load(uri).diskCacheStrategy(SOURCE).override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL).into(image);
+        Glide.with(this).load(uri).diskCacheStrategy(SOURCE).centerCrop().override(Target.SIZE_ORIGINAL,Target.SIZE_ORIGINAL).into(image);
         numberLikesLayout = (RelativeLayout) findViewById(R.id.likeslayout);
         numberDislikesLayout = (RelativeLayout) findViewById(R.id.dislikeslayout);
         numberCommentsLayout = (RelativeLayout) findViewById(R.id.comentslayout);

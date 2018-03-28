@@ -287,14 +287,16 @@
             <RelativeLayout
                 android:id="@+id/layout_for_image"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="400dp"
                 android:layout_below="@id/layout_for_text_image"
                 android:visibility="gone">
 
-                <com.malikbisic.sportapp.utils.DynamicImageView
+                <com.malikbisic.sportapp.utils.AspectRatioImageView
                     android:id="@+id/posted_image"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/backgroundproba"
+                    android:adjustViewBounds="true"
                     android:layout_below="@+id/layout_for_text_image"
                     android:visibility="visible"
 

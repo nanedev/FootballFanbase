@@ -65,6 +65,7 @@ import com.malikbisic.sportapp.activity.firebase.CommentsActivity;
 import com.malikbisic.sportapp.activity.firebase.FullScreenImage;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
 import com.malikbisic.sportapp.listener.OnLoadMoreListener;
+import com.malikbisic.sportapp.utils.AspectRatioImageView;
 import com.malikbisic.sportapp.utils.PostingTimeAgo;
 import com.malikbisic.sportapp.fragment.firebase.ProfileFragment;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
@@ -1024,7 +1025,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
         public Button play_button;
         public MediaPlayer mPlayer;
         JZVideoPlayerStandard videoView;
-        ImageView post_photo;
+        AspectRatioImageView post_photo;
         MediaController mediaController;
         RelativeLayout audioLayout;
         ProgressDialog progressDialog;
@@ -1094,7 +1095,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
             mediaController = new MediaController(mView.getContext());
 
             videoView = (JZVideoPlayerStandard) mView.findViewById(R.id.posted_video);
-            post_photo = (ImageView) mView.findViewById(R.id.posted_image);
+            post_photo = (AspectRatioImageView) mView.findViewById(R.id.posted_image);
             audioLayout = (RelativeLayout) mView.findViewById(R.id.layout_for_audio_player);
             mPlayer = new MediaPlayer();
             progressDialog = new ProgressDialog(mView.getContext());
@@ -1547,7 +1548,7 @@ public class MainPageAdapter extends RecyclerView.Adapter {
                 Glide.with(ctx)
                         .load(photoPost)
                         .asBitmap()
-                        .override(720, 640)
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                         .centerCrop()
                         .listener(new RequestListener<String, Bitmap>() {
                             @Override

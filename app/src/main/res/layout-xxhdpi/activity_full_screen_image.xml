@@ -10,7 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imagetitlelayout"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:padding="10dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,17 +20,25 @@
             android:id="@+id/textfromposttoimage"
             android:text="sadasdahgsjadhfasfglsagzf"/>
     </RelativeLayout>
-
-    <ImageView
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/fullScreenImageView"
-        android:layout_below="@+id/imagetitlelayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imagetitlelayout"
+        android:layout_above="@+id/parentlayout"
+        android:layout_centerVertical="true">
+        <ImageView
+            android:id="@+id/fullScreenImageView"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+
+           />
+
+    </ScrollView>
 
 
-        android:layout_above="@+id/parentlayout"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
