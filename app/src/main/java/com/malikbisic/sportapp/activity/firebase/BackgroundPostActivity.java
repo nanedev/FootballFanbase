@@ -36,4 +36,6 @@ GridLayoutManager manager;
         Intent backToOnlyPost = new Intent(BackgroundPostActivity.this, OnlyPostActivity.class);
         startActivity(backToOnlyPost);
     }
+
+
 }
