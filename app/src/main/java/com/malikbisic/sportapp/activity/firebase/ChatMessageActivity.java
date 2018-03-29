@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -120,6 +121,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -203,6 +205,8 @@ public class ChatMessageActivity extends AppCompatActivity implements EmojiconGr
     RelativeLayout typingLayout;
 
     RelativeLayout goToGridLayout;
+
+    private File output=null;
 private boolean isPaused;
 private  long runningTime = 0;
     TextView usernameTypinG;
@@ -249,8 +253,15 @@ private  long runningTime = 0;
         captureImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "JPEG_" + timeStamp + "_";
+                Intent i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File dir= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+                output=new File(dir, imageFileName);
+                i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(output));
+
+                startActivityForResult(i, CAMERA_REQUEST);
             }
         });
         utils = new ImageAlbumName(this);
@@ -825,8 +836,8 @@ recordStop();
             Bitmap image = null;
             Uri imageData = null;
             if (resultCode == RESULT_OK) {
-                image = (Bitmap) data.getExtras().get("data");
-                imageData = data.getData();
+                imageData = Uri.fromFile(output);
+
                 Intent openCameraSend = new Intent(ChatMessageActivity.this, CaptureImageSendChatActivity.class);
                 openCameraSend.setData(imageData);
                 openCameraSend.putExtra("imagedata", image);
@@ -1824,20 +1835,22 @@ recordStop();
 
                                     }
                                 });
-                                boolean isTyping = snapshot.getBoolean("typing");
+                                if (snapshot.contains("typing")) {
+                                    boolean isTyping = snapshot.getBoolean("typing");
 
-                                if (isTyping) {
+                                    if (isTyping) {
 
-                                    usernameTypinG.setText(mChatUsername + " is typing ...");
+                                        usernameTypinG.setText(mChatUsername + " is typing ...");
 
 
-                                    usernameTypinG.setVisibility(View.VISIBLE);
-                                    typingLayout.setVisibility(View.VISIBLE);
+                                        usernameTypinG.setVisibility(View.VISIBLE);
+                                        typingLayout.setVisibility(View.VISIBLE);
 
-                                } else {
-                                    typingLayout.setVisibility(View.GONE);
+                                    } else {
+                                        typingLayout.setVisibility(View.GONE);
 
-                                    usernameTypinG.setVisibility(View.GONE);
+                                        usernameTypinG.setVisibility(View.GONE);
+                                    }
                                 }
                             }
                         }
@@ -2151,18 +2164,20 @@ recordStop();
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.getResult().exists()) {
-                        boolean isInChat = task.getResult().getBoolean("isInChat");
-                        if (!isInChat) {
-                            Map<String, Object> notifMap = new HashMap<>();
-                            notifMap.put("action", "chat");
-                            notifMap.put("uid", mCurrentUserId);
-                            notifMap.put("seen", false);
-                            notifMap.put("whatIS", "text");
-                            notifMap.put("timestamp", FieldValue.serverTimestamp());
+                        if (task.getResult().contains("isInChat")) {
+                            boolean isInChat = task.getResult().getBoolean("isInChat");
+                            if (!isInChat) {
+                                Map<String, Object> notifMap = new HashMap<>();
+                                notifMap.put("action", "chat");
+                                notifMap.put("uid", mCurrentUserId);
+                                notifMap.put("seen", false);
+                                notifMap.put("whatIS", "text");
+                                notifMap.put("timestamp", FieldValue.serverTimestamp());
 
-                            if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
-                                CollectionReference notifSet = FirebaseFirestore.getInstance().collection("NotificationChat").document(mChatUser).collection("notif-id");
-                                notifSet.add(notifMap);
+                                if (!mChatUser.equals(mAuth.getCurrentUser().getUid())) {
+                                    CollectionReference notifSet = FirebaseFirestore.getInstance().collection("NotificationChat").document(mChatUser).collection("notif-id");
+                                    notifSet.add(notifMap);
+                                }
                             }
                         }
                     }
