@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -43,6 +44,10 @@ import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,6 +90,8 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
     ImageButton audioIcon;
     ImageButton captureImage;
     Uri  imageUri;
+
+    private File output=null;
 
 
     @Override
@@ -442,78 +449,71 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
                 .commit();
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data != null) {
-            if (requestCode == PHOTO_OPEN || requestCode == PHOTO_OPEN_ON_OLDER_PHONES && resultCode == RESULT_OK) {
+        if (requestCode == PHOTO_OPEN || requestCode == PHOTO_OPEN_ON_OLDER_PHONES && resultCode == RESULT_OK) {
 
-                Uri imageUri = data.getData();
+            Uri imageUri = data.getData();
+            Intent goToAddPhotoOrVideo = new Intent(OnlyPostActivity.this, AddPhotoOrVideo.class);
+            goToAddPhotoOrVideo.setData(imageUri);
+            goToAddPhotoOrVideo.putExtra("username", MainPage.usernameInfo);
+            goToAddPhotoOrVideo.putExtra("profileImage", MainPage.profielImage);
+            goToAddPhotoOrVideo.putExtra("country", MainPage.country);
+            goToAddPhotoOrVideo.putExtra("clubheader", MainPage.clubHeaderString);
+            startActivity(goToAddPhotoOrVideo);
+            Log.i("uri photo", String.valueOf(imageUri));
+
+        } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
+            Uri videoUri = data.getData();
+            Log.i("vidoeURL", videoUri.toString());
+            if (videoUri.toString().contains("com.google.android.apps.docs.storage")) {
+
+                Toast.makeText(OnlyPostActivity.this, "Can't open video from google drive", Toast.LENGTH_LONG).show();
+            } else {
                 Intent goToAddPhotoOrVideo = new Intent(OnlyPostActivity.this, AddPhotoOrVideo.class);
-                goToAddPhotoOrVideo.setData(imageUri);
+                goToAddPhotoOrVideo.setData(videoUri);
+                goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
                 goToAddPhotoOrVideo.putExtra("username", MainPage.usernameInfo);
                 goToAddPhotoOrVideo.putExtra("profileImage", MainPage.profielImage);
                 goToAddPhotoOrVideo.putExtra("country", MainPage.country);
                 goToAddPhotoOrVideo.putExtra("clubheader", MainPage.clubHeaderString);
+                Log.i("uri video", String.valueOf(videoUri));
                 startActivity(goToAddPhotoOrVideo);
-                Log.i("uri photo", String.valueOf(imageUri));
+            }
 
-            } else if (requestCode == VIDEO_OPEN && resultCode == RESULT_OK) {
-                Uri videoUri = data.getData();
-                Log.i("vidoeURL", videoUri.toString());
-                if (videoUri.toString().contains("com.google.android.apps.docs.storage")) {
 
-                    Toast.makeText(OnlyPostActivity.this, "Can't open video from google drive", Toast.LENGTH_LONG).show();
-                } else {
-                    Intent goToAddPhotoOrVideo = new Intent(OnlyPostActivity.this, AddPhotoOrVideo.class);
-                    goToAddPhotoOrVideo.setData(videoUri);
-                    goToAddPhotoOrVideo.putExtra("video-uri_selected", videoUri.toString());
-                    goToAddPhotoOrVideo.putExtra("username", MainPage.usernameInfo);
-                    goToAddPhotoOrVideo.putExtra("profileImage", MainPage.profielImage);
-                    goToAddPhotoOrVideo.putExtra("country", MainPage.country);
-                    goToAddPhotoOrVideo.putExtra("clubheader", MainPage.clubHeaderString);
-                    Log.i("uri video", String.valueOf(videoUri));
-                    startActivity(goToAddPhotoOrVideo);
+        } else if (requestCode == CAMERA_REQUEST) {
+            Bitmap image = null;
+            String imageData = null;
+
+            if (resultCode == RESULT_OK) {
+                try {
+
+
+                    imageUri = Uri.fromFile(output);
+                    image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+
+
+                    Intent openCameraSend = new Intent(OnlyPostActivity.this, CaptureImageSendChatActivity.class);
+                    openCameraSend.setData(imageUri);
+
+                    openCameraSend.putExtra("userIDFromMainPage", mauth.getCurrentUser().getUid());
+                    openCameraSend.putExtra("fromMainPage", MainPage.fromMainPage);
+                    openCameraSend.putExtra("username", MainPage.usernameInfo);
+                    openCameraSend.putExtra("profileImage", MainPage.profielImage);
+                    openCameraSend.putExtra("country", MainPage.country);
+                    openCameraSend.putExtra("clubHeader", MainPage.clubHeaderString);
+                    openCameraSend.putExtra("clubName", MainPage.myClubName);
+                    openCameraSend.putExtra("postkey", MainPage.postKey);
+                    startActivity(openCameraSend);
+                } catch (Exception e) {
+                    Log.i("imageExcp", e.getLocalizedMessage());
                 }
 
-
-            } else if (requestCode == CAMERA_REQUEST) {
-                Bitmap image = null;
-                String imageData = null;
-                if (resultCode == RESULT_OK) {
-                    try {
-                        image = MediaStore.Images.Media.getBitmap(
-                                getContentResolver(), imageUri);
-
-                        imageData = getRealPathFromURI(imageUri);
-
-
-                        Intent openCameraSend = new Intent(OnlyPostActivity.this, CaptureImageSendChatActivity.class);
-                        openCameraSend.setData(imageUri);
-                        openCameraSend.putExtra("imagedata", image);
-                        openCameraSend.putExtra("userIDFromMainPage", mauth.getCurrentUser().getUid());
-                        openCameraSend.putExtra("fromMainPage", MainPage.fromMainPage);
-                        openCameraSend.putExtra("username", MainPage.usernameInfo);
-                        openCameraSend.putExtra("profileImage", MainPage.profielImage);
-                        openCameraSend.putExtra("country", MainPage.country);
-                        openCameraSend.putExtra("clubHeader", MainPage.clubHeaderString);
-                        openCameraSend.putExtra("clubName", MainPage.myClubName);
-                        openCameraSend.putExtra("postkey", MainPage.postKey);
-                        startActivity(openCameraSend);
-                    } catch (Exception e) {
-                        Log.i("imageExcp", e.getLocalizedMessage());
-                    }
-
-                } else{
-                    Toast.makeText(OnlyPostActivity.this, "Error", Toast.LENGTH_LONG).show();
-                }
-            } else {
-
-                for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                    fragment.onActivityResult(requestCode, resultCode, data);
-                }
+            } else{
+                Toast.makeText(OnlyPostActivity.this, "Error", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -524,14 +524,24 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
 
         if (view.getId() == R.id.take_photo_btn) {
 
-         ContentValues   values = new ContentValues();
-            values.put(MediaStore.Images.Media.TITLE, "New Picture");
-            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
-            imageUri = getContentResolver().insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            startActivityForResult(intent, CAMERA_REQUEST);
+//         ContentValues   values = new ContentValues();
+//            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+//            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+//            imageUri = getContentResolver().insert(
+//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+//            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+//            startActivityForResult(intent, CAMERA_REQUEST);
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            Intent i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File dir= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+            output=new File(dir, imageFileName);
+            i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(output));
+
+            startActivityForResult(i, CAMERA_REQUEST);
 
         } else if (view.getId() == R.id.video_btn) {
             Intent intent = new Intent();

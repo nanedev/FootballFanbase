@@ -41,6 +41,7 @@ public class UserVotesActivity extends AppCompatActivity {
         usersVoteRecView = (RecyclerView) findViewById(R.id.uservotesRecylerview);
         usersVoteRecView.setLayoutManager(new LinearLayoutManager(this));
         usersVoteRecView.setAdapter(adapter);
+
         DateTime prevDate = new DateTime().minusMonths(1);
         final String prevMonth = prevDate.toString("MMMM");
         final FirebaseFirestore db = FirebaseFirestore.getInstance();

@@ -61,7 +61,7 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
 
     Intent myIntent;
-    Bitmap image;
+    Uri image;
     String userID;
     String myUID;
     ProgressDialog dialog;
@@ -87,7 +87,7 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
         actionBar.setTitle("Send image...");
         myIntent = getIntent();
         mAuth = FirebaseAuth.getInstance();
-        image = (Bitmap) myIntent.getExtras().get("imagedata");
+        image = myIntent.getData();
         userID = myIntent.getStringExtra("userID");
         myUID = mAuth.getCurrentUser().getUid();
         userIdFromMainPage = myIntent.getStringExtra("userIDFromMainPage");
@@ -101,7 +101,7 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
         dialog = new ProgressDialog(this);
 
         displayImage = (ImageView) findViewById(R.id.imageCapture);
-        displayImage.setImageBitmap(image);
+        displayImage.setImageURI(image);
 
     }
 
@@ -135,12 +135,12 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
     public void sendImageFromMainPage() {
         try {
 
-            Uri imageUri = getImageUri(CaptureImageSendChatActivity.this, image);
+            Uri imageUri = image;
             dialog.setMessage("Sending...");
             dialog.show();
             File imagePath = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                imagePath = new File(getRealPathFromURI(imageUri));
+                imagePath = new File(imageUri.getPath());
             }
             Log.i("imagePath", imagePath.getPath());
 
@@ -219,12 +219,12 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
     public void sendImage() {
         try {
 
-            Uri imageUri = getImageUri(CaptureImageSendChatActivity.this, image);
+            Uri imageUri = image;
             dialog.setMessage("Sending...");
             dialog.show();
             File imagePath = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                imagePath = new File(getRealPathFromURI(imageUri));
+                imagePath = new File(imageUri.getPath());
             }
             Log.i("imagePath", imagePath.getPath());
 
