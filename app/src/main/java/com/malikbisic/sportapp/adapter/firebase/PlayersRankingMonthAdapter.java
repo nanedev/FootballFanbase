@@ -30,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.firebase.UserVotesActivity;
 import com.malikbisic.sportapp.model.api.PlayerModel;
 import com.malikbisic.sportapp.model.api.TopScorerModel;
 import com.malikbisic.sportapp.viewHolder.firebase.PlayerRankingViewHolder;
@@ -76,17 +77,27 @@ public class PlayersRankingMonthAdapter extends RecyclerView.Adapter<PlayerRanki
                 .into(holder.playerImageRankingMonth);
         holder.playerPointsRankingMonth.setText(list.get(position).getPoints() + " pts");
         holder.playerPositionRankingMonth.setText(model.getId() + ".");
-holder.playerName.setText(model.getName());
-holder.setNumbervotes(model);
-holder.setCountryClub(model);
-holder.votePlayer.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        votePlayer(model);
-    }
-});
+        holder.playerName.setText(model.getName());
+        holder.setNumbervotes(model);
+        holder.setCountryClub(model);
+        holder.votePlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                votePlayer(model);
+            }
+        });
 
+        holder.seeVotesTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                Intent opetSeeVotes = new Intent(activity, UserVotesActivity.class);
+                opetSeeVotes.putExtra("playerID", model.getPlayerID());
+                opetSeeVotes.putExtra("isThisMonth", true);
+                activity.startActivity(opetSeeVotes);
+
+            }
+        });
 
 
     }
@@ -209,8 +220,8 @@ holder.votePlayer.setOnClickListener(new View.OnClickListener() {
                                                                     Map<String, Object> usersInfo = new HashMap<>();
                                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
-                                                                    usersInfo.put("userGivePoints",enterPoint);
-                                                                    if (task.getResult().exists()){
+                                                                    usersInfo.put("userGivePoints", enterPoint);
+                                                                    if (task.getResult().exists()) {
                                                                         DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                                         usersVote.update(usersInfo);
                                                                     } else {
@@ -239,8 +250,8 @@ holder.votePlayer.setOnClickListener(new View.OnClickListener() {
                                                                     Map<String, Object> usersInfo = new HashMap<>();
                                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
-                                                                    usersInfo.put("userGivePoints",enterPoint);
-                                                                    if (task.getResult().exists()){
+                                                                    usersInfo.put("userGivePoints", enterPoint);
+                                                                    if (task.getResult().exists()) {
                                                                         DocumentReference usersVote = db.collection("PlayerPoints").document(currentMonth).collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                                         usersVote.update(usersInfo);
                                                                     } else {
@@ -277,7 +288,7 @@ holder.votePlayer.setOnClickListener(new View.OnClickListener() {
                                                                     Map<String, Object> usersInfo = new HashMap<>();
                                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
-                                                                    if (task.getResult().exists()){
+                                                                    if (task.getResult().exists()) {
                                                                         DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                                         usersVote.update(usersInfo);
                                                                     } else {
@@ -306,7 +317,7 @@ holder.votePlayer.setOnClickListener(new View.OnClickListener() {
                                                                     Map<String, Object> usersInfo = new HashMap<>();
                                                                     usersInfo.put("uid", mAuth.getCurrentUser().getUid());
                                                                     usersInfo.put("timestamp", FieldValue.serverTimestamp());
-                                                                    if (task.getResult().exists()){
+                                                                    if (task.getResult().exists()) {
                                                                         DocumentReference usersVote = db.collection("PlayerPoints").document("AllTime").collection("player-id").document(String.valueOf(model.getPlayerID())).collection("usersVote").document(mAuth.getCurrentUser().getUid());
                                                                         usersVote.update(usersInfo);
                                                                     } else {

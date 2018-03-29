@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -53,6 +54,7 @@ public class PlayerRankingViewHolder extends RecyclerView.ViewHolder {
     public TextView playerPointsRankingMonth;
     public TextView numberVotesRankingMonth;
     public TextView playerName;
+    public RelativeLayout seeVotesTxt;
     public CircleImageView clubLogoImage;
     public CircleImageView countryLogo;
 public Button votePlayer;
@@ -71,6 +73,7 @@ public Button votePlayer;
         clubLogoImage = (CircleImageView) itemView.findViewById(R.id.playerRankingClub);
         countryLogo = (CircleImageView) itemView.findViewById(R.id.playerRankingCOuntry);
         votePlayer = (Button) itemView.findViewById(R.id.voteplayerButton);
+        seeVotesTxt = (RelativeLayout) itemView.findViewById(R.id.nekilayout31);
 
 
     }
