@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.activity.firebase;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -64,6 +65,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
 import id.zelory.compressor.Compressor;
 
 public class CaptureImageSendChatActivity extends AppCompatActivity implements TextWatcher,EmojiconsFragment.OnEmojiconBackspaceClickedListener,EmojiconGridFragment.OnEmojiconClickedListener {
@@ -77,7 +79,7 @@ public class CaptureImageSendChatActivity extends AppCompatActivity implements T
     Uri image;
     String userID;
     String myUID;
-    ProgressDialog dialog;
+    AlertDialog dialog;
     String userIdFromMainPage;
     boolean mainpage;
     String username;
@@ -118,7 +120,7 @@ public class CaptureImageSendChatActivity extends AppCompatActivity implements T
         profileImage = myIntent.getStringExtra("profileImage");
         clubName = myIntent.getStringExtra("clubName");
         key = myIntent.getStringExtra("postkey");
-        dialog = new ProgressDialog(this);
+        dialog = new SpotsDialog(this,"Sending",R.style.StyleLogin);
         saySomething = (EmojiconEditText) findViewById(R.id.tell_something_capture_image);
 smajlic = (ImageView) findViewById(R.id.smileInCaptureImage) ;
 emoticonsPhoto = (FrameLayout) findViewById(R.id.emojiconsImageCapture);
@@ -222,7 +224,7 @@ emoticonsPhoto = (FrameLayout) findViewById(R.id.emojiconsImageCapture);
         try {
 
             Uri imageUri = image;
-            dialog.setMessage("Sending...");
+
             dialog.show();
             File imagePath = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -307,7 +309,6 @@ String aboutPhotoText = saySomething.getText().toString();
         try {
 
             Uri imageUri = image;
-            dialog.setMessage("Sending...");
             dialog.show();
             File imagePath = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {

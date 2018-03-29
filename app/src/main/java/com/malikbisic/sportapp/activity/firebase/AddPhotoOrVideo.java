@@ -1,5 +1,6 @@
 package com.malikbisic.sportapp.activity.firebase;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -65,6 +66,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.jzvd.JZVideoPlayerStandard;
+import dmax.dialog.SpotsDialog;
 import id.zelory.compressor.Compressor;
 
 import static com.iceteck.silicompressorr.FileUtils.getDataColumn;
@@ -80,8 +82,8 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
     private JZVideoPlayerStandard videoSelected;
     private EmojiconEditText saySomething;
 
-    ProgressDialog pDialog;
-    ProgressDialog postingDialog;
+    AlertDialog pDialog;
+    AlertDialog postingDialog;
 
     private StorageReference mFilePath;
     private StorageReference photoPost;
@@ -118,7 +120,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         emoticonsPhoto = (FrameLayout) findViewById(R.id.emojiconsPhotoVideo);
         videoSelected = (cn.jzvd.JZVideoPlayerStandard) findViewById(R.id.post_video);
         saySomething = (EmojiconEditText) findViewById(R.id.tell_something_about_video_image);
-        postingDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
+        postingDialog = new SpotsDialog(this,"Posting", R.style.StyleLogin);
         mAuth = FirebaseAuth.getInstance();
         smajlic = (ImageView) findViewById(R.id.smileinphoto);
         layout = (RelativeLayout) findViewById(R.id.container);
@@ -198,10 +200,9 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
         } else if (!MainPage.photoSelected) {
             photoSelected.setVisibility(View.GONE);
 
-            pDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
-            pDialog.setMessage("Buffering");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
+            pDialog = new SpotsDialog(this, "Buffering",R.style.StyleLogin);
+
+
             pDialog.show();
 
 
@@ -281,7 +282,7 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                     Log.i("name", username);
 
                     photoPost = mFilePath.child("Post_Photo").child(imageUri.getLastPathSegment());
-                    postingDialog.setMessage("Posting");
+
                     postingDialog.show();
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -363,7 +364,6 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                             .show();
                 } else {
 
-                    postingDialog.setMessage("Posting");
                     postingDialog.show();
 
 
