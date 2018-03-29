@@ -17,13 +17,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,6 +51,10 @@ import com.google.firebase.storage.UploadTask;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.adapter.firebase.MultiSelectImageAdapter;
 import com.malikbisic.sportapp.utils.ImageAlbumName;
+import com.rockerhieu.emojicon.EmojiconEditText;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
+import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -53,7 +66,7 @@ import java.util.Map;
 
 import id.zelory.compressor.Compressor;
 
-public class CaptureImageSendChatActivity extends AppCompatActivity {
+public class CaptureImageSendChatActivity extends AppCompatActivity implements TextWatcher,EmojiconsFragment.OnEmojiconBackspaceClickedListener,EmojiconGridFragment.OnEmojiconClickedListener {
 
     Toolbar mChatToolbar;
 
@@ -73,6 +86,13 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
     String clubName;
     String key;
     String profileImage;
+    Animation slideUpAnimation;
+    EmojiconEditText saySomething;
+    ImageView smajlic;
+    FrameLayout emoticonsPhoto;
+    boolean firstClickSmile = true;
+    boolean secondClickSmile = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +119,75 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
         clubName = myIntent.getStringExtra("clubName");
         key = myIntent.getStringExtra("postkey");
         dialog = new ProgressDialog(this);
-
+        saySomething = (EmojiconEditText) findViewById(R.id.tell_something_capture_image);
+smajlic = (ImageView) findViewById(R.id.smileInCaptureImage) ;
+emoticonsPhoto = (FrameLayout) findViewById(R.id.emojiconsImageCapture);
         displayImage = (ImageView) findViewById(R.id.imageCapture);
         displayImage.setImageURI(image);
+
+        if (mainpage){
+
+
+
+            slideUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                    R.anim.anmation_drom_down_to_top);
+
+//            Picasso
+//                    .with(AddPhotoOrVideo.this)
+//                    .load(imageUri)
+//                    .fit()
+//                    .centerCrop()
+//                    .
+//                    // call .centerInside() or .centerCrop() to avoid a stretched image
+//                    .into(photoSelected);
+
+
+
+            saySomething.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+            smajlic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (firstClickSmile) {
+                        firstClickSmile = false;
+                        secondClickSmile = true;
+
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                        emoticonsPhoto.startAnimation(slideUpAnimation);
+                        emoticonsPhoto.setVisibility(View.VISIBLE);
+
+
+                    } else if (secondClickSmile) {
+                        firstClickSmile = true;
+                        secondClickSmile = false;
+                        saySomething.clearFocus();
+          /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);*/
+                        emoticonsPhoto.setVisibility(View.GONE);
+
+
+                    }
+                }
+            });
+
+            setEmojiconFragment(false);
+        }
 
     }
 
@@ -161,7 +247,7 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
-
+String aboutPhotoText = saySomething.getText().toString();
 
                     Map<String, Object> postMap = new HashMap<>();
                     postMap.put("clubLogo", clubLogo);
@@ -172,6 +258,7 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
                     postMap.put("profileImage", profileImage);
                     postMap.put("time", FieldValue.serverTimestamp());
                     postMap.put("uid", myUID);
+                    postMap.put("descForPhoto", aboutPhotoText);
                     postMap.put("username", username);
                     final FirebaseFirestore mRootRef = FirebaseFirestore.getInstance();
                     mRootRef.collection("Posting").add(postMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -328,6 +415,15 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
         }
     }
 
+    private void setEmojiconFragment(boolean useSystemDefault) {
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.emojiconsImageCapture, EmojiconsFragment.newInstance(useSystemDefault))
+                .commit();
+    }
+
+
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -340,5 +436,30 @@ public class CaptureImageSendChatActivity extends AppCompatActivity {
         cursor.moveToFirst();
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         return cursor.getString(idx);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
+    }
+
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+        EmojiconsFragment.input(saySomething, emojicon);
+    }
+
+    @Override
+    public void onEmojiconBackspaceClicked(View v) {
+        EmojiconsFragment.backspace(saySomething);
     }
 }

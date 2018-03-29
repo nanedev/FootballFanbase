@@ -500,7 +500,7 @@ public class OnlyPostActivity extends AppCompatActivity implements TextWatcher, 
                     openCameraSend.setData(imageUri);
 
                     openCameraSend.putExtra("userIDFromMainPage", mauth.getCurrentUser().getUid());
-                    openCameraSend.putExtra("fromMainPage", MainPage.fromMainPage);
+                    openCameraSend.putExtra("fromMainPage", true);
                     openCameraSend.putExtra("username", MainPage.usernameInfo);
                     openCameraSend.putExtra("profileImage", MainPage.profielImage);
                     openCameraSend.putExtra("country", MainPage.country);
