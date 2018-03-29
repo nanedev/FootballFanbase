@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.adapter.firebase;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.firebase.SeeUsersVotesActivity;
+import com.malikbisic.sportapp.activity.firebase.UserVotesActivity;
 import com.malikbisic.sportapp.model.api.PlayerModel;
 import com.malikbisic.sportapp.viewHolder.firebase.PlayerAllTimeRankingViewHolder;
 import com.malikbisic.sportapp.viewHolder.firebase.PlayerRankingViewHolder;
@@ -50,6 +53,17 @@ public class PlayersRankingAllTimeAdapter extends RecyclerView.Adapter<PlayerAll
         holder.playerPositionRankingMonth.setText(model.getId() + ".");
         holder.playerName.setText(model.getName());
         holder.setNumbervotes(model);
+
+
+        holder.seeVotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, UserVotesActivity.class);
+                intent.putExtra("fromAllTimeRanking",true);
+                intent.putExtra("playerID",model.getPlayerID());
+                activity.startActivity(intent);
+            }
+        });
     }
 
     @Override

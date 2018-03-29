@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,6 +35,7 @@ public class PlayerAllTimeRankingViewHolder extends RecyclerView.ViewHolder {
     public TextView playerPointsRankingMonth;
     public TextView numberVotesRankingMonth;
     public TextView playerName;
+    public RelativeLayout seeVotes;
 
     int number;
 
@@ -46,6 +48,7 @@ public class PlayerAllTimeRankingViewHolder extends RecyclerView.ViewHolder {
         playerPointsRankingMonth = (TextView) itemView.findViewById(R.id.playerRankingPints);
         numberVotesRankingMonth = (TextView) itemView.findViewById(R.id.playerRAnkingFansVotedNmbr);
         playerName = (TextView) itemView.findViewById(R.id.playerRankingName);
+        seeVotes = (RelativeLayout) itemView.findViewById(R.id.nekilayout31);
 
 
     }
