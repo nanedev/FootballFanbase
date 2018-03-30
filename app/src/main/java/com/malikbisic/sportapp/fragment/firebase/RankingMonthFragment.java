@@ -48,6 +48,7 @@ import com.malikbisic.sportapp.adapter.firebase.PlayersRankingMonthAdapter;
 import com.malikbisic.sportapp.model.api.PlayerModel;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 import com.malikbisic.sportapp.model.firebase.Post;
+import com.malikbisic.sportapp.model.firebase.UserChatGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -205,67 +206,68 @@ public class RankingMonthFragment extends Fragment {
                         public void onComplete(@NonNull final Task<QuerySnapshot> task2) {
                             if (task2.getException() == null) {
 
-                                for (final DocumentSnapshot snapshot1 : task2.getResult()) {
+                                if (!task2.getResult().isEmpty()) {
 
-                                    db.collection("Posting").document(postID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                    numberLikes = task2.getResult().size();
+
+                                    Post model = snapshotPost.toObject(Post.class).withId(postID).setTotalPosints(numberLikes);
+                                    postArrayList.add(model);
+                                    Collections.sort(postArrayList, new Comparator<Post>() {
                                         @Override
-                                        public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                                        public int compare(Post o1, Post o2) {
+                                            return ((Integer) o2.getTotalPoints()).compareTo((Integer) o1.getTotalPoints());
+                                        }
+                                    });
+                                    postAdapter.notifyDataSetChanged();
 
 
+                                    Log.i("Like post: " + postID, String.valueOf(numberLikes));
 
-                                            numberLikes = task2.getResult().size();
+
+                                    CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
+                                    dislikeNumber.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task3) {
+
+                                            if (task3.getException() == null) {
+
+                                                numberDisliks = task3.getResult().getDocuments().size();
+
+                                                pointsTotal = numberLikes - numberDisliks;
+
+                                            }
 
 
                                         }
+
                                     });
 
 
                                 }
-
-
-                                CollectionReference dislikeNumber = db.collection("Dislikes").document(postID).collection("dislike-id");
-                                dislikeNumber.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task3) {
-
-                                        if (task3.getException() == null) {
-
-                                            numberDisliks = task3.getResult().getDocuments().size();
-
-                                            pointsTotal = numberLikes - numberDisliks;
-
-                                        }
-
-                                        Post model = snapshotPost.toObject(Post.class).withId(postID).setTotalPosints(pointsTotal);
-                                        postArrayList.add(model);
-
-                                        Log.i("Like post: " + postID, String.valueOf(pointsTotal));
-
-                                        Collections.sort(postArrayList, new Comparator<Post>() {
-                                            public int compare(Post s1, Post s2) {
-                                                // notice the cast to (Integer) to invoke compareTo
-                                                return ((Integer) s1.getTotalPoints()).compareTo(s2.getTotalPoints());
-                                            }
-                                        });
-
-                                        postAdapter.notifyDataSetChanged();
-                                    }
-
-                                });
-
-
                             }
                         }
 
                     });
 
-
+                    numberLikes = 0;
                 }
 
             }
         });
 
 
+    }
+
+    class totalPointsNumber implements Comparator<Post> {
+
+        @Override
+        public int compare(Post e1, Post e2) {
+            if (e1.getTotalPoints() < e2.getTotalPoints()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
     }
 
 
