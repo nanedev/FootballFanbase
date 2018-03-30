@@ -35,6 +35,8 @@ public class Post {
     Date systemTime;
 
 
+    @Exclude
+    private int totalPoints;
 
     public Post() {
     }
@@ -42,6 +44,11 @@ public class Post {
 
     public <T extends Post> T withId(@NonNull final String id) {
         this.key = id;
+        return (T) this;
+    }
+
+    public <T extends Post> T setTotalPosints(@NonNull final int totalPoints) {
+        this.totalPoints = totalPoints;
         return (T) this;
     }
 
@@ -66,6 +73,14 @@ public class Post {
         this.systemTime = systemTime;
         this.descWithBackground = descWithBackground;
         this.idResource = idResource;
+    }
+
+    public void setTotalPoints(int totalPoints) {
+        this.totalPoints = totalPoints;
+    }
+
+    public int getTotalPoints() {
+        return totalPoints;
     }
 
     public String getDescWithBackground() {
