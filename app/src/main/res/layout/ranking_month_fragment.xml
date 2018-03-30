@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="TOP"
-                android:textColor="@color/black"
+                android:background="@color/primary"
                 android:textStyle="bold" />
 
 
@@ -64,8 +64,12 @@
                 android:layout_below="@+id/postRankingText"
                 android:layout_centerHorizontal="true"
                 android:text="POSTS"
-                android:textColor="@color/black"
+                android:background="@color/primary"
                 android:textStyle="bold" />
+
+
+
+
 
 
         </RelativeLayout>
@@ -75,14 +79,8 @@
             android:layout_width="1dp"
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
-            android:background="@color/black" />
+           android:background="@color/primary" />
 
-        <View
-            android:id="@+id/horizontallinestnadnigs"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/playersRankinglayoutalltime"
-            android:background="@color/black" />
 
 
     </RelativeLayout>
@@ -93,8 +91,16 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/rankingslayoutcontainer"
-        android:background="@color/black" />
+        android:background="@color/primary" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/topPostsRecyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/horizontalviewranking"
+        android:visibility="gone">
 
+
+    </android.support.v7.widget.RecyclerView>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/playersRankingrecyclerview"

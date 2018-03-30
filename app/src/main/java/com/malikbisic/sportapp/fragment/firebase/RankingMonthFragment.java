@@ -41,9 +41,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.activity.api.SearchableCountry;
+import com.malikbisic.sportapp.activity.firebase.MainPage;
+import com.malikbisic.sportapp.adapter.firebase.MainPageAdapter;
 import com.malikbisic.sportapp.adapter.firebase.PlayersRankingMonthAdapter;
 import com.malikbisic.sportapp.model.api.PlayerModel;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
+import com.malikbisic.sportapp.model.firebase.Post;
+import com.malikbisic.sportapp.model.firebase.UsersModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +58,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by Nane on 26.1.2018.
@@ -74,6 +80,11 @@ public class RankingMonthFragment extends Fragment {
     RecyclerView playerRankingRecyclerView;
     PlayersRankingMonthAdapter adapter;
     ArrayList<PlayerModel> list;
+
+
+    MainPageAdapter topPostsAdapter;
+    ArrayList <Post> postsList;
+    RecyclerView topPostsRec;
 
     @Nullable
     @Override
@@ -96,8 +107,14 @@ public class RankingMonthFragment extends Fragment {
 
 
         playerRankLayout.setActivated(true);
-        playerRankText1.setTextColor(Color.parseColor("#000000"));
-        playerRankText2.setTextColor(Color.parseColor("#000000"));
+        playerRankText1.setTextColor(Color.parseColor("#33691e"));
+        playerRankText2.setTextColor(Color.parseColor("#33691e"));
+
+        postsList = new ArrayList<>();
+        topPostsRec = (RecyclerView) view.findViewById(R.id.topPostsRecyclerview);
+        topPostsAdapter = new MainPageAdapter(postsList, getApplicationContext(), getActivity(), topPostsRec, MainPage.postKey);
+
+
 
         updateListPlayer();
 

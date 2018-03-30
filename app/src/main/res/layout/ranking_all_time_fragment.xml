@@ -49,7 +49,7 @@
             android:layout_centerVertical="true"
             android:textStyle="bold"
             android:text="Clubs Ranking"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
 
 
     </RelativeLayout>
@@ -59,14 +59,14 @@
         android:layout_width="1dp"
         android:layout_height="40dp"
         android:layout_centerHorizontal="true"
-        android:background="@color/black" />
+        android:background="@color/primary" />
 
     <View
         android:id="@+id/horizontallinestnadnigs"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/playersRankinglayoutalltime"
-        android:background="@color/black" />
+        android:background="@color/primary" />
 
 
 </RelativeLayout>

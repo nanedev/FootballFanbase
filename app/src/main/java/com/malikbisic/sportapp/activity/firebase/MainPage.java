@@ -205,7 +205,7 @@ public class MainPage extends AppCompatActivity
 
     PremiumUsers premiumUsers;
     FreeUser freeUser;
-    static String postKey;
+    public static String postKey;
     ActionBarDrawerToggle toggle;
     int id;
 

@@ -97,7 +97,7 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
 
 
         playersLayout.setActivated(true);
-        playerText.setTextColor(Color.parseColor("#000000"));
+        playerText.setTextColor(Color.parseColor("#33691e"));
 
         recFanClub = (RecyclerView) view.findViewById(R.id.alltimeclubs);
         recFanClub.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -120,7 +120,7 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
             public void onClick(View v) {
              playerRankingRecyclerView.setVisibility(View.GONE);
              clubLayout.setActivated(true);
-             clubText.setTextColor(Color.parseColor("#000000"));
+             clubText.setTextColor(Color.parseColor("#33691e"));
                 playersLayout.setActivated(false);
                 playerText.setTextColor(Color.parseColor("#ffffff"));
                 recFanClub.setVisibility(View.VISIBLE);
@@ -135,7 +135,7 @@ playerRankingRecyclerView = (RecyclerView) view.findViewById(R.id.alltimeplayers
                 clubLayout.setActivated(false);
                 clubText.setTextColor(Color.parseColor("#ffffff"));
                 playersLayout.setActivated(true);
-                playerText.setTextColor(Color.parseColor("#000000"));
+                playerText.setTextColor(Color.parseColor("#33691e"));
                 playerRankingRecyclerView.setVisibility(View.VISIBLE);
                 recFanClub.setVisibility(View.GONE);
             }
