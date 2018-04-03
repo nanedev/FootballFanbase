@@ -30,6 +30,7 @@ import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.SingleFixtureAdapter;
 import com.malikbisic.sportapp.model.api.AllFixturesModel;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -195,7 +196,7 @@ SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
 
 
 
-        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/"+dateUrl+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=localTeam%2CvisitorTeam%2Cleague.country&leagues="+leagueID;
+        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/"+dateUrl+ Constants.API_KEY + "&include=localTeam%2CvisitorTeam%2Cleague.country&leagues="+leagueID;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override

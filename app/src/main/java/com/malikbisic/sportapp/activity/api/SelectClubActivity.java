@@ -27,6 +27,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.ClubAdapter;
 import com.malikbisic.sportapp.model.api.ClubModel;
+import com.malikbisic.sportapp.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -41,7 +42,7 @@ public class SelectClubActivity extends AppCompatActivity implements SearchView.
 
     final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/teams";
     final String URL_LEAGUEID = "/season/";
-    final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    final String URL_APIKEY = Constants.API_KEY;
 
     ArrayList<ClubModel> club = new ArrayList<>();
     ClubAdapter adapter;

@@ -20,6 +20,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.LivescoreAdapter;
 import com.malikbisic.sportapp.model.api.LivescoreModel;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 public class FragmentMyClubMatches extends Fragment {
 
     String URL_LIVESCORE = "https://soccer.sportmonks.com/api/v2.0/livescores";
-    String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    String URL_API = Constants.API_KEY;
     String URL_INCLUDES = "&include=localTeam,visitorTeam,league,odds,lineup,stats";
     String url;
 

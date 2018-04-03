@@ -35,6 +35,7 @@ import com.malikbisic.sportapp.fragment.api.FragmentSquad;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
 import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
+import com.malikbisic.sportapp.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -60,7 +61,7 @@ public class AboutFootballClub extends AppCompatActivity  {
     private SectionPageAdapter sectionPageAdapter;
 
     private final String countryUrl = "https://soccer.sportmonks.com/api/v2.0/countries/";
-    private final String apiKey = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    private final String apiKey = Constants.API_KEY;
 
     String nameCounry;
     @Override

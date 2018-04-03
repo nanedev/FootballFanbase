@@ -21,6 +21,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.ClubFixturesAdapter;
 import com.malikbisic.sportapp.model.api.ClubFixturesModel;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +36,7 @@ public class FixturesClubFragment extends Fragment {
 
     String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/teams/";
     String teamID;
-    String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    String URL_API = Constants.API_KEY;
     String URL_INCLUDES = "&include=upcoming:order(starting_at|asc),upcoming.localTeam,upcoming.visitorTeam,upcoming.league";
 
     ArrayList<ClubFixturesModel> clubFixturesModelArrayList = new ArrayList<>();

@@ -20,6 +20,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
 import com.malikbisic.sportapp.fragment.api.InfoPlayerFragment;
+import com.malikbisic.sportapp.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -91,7 +92,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
         if (!fromMatch){
 
-            String url = "https://soccer.sportmonks.com/api/v2.0/players/"+playerId+"?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=team";
+            String url = "https://soccer.sportmonks.com/api/v2.0/players/"+playerId+ Constants.API_KEY + "&include=team";
 
             JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override

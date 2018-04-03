@@ -40,6 +40,7 @@ import com.malikbisic.sportapp.adapter.api.TopScorerAdapter;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
 import com.malikbisic.sportapp.model.api.TableModel;
 import com.malikbisic.sportapp.model.api.TopScorerModel;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +65,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
     TopScorerAdapter scorerAdapter;
     ArrayList<TableModel> tableListStandings = new ArrayList<>();
     ArrayList<TopScorerModel> topScorerList = new ArrayList<>();
-    final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    final String URL_APIKEY = Constants.API_KEY;
     private String INCLUDE_IN_URL = "&include=standings.league.country%2Cstandings.team";
     TextView leagueNameTextview;
     TextView topScorerTextview;

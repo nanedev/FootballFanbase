@@ -38,6 +38,7 @@ import com.malikbisic.sportapp.activity.firebase.EnterUsernameForApp;
 import com.malikbisic.sportapp.adapter.api.LeagueAdapter;
 import com.malikbisic.sportapp.model.api.LeagueModel;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +53,7 @@ import dmax.dialog.SpotsDialog;
 public class SelectLeagueActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/leagues";
-    final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    final String URL_APIKEY = Constants.API_KEY;
 
     RecyclerView leagueListView;
     ArrayList<LeagueModel> arrayListLeague;

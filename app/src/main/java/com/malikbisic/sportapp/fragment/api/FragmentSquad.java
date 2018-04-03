@@ -23,6 +23,7 @@ import com.malikbisic.sportapp.adapter.api.TeamAdapterDef;
 import com.malikbisic.sportapp.adapter.api.TeamAdapterGK;
 import com.malikbisic.sportapp.adapter.api.TeamAdapterMid;
 import com.malikbisic.sportapp.model.api.TeamModel;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,7 +51,7 @@ public class FragmentSquad extends Fragment {
     String clubLogo;
     String clubName;
 
-    private final String API_KEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    private final String API_KEY = Constants.API_KEY;
     private final String URL = "https://soccer.sportmonks.com/api/v2.0/teams/";
     private final String INCLUDES = "&include=squad.player.position,coach";
     String finalUrl;

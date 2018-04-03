@@ -39,6 +39,7 @@ import com.malikbisic.sportapp.activity.api.SearchableCountry;
 import com.malikbisic.sportapp.adapter.api.SelectLeagueAdapter;
 import com.malikbisic.sportapp.model.api.LeagueModel;
 import com.malikbisic.sportapp.model.api.SvgDrawableTranscoder;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +56,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTextListener {
     final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/countries";
-    final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    final String URL_APIKEY = Constants.API_KEY;
 
     RecyclerView selectLeagueRecyclerView;
     ArrayList<LeagueModel> selectLeaguelist;

@@ -20,6 +20,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.CommentsMatchAdapter;
 import com.malikbisic.sportapp.model.api.CommentaryMatchModel;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +35,7 @@ public class FragmentCommentsMatch extends Fragment {
 
     String fixturesID;
     public static String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/commentaries/fixture/";
-    public static String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    public static String URL_API = Constants.API_KEY;
 
     ArrayList<CommentaryMatchModel> modelArrayList = new ArrayList<>();
     CommentsMatchAdapter adapter;

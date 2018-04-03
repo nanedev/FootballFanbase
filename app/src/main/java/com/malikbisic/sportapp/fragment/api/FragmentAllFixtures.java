@@ -32,6 +32,7 @@ import com.malikbisic.sportapp.listener.OnLoadMoreListener;
 import com.malikbisic.sportapp.activity.api.DateActivity;
 import com.malikbisic.sportapp.adapter.api.AllFixturesAdapter;
 import com.malikbisic.sportapp.model.api.LeagueModel;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +52,7 @@ import java.util.Set;
  */
 public class FragmentAllFixtures extends Fragment implements SearchView.OnQueryTextListener{
     final String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/countries/";
-    final String URL_APIKEY = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    final String URL_APIKEY = Constants.API_KEY;
 
 
 
@@ -299,7 +300,7 @@ public class FragmentAllFixtures extends Fragment implements SearchView.OnQueryT
     public void loadData(final String formattedDate) {
 
       //  final String url = URL_BASE + URL_APIKEY + "&include=leagues" + "&page=" + currentPage;
-        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/" + formattedDate + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=league.country";
+        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/" + formattedDate +Constants.API_KEY + "&include=league.country";
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(final JSONObject response) {

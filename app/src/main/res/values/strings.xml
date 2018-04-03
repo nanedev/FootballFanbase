@@ -92,4 +92,9 @@
     <string name="no_internet_connection">No internet connection! \n Tap to retry</string>
     <string name="votes">Votes</string>
     <string name="points">Points</string>
+    
+    
+    
+    
+    <string name="api_key">TzjTbidZGMmfK7B7OtkKExF1M9l3JQp0h0rX3LCvPVQfgWdIV9bORqluvuFM</string>
 </resources>

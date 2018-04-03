@@ -20,6 +20,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.LineUpAdapter;
 import com.malikbisic.sportapp.model.api.LineUpModel;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
  */
 public class AwayTeamLineUp extends Fragment {
     private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/fixtures/";
-    private String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    private String URL_API = Constants.API_KEY;
     private String URL_INCLUDE = "&include=lineup";
     private String fixturesID;
     private String fullURL;

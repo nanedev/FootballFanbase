@@ -22,6 +22,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
+import com.malikbisic.sportapp.utils.Constants;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +35,7 @@ import org.json.JSONObject;
 public class FragmentStats extends Fragment {
 
     private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/fixtures/";
-    private String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    private String URL_API = Constants.API_KEY;
     private String URL_INCLUDE = "&include=stats";
     private String fixturesID;
     private String fullURL;

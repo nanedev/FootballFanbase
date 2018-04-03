@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/rankingslayoutcontainer"
@@ -22,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-
+              android:textColor="@color/primary"
                 android:text="PLAYERS" />
 
             <TextView
@@ -31,6 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/playersText"
                 android:layout_centerHorizontal="true"
+                android:textColor="@color/primary"
                 android:text="RANKING" />
 
 
@@ -53,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="TOP"
-                android:background="@color/primary"
+                android:textColor="@color/primary"
                 android:textStyle="bold" />
 
 
@@ -64,7 +66,7 @@
                 android:layout_below="@+id/postRankingText"
                 android:layout_centerHorizontal="true"
                 android:text="POSTS"
-                android:background="@color/primary"
+                android:textColor="@color/primary"
                 android:textStyle="bold" />
 
 

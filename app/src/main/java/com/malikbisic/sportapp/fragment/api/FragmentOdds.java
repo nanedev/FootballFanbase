@@ -20,6 +20,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.adapter.api.OddsAdapter;
 import com.malikbisic.sportapp.model.api.OddsModel;
+import com.malikbisic.sportapp.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +36,7 @@ public class FragmentOdds extends Fragment {
     //https://soccer.sportmonks.com/api/v2.0/odds/fixture/1625119?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s
 
     String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/odds/fixture/";
-    String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    String URL_API = Constants.API_KEY;
 
     String fixturesID;
     String companyName;

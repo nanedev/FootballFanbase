@@ -26,6 +26,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.classes.PlayerComments;
 
+import com.malikbisic.sportapp.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -60,7 +61,7 @@ public class InfoPlayerFragment extends Fragment {
 
     String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/players/";
     String playerID;
-    String URL_API = "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s";
+    String URL_API = Constants.API_KEY;
     String URL_INCLUDES = "&include=transfers,trophies.seasons";
     String URL_TEAM = "https://soccer.sportmonks.com/api/v2.0/teams/";
     boolean fromMatch;
