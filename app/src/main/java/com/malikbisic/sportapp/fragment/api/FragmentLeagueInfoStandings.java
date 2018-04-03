@@ -352,7 +352,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
     public void topScorer() {
         mDialog.show();
-        String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/" + currentSeasonId + "?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=goalscorers.player";
+        String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/" + currentSeasonId + Constants.API_KEY+"include=goalscorers.player";
         scorerAdapter = new TopScorerAdapter(topScorerList, getActivity());
         tableRecyclerview.setAdapter(scorerAdapter);
 
@@ -394,7 +394,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("errorVolley", error.getLocalizedMessage());
+                //Log.e("errorVolley", error.getLocalizedMessage());
                 mDialog.dismiss();
             }
         });

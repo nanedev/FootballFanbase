@@ -32,6 +32,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
+import com.google.gson.JsonArray;
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.listener.OnLoadMoreListener;
@@ -125,6 +126,7 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
                 selectLeagueRecyclerView.setLayoutManager(linearLayoutManager);
                 adapterLeague = new SelectLeagueAdapter(newList, getActivity().getApplicationContext(), getActivity(), selectLeagueRecyclerView);
                 selectLeagueRecyclerView.setAdapter(adapterLeague);
+                selectLeagueRecyclerView.setItemViewCacheSize(newList.size());
                 adapterLeague.notifyDataSetChanged();
 
 
@@ -264,6 +266,8 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
                 leagueName.setText(model.getName().toUpperCase());
                 countryName.setText(model.getCountry_name().toUpperCase() + ":");
 
+                Log.i("country name: ", model.getCountry_name());
+
 
                 if (model.getCountry_name().equals("England")) {
                     zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.england));
@@ -273,63 +277,50 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
                     zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.scotland));
                 } else if (model.getCountry_name().equals("Wales")) {
                     zastava.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.welsh_flag));
-                }
+                } else {
 
 
-                String countryURL = "https://restcountries.eu/rest/v2/name/" + model.getCountry_name();
+                    String countryURL = "http://countryapi.gear.host/v1/Country/getCountries?pName=" + model.getCountry_name();
 
-                JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.i("json", response.toString());
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
+                    final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, countryURL, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
 
-                                JSONObject object = response.getJSONObject(i);
-                                String countryName = object.getString("name");
-                                String countryImage = object.getString("flag");
+                            try {
+                                JSONArray arrayLeague = response.getJSONArray("Response");
+                                for (int i = 0; i < arrayLeague.length(); i++) {
 
-                                System.out.println("country flag" + countryImage);
-                                GenericRequestBuilder<Uri, InputStream, SVG, PictureDrawable> requestBuilder;
+                                    JSONObject object = arrayLeague.getJSONObject(i);
+                                    String countryName = object.getString("Name");
+                                    String countryImage = object.getString("FlagPng");
 
-                                requestBuilder = Glide
-                                        .with(ctx)
-                                        .using(Glide.buildStreamModelLoader(Uri.class, itemView.getContext()), InputStream.class)
-                                        .from(Uri.class)
-                                        .as(SVG.class)
-                                        .transcode(new SvgDrawableTranscoder(), PictureDrawable.class)
-                                        .sourceEncoder(new StreamEncoder())
-                                        .cacheDecoder(new FileToStreamDecoder<SVG>(new SearchableCountry.SvgDecoder()))
-                                        .decoder(new SearchableCountry.SvgDecoder())
-                                        .animate(android.R.anim.fade_in);
+                                    System.out.println("country flag" + countryImage);
+
+                                    Glide.with(ctx).load(countryImage).into(zastava);
+
+                                }
 
 
-                                Uri uri = Uri.parse(countryImage);
-
-                                requestBuilder
-                                        // SVG cannot be serialized so it's not worth to cache it
-                                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                        .load(uri)
-                                        .into(zastava);
-
+                            } catch (JSONException e) {
+                                Log.v("json", e.getLocalizedMessage());
                             }
 
-
-                        } catch (JSONException e) {
-                            Log.v("json", e.getLocalizedMessage());
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //Log.v("json", error.getLocalizedMessage());
-                    }
-                });
-                Volley.newRequestQueue(itemView.getContext()).add(request);
 
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //Log.v("json", error.getLocalizedMessage());
+                        }
+                    });
+                    Volley.newRequestQueue(itemView.getContext()).add(request);
+
+                }
                 Log.i("country: ", model.getCountry_name() + " , league: " + model.getName());
 
             }
+
+
         }
     }
 
