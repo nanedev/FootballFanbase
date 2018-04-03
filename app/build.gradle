@@ -49,7 +49,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation files('src/androidsvg-1.2.2-beta-1.jar')
-
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
     implementation 'com.android.volley:volley:1.0.0'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
@@ -93,7 +92,7 @@ dependencies {
     implementation 'com.rockerhieu.emojicon:library:1.3.3'
     implementation 'com.github.d-max:spots-dialog:0.7@aar'
     implementation 'com.cpiz.bubbleview:bubbleview:1.0.2'
-    compile 'com.github.d-max:spots-dialog:0.7@aar'
+    implementation 'com.github.d-max:spots-dialog:0.7@aar'
     testImplementation 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

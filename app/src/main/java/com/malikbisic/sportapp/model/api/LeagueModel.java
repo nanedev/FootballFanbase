@@ -13,6 +13,7 @@ public class LeagueModel {
     String date;
 
     int fixtureId;
+    boolean isCup;
 
     public LeagueModel() {
     }
@@ -28,12 +29,21 @@ public class LeagueModel {
 
 
 
-    public LeagueModel(String name, String current_season_id, String country_name, int league_id) {
+    public LeagueModel(String name, String current_season_id, String country_name, int league_id, boolean isCup) {
         this.name = name;
         this.current_season_id = current_season_id;
         this.country_name = country_name;
       this.league_id = league_id;
         this.fixtureId = fixtureId;
+        this.isCup = isCup;
+    }
+
+    public boolean isCup() {
+        return isCup;
+    }
+
+    public void setCup(boolean cup) {
+        isCup = cup;
     }
 
     public String getDate() {

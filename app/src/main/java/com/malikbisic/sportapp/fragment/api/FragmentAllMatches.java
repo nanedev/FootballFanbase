@@ -74,6 +74,7 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
 
     LinearLayoutManager linearLayoutManager;
     AlertDialog progressBar;
+    boolean isCup;
 
     public FragmentAllMatches() {
         // Required empty public constructor
@@ -97,6 +98,13 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
         mSearchView = (SearchView) view.findViewById(R.id.search_for_league);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         selectLeagueRecyclerView.setLayoutManager(linearLayoutManager);
+
+        selectLeagueRecyclerView.setHasFixedSize(true);
+        selectLeagueRecyclerView.setItemViewCacheSize(40);
+        selectLeagueRecyclerView.setDrawingCacheEnabled(true);
+        selectLeagueRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+
         setupSearchView();
 
         progressBar.show();
@@ -162,6 +170,7 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
                             league_id = obj.getInt("id");
                             currentSeason = obj.getInt("current_season_id");
                             leagueName = obj.getString("name");
+                            isCup = obj.getBoolean("is_cup");
 
 
 
@@ -169,7 +178,7 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
                             JSONObject object = countryObj.getJSONObject("data");
                             countryName = object.getString("name");
 
-                            LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id);
+                            LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, isCup);
                             selectLeaguelist.add(model);
                         }
                         selectLeagueRecyclerView.setItemViewCacheSize(selectLeaguelist.size());

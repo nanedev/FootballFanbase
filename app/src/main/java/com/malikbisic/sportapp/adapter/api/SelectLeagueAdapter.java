@@ -113,8 +113,9 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         int getViewType = holder.getItemViewType();
-        final LeagueModel leagueModel = leagueModelArrayList.get(position);
+
         if (getViewType == ITEM_VIEW) {
+            final LeagueModel leagueModel = leagueModelArrayList.get(position);
             ((FragmentAllMatches.SelectLeagueViewHolder) holder).updateUI(leagueModel, activity);
 
             ((FragmentAllMatches.SelectLeagueViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {

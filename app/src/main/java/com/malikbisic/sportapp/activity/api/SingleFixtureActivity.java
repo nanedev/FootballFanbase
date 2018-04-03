@@ -40,8 +40,10 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -194,9 +196,13 @@ SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
         });
         Volley.newRequestQueue(this).add(countryReq);
 
+        Calendar cal = Calendar.getInstance();
+        TimeZone tz = cal.getTimeZone();
+
+        String myTimezone = tz.getID();
 
 
-        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/"+dateUrl+ Constants.API_KEY + "&include=localTeam%2CvisitorTeam%2Cleague.country&leagues="+leagueID;
+        String url = "https://soccer.sportmonks.com/api/v2.0/fixtures/date/"+dateUrl+ Constants.API_KEY + "&include=localTeam%2CvisitorTeam%2Cleague.country&leagues="+leagueID+"&tz="+myTimezone;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
