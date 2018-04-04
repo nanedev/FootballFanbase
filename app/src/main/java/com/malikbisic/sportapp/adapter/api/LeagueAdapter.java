@@ -46,7 +46,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<SelectLeagueActivity.Lea
     @Override
     public void onBindViewHolder(final SelectLeagueActivity.LeagueViewHolder holder, int position) {
         final LeagueModel leagueModel = leagueModelArrayList.get(position);
-        holder.updateUI(leagueModel);
+        holder.updateUI(leagueModel,ctx);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

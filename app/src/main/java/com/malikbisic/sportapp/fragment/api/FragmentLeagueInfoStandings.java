@@ -352,7 +352,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
 
     public void topScorer() {
         mDialog.show();
-        String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/" + currentSeasonId + Constants.API_KEY+"include=goalscorers.player";
+        String url = "https://soccer.sportmonks.com/api/v2.0/topscorers/season/" + currentSeasonId + Constants.API_KEY+"&include=goalscorers.player";
         scorerAdapter = new TopScorerAdapter(topScorerList, getActivity());
         tableRecyclerview.setAdapter(scorerAdapter);
 
