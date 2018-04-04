@@ -614,6 +614,10 @@ mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.Styl
                         usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                Map<String, Object> clubNameMap = new HashMap<>();
+                                clubNameMap.put("favoriteClub", clubName);
+
+                                usersChat.collection("UsersChat").document(favoriteClubString).set(clubNameMap);
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -622,6 +626,7 @@ mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.Styl
 
                             }
                         });
+
 
 
                         clubTableFan(downloadUrl.toString());
@@ -720,6 +725,10 @@ mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.Styl
                             @Override
                             public void onSuccess(Void aVoid) {
 
+                                Map<String, Object> clubNameMap = new HashMap<>();
+                                clubNameMap.put("favoriteClub", clubName);
+
+                                usersChat.collection("UsersChat").document(favoriteClubString).set(clubNameMap);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -727,6 +736,8 @@ mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.Styl
 
                             }
                         });
+
+
 
 
                         clubTableFan(downloadUrl.toString());
@@ -891,7 +902,10 @@ mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.Styl
                     usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            Map<String, Object> clubNameMap = new HashMap<>();
+                            clubNameMap.put("favoriteClub", clubName);
 
+                            usersChat.collection("UsersChat").document(favoriteClubString).set(clubNameMap);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
