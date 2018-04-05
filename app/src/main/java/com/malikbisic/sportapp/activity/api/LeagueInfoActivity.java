@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -71,9 +72,26 @@ public class LeagueInfoActivity extends AppCompatActivity {
     ArrayList<TableModel> tableListStandings = new ArrayList<>();
     CircleImageView flag;
     RelativeLayout tableLayout;
+
+
+    RelativeLayout parentChampionsleague;
+    RelativeLayout parentChampionsLEagueQualif;
+    RelativeLayout parentEuropeLeague;
+    RelativeLayout parentEuroeLeagueQualif;
+    RelativeLayout parentRelegation;
+    RelativeLayout parentRelegationDoig;
+
+
+
+
     TextView championsLeagueTextview;
+    TextView championsLeagueQualifTextview;
+
+
     TextView europeLeagueTextview;
+    TextView europeLeagueQualifTextview;
     TextView relegationTextview;
+    TextView relegationQualifTextview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +112,18 @@ countryNameTextview = (TextView) findViewById(R.id.countrynamestandings);
         relegationTextview = (TextView) findViewById(R.id.textforrelegation);
 
 
+        championsLeagueQualifTextview = (TextView) findViewById(R.id.textforchampionleagueQualif);
+        europeLeagueQualifTextview = (TextView) findViewById(R.id.textforeuropeleagueQualif);
+        relegationQualifTextview = (TextView) findViewById(R.id.textforrelegationQualif);
+
+        parentChampionsleague = (RelativeLayout) findViewById(R.id.parentchampions);
+        parentChampionsLEagueQualif = (RelativeLayout) findViewById(R.id.parentchampionsQualif);
+        parentEuropeLeague = (RelativeLayout) findViewById(R.id.parenteuropeleague);
+        parentEuroeLeagueQualif = (RelativeLayout) findViewById(R.id.parenteuropeleagueQualif);
+        parentRelegation = (RelativeLayout) findViewById(R.id.parentrelegation);
+        parentRelegationDoig = (RelativeLayout) findViewById(R.id.parentrelegationQualif);
+
+
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(LeagueInfoActivity.this);
 
@@ -112,9 +142,7 @@ countryNameTextview = (TextView) findViewById(R.id.countrynamestandings);
         leaguNameTextview.setText(leagueName);
         countryNameTextview.setText(countryName);
 
-        championsLeagueTextview.setText(leagueName + " - " + " Champions League ");
-        europeLeagueTextview.setText(leagueName + " - " + " Europa League ");
-        relegationTextview.setText(leagueName + " - " + " Relegation Group ");
+
 
 standingsTable();
 
@@ -242,6 +270,34 @@ standingsTable();
                                 });
                                 Volley.newRequestQueue(LeagueInfoActivity.this).add(request);
 
+                            }
+
+
+                            if (model.getResult().equals("Promotion - Champions League (Group Stage)")) {
+                                parentChampionsleague.setVisibility(View.VISIBLE);
+                                championsLeagueTextview.setText(leagueName + " - " + " Champions League (Group Stage)");
+
+                            }
+                            if (model.getResult().equals("Promotion - Champions League (Qualification)")){
+                                parentChampionsLEagueQualif.setVisibility(View.VISIBLE);
+                                championsLeagueQualifTextview.setText(leagueName + " - " + " Champions League (Qualification)");
+
+                            }
+                            if (model.getResult().equals("Promotion - Europa League (Group Stage)")){
+                                parentEuropeLeague.setVisibility(View.VISIBLE);
+                                europeLeagueTextview.setText(leagueName + "Europa League (Group Stage)");
+                            }
+                            if (model.getResult().equals("Promotion - Europa League (Qualification)")){
+                              parentEuroeLeagueQualif.setVisibility(View.VISIBLE);
+                              europeLeagueQualifTextview.setText(leagueName + " Europa League (Qualification)");
+                            }
+                            if (model.getResult().equals("Relegation - Ligue 2")){
+                                  parentRelegation.setVisibility(View.VISIBLE);
+                                  relegationTextview.setText(leagueName + " Relegation - Ligue 2");
+                            }
+                            if (model.getResult().equals("Ligue 1 (Relegation)")){
+                              parentRelegationDoig.setVisibility(View.VISIBLE);
+                              relegationQualifTextview.setText(leagueName + " Ligue 1 (Relegation)");
                             }
                             adapter.notifyDataSetChanged();
 
