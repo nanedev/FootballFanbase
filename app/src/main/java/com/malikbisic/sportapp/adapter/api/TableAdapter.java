@@ -48,6 +48,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
         holder.updateUI(model, context);
 
 
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

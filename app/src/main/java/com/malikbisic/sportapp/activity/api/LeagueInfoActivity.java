@@ -124,6 +124,44 @@ public class LeagueInfoActivity extends AppCompatActivity {
     String prevDate_fixtures = "";
     String currentDate_fixtures = "";
 
+    //results
+
+    private String URL_BASE_RESULT = "https://soccer.sportmonks.com/api/v2.0/leagues/";
+    public static int URL_LEAGUE_ID_RESULT;
+    private String URL_INCLUDES_RESULT = "&include=season.results:order(starting_at|desc),season.results.localTeam,season.results.visitorTeam";
+
+    ArrayList<FixturesLeagueModel> modelArrayList_results = new ArrayList<>();
+    ArrayList<String> dateList_results = new ArrayList<>();
+    FixturesLeagueAdapter adapter_results;
+
+
+    String formattedDate_results;
+    Date date_results;
+
+    String homeTeamName_results;
+    String awayTeamName_results;
+    String homeTeamLogo_results;
+    String awayTeamLogo_results;
+    String leagueName_results;
+    String mstartTime_results;
+    String datum_results;
+    String idFixtures_results;
+    int localTeamId_results;
+    int visitorTeamId_results;
+
+    Button prevBtn_results;
+    Button nextBtn_results;
+    TextView dateLabel_results;
+    String statusS_results;
+    String ftScore_results;
+
+    String prevDate_results = "";
+    String currentDate_results = "";
+
+    TextView fixturesText;
+    TextView standingsText;
+    TextView resultsText;
+
     RelativeLayout parentChampionsleague;
     RelativeLayout parentChampionsLEagueQualif;
     RelativeLayout parentEuropeLeague;
@@ -163,6 +201,9 @@ public class LeagueInfoActivity extends AppCompatActivity {
         championsLeagueTextview = (TextView) findViewById(R.id.textforchampionleague);
         europeLeagueTextview = (TextView) findViewById(R.id.textforeuropeleague);
         relegationTextview = (TextView) findViewById(R.id.textforrelegation);
+        fixturesText = (TextView) findViewById(R.id.fixtures);
+        resultsText = (TextView) findViewById(R.id.results);
+        standingsText = (TextView) findViewById(R.id.standingsText);
 
 
 
@@ -188,6 +229,7 @@ public class LeagueInfoActivity extends AppCompatActivity {
         leaguNameTextview.setText(leagueName);
         countryNameTextview.setText(countryName);
         URL_LEAGUE_ID_FIXTURES = intent.getIntExtra("league_id", 0);
+        URL_LEAGUE_ID_RESULT = intent.getIntExtra("league_id", 0);
 
         championsLeagueTextview.setText(leagueName + " - " + " Champions League ");
         europeLeagueTextview.setText(leagueName + " - " + " Europa League ");
@@ -207,8 +249,72 @@ public class LeagueInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 horizontalnTableLayout.setVisibility(View.GONE);
                 tableLayout.setVisibility(View.GONE);
+                parentChampionsleague.setVisibility(View.GONE);
+                parentChampionsLEagueQualif.setVisibility(View.GONE);
+                parentEuropeLeague.setVisibility(View.GONE);
+                parentEuroeLeagueQualif.setVisibility(View.GONE);
+                parentRelegation.setVisibility(View.GONE);
+                parentRelegationDoig.setVisibility(View.GONE);
                 tableListStandings.clear();
+                modelArrayList_results.clear();
+                standingsLayout.setBackground(null);
+                standingsText.setTextColor(getResources().getColor(R.color.white));
+                resultsLayout.setBackground(null);
+                resultsText.setTextColor(getResources().getColor(R.color.white));
+                fixturesLayout.setBackgroundColor(getResources().getColor(R.color.white));
+                fixturesText.setTextColor(getResources().getColor(R.color.primary));
+
                 loadFixtures();
+
+            }
+        });
+
+        resultsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                horizontalnTableLayout.setVisibility(View.GONE);
+                tableLayout.setVisibility(View.GONE);
+                parentChampionsleague.setVisibility(View.GONE);
+                parentChampionsLEagueQualif.setVisibility(View.GONE);
+                parentEuropeLeague.setVisibility(View.GONE);
+                parentEuroeLeagueQualif.setVisibility(View.GONE);
+                parentRelegation.setVisibility(View.GONE);
+                parentRelegationDoig.setVisibility(View.GONE);
+                tableListStandings.clear();
+                modelArrayList_fixtures.clear();
+                standingsLayout.setBackground(null);
+                standingsText.setTextColor(getResources().getColor(R.color.white));
+                fixturesLayout.setBackground(null);
+                fixturesText.setTextColor(getResources().getColor(R.color.white));
+                resultsLayout.setBackgroundColor(getResources().getColor(R.color.white));
+                resultsText.setTextColor(getResources().getColor(R.color.primary));
+
+                loadResults();
+
+            }
+        });
+
+        standingsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                horizontalnTableLayout.setVisibility(View.VISIBLE);
+                tableLayout.setVisibility(View.VISIBLE);
+                parentChampionsleague.setVisibility(View.VISIBLE);
+                parentChampionsLEagueQualif.setVisibility(View.VISIBLE);
+                parentEuropeLeague.setVisibility(View.VISIBLE);
+                parentEuroeLeagueQualif.setVisibility(View.VISIBLE);
+                parentRelegation.setVisibility(View.VISIBLE);
+                parentRelegationDoig.setVisibility(View.VISIBLE);
+                modelArrayList_results.clear();
+                modelArrayList_fixtures.clear();
+                resultsLayout.setBackground(null);
+                resultsText.setTextColor(getResources().getColor(R.color.white));
+                fixturesLayout.setBackground(null);
+                fixturesText.setTextColor(getResources().getColor(R.color.white));
+                standingsLayout.setBackgroundColor(getResources().getColor(R.color.white));
+                standingsText.setTextColor(getResources().getColor(R.color.primary));
+
+                standingsTable();
 
             }
         });
@@ -218,10 +324,104 @@ public class LeagueInfoActivity extends AppCompatActivity {
 
     }
 
+    public void loadResults(){
+
+        adapter_results = new FixturesLeagueAdapter(modelArrayList_results, LeagueInfoActivity.this);
+        tableRecyclerview.setAdapter(adapter_results);
+
+        mDialog.show();
+        String full_URL = URL_BASE_RESULT + URL_LEAGUE_ID_RESULT + URL_API + URL_INCLUDES_RESULT;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, full_URL, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    JSONObject mainObject = response.getJSONObject("data");
+                    JSONObject seasonObject = mainObject.getJSONObject("season");
+                    JSONObject dataSeason = seasonObject.getJSONObject("data");
+                    JSONObject fixturesObject = dataSeason.getJSONObject("results");
+                    JSONArray fixturesData = fixturesObject.getJSONArray("data");
+
+                    for (int i = 0; i < fixturesData.length(); i++){
+
+                        JSONObject objectMain = fixturesData.getJSONObject(i);
+                        idFixtures_results = objectMain.getString("id");
+
+                        JSONObject locTeam = objectMain.getJSONObject("localTeam");
+                        JSONObject visTeam = objectMain.getJSONObject("visitorTeam");
+                        JSONObject localTeamObj = locTeam.getJSONObject("data");
+                        JSONObject visitorTeamObj = visTeam.getJSONObject("data");
+
+                        homeTeamName_results = localTeamObj.getString("name");
+                        homeTeamLogo_results = localTeamObj.getString("logo_path");
+                        localTeamId_results = localTeamObj.getInt("id");
+                        awayTeamName_results = visitorTeamObj.getString("name");
+                        awayTeamLogo_results = visitorTeamObj.getString("logo_path");
+                        visitorTeamId_results = visitorTeamObj.getInt("id");
+
+                        JSONObject timeMain = objectMain.getJSONObject("time");
+                        JSONObject starting_at = timeMain.getJSONObject("starting_at");
+
+                        mstartTime_results = starting_at.getString("time");
+                        datum_results = starting_at.getString("date");
+                        statusS_results = timeMain.getString("status");
+
+
+
+
+                        if (datum_results.equals(prevDate_results)){
+
+                            currentDate_results = "isti datum";
+                        } else {
+                            currentDate_results = starting_at.getString("date");
+                        }
+
+
+                        JSONObject scores = objectMain.getJSONObject("scores");
+                        String localScore = scores.getString("localteam_score");
+                        String visitScore = scores.getString("visitorteam_score");
+
+                        ftScore_results = localScore + " - " + visitScore;
+
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            date_results = format.parse(datum_results);
+                            System.out.println(date_results);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        android.text.format.DateFormat df = new android.text.format.DateFormat();
+                        df.format("dd-MMM-yyyy", date_results);
+
+                        FixturesLeagueModel model = new FixturesLeagueModel(homeTeamName_results, homeTeamLogo_results, awayTeamName_results, awayTeamLogo_results, mstartTime_results, date_results, currentDate_results, statusS_results, ftScore_results, idFixtures_results, localTeamId_results, visitorTeamId_results);
+                        modelArrayList_results.add(model);
+
+                        adapter_results.notifyDataSetChanged();
+                        prevDate_results = datum_results;
+                    }
+
+
+                } catch (JSONException e) {
+                    Log.e("responseErrorLeagFix", e.getLocalizedMessage());
+                    mDialog.dismiss();
+                }
+                mDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e("errorFixturesLeague", error.getLocalizedMessage());
+                mDialog.dismiss();
+            }
+        });
+        Volley.newRequestQueue(LeagueInfoActivity.this).add(request);
+    }
+
 
     public void loadFixtures() {
 
-
+        mDialog.show();
         adapter_fixtures = new FixturesLeagueAdapter(modelArrayList_fixtures, LeagueInfoActivity.this);
         tableRecyclerview.setAdapter(adapter_fixtures);
         Calendar cal = Calendar.getInstance();
@@ -236,7 +436,7 @@ public class LeagueInfoActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
 
                 try {
-                    mDialog.show();
+
                     JSONObject mainObject = response.getJSONObject("data");
                     JSONObject seasonObject = mainObject.getJSONObject("season");
                     JSONObject dataSeason = seasonObject.getJSONObject("data");

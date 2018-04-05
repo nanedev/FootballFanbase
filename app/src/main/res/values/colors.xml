@@ -24,6 +24,15 @@
     <color name="toolbarTransparent">#00FFFFFF</color>
     <color name="progressbarColorVisible">#00ffffff</color>
 
+    <color name="promotion_champion_league_groupStage">#0d47a1</color>
+    <color name="promotion_champion_league_qualification">#4fc3f7</color>
+    <color name="promotion_europe_league_groupStage">#5F021F</color>
+    <color name="promotion_europe_league_qualfication">#ab47bc</color>
+    <color name="relegation_playoff">#ff7043</color>
+    <color name="relegation_league">#d50000</color>
+
+
+
 
 
 

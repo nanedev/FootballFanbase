@@ -71,6 +71,31 @@ String result;
 
 
 
+        if (table.getResult().equals("Promotion - Champions League (Group Stage)")) {
+            posLay.setBackground(context.getResources().getDrawable(R.drawable.champion_league_shape));
+           // posLay.setBackgroundColor(context.getResources().getColor(R.color.promotion_champion_league_groupStage));
+
+        }
+        if (table.getResult().equals("Promotion - Champions League (Qualification)")){
+            posLay.setBackground(context.getResources().getDrawable(R.drawable.champions_league_qualification));
+            //posLay.setBackgroundColor(context.getResources().getColor(R.color.promotion_champion_league_qualification));
+        }
+        if (table.getResult().equals("Promotion - Europa League (Group Stage)")){
+            posLay.setBackground(context.getResources().getDrawable(R.drawable.europa_league_shape));
+           // posLay.setBackgroundColor(context.getResources().getColor(R.color.promotion_europe_league_groupStage));
+        }
+        if (table.getResult().equals("Promotion - Europa League (Qualification)")){
+            posLay.setBackground(context.getResources().getDrawable(R.drawable.europe_league_qualification_shape));
+          //  posLay.setBackgroundColor(context.getResources().getColor(R.color.promotion_europe_league_qualfication));
+        }
+        if (table.getResult().contains("Relegation - ")){
+            posLay.setBackground(context.getResources().getDrawable(R.drawable.relegation_shape));
+           // posLay.setBackgroundColor(context.getResources().getColor(R.color.relegation_league));
+        }
+        if (table.getResult().contains(" (Relegation)")){
+            posLay.setBackground(context.getResources().getDrawable(R.drawable.relegation_doigravanje_shape));
+           // posLay.setBackgroundColor(context.getResources().getColor(R.color.relegation_playoff));
+        }
 
 
 
