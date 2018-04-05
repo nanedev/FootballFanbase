@@ -90,6 +90,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
     RelativeLayout infoAboutChampAndRel;
     RelativeLayout topscorersInfoLayout;
 
+
     int myPointsVote = 50;
 
 
@@ -126,9 +127,9 @@ public class FragmentLeagueInfoStandings extends Fragment {
         tableTextview = (TextView) view.findViewById(R.id.tableTextTextview);
         topScorerTextview = (TextView) view.findViewById(R.id.topscorerstextview);
         infoAboutChampAndRel = (RelativeLayout) view.findViewById(R.id.infoaboutredandblue);
-        toolbar = (Toolbar) view.findViewById(R.id.toolbarLeagueInfo);
+
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        leagueNameInToolbar = (TextView) view.findViewById(R.id.leaguenameinleagueinfotoolbar);
+
         tableLayout.setActivated(true);
         tableTextview.setTextColor(Color.parseColor("#000000"));
 
@@ -144,7 +145,8 @@ public class FragmentLeagueInfoStandings extends Fragment {
         countryName = intent.getStringExtra("countryName");
         leagueNameTextview.setText(leagueName.toUpperCase());
         countryNameTextview.setText(countryName.toUpperCase() + ":");
-        championLeagueTextview.setText(leagueName + " - " + " Champions Group ");
+        championLeagueTextview.setText(leagueName + " - " + " Champions League ");
+
         relegeationTextview.setText(leagueName + " - " + " Relegation Group ");
 
         standingsTable();

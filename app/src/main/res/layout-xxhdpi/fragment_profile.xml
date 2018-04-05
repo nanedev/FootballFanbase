@@ -283,8 +283,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/seaparator1"
-                    android:layout_toStartOf="@+id/seaparator1">
+                 >
 
                     <RelativeLayout
                         android:id="@+id/postlayout"
@@ -631,7 +630,6 @@
                 android:text="This month top 10 players"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold|italic"
-                android:layout_below="@+id/separator4"
                 android:textColor="@color/primary"
                 android:layout_margin="10dp"/>
 
