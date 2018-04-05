@@ -19,13 +19,14 @@ import com.malikbisic.sportapp.listener.OnLoadMoreListener;
 import com.malikbisic.sportapp.model.api.LeagueModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Nane on 20.10.2017.
  */
 
 public class SelectLeagueAdapter extends RecyclerView.Adapter {
-    ArrayList<LeagueModel> leagueModelArrayList = new ArrayList<>();
+    HashMap< Integer, LeagueModel> leagueModelArrayList = new HashMap<>();
     Context ctx;
     Activity activity;
     boolean isOpened = true;
@@ -39,7 +40,7 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter {
 
     private static final int ITEM_VIEW = 0;
     private static final int ITEM_LOADING = 1;
-    public SelectLeagueAdapter(ArrayList<LeagueModel> leagueModelArrayList, Context ctx, Activity activity, RecyclerView recyclerView) {
+    public SelectLeagueAdapter(HashMap< Integer, LeagueModel> leagueModelArrayList, Context ctx, Activity activity, RecyclerView recyclerView) {
         this.leagueModelArrayList = leagueModelArrayList;
         this.ctx = ctx;
         this.activity = activity;
@@ -134,17 +135,18 @@ public class SelectLeagueAdapter extends RecyclerView.Adapter {
         } else if (getViewType == ITEM_LOADING) {
 
 
-            if (isLoading) {
+//            if (isLoading) {
+//
+//                ((SelectLeagueAdapter.ProgressViewHolder) holder).progressBar.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.spinnerLoad),
+//                        android.graphics.PorterDuff.Mode.MULTIPLY);
+//                ((SelectLeagueAdapter.ProgressViewHolder) holder).progressBar.setVisibility(
+//                        View.VISIBLE);
+//                ((SelectLeagueAdapter.ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+//            } else if (!isLoading){
+////                ((SelectLeagueAdapter.ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
+//            }
+       }
 
-                ((SelectLeagueAdapter.ProgressViewHolder) holder).progressBar.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.spinnerLoad),
-                        android.graphics.PorterDuff.Mode.MULTIPLY);
-                ((SelectLeagueAdapter.ProgressViewHolder) holder).progressBar.setVisibility(
-                        View.VISIBLE);
-                ((SelectLeagueAdapter.ProgressViewHolder) holder).progressBar.setIndeterminate(true);
-            } else if (!isLoading){
-                ((SelectLeagueAdapter.ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
-            }
-        }
     }
 
     @Override

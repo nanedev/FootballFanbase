@@ -31,6 +31,7 @@ import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.StopAppServices;
 import com.malikbisic.sportapp.fragment.api.FixturesClubFragment;
 import com.malikbisic.sportapp.fragment.api.FragmentClubInfo;
+import com.malikbisic.sportapp.fragment.api.FragmentLeagueInfoStandings;
 import com.malikbisic.sportapp.fragment.api.FragmentSquad;
 import com.malikbisic.sportapp.activity.firebase.MainPage;
 import com.malikbisic.sportapp.adapter.api.SectionPageAdapter;
@@ -50,12 +51,12 @@ public class AboutFootballClub extends AppCompatActivity  {
     Toolbar toolbar;
     Intent intent;
    public static String clubLogo;
-  public static  String clubName;
-    String countryId;
+   public static  String clubName;
+    public static String countryId;
     CircleImageView logo_image_club;
     TextView club_name_textview;
     CircleImageView flagImageView;
-    String teamId;
+    public static String teamId;
     Bundle bundle;
     private ViewPager mViewPager;
     private SectionPageAdapter sectionPageAdapter;
@@ -63,7 +64,11 @@ public class AboutFootballClub extends AppCompatActivity  {
     private final String countryUrl = "https://soccer.sportmonks.com/api/v2.0/countries/";
     private final String apiKey = Constants.API_KEY;
 
-    String nameCounry;
+    public static String nameCounry;
+    public static String leagueName;
+    public static String countryName;
+    public static int leagueID;
+    public static String seasonID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +93,13 @@ public class AboutFootballClub extends AppCompatActivity  {
         clubName = intent.getStringExtra("teamName");
         countryId = intent.getStringExtra("countryId");
         teamId = intent.getStringExtra("teamId");
+        leagueName = intent.getStringExtra("leagueName");
+        countryName = intent.getStringExtra("countryName");
+        leagueID = intent.getIntExtra("leagueID", 0);
+        seasonID = intent.getStringExtra("seasonID");
+
+        Log.i("leagueIDAboutClub", String.valueOf(leagueID));
+        Log.i("seasonIDAboutClub", seasonID);
 
         Bundle bundle = new Bundle();
         if (teamId != null)
@@ -202,7 +214,11 @@ public class AboutFootballClub extends AppCompatActivity  {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(AboutFootballClub.this, MainPage.class);
+        Intent intent = new Intent(AboutFootballClub.this, LeagueInfoActivity.class);
+        intent.putExtra("leagueName", leagueName);
+        intent.putExtra("countryName", countryName);
+        intent.putExtra("seasonId", seasonID);
+        intent.putExtra("league_id", leagueID);
         startActivity(intent);
         super.onBackPressed();
 

@@ -33,9 +33,11 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,7 +51,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
 
     //https://soccer.sportmonks.com/api/v2.0/leagues/501?api_token=wwA7eL6lditWNSwjy47zs9mYHJNM6iqfHc3TbnMNWonD0qSVZJpxWALiwh2s&include=season.fixtures.localTeam,season.fixtures.visitorTeam
     private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/leagues/";
-    private int URL_LEAGUE_ID;
+    public static int URL_LEAGUE_ID;
     private String URL_API = Constants.API_KEY;
     private String URL_INCLUDES = "&include=season.upcoming:order(starting_at|asc),season.upcoming.localTeam,season.upcoming.visitorTeam";
     RecyclerView leagueRecView;
@@ -115,7 +117,12 @@ public class FragmentLeagueInfoFixtures extends Fragment {
     public void loadFixtures() {
         mDialog.setVisibility(View.VISIBLE);
 
-        String full_URL = URL_BASE + URL_LEAGUE_ID + URL_API + URL_INCLUDES;
+        Calendar cal = Calendar.getInstance();
+        TimeZone tz = cal.getTimeZone();
+
+        String myTimezone = tz.getID();
+
+        String full_URL = URL_BASE + URL_LEAGUE_ID + URL_API + URL_INCLUDES  + "&tz="+myTimezone;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, full_URL, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -201,7 +208,7 @@ public class FragmentLeagueInfoFixtures extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("errorFixturesLeague", error.getLocalizedMessage());
+                //Log.e("errorFixturesLeague", error.getLocalizedMessage());
                 mDialog.setVisibility(View.GONE);
             }
         });

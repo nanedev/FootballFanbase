@@ -57,8 +57,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FragmentLeagueInfoStandings extends Fragment {
     private String URL_STANDINGS = "https://soccer.sportmonks.com/api/v2.0/standings/season/";
     Intent intent;
-    String currentSeasonId;
-    String leagueName;
+    public static String currentSeasonId;
+    public static String leagueName;
     String finalUrl;
     RecyclerView tableRecyclerview;
     TableAdapter adapter;
@@ -136,7 +136,7 @@ public class FragmentLeagueInfoStandings extends Fragment {
         topscoresLayout.setActivated(false);
         topScorerTextview.setTextColor(Color.parseColor("#ffffff"));
 
-        topscorersInfoLayout = (RelativeLayout) view.findViewById(R.id.topscoreinfolayout);
+        topscorersInfoLayout = (RelativeLayout) view.findViewById(R.id.topScorersLayout);
 
 
         intent = getActivity().getIntent();

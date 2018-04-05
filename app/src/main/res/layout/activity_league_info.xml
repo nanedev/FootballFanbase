@@ -425,7 +425,8 @@
                 <RelativeLayout
                     android:id="@+id/parentchampions"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:id="@+id/champiosnleague"
@@ -452,8 +453,9 @@
                     android:id="@+id/parentchampionsQualif"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/parentchampions"
                     android:layout_marginTop="10dp"
-                    android:layout_below="@+id/parentchampions">
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:id="@+id/champiosnleagueQualif"
@@ -481,7 +483,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/parentchampionsQualif"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:id="@+id/europeleaguelayout"
@@ -511,7 +514,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/parenteuropeleague"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:id="@+id/europeleaguelayoutQualif"
@@ -537,13 +541,13 @@
                 </RelativeLayout>
 
 
-
                 <RelativeLayout
                     android:id="@+id/parentrelegation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/parenteuropeleagueQualif"
                     android:layout_marginTop="10dp"
-                    android:layout_below="@+id/parenteuropeleagueQualif">
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:id="@+id/relagation"
@@ -573,8 +577,9 @@
                     android:id="@+id/parentrelegationQualif"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/parentrelegation"
                     android:layout_marginTop="10dp"
-                    android:layout_below="@+id/parentrelegation">
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:id="@+id/relagationQualif"

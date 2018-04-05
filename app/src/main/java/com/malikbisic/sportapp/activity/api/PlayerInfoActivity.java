@@ -42,6 +42,16 @@ public class PlayerInfoActivity extends AppCompatActivity {
     TextView playerAge;
     TextView playerCLubName;
     ImageView playerClubImage;
+
+    public static String leagueName;
+    public static String countryName;
+    public static int leagueID;
+    public static String seasonID;
+    private String countryId;
+    private String teamId;
+    private String clubLogo;
+    private String clubName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +77,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
         player_image = (ImageView) findViewById(R.id.player_info_image);
         player_name = (TextView) findViewById(R.id.player_info_name);
-        playerAge = (TextView)  findViewById(R.id.yearsPLayer);
+        playerAge = (TextView) findViewById(R.id.yearsPLayer);
         playerClubImage = (ImageView) findViewById(R.id.clubimageheader);
         playerCLubName = (TextView) findViewById(R.id.clubName);
         myIntentm = getIntent();
@@ -76,6 +86,18 @@ public class PlayerInfoActivity extends AppCompatActivity {
         String playerId = myIntentm.getStringExtra("playerId");
         boolean fromMatch = myIntentm.getBooleanExtra("openMatchInfo", false);
         String playerDateOfBirth = myIntentm.getStringExtra("playerBirthDate");
+
+        leagueName = myIntentm.getStringExtra("leagueName");
+        countryName = myIntentm.getStringExtra("countryName");
+        leagueID = myIntentm.getIntExtra("league_id", 0);
+        seasonID = myIntentm.getStringExtra("seasonId");
+        countryId = myIntentm.getStringExtra("countryId");
+        teamId = myIntentm.getStringExtra("teamId");
+        clubLogo = myIntentm.getStringExtra("teamLogo");
+        clubName = myIntentm.getStringExtra("teamName");
+
+        Log.i("leagueIDAboutPlayer", String.valueOf(leagueID));
+        Log.i("seasonIDAboutPlayer", seasonID);
 
         Picasso.with(this).load(playerImage).into(player_image);
         player_name.setText(playerName);
@@ -86,13 +108,12 @@ public class PlayerInfoActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        playerAge.setText("Age: " + getAge(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)) +"  " + "(" +playerDateOfBirth + ")");
+        playerAge.setText("Age: " + getAge(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)) + "  " + "(" + playerDateOfBirth + ")");
 
 
+        if (!fromMatch) {
 
-        if (!fromMatch){
-
-            String url = "https://soccer.sportmonks.com/api/v2.0/players/"+playerId+ Constants.API_KEY + "&include=team";
+            String url = "https://soccer.sportmonks.com/api/v2.0/players/" + playerId + Constants.API_KEY + "&include=team";
 
             JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override
@@ -139,6 +160,23 @@ public class PlayerInfoActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
 
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(PlayerInfoActivity.this, AboutFootballClub.class);
+        intent.putExtra("leagueName", leagueName);
+        intent.putExtra("countryName", countryName);
+        intent.putExtra("seasonID", seasonID);
+        intent.putExtra("leagueID", leagueID);
+        intent.putExtra("countryId", countryId);
+        intent.putExtra("teamId", teamId);
+        intent.putExtra("teamLogo", clubLogo);
+        intent.putExtra("teamName", clubName);
+        startActivity(intent);
+        super.onBackPressed();
+
+    }
+
     private String getAge(int year, int month, int day) {
         Calendar dob = Calendar.getInstance();
         Calendar today = Calendar.getInstance();

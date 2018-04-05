@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 
 import com.malikbisic.sportapp.R;
 import com.malikbisic.sportapp.activity.api.AboutFootballClub;
+import com.malikbisic.sportapp.fragment.api.FragmentLeagueInfoFixtures;
+import com.malikbisic.sportapp.fragment.api.FragmentLeagueInfoResults;
+import com.malikbisic.sportapp.fragment.api.FragmentLeagueInfoStandings;
 import com.malikbisic.sportapp.model.api.TableModel;
 import com.malikbisic.sportapp.viewHolder.api.TableViewHolder;
 
@@ -50,10 +53,14 @@ public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
             public void onClick(View v) {
 
                 Intent intent = new Intent(context, AboutFootballClub.class);
+                intent.putExtra("leagueName", FragmentLeagueInfoStandings.leagueName);
                 intent.putExtra("teamId", String.valueOf(model.getTeamId()));
                 intent.putExtra("teamLogo", model.getClubLogo());
                 intent.putExtra("teamName", model.getTeamName());
                 intent.putExtra("countryId", model.getCountryId());
+                intent.putExtra("countryName", model.getCountryName());
+                intent.putExtra("seasonID", FragmentLeagueInfoStandings.currentSeasonId);
+                intent.putExtra("leagueID", FragmentLeagueInfoResults.URL_LEAGUE_ID);
 
                 activity.startActivity(intent);
 

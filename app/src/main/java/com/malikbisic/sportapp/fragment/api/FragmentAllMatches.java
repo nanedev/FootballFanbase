@@ -1,6 +1,7 @@
 package com.malikbisic.sportapp.fragment.api;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +51,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dmax.dialog.SpotsDialog;
@@ -60,10 +63,10 @@ import dmax.dialog.SpotsDialog;
 public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTextListener {
     final String URL_BASE = " https://soccer.sportmonks.com/api/v2.0/leagues";
     final String URL_APIKEY = Constants.API_KEY;
-    final String INCLUDE = "&include=country";
+    final String INCLUDE = "&include=country,season:order(league_id|asc)";
 
     RecyclerView selectLeagueRecyclerView;
-    ArrayList<LeagueModel> selectLeaguelist;
+    HashMap<Integer, LeagueModel> selectLeaguelist;
     String leagueName;
     int currentSeason;
     String countryName;
@@ -75,6 +78,8 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
     LinearLayoutManager linearLayoutManager;
     AlertDialog progressBar;
     boolean isCup;
+
+    int leaguePos = 4;
 
     public FragmentAllMatches() {
         // Required empty public constructor
@@ -91,7 +96,7 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         progressBar = new SpotsDialog(getActivity(),"Loading",R.style.StyleLogin);
         selectLeagueRecyclerView = (RecyclerView) view.findViewById(R.id.search_league_recyclerview);
-        selectLeaguelist = new ArrayList<>();
+        selectLeaguelist = new HashMap<>();
         adapterLeague = new SelectLeagueAdapter(selectLeaguelist, getContext(), getActivity(), selectLeagueRecyclerView);
         selectLeagueRecyclerView.setAdapter(adapterLeague);
 
@@ -117,16 +122,24 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
             @Override
             public boolean onQueryTextChange(String newText) {
 
+                leaguePos = 0;
 
                 newText = newText.toLowerCase();
-                ArrayList<LeagueModel> newList = new ArrayList<>();
-                for (LeagueModel leagueModel : selectLeaguelist) {
+                HashMap< Integer, LeagueModel> newList = new HashMap<>();
+                for (LeagueModel leagueModel : selectLeaguelist.values()) {
                     String name = leagueModel.getName().toLowerCase();
                     if (name.contains(newText)) {
 
-                        newList.add(leagueModel);
+                        newList.put(leaguePos, leagueModel);
+                        leaguePos++;
 
 
+                    }
+
+                    else if (TextUtils.isEmpty(name)){
+                        selectLeaguelist.clear();
+                        leaguePos = 4;
+                        loadData();
                     }
                 }
 
@@ -165,21 +178,105 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
                             progressBar.setMessage("Loading...");
 
                             progressBar.show();
-
                             JSONObject obj = array.getJSONObject(i);
-                            league_id = obj.getInt("id");
-                            currentSeason = obj.getInt("current_season_id");
-                            leagueName = obj.getString("name");
                             isCup = obj.getBoolean("is_cup");
+                            String lgName = obj.getString("name");
+                            JSONObject cObj = obj.getJSONObject("country");
+                            JSONObject ob = cObj.getJSONObject("data");
+                            String cyName = ob.getString("name");
+
+                            if (!isCup) {
+
+                                if (lgName.equals("Premier League") && cyName.equals("England")) {
 
 
+                                    league_id = obj.getInt("id");
+                                    currentSeason = obj.getInt("current_season_id");
+                                    leagueName = obj.getString("name");
 
-                            JSONObject countryObj = obj.getJSONObject("country");
-                            JSONObject object = countryObj.getJSONObject("data");
-                            countryName = object.getString("name");
 
-                            LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, isCup);
-                            selectLeaguelist.add(model);
+                                    JSONObject countryObj = obj.getJSONObject("country");
+                                    JSONObject object = countryObj.getJSONObject("data");
+                                    countryName = object.getString("name");
+
+                                    LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, isCup);
+                                    selectLeaguelist.put(0, model);
+
+                                } else if (lgName.equals("Bundesliga")) {
+
+
+                                    league_id = obj.getInt("id");
+                                    currentSeason = obj.getInt("current_season_id");
+                                    leagueName = obj.getString("name");
+
+
+                                    JSONObject countryObj = obj.getJSONObject("country");
+                                    JSONObject object = countryObj.getJSONObject("data");
+                                    countryName = object.getString("name");
+
+                                    LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, isCup);
+                                    selectLeaguelist.put(1, model);
+
+                                } else if (lgName.equals("Serie A")) {
+
+
+                                    league_id = obj.getInt("id");
+                                    currentSeason = obj.getInt("current_season_id");
+                                    leagueName = obj.getString("name");
+
+
+                                    JSONObject countryObj = obj.getJSONObject("country");
+                                    JSONObject object = countryObj.getJSONObject("data");
+                                    countryName = object.getString("name");
+
+                                    LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, isCup);
+                                    selectLeaguelist.put(2, model);
+
+                                } else if (lgName.equals("La Liga")) {
+
+
+                                    league_id = obj.getInt("id");
+                                    currentSeason = obj.getInt("current_season_id");
+                                    leagueName = obj.getString("name");
+
+
+                                    JSONObject countryObj = obj.getJSONObject("country");
+                                    JSONObject object = countryObj.getJSONObject("data");
+                                    countryName = object.getString("name");
+
+                                    LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, isCup);
+                                    selectLeaguelist.put(3, model);
+
+                                } else if (lgName.equals("Ligue 1")) {
+
+
+                                    league_id = obj.getInt("id");
+                                    currentSeason = obj.getInt("current_season_id");
+                                    leagueName = obj.getString("name");
+
+
+                                    JSONObject countryObj = obj.getJSONObject("country");
+                                    JSONObject object = countryObj.getJSONObject("data");
+                                    countryName = object.getString("name");
+
+                                    LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, isCup);
+                                    selectLeaguelist.put(4, model);
+
+                                } else {
+                                    leaguePos++;
+                                    league_id = obj.getInt("id");
+                                    currentSeason = obj.getInt("current_season_id");
+                                    leagueName = obj.getString("name");
+
+
+                                    JSONObject countryObj = obj.getJSONObject("country");
+                                    JSONObject object = countryObj.getJSONObject("data");
+                                    countryName = object.getString("name");
+
+                                    LeagueModel model = new LeagueModel(leagueName, String.valueOf(currentSeason), countryName, league_id, isCup);
+                                    selectLeaguelist.put(leaguePos, model);
+                                }
+                            }
                         }
                         selectLeagueRecyclerView.setItemViewCacheSize(selectLeaguelist.size());
                         adapterLeague.notifyDataSetChanged();
@@ -231,11 +328,11 @@ public class FragmentAllMatches extends Fragment implements SearchView.OnQueryTe
 
         public TextView leagueName;
         public TextView countryName;
-        ArrayList<LeagueModel> leagues = new ArrayList<>();
+        HashMap< Integer, LeagueModel> leagues = new HashMap<>();
         View vm;
         CircleImageView zastava;
 
-        public SelectLeagueViewHolder(View itemView, ArrayList<LeagueModel> leagues) {
+        public SelectLeagueViewHolder(View itemView, HashMap< Integer, LeagueModel> leagues) {
             super(itemView);
             vm = itemView;
             leagueName = (TextView) vm.findViewById(R.id.leagueNameInMatches);

@@ -47,7 +47,7 @@ public class FragmentLeagueInfoResults extends Fragment {
     }
 
     private String URL_BASE = "https://soccer.sportmonks.com/api/v2.0/leagues/";
-    private int URL_LEAGUE_ID;
+    public static int URL_LEAGUE_ID;
     private String URL_API = Constants.API_KEY;
     private String URL_INCLUDES = "&include=season.results:order(starting_at|desc),season.results.localTeam,season.results.visitorTeam";
     RecyclerView leagueRecView;
@@ -191,7 +191,7 @@ public class FragmentLeagueInfoResults extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("errorFixturesLeague", error.getLocalizedMessage());
+                //Log.e("errorFixturesLeague", error.getLocalizedMessage());
                 mDialog.setVisibility(View.GONE);
             }
         });

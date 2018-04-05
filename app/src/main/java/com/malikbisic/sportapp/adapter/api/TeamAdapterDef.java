@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.malikbisic.sportapp.R;
+import com.malikbisic.sportapp.activity.api.AboutFootballClub;
 import com.malikbisic.sportapp.activity.api.PlayerInfoActivity;
 import com.malikbisic.sportapp.model.api.TeamModel;
 import com.malikbisic.sportapp.viewHolder.api.TeamSquadViewHolder;
@@ -70,6 +71,14 @@ public class TeamAdapterDef extends RecyclerView.Adapter<TeamSquadViewHolder> {
                 intent.putExtra("lineups",String.valueOf(model.getLineups()));
                 intent.putExtra("substituteIn",String.valueOf(model.getSubstituteIn()));
                 intent.putExtra("playerId",String.valueOf(model.getPlayerId()));
+                intent.putExtra("leagueName", AboutFootballClub.leagueName);
+                intent.putExtra("countryName", AboutFootballClub.countryName);
+                intent.putExtra("seasonId", AboutFootballClub.seasonID);
+                intent.putExtra("league_id", AboutFootballClub.leagueID);
+                intent.putExtra("countryId", AboutFootballClub.countryId);
+                intent.putExtra("teamId", AboutFootballClub.teamId);
+                intent.putExtra("teamLogo", AboutFootballClub.clubLogo);
+                intent.putExtra("teamName", AboutFootballClub.clubName);
                 activity.startActivity(intent);
             }
         });
