@@ -84,7 +84,6 @@ public class LeagueInfoActivity extends AppCompatActivity {
     RelativeLayout tableLayout;
 
 
-
     RelativeLayout standingsLayout;
     RelativeLayout resultsLayout;
     RelativeLayout fixturesLayout;
@@ -206,11 +205,9 @@ public class LeagueInfoActivity extends AppCompatActivity {
         standingsText = (TextView) findViewById(R.id.standingsText);
 
 
-
         championsLeagueQualifTextview = (TextView) findViewById(R.id.textforchampionleagueQualif);
         europeLeagueQualifTextview = (TextView) findViewById(R.id.textforeuropeleagueQualif);
         relegationQualifTextview = (TextView) findViewById(R.id.textforrelegationQualif);
-
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(LeagueInfoActivity.this);
@@ -241,7 +238,6 @@ public class LeagueInfoActivity extends AppCompatActivity {
         parentEuroeLeagueQualif = (RelativeLayout) findViewById(R.id.parenteuropeleagueQualif);
         parentRelegation = (RelativeLayout) findViewById(R.id.parentrelegation);
         parentRelegationDoig = (RelativeLayout) findViewById(R.id.parentrelegationQualif);
-
 
 
         fixturesLayout.setOnClickListener(new View.OnClickListener() {
@@ -324,7 +320,7 @@ public class LeagueInfoActivity extends AppCompatActivity {
 
     }
 
-    public void loadResults(){
+    public void loadResults() {
 
         adapter_results = new FixturesLeagueAdapter(modelArrayList_results, LeagueInfoActivity.this);
         tableRecyclerview.setAdapter(adapter_results);
@@ -342,7 +338,7 @@ public class LeagueInfoActivity extends AppCompatActivity {
                     JSONObject fixturesObject = dataSeason.getJSONObject("results");
                     JSONArray fixturesData = fixturesObject.getJSONArray("data");
 
-                    for (int i = 0; i < fixturesData.length(); i++){
+                    for (int i = 0; i < fixturesData.length(); i++) {
 
                         JSONObject objectMain = fixturesData.getJSONObject(i);
                         idFixtures_results = objectMain.getString("id");
@@ -367,9 +363,7 @@ public class LeagueInfoActivity extends AppCompatActivity {
                         statusS_results = timeMain.getString("status");
 
 
-
-
-                        if (datum_results.equals(prevDate_results)){
+                        if (datum_results.equals(prevDate_results)) {
 
                             currentDate_results = "isti datum";
                         } else {
@@ -430,7 +424,7 @@ public class LeagueInfoActivity extends AppCompatActivity {
         String myTimezone = tz.getID();
 
 
-        String full_URL = URL_BASE_FIXTURES + URL_LEAGUE_ID_FIXTURES + URL_API + URL_INCLUDES_FIXTURES  + "&tz="+myTimezone;
+        String full_URL = URL_BASE_FIXTURES + URL_LEAGUE_ID_FIXTURES + URL_API + URL_INCLUDES_FIXTURES + "&tz=" + myTimezone;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, full_URL, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -509,10 +503,10 @@ public class LeagueInfoActivity extends AppCompatActivity {
 
                     }); */
 
-                   mDialog.dismiss();
+                    mDialog.dismiss();
                 } catch (JSONException e) {
                     Log.e("responseErrorLeagFix", e.getLocalizedMessage());
-                   mDialog.dismiss();
+                    mDialog.dismiss();
                 }
 
             }
@@ -646,29 +640,30 @@ public class LeagueInfoActivity extends AppCompatActivity {
 
                             }
 
-                            if (model.getResult().equals("Promotion - Champions League (Group Stage)")) {
+                            if (model.getResult().contains("Promotion - ") && !model.getResult().contains("(Qualification)") && !model.getResult().contains("(Play Offs)") && !model.getResult().equals("Promotion - Europa League (Group Stage)") && !model.getResult().equals("Promotion - Europa League (Qualification)")) {
                                 parentChampionsleague.setVisibility(View.VISIBLE);
-                                championsLeagueTextview.setText(leagueName + " - " + " Champions League (Group Stage)");
+                                championsLeagueTextview.setText(leagueName + " - " + " " + model.getResult());
 
                             }
-                            if (model.getResult().equals("Promotion - Champions League (Qualification)")){
+                            if (model.getResult().contains("Promotion - Champions League (Qualification)") || model.getResult().contains("(Play Offs)")) {
                                 parentChampionsLEagueQualif.setVisibility(View.VISIBLE);
-                                championsLeagueQualifTextview.setText(leagueName + " - " + " Champions League (Qualification)");
+                                championsLeagueQualifTextview.setText(leagueName + " - " + " " + model.getResult());
 
                             }
-                            if (model.getResult().equals("Promotion - Europa League (Group Stage)")){
+
+                            if (model.getResult().contains("Promotion - Europa League (Group Stage)")) {
                                 parentEuropeLeague.setVisibility(View.VISIBLE);
-                                europeLeagueTextview.setText(leagueName + "Europa League (Group Stage)");
+                                europeLeagueTextview.setText(leagueName + " Europa League (Group Stage)");
                             }
-                            if (model.getResult().equals("Promotion - Europa League (Qualification)")){
+                            if (model.getResult().contains("Promotion - Europa League (Qualification)")) {
                                 parentEuroeLeagueQualif.setVisibility(View.VISIBLE);
                                 europeLeagueQualifTextview.setText(leagueName + " Europa League (Qualification)");
                             }
-                            if (model.getResult().contains("Relegation - ")){
+                            if (model.getResult().contains("Relegation - ")) {
                                 parentRelegation.setVisibility(View.VISIBLE);
                                 relegationTextview.setText(leagueName + " " + model.getResult());
                             }
-                            if (model.getResult().contains(" (Relegation)")){
+                            if (model.getResult().contains(" (Relegation)")) {
                                 parentRelegationDoig.setVisibility(View.VISIBLE);
                                 relegationQualifTextview.setText(leagueName + " " + model.getResult());
                             }

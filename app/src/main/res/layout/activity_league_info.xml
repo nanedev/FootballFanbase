@@ -33,7 +33,8 @@
                 <RelativeLayout
                     android:id="@+id/tableresultsfixtureslayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    >
 
 
                     <RelativeLayout
@@ -540,12 +541,44 @@
 
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:id="@+id/parentrelegationQualif"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/parenteuropeleagueQualif"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:id="@+id/relagationQualif"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/relegation_doigravanje_shape">
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/textforrelegationQualif"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+
+                        android:layout_marginTop="5dp"
+                        android:layout_toEndOf="@+id/relagationQualif"
+                        android:layout_toRightOf="@+id/relagationQualif"
+                        android:textColor="@color/black" />
+                </RelativeLayout>
+
 
                 <RelativeLayout
                     android:id="@+id/parentrelegation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/parenteuropeleagueQualif"
+                    android:layout_below="@+id/parentrelegationQualif"
                     android:layout_marginTop="10dp"
                     android:visibility="gone">
 
@@ -573,37 +606,7 @@
                         android:textColor="@color/black" />
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:id="@+id/parentrelegationQualif"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/parentrelegation"
-                    android:layout_marginTop="10dp"
-                    android:visibility="gone">
 
-                    <RelativeLayout
-                        android:id="@+id/relagationQualif"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/relegation_doigravanje_shape">
-
-                    </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/textforrelegationQualif"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginStart="10dp"
-
-                        android:layout_marginTop="5dp"
-                        android:layout_toEndOf="@+id/relagationQualif"
-                        android:layout_toRightOf="@+id/relagationQualif"
-                        android:textColor="@color/black" />
-                </RelativeLayout>
 
 
             </RelativeLayout>
