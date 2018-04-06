@@ -53,21 +53,6 @@ String result;
         pointsTextview.setText(String.valueOf(table.getPoints()));
         Picasso.with(context).load(table.getClubLogo()).into(logoClubImage);
         teamId = String.valueOf(table.getTeamId());
-        String example = table.getResult();
-        Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(example);
-        while(m.find()) {
-            System.out.println(m.group(1));
-
-            if (m.group(1).equals("Championship Group")){
-
-                posLay.setBackgroundColor(Color.parseColor("#0d47a1"));
-                positionTextview.setTextColor(Color.parseColor("#ffffff"));
-            }
-            if (m.group(1).equals("Relegation Group")){
-                posLay.setBackgroundColor(Color.parseColor("#b71c1c"));
-                positionTextview.setTextColor(Color.parseColor("#ffffff"));
-            }
-        }
 
 
 
