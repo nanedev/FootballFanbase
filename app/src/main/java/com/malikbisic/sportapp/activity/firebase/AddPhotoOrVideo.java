@@ -39,8 +39,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -290,10 +293,18 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
                     final byte[] data = baos.toByteArray();
 
                     UploadTask uploadTask = photoPost.putBytes(data);
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Uri downloadUri = taskSnapshot.getDownloadUrl();
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            return photoPost.getDownloadUrl();
+                        }
+                    });
+                    urlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+
+                            Uri downloadUri = task.getResult();
 
                             Map<String, Object> imagePost = new HashMap<>();
 
@@ -366,11 +377,18 @@ public class AddPhotoOrVideo extends AppCompatActivity implements View.OnClickLi
 
                     postingDialog.show();
 
-
-                    postVideo.putFile(videoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    UploadTask task = postVideo.putFile(videoUri);
+                    Task<Uri> urlTask = task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Uri downloadUri = taskSnapshot.getDownloadUrl();
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            return postVideo.getDownloadUrl();
+                        }
+                    });
+                           urlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+                               @Override
+                               public void onComplete(@NonNull Task<Uri> task) {
+
+                            Uri downloadUri = task.getResult();
 
                             Map<String, Object> videoPost = new HashMap<>();
 

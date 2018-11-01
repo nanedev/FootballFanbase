@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -282,12 +283,20 @@ public class ImageAlbumAdapter extends RecyclerView.Adapter<ImageAlbumAdapter.Im
             imageCompressBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             final byte[] data = baos.toByteArray();
             StorageReference mFilePath = FirebaseStorage.getInstance().getReference();
-            StorageReference photoPost = mFilePath.child("Chat_Image").child(imagePath.getName());
+            final StorageReference photoPost = mFilePath.child("Chat_Image").child(imagePath.getName());
             UploadTask uploadTask = photoPost.putBytes(data);
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUri = taskSnapshot.getDownloadUrl();
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    return photoPost.getDownloadUrl();
+                }
+            });
+            urlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+
+                    Uri downloadUri = task.getResult();
 
 
                     Map<String, Object> messageMap = new HashMap<>();

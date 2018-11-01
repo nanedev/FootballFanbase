@@ -40,6 +40,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -427,10 +428,19 @@ showAlertInfo();
                         .placeholder(R.drawable.profilimage).error(R.mipmap.ic_launcher)
                         .into(profile);
                 profileImageUpdate = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-                profileImageUpdate.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                UploadTask task = profileImageUpdate.putFile(resultUri);
+                Task<Uri> urlTask = task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadUri = taskSnapshot.getDownloadUrl();
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        return profileImageUpdate.getDownloadUrl();
+                    }
+                });
+                       urlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+                           @Override
+                           public void onComplete(@NonNull Task<Uri> task) {
+
+                        Uri downloadUri = task.getResult();
 
                         //mReference = mDatabase.getReference().child("Users").child(uid);
                         //mReference.child("profileImage").setValue(downloadUri.toString());

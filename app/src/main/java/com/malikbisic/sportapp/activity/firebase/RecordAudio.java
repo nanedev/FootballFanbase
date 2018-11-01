@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -61,6 +62,7 @@ public class RecordAudio extends AppCompatActivity {
     FirebaseAuth mAuth;
     //komentar
     private static final String LOG_TAG = "record_log";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -206,12 +208,20 @@ public class RecordAudio extends AppCompatActivity {
                 StorageMetadata metadata = new StorageMetadata.Builder()
                         .setContentType("audio/mpeg")
                         .build();
-                StorageReference filePath = mStorage.child("Audio").child(CreateRandomAudioFileName(5));
+                final StorageReference filePath = mStorage.child("Audio").child(CreateRandomAudioFileName(5));
                 Uri uri = Uri.fromFile(new File(AudioSavePathInDevice));
-                filePath.putFile(uri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                UploadTask task = filePath.putFile(uri, metadata);
+                Task<Uri> urlTask = task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        uriAudio = taskSnapshot.getDownloadUrl();
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        return filePath.getDownloadUrl();
+                    }
+                });
+                urlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+
+                        uriAudio = task.getResult();
                         mDialog.dismiss();
                         buttonStart.setEnabled(true);
                         buttonStopPlayingRecording.setEnabled(false);
@@ -261,9 +271,9 @@ public class RecordAudio extends AppCompatActivity {
                 postAudio.collection("Posting").add(audioMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             String key = task.getResult().getId();
-                            Map<String,Object> keyUpdate = new HashMap<>();
+                            Map<String, Object> keyUpdate = new HashMap<>();
                             keyUpdate.put("key", key);
                             postAudio.collection("Posting").document(key).update(keyUpdate);
                         }

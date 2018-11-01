@@ -35,6 +35,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.StreamEncoder;
 import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import com.caverock.androidsvg.SVG;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -497,7 +498,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
                     mDialog.show();
                     if (LoginActivity.checkGoogleSignIn) {
-                        googleEnterDatabase();
+                        //googleEnterDatabase();
                         Log.i("enter", "google");
 
 
@@ -507,7 +508,7 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
                         Log.i("enter", "login");
 
                     } else {
-                        facebookEnterDatabase();
+                        //facebookEnterDatabase();
                         Log.i("enter", "facebook");
                     }
 
@@ -534,225 +535,225 @@ public class EnterUsernameForApp extends AppCompatActivity implements View.OnCli
 
     }
 
-    public void facebookEnterDatabase() {
-
-mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.StyleLogin);
-        username = enterUsername.getText().toString().trim();
-        userDate = birthday.getText().toString().trim();
-        favoriteClubString = favoriteClub.getText().toString().trim();
-        countryString = selectCountry.getText().toString().trim();
-        File thumb_filePath = new File(getRealPathFromURI(resultUri));
-        try {
-            Bitmap profileThumb = new Compressor(this)
-                    .setMaxWidth(640)
-                    .setMaxHeight(480)
-                    .setQuality(75)
-                    .compressToBitmap(thumb_filePath);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] thumb_byte = baos.toByteArray();
-            profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-
-            mDialog.show();
-
-            UploadTask task = profileImageRef.putBytes(thumb_byte);
-            task.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                    String downloadUrl = task.getResult().getDownloadUrl().toString();
-                    if (task.isSuccessful()) {
-                        mReference = FirebaseFirestore.getInstance();
-
-
-                        Map<String, Object> userInfoMap = new HashMap<>();
-                        userInfoMap.put("name", fbFirstName);
-                        userInfoMap.put("surname", fbLastName);
-                        userInfoMap.put("username", username);
-                        userInfoMap.put("date", userDate);
-                        userInfoMap.put("gender", gender);
-                        if (downloadUrl != null)
-                            userInfoMap.put("profileImage", downloadUrl.toString());
-                        userInfoMap.put("country", countryString);
-                        userInfoMap.put("flag", imageOfCountry);
-                        userInfoMap.put("favoriteClub", clubName);
-                        userInfoMap.put("favoriteClubLogo", clubLogo);
-                        userInfoMap.put("userID", uid);
-                        userInfoMap.put("premium", true);
-                        userInfoMap.put("premiumDate", todayDateTime);
-
-
-                        googleCollection.collection("Users").document(uid).set(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                //Log.i("Successfully written",task.getResult().toString());
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.i("Error", e.getLocalizedMessage());
-                            }
-                        });
-
-
-                        final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
-
-                        Map<String, Object> userChatInfo = new HashMap<>();
-                        userChatInfo.put("username", username);
-                        userChatInfo.put("date", currentDate);
-                        if (downloadUrl != null)
-                            userChatInfo.put("profileImage", downloadUrl.toString());
-                        userChatInfo.put("country", countryString);
-                        userChatInfo.put("flag", imageOfCountry);
-                        userChatInfo.put("favoriteClub", clubName);
-                        userChatInfo.put("favoriteClubLogo", clubLogo);
-                        userChatInfo.put("userID", uid);
-                        userChatInfo.put("online", "true");
-
-                        usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Map<String, Object> clubNameMap = new HashMap<>();
-                                clubNameMap.put("favoriteClub", clubName);
-
-                                usersChat.collection("UsersChat").document(favoriteClubString).set(clubNameMap);
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-
-
-
-                        clubTableFan(downloadUrl.toString());
-                        if ((mDialog != null) && mDialog.isShowing()) {
-                            mDialog.dismiss();
-                        }
-                    } else
-                        Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-            });
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void googleEnterDatabase() {
-
-mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.StyleLogin);
-        username = enterUsername.getText().toString().trim();
-        userDate = birthday.getText().toString().trim();
-        favoriteClubString = favoriteClub.getText().toString().trim();
-        countryString = selectCountry.getText().toString().trim();
-        File thumb_filePath = new File(getRealPathFromURI(resultUri));
-        try {
-            Bitmap profileThumb = new Compressor(this)
-                    .setMaxWidth(640)
-                    .setMaxHeight(480)
-                    .setQuality(75)
-                    .compressToBitmap(thumb_filePath);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] thumb_byte = baos.toByteArray();
-            profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
-
-            mDialog.show();
-
-            UploadTask task = profileImageRef.putBytes(thumb_byte);
-            task.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                    String downloadUrl = task.getResult().getDownloadUrl().toString();
-                    if (task.isSuccessful()) {
-                        mReference = FirebaseFirestore.getInstance();
-
-
-                        Map<String, Object> userInfoMap = new HashMap<>();
-                        userInfoMap.put("name", googleFirstName);
-                        userInfoMap.put("surname", googleLastName);
-                        userInfoMap.put("username", username);
-                        userInfoMap.put("date", userDate);
-                        userInfoMap.put("gender", gender);
-                        if (downloadUrl != null)
-                            userInfoMap.put("profileImage", downloadUrl.toString());
-                        userInfoMap.put("country", countryString);
-                        userInfoMap.put("flag", imageOfCountry);
-                        userInfoMap.put("favoriteClub", clubName);
-                        userInfoMap.put("favoriteClubLogo", clubLogo);
-                        userInfoMap.put("userID", uid);
-                        userInfoMap.put("premium", true);
-                        userInfoMap.put("premiumDate", todayDateTime);
-
-
-                        googleCollection.collection("Users").document(uid).set(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                //Log.i("Successfully written",task.getResult().toString());
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.i("Error", e.getLocalizedMessage());
-                            }
-                        });
-
-
-                        final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
-
-                        Map<String, Object> userChatInfo = new HashMap<>();
-                        userChatInfo.put("username", username);
-                        userChatInfo.put("date", currentDate);
-                        if (downloadUrl != null)
-                            userChatInfo.put("profileImage", downloadUrl.toString());
-                        userChatInfo.put("country", countryString);
-                        userChatInfo.put("flag", imageOfCountry);
-                        userChatInfo.put("favoriteClub", clubName);
-                        userChatInfo.put("favoriteClubLogo", clubLogo);
-                        userChatInfo.put("userID", uid);
-                        userChatInfo.put("online", "true");
-
-                        usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-
-                                Map<String, Object> clubNameMap = new HashMap<>();
-                                clubNameMap.put("favoriteClub", clubName);
-
-                                usersChat.collection("UsersChat").document(favoriteClubString).set(clubNameMap);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
-
-
-
-
-                        clubTableFan(downloadUrl.toString());
-                        if (mDialog != null && mDialog.isShowing())
-                            mDialog.dismiss();
-                    } else
-                        Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-            });
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void facebookEnterDatabase() {
+//
+//mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.StyleLogin);
+//        username = enterUsername.getText().toString().trim();
+//        userDate = birthday.getText().toString().trim();
+//        favoriteClubString = favoriteClub.getText().toString().trim();
+//        countryString = selectCountry.getText().toString().trim();
+//        File thumb_filePath = new File(getRealPathFromURI(resultUri));
+//        try {
+//            Bitmap profileThumb = new Compressor(this)
+//                    .setMaxWidth(640)
+//                    .setMaxHeight(480)
+//                    .setQuality(75)
+//                    .compressToBitmap(thumb_filePath);
+//
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            byte[] thumb_byte = baos.toByteArray();
+//            profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+//
+//            mDialog.show();
+//
+//            UploadTask task = profileImageRef.putBytes(thumb_byte);
+//            task.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//
+//                    String downloadUrl = task.getResult().getDownloadUrl().toString();
+//                    if (task.isSuccessful()) {
+//                        mReference = FirebaseFirestore.getInstance();
+//
+//
+//                        Map<String, Object> userInfoMap = new HashMap<>();
+//                        userInfoMap.put("name", fbFirstName);
+//                        userInfoMap.put("surname", fbLastName);
+//                        userInfoMap.put("username", username);
+//                        userInfoMap.put("date", userDate);
+//                        userInfoMap.put("gender", gender);
+//                        if (downloadUrl != null)
+//                            userInfoMap.put("profileImage", downloadUrl.toString());
+//                        userInfoMap.put("country", countryString);
+//                        userInfoMap.put("flag", imageOfCountry);
+//                        userInfoMap.put("favoriteClub", clubName);
+//                        userInfoMap.put("favoriteClubLogo", clubLogo);
+//                        userInfoMap.put("userID", uid);
+//                        userInfoMap.put("premium", true);
+//                        userInfoMap.put("premiumDate", todayDateTime);
+//
+//
+//                        googleCollection.collection("Users").document(uid).set(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                //Log.i("Successfully written",task.getResult().toString());
+//
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.i("Error", e.getLocalizedMessage());
+//                            }
+//                        });
+//
+//
+//                        final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+//
+//                        Map<String, Object> userChatInfo = new HashMap<>();
+//                        userChatInfo.put("username", username);
+//                        userChatInfo.put("date", currentDate);
+//                        if (downloadUrl != null)
+//                            userChatInfo.put("profileImage", downloadUrl.toString());
+//                        userChatInfo.put("country", countryString);
+//                        userChatInfo.put("flag", imageOfCountry);
+//                        userChatInfo.put("favoriteClub", clubName);
+//                        userChatInfo.put("favoriteClubLogo", clubLogo);
+//                        userChatInfo.put("userID", uid);
+//                        userChatInfo.put("online", "true");
+//
+//                        usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Map<String, Object> clubNameMap = new HashMap<>();
+//                                clubNameMap.put("favoriteClub", clubName);
+//
+//                                usersChat.collection("UsersChat").document(favoriteClubString).set(clubNameMap);
+//
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//
+//                            }
+//                        });
+//
+//
+//
+//                        clubTableFan(downloadUrl.toString());
+//                        if ((mDialog != null) && mDialog.isShowing()) {
+//                            mDialog.dismiss();
+//                        }
+//                    } else
+//                        Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
+//                }
+//            });
+//
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void googleEnterDatabase() {
+//
+//mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.StyleLogin);
+//        username = enterUsername.getText().toString().trim();
+//        userDate = birthday.getText().toString().trim();
+//        favoriteClubString = favoriteClub.getText().toString().trim();
+//        countryString = selectCountry.getText().toString().trim();
+//        File thumb_filePath = new File(getRealPathFromURI(resultUri));
+//        try {
+//            Bitmap profileThumb = new Compressor(this)
+//                    .setMaxWidth(640)
+//                    .setMaxHeight(480)
+//                    .setQuality(75)
+//                    .compressToBitmap(thumb_filePath);
+//
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            profileThumb.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            byte[] thumb_byte = baos.toByteArray();
+//            profileImageRef = mFilePath.child("Profile_Image").child(resultUri.getLastPathSegment());
+//
+//            mDialog.show();
+//
+//            UploadTask task = profileImageRef.putBytes(thumb_byte);
+//            task.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//
+//                    String downloadUrl = task.getResult().getDownloadUrl().toString();
+//                    if (task.isSuccessful()) {
+//                        mReference = FirebaseFirestore.getInstance();
+//
+//
+//                        Map<String, Object> userInfoMap = new HashMap<>();
+//                        userInfoMap.put("name", googleFirstName);
+//                        userInfoMap.put("surname", googleLastName);
+//                        userInfoMap.put("username", username);
+//                        userInfoMap.put("date", userDate);
+//                        userInfoMap.put("gender", gender);
+//                        if (downloadUrl != null)
+//                            userInfoMap.put("profileImage", downloadUrl.toString());
+//                        userInfoMap.put("country", countryString);
+//                        userInfoMap.put("flag", imageOfCountry);
+//                        userInfoMap.put("favoriteClub", clubName);
+//                        userInfoMap.put("favoriteClubLogo", clubLogo);
+//                        userInfoMap.put("userID", uid);
+//                        userInfoMap.put("premium", true);
+//                        userInfoMap.put("premiumDate", todayDateTime);
+//
+//
+//                        googleCollection.collection("Users").document(uid).set(userInfoMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                //Log.i("Successfully written",task.getResult().toString());
+//
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.i("Error", e.getLocalizedMessage());
+//                            }
+//                        });
+//
+//
+//                        final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+//
+//                        Map<String, Object> userChatInfo = new HashMap<>();
+//                        userChatInfo.put("username", username);
+//                        userChatInfo.put("date", currentDate);
+//                        if (downloadUrl != null)
+//                            userChatInfo.put("profileImage", downloadUrl.toString());
+//                        userChatInfo.put("country", countryString);
+//                        userChatInfo.put("flag", imageOfCountry);
+//                        userChatInfo.put("favoriteClub", clubName);
+//                        userChatInfo.put("favoriteClubLogo", clubLogo);
+//                        userChatInfo.put("userID", uid);
+//                        userChatInfo.put("online", "true");
+//
+//                        usersChat.collection("UsersChat").document(favoriteClubString).collection("user-id").document(uid).set(userChatInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//
+//                                Map<String, Object> clubNameMap = new HashMap<>();
+//                                clubNameMap.put("favoriteClub", clubName);
+//
+//                                usersChat.collection("UsersChat").document(favoriteClubString).set(clubNameMap);
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//
+//                            }
+//                        });
+//
+//
+//
+//
+//                        clubTableFan(downloadUrl.toString());
+//                        if (mDialog != null && mDialog.isShowing())
+//                            mDialog.dismiss();
+//                    } else
+//                        Toast.makeText(EnterUsernameForApp.this, "Something went wrong", Toast.LENGTH_LONG).show();
+//                }
+//            });
+//
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void clubTableFan(final String profileImage) {
         final String clubName = favoriteClub.getText().toString().trim();
@@ -852,10 +853,18 @@ mDialog = new SpotsDialog(EnterUsernameForApp.this,"Registering...",R.style.Styl
             mDialog.show();
 
             UploadTask task = profileImageRef.putBytes(thumb_byte);
-            task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            Task<Uri> urlTask = task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    final Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    return profileImageRef.getDownloadUrl();
+                }
+            });
+            urlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+
+
+                    final Uri downloadUrl = task.getResult();
 
 
                     Map<String, Object> userInfoMap = new HashMap<>();

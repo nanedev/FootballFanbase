@@ -69,6 +69,7 @@ import com.firebase.ui.common.ChangeEventType;
 import com.firebase.ui.firestore.ChangeEventListener;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -686,12 +687,22 @@ recordStop();
                     .setContentType("audio/mpeg")
                     .build();
 
-            StorageReference filePath = mStorage.child("Audio_Chat").child(CreateRandomAudioFileName(5));
+            final StorageReference filePath = mStorage.child("Audio_Chat").child(CreateRandomAudioFileName(5));
             final Uri uri = Uri.fromFile(new File(AudioSavePathInDevice));
-            filePath.putFile(uri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    uriAudio = taskSnapshot.getDownloadUrl();
+
+        UploadTask task = filePath.putFile(uri, metadata);
+        Task<Uri> urlTask = task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                return filePath.getDownloadUrl();
+            }
+        });
+
+                   urlTask .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                       @Override
+                       public void onComplete(@NonNull Task<Uri> task) {
+
+                    uriAudio = task.getResult();
                     mDialog.dismiss();
 
                     Map messageMap = new HashMap();

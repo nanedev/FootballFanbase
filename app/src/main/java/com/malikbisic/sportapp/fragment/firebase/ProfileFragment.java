@@ -60,6 +60,7 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 
 import com.caverock.androidsvg.SVG;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -746,10 +747,18 @@ public class ProfileFragment extends AppCompatActivity implements DiscreteScroll
                     final byte[] changeImageData = baos.toByteArray();
 
                     UploadTask uploadTask = profileImageUpdate.putBytes(changeImageData);
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            final Uri downloadUri = taskSnapshot.getDownloadUrl();
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            return profileImageUpdate.getDownloadUrl();
+                        }
+                    });
+                    urlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+
+                            final Uri downloadUri = task.getResult();
                             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                             DocumentReference mDoc = db.collection("Users").document(uid);

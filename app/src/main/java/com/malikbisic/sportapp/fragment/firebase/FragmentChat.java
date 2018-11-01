@@ -26,7 +26,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentListenOptions;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -150,7 +149,7 @@ loadMessagesList();
     private void updateMessagesList() {
 
             DocumentReference messageListQUERY = FirebaseFirestore.getInstance().collection("Messages").document(mAuth.getCurrentUser().getUid());
-            messageListQUERY.addSnapshotListener(getActivity(), new DocumentListenOptions(), new EventListener<DocumentSnapshot>() {
+            messageListQUERY.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                     if (documentSnapshot.exists()) {

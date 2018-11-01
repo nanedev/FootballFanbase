@@ -48,9 +48,7 @@ public class Application extends android.app.Application {
         Intent closeAPP = new Intent(this, StopAppServices.class);
         startService(closeAPP);
 
-        if (!FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        }
+
 
 
         Picasso.Builder builder = new Picasso.Builder(this);
